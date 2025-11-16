@@ -1,0 +1,405 @@
+/* FolderTree.css */
+.folder-tree {
+  margin-left: 0.8rem;
+  font-size: 0.95rem;
+  color: var(--text-color, #f1f1f1);
+  position: relative;
+}
+
+/* === NOM DES DOSSIERS === */
+.folder-name {
+  color: #f7f7f7;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.folder-node:hover .folder-name {
+  color: var(--primary-color, #6c63ff);
+}
+
+.folder-node.active .folder-name {
+  color: var(--primary-color, #6c63ff);
+  font-weight: 600;
+}
+
+/* === STRUCTURE GLOBALE === */
+.folder-node {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 4px 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  position: relative;
+}
+
+.folder-node:hover {
+  background: rgba(108, 99, 255, 0.12);
+}
+
+.folder-children {
+  margin-left: 1.2rem;
+  border-left: 1px dashed rgba(108, 99, 255, 0.2);
+  padding-left: 0.6rem;
+}
+
+/* === BOUTONS === */
+.add-subfolder,
+.context-btn,
+.star {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ccc;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s, transform 0.2s;
+  padding: 2px;
+}
+
+.add-subfolder:hover,
+.context-btn:hover,
+.star:hover {
+  color: var(--primary-color, #6c63ff);
+  transform: scale(1.15);
+}
+
+.star.active {
+  color: #ffd700;
+}
+.star.inactive {
+  color: #888;
+}
+
+/* === CONTEXT MENU === */
+.context-menu {
+  /*position: absolute;*/
+  right: 0;
+  top: 24px;
+  background: rgba(30, 30, 45, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 6px 0;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 999;
+  animation: scaleFadeIn 0.2s ease forwards;
+}
+
+.context-menu button {
+  background: transparent;
+  border: none;
+  color: #eee;
+  padding: 8px 14px;
+  text-align: left;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.context-menu button:hover {
+  background: rgba(108, 99, 255, 0.2);
+  color: var(--primary-color, #6c63ff);
+}
+
+/* Animation douce */
+@keyframes scaleFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* === Flèche animée pour sous-dossiers === */
+.arrow {
+  display: inline-block;
+  width: 16px;
+  margin-right: 4px;
+  color: #ccc;
+  cursor: pointer;
+  transition: transform 0.25s ease, color 0.2s ease;
+  user-select: none;
+}
+
+.arrow-icon {
+  transition: transform 0.25s ease, stroke 0.2s ease;
+  stroke: #bbb;
+}
+
+.arrow.expanded .arrow-icon {
+  transform: rotate(90deg);
+  stroke: var(--primary-color, #6c63ff);
+}
+
+
+.arrow.expanded {
+  transform: rotate(90deg);
+  color: var(--primary-color, #6c63ff);
+}
+
+/* 📁 Icône dossier */
+.folder-icon {
+  margin-right: 6px;
+}
+
+/* === Menu contextuel moderne Gemini+ === */
+.folder-menu-wrapper {
+  position: relative;
+  z-index: 10;
+}
+
+.context-menu.glass,
+.context-menu.glass-effect {
+  position: absolute;
+  top: 28px;
+  right: 0;
+  min-width: 160px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  padding: 6px 0;
+  z-index: 999999;
+  animation: scaleFadeIn 0.25s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+.context-menu.glass button {
+  background: transparent;
+  border: none;
+  color: #1a1a1a;
+  font-weight: 500;
+  padding: 8px 14px;
+  text-align: left;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  transition: all 0.25s ease;
+}
+
+.context-menu.glass button:hover {
+  background: rgba(108, 99, 255, 0.15);
+  color: var(--primary-color, #6c63ff);
+  transform: scale(1.02);
+}
+
+/* ✨ Animation fluide scale + fade */
+.scale-fade {
+  animation: scaleFadeIn 0.25s ease forwards;
+}
+
+@keyframes scaleFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Animation ouverture sous-dossiers */
+.fade-expand {
+  animation: fadeExpand 0.25s ease-out forwards;
+}
+
+@keyframes fadeExpand {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Modale création sous-dossier (Gemini+ style) === */
+.subfolder-modal .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(20, 20, 30, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  backdrop-filter: blur(6px);
+}
+
+.subfolder-modal .modal-content {
+  background: var(--modal-bg, #1f1f2e);
+  color: var(--text-color, #f2f2f2);
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  padding: 20px 24px;
+  width: 360px;
+  animation: scaleFadeIn 0.25s ease forwards;
+}
+
+.subfolder-modal h3 {
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.subfolder-modal input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.07);
+ /* color: #fff;*/
+  outline: none;
+}
+
+.subfolder-modal input.input-error {
+  border-color: #ff4b4b;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.confirm-btn, .cancel-btn {
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.confirm-btn {
+  background: var(--primary-color, #6c63ff);
+  color: #fff;
+}
+
+/*.cancel-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ddd;
+}*/
+
+.confirm-btn:hover {
+  background: #7b72ff;
+}
+
+.cancel-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Toast intégré */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  animation: fadeInUp 0.3s ease forwards;
+  z-index: 999999;
+}
+
+.toast.success {
+  background: rgba(60, 180, 75, 0.9);
+  color: #fff;
+}
+.toast.error {
+  background: rgba(255, 80, 80, 0.9);
+  color: #fff;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === ✅ TOOLTIP GLOBAL FIX — sans double affichage === */
+.folder-name[data-title] {
+  position: relative;
+}
+
+.folder-name[data-title]:hover::after {
+  content: attr(data-title);
+  position: fixed;
+  left: calc(var(--tooltip-x, 0px) + 14px);
+  top: calc(var(--tooltip-y, 0px) - 10px);
+  white-space: nowrap;
+  background: rgba(20, 20, 40, 0.95);
+  color: #fff;
+  font-size: 0.85rem;
+  padding: 5px 10px;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  z-index: 999999;
+  pointer-events: none;
+  opacity: 0;
+  animation: tooltipFadeIn 0.2s ease forwards;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+
+/* Désactivation visible pour les boutons inactifs */
+.folder-actions button.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Correction mobile — évite les dépassements sur petits écrans */
+@media (max-width: 1024px) {
+  .folder-node[title]:hover::after {
+    left: auto;
+    right: 105%;
+  }
+}
+
+/* ✅ S’assure que le tooltip reste visible même dans les zones masquées */
+.sidebar,
+.section-scroll,
+.shared-files {
+  overflow: visible !important;
+}
+
+.folder-name[data-title]:hover::after {
+  position: fixed !important; /* sort du flux sidebar */
+  z-index: 9999999 !important;
+}

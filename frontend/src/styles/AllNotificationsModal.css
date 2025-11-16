@@ -1,0 +1,382 @@
+/* === 🧭 FOND & STRUCTURE GÉNÉRALE === */
+.notif-modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 3000;
+  animation: fadeIn 0.3s ease;
+}
+
+.notif-modal-content {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  width: 520px;
+  max-height: 80vh;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 0.3s ease;
+}
+
+/* === HEADER === */
+.notif-modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  background: linear-gradient(90deg, #6c63ff, #7c3aed);
+  color: white; padding: 14px 18px;
+  font-weight: bold;
+
+}
+
+
+.notif-modal-close {
+  background: transparent; border: none;
+  color: white; font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.notif-modal-close:hover {
+  color: #ffd700; transform: rotate(90deg);
+}
+
+/* === LISTE === */
+.notif-modal-list {
+  flex: 1; overflow-y: auto;
+  padding: 12px 16px;
+}
+
+.notif-item {
+  position: relative;
+  padding-bottom: 20px;
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+  transition: 0.25s ease;
+}
+.notif-item:hover {
+  background: #f8f6ff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(108, 99, 255, 0.15);
+}
+
+/* === TEXTE + HEURE === */
+.notif-body {
+  position: relative;
+  flex: 1;
+}
+
+.notif-text {
+  font-size: 14px;
+  color: #333;
+  padding-right: 8px;
+}
+
+/*L'heure alignée en bas à droite 
+.notif-time-right {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  font-size: 0.8rem;
+  color: #777;
+  font-style: italic;
+  cursor: help;
+  transition: opacity 0.2s ease;
+}*/
+
+/* Style moderne pour l’heure */
+.notif-time-right {
+  right: 0;
+  font-size: 0.82rem;
+  color: #777;
+  font-style: italic;
+  text-align: right;
+  margin-top: 2px;
+  display: block;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.notif-time-right:hover {
+  color: #6c63ff;
+  transform: scale(1.02);
+}
+
+/* Tooltip élégant */
+.notif-time-right:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 130%;
+  right: 0;
+  background: rgba(30, 30, 30, 0.9);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  font-size: 0.75rem;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+.notif-time-right::after {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/*Style harmonisé pour la boîte rapide de notifications */
+.notif-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+
+
+.notif-message {
+  font-size: 0.9rem;
+  color: #333;
+  line-height: 1.3;
+}
+
+/* === BOUTONS === */
+.notif-delete-one {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  color: #ff4b5c;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.notif-delete-one:hover {
+  transform: scale(1.2);
+  color: #e63946;
+}
+
+/* === FOOTER === */
+.notif-modal-footer {
+  padding: 10px 16px;
+  border-top: 1px solid #ddd;
+  display: flex; justify-content: flex-end;
+}
+.notif-clear-all {
+  background: #ff4b5c;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.notif-clear-all:hover {
+  background: #e63946;
+  transform: translateY(-2px);
+}
+
+/* === ÉTAT VIDE === */
+.no-notif {
+  text-align: center;
+  color: #777;
+  font-style: italic;
+  padding: 20px;
+}
+
+/* === SCROLLBAR === */
+.notif-modal-list::-webkit-scrollbar {
+  width: 6px;
+}
+.notif-modal-list::-webkit-scrollbar-thumb {
+  background: rgba(108, 99, 255, 0.4);
+  border-radius: 6px;
+}
+.notif-modal-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(108, 99, 255, 0.6);
+}
+
+/* === ANIMATIONS === */
+@keyframes fadeIn {
+  from { opacity: 0; } to { opacity: 1; }
+}
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/************************************************************************/
+.notif-btn:hover .icon-bell {
+  transform: rotate(-10deg) scale(1.1);
+  color: #ffd700; /* doré au hover */
+}
+
+/* ====== DROPDOWN NOTIF ====== */
+.notif-wrapper, .account-wrapper {
+  position: relative;
+  margin-left: 20px;   /* espace entre les icônes */
+  margin-right: 15px;  /* décollage du bord droit */
+}
+
+.notif-dropdown, .account-dropdown {
+  position: absolute;
+  top: 45px;   /* descend un peu plus bas */
+  right: 0;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+  padding: 12px;
+  min-width: 260px;  /* plus large */
+  z-index: 2000;
+}
+
+.notif-dropdown ul, .account-dropdown ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.notif-dropdown li, .account-dropdown li {
+   padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;         /* espace entre icône et texte */
+  color: #333;
+}
+
+.notif-dropdown li:hover, .account-dropdown li:hover {
+  background: #f3f0ff;
+}
+
+/* Centrer le titre des notifications */
+.notif-title {
+  font-weight: 700;
+  text-align: center;
+  color: #6c63ff;
+  font-size: 15px;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(108, 99, 255, 0.15);
+}
+
+/* Espace plus élégant entre message et heure */
+.notif-item .notif-message {
+  line-height: 1.45;
+  margin-bottom: 6px; /* ajoute un petit espace avant l’heure */
+}
+
+
+.notif-title, .account-title {
+  font-weight: bold;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #6c63ff;
+}
+
+.notif-clear {
+  margin-top: 8px;
+  padding: 6px 10px;
+  border: none;
+  background: #ff4b5c;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  width: 100%;
+}
+
+.notif-clear:hover {
+  background: #e63946;
+}
+
+.notif-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: red;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 50%;
+}
+
+/* ====== NOTIF LIST LIMIT + SCROLL ====== */
+.notif-dropdown .notif-list {
+  max-height: 250px;   /* ~5 notifs max */
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+/* Scrollbar moderne */
+.notif-dropdown .notif-list::-webkit-scrollbar {
+  width: 6px;
+}
+.notif-dropdown .notif-list::-webkit-scrollbar-thumb {
+  background: rgba(108, 99, 255, 0.4); /* violet doux */
+  border-radius: 10px;
+}
+.notif-dropdown .notif-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(108, 99, 255, 0.7);
+}
+.notif-dropdown .notif-list {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(108, 99, 255, 0.4) transparent;
+}
+
+
+/* Bouton voir toutes */
+.notif-more {
+  margin-top: 6px;
+  padding: 6px 10px;
+  background: linear-gradient(90deg, #8b5cf6, #7c3aed);
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  width: 100%;
+  transition: 0.3s;
+}
+.notif-more:hover {
+  background: linear-gradient(90deg, #7c3aed, #6d28d9);
+}
+
+.notif-list li {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 8px;
+  margin-bottom: 8px; /* plus espacé */
+  padding: 10px 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  transition: background 0.25s, transform 0.25s;
+}
+
+.notif-list li:hover {
+  background: #f9f7ff;
+  transform: translateY(-1px);
+}
+
+.notif-message {
+  font-size: 14px;
+  color: #333;
+}
+
+.notif-time {
+  font-size: 11px;
+  color: #999;
+  align-self: flex-end;
+  margin-top: 3px;
+  font-style: italic;
+}

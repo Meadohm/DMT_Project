@@ -1,0 +1,797 @@
+/* src/styles/AdminPanel.css */
+
+/* Layout */
+.admin-panel-container {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+}
+
+/* AdminFileManager Table */
+.admin-file-container {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+.admin-file-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-file-container .center-entete {
+  text-align: center;
+}
+
+
+.admin-file-container th,
+.admin-file-container td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.admin-file-container th {
+  position: sticky;
+  top: 0;
+  background-color: #007bff;
+  color: white;
+  z-index: 2;
+}
+
+/* File Action Buttons */
+.file-action-button {
+  padding: 8px 12px;
+  margin-right: 5px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+}
+
+.file-action-button.edit-buttonAdmin {
+  background-color: #007bff;
+}
+
+.file-action-button.delete-buttonAdmin {
+  background-color: #dc3545;
+}
+
+.file-action-button.download-buttonAdmin {
+  background-color: #28a745;
+}
+
+.file-action-button.read-buttonAdmin {
+  background-color: #ffc107;
+}
+
+.file-action-button:hover {
+  opacity: 0.9;
+}
+
+
+/* Sidebar */
+.admin-sidebar {
+  width: 240px;
+  background: linear-gradient(180deg, #003366, #00509e);
+  color: #fff;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.app-logo {
+  height: auto;
+  max-width: 100%;
+  margin-bottom: 20px;
+}
+
+.admin-sidebar button {
+  width: 100%;
+  padding: 12px;
+  background: #007bff;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 1em;
+  text-align: left;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.admin-sidebar button:hover {
+  background-color: #0056b3;
+  transform: scale(1.02);
+}
+
+.admin-sidebar button:active {
+  transform: scale(1);
+}
+
+/* Content Area */
+.admin-content {
+  flex: 1;
+  padding: 20px 40px;
+  background: #f5f5f5;
+}
+
+.admin-content h1 {
+  font-size: 2.2em;
+  color: #003366;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.welcome-message {
+  text-align: center;
+  font-size: 1.1em;
+  color: #555;
+  margin-bottom: 30px;
+}
+
+/* Section Title */
+.admin-content h2 {
+  font-size: 1.8em;
+  color: #007bff;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 5px;
+}
+
+/* Form: Create a Service */
+.service-form {
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
+}
+
+.service-form h2 {
+  font-size: 1.6em;
+  color: #003366;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.service-form label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.service-form input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  transition: border-color 0.3s;
+}
+
+.service-form input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.service-form button {
+  width: 48%;
+  padding: 12px;
+  font-size: 1em;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.service-form button[type="submit"] {
+  background-color: #007bff;
+}
+
+.service-form button[type="button"] {
+  background-color: #6c757d;
+}
+
+.service-form button:hover {
+  transform: scale(1.02);
+}
+
+.service-form button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+.service-form button[type="button"]:hover {
+  background-color: #5a6268;
+}
+
+.delete-service-button {
+    background-color: #dc3545; /* Rouge vif */
+    color: white; /* Texte en blanc */
+    padding: 8px 12px; /* Espacement interne */
+    border: none; /* Supprime la bordure */
+    border-radius: 4px; /* Coins arrondis */
+    cursor: pointer; /* Pointeur en forme de main */
+    font-size: 0.9em; /* Taille de texte adaptée */
+    transition: background-color 0.3s, transform 0.2s; /* Effets fluides */
+
+}
+
+.delete-service-button:hover {
+    background-color: #c82333; /* Rouge plus sombre au survol */
+    transform: scale(1.05); /* Légère mise en avant */
+}
+
+.delete-service-button:active {
+    background-color: #a71d2a; /* Rouge encore plus sombre au clic */
+    transform: scale(0.98); /* Légère réduction */
+}
+
+
+
+.services-table {
+    position: relative; /* Positionnement relatif pour l'en-tête fixe */
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.services-table h3 {
+    font-size: 1.8em;
+    color: #007bff;
+    position: sticky; /* Rendre le titre fixe */
+    top: 0; /* Position en haut du conteneur */
+    z-index: 3; /* Priorité pour être au-dessus des autres éléments */
+    background-color: white; /* Arrière-plan blanc pour masquer le contenu défilant */
+    padding: 10px;
+    border-bottom: 2px solid #007bff;
+    margin: 0; /* Supprime l'espacement pour éviter les sauts visuels */
+    text-align: center;
+  text-transform: uppercase;
+
+}
+
+
+.services-content {
+    overflow-y: auto; /* Permet le défilement uniquement pour le contenu */
+    max-height: 200px; /* Hauteur maximale pour activer le défilement */
+}
+
+
+.service-count {
+    /*float: right;  Place le texte à droite */
+    font-size: 18px; /* Taille légèrement réduite */
+    font-weight: normal; /* Pas trop accentué */
+    color: #ffaa33; /* ou #555 Couleur grise pour différencier du titre*/
+    margin-right: 10px; /* Espacement avec le bord droit */
+    padding: 10px;
+
+}
+
+
+/* Users Container */
+.admin-users-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-top: 20px;
+  margin-left: 10px;
+  max-height: 500px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Submissions Container */
+.admin-submissions-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-top: 20px;
+  margin-left: 10px;
+  max-height: 500px;
+  overflow: hidden;
+}
+
+/* Table Styles */
+.admin-table-container {
+    flex: 1;
+    overflow-y: auto; /* Active le défilement vertical */
+    max-height: 400px; /* Hauteur du tableau avec défilement */
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background: white;
+}
+
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+
+}
+
+
+table, th, td {
+  border: 1px solid #ddd;
+}
+
+td, th {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+
+thead th {
+    position: sticky; /* Fixe les en-têtes */
+    top: 0; /* Distance par rapport au haut */
+    background-color: #003366; /* Arrière-plan bleu */
+    color: white; /* Couleur du texte */
+    z-index: 2; /* Priorité pour rester au-dessus */
+    padding: 10px;
+    text-align: center;
+}
+
+
+tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+  background-color: #e9e9e9;
+  cursor: pointer;
+}
+
+/* Fixed User Count */
+.user-count {
+  text-align: right;
+  padding: 10px;
+  font-weight: bold;
+  color: #555;
+  border-top: 1px solid #ddd;
+  background-color: #f9f9f9;
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+}
+
+/* Buttons */
+button {
+  transition: all 0.3s;
+}
+
+button:hover {
+  transform: scale(1.02);
+}
+
+button:active {
+  transform: scale(1);
+}
+
+/* Export Buttons */
+.admin-export-buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 0;
+  background-color: #f9f9f9;
+}
+
+.admin-export-button {
+  padding: 10px 20px;
+  background-color: #28a745;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.admin-export-button:hover {
+  background-color: #218838;
+}
+
+/* Style for register form */
+.admin-register-container {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 500px;
+  margin: auto;
+  border: 1px solid #ddd;
+}
+
+.admin-register-container h2 {
+  color: #003366;
+  text-align: center;
+}
+
+.admin-register-container form div {
+  margin-bottom: 15px;
+}
+
+.admin-register-container label {
+  font-weight: bold;
+}
+
+.admin-register-container input,
+.admin-register-container select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Buttons in register form */
+.admin-form-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.admin-form-actions button {
+  padding: 10px 15px;
+  font-size: 1em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.admin-form-actions button[type="submit"] {
+  background-color: #007bff;
+  color: white;
+}
+
+.admin-form-actions button[type="button"] {
+  background-color: #6c757d;
+  color: white;
+}
+
+.admin-form-actions button[type="button"]:hover {
+  background-color: #5a6268;
+}
+
+.admin-form-actions button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+
+/* Style for checkbox label */
+.form-group-checkbox label {
+  color: #555;
+  font-size: 0.9em;
+  cursor: pointer;
+}
+.form-group-checkbox input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+.form-group-checkbox {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  gap: 8px;
+}
+
+.logout-button {
+  background-color: #dc3545;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.logout-button:hover {
+  background-color: #c82333;
+}
+
+
+/* Search bar */
+.admin-search-bar {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.admin-search-bar input {
+  padding: 10px;
+  font-size: 1em;
+  width: 80%;
+  max-width: 400px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.admin-search-bar input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Account info section */
+.account-info {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  max-width: 500px;
+  margin: auto;
+  margin-top: 20px;
+}
+
+.change-password-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.change-password-button:hover {
+  background-color: #0056b3;
+}
+
+/* Formulaire de modification de mot de passe */
+.password-form {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.password-form label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.password-form input {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.password-form .form-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.password-form .submit-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.password-form .cancel-button {
+  background-color: #dc3545;
+  color: white;
+}
+
+.password-form .submit-button:hover {
+  background-color: #0056b3;
+}
+
+.password-form .cancel-button:hover {
+  background-color: #c82333;
+}
+
+/* Edit User Form */
+.edit-user-form {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 500px;
+  margin: auto;
+  border: 1px solid #ddd;
+}
+
+.edit-user-form h2 {
+  color: #003366;
+  text-align: center;
+}
+
+.edit-user-form label {
+  font-weight: bold;
+  display: block;
+  margin-top: 10px;
+}
+
+.edit-user-form input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 5px;
+}
+
+.edit-form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.edit-form-actions button {
+  padding: 10px 15px;
+  font-size: 1em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.edit-form-actions button:first-child {
+  background-color: #28a745;
+  color: white;
+}
+
+.edit-form-actions button:last-child {
+  background-color: #6c757d;
+  color: white;
+}
+
+.edit-form-actions button:first-child:hover {
+  background-color: #218838;
+}
+
+.edit-form-actions button:last-child:hover {
+  background-color: #5a6268;
+}
+
+/* Buttons in the user management table */
+.reset-password-button, .delete-user-button, .edit-user-button {
+  padding: 8px 12px;
+  margin-right: 5px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+}
+
+.reset-password-button {
+  background-color: #ffc107;
+}
+
+.delete-user-button {
+  background-color: #dc3545;
+}
+
+.edit-user-button {
+  background-color: #007bff;
+}
+
+.reset-password-button:hover {
+  background-color: #e0a800;
+}
+
+.delete-user-button:hover {
+  background-color: #c82333;
+}
+
+.edit-user-button:hover {
+  background-color: #0056b3;
+}
+
+
+.styled-button {
+    padding: 10px 20px;
+    font-size: 1em;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.admin-delete-button {
+    background-color: #dc3545;
+}
+
+.admin-delete-button:hover {
+    background-color: #c82333;
+}
+
+.admin-reset-button {
+    background-color: #007bff;
+}
+
+.admin-reset-button:hover {
+    background-color: #0056b3;
+}
+
+
+/* User Info Badge */
+.user-infoAdmin {
+  font-size: 1em;
+  font-weight: bold;
+  color: #003366;
+  padding: 8px 15px;
+  border: 2px solid #003366;
+  border-radius: 6px;
+  display: inline-block;
+  background-color: rgba(0, 51, 102, 0.1);
+}
+
+.user-infoAdmin:before {
+  content: "👤 ";
+  margin-right: 8px;
+}
+
+/* Titre CLD */
+/*.titrecld{
+  font-size: 1em;
+  font-weight: bold;
+  color: #003366; 
+  border: 2px solid #003366;
+  padding: 10px 10px;
+  border-radius: 80px; 
+  display: inline-block;
+  margin-left: 100vh;
+  background-color: rgba(0, 51, 102, 0.05);
+}*/
+
+
+.titrecld{
+  font-size: 1em;
+  font-weight: bold;
+  color: white; /* Texte en blanc */
+  background-color: #007bff; /* Bleu vif */
+  padding: 8px 15px;
+  border-radius: 15px; /* Coins arrondis */
+  display: inline-block;
+  margin-bottom: 10px;
+  margin-left: 100vh;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Légère ombre pour un effet de badge */
+}
+
+/* Message d'erreur de Modification de Mot de passe */
+.error-box {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  border-radius: 5px;
+  padding: 15px;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.error-box p {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.error-box ul {
+  padding-left: 20px;
+  list-style-type: disc;
+}
+
+.error-box li {
+  margin-bottom: 5px;
+}
+
+
+.error-box {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+

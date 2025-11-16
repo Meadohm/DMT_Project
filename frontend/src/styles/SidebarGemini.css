@@ -1,0 +1,494 @@
+/* SidebarGemini.css */
+/* 📦 Sidebar principale */
+.sidebar {
+  position: fixed;
+  top: 70px;
+  bottom: 55px;
+  left: 0;
+  width: 240px;
+  background-color: #002b5c;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-layout-fix {
+  flex: 1;
+  overflow-y: auto; /* Scroll indépendant */
+  overflow-x: hidden;
+  padding: 16px;
+  scrollbar-width: thin;
+  scrollbar-color: #6c63ff transparent;
+}
+
+.sidebar-layout-fix::-webkit-scrollbar {
+  width: 6px;
+}
+.sidebar-layout-fix::-webkit-scrollbar-thumb {
+  background-color: rgba(108, 99, 255, 0.4);
+  border-radius: 4px;
+}
+.sidebar-layout-fix::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(108, 99, 255, 0.6);
+}
+
+
+
+/* Supprime tout effet scroll horizontal */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* 📂 Sections de la sidebar */
+.sidebar-section {
+  margin-top: 18px;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #f5f5f5;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  padding-bottom: 4px;
+}
+
+/* ➕ Bouton Nouveau dossier */
+.new-folder-btn {
+  width: 100%;
+  background: #6c63ff;
+  color: white;
+  font-weight: 600;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 12px;
+  margin-bottom: 20px;
+}
+
+.new-folder-btn:hover {
+  background: #5a52e0;
+}
+
+/* === 📁 Dossiers === */
+.folder-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+
+.folder-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  gap: 8px;
+  width: 100%;
+}
+
+.folder-icon {
+  flex-shrink: 0;
+}
+
+.folder-item:hover {
+  background: rgba(108, 99, 255, 0.12);
+}
+
+.folder-item.active {
+  background: rgba(108, 99, 255, 0.25);
+}
+
+/* ====== ACTIONS SUR DOSSIERS ====== */
+
+.folder-actions button {
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  font-size: 16px;
+  padding: 4px;
+  border-radius: 6px;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.folder-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.icon-action {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2;
+}
+
+
+.folder-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.folder-name {
+  flex: 1;
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+}
+
+/* === ✨ Harmonisation tooltip & nom de dossier (Sidebar) === */
+.folder-list .folder-name[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  left: 105%;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  background: rgba(20, 20, 40, 0.9);
+  color: #fff;
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  animation: tooltipFadeIn 0.25s ease forwards;
+}
+
+
+/* ⭐ Icônes et ⋮ actions */
+.folder-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.star,
+.context-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  transition: transform 0.15s ease;
+  
+}
+
+.star:hover,
+.context-btn:hover {
+  transform: scale(1.1);
+}
+
+.context-btn.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+
+.folder-list li:hover {
+  background-color: rgba(124, 58, 237, 0.07);
+  border-radius: 8px;
+}
+
+
+.context-btn:hover {
+  background: rgba(108, 99, 255, 0.2);
+  color: white;
+}
+
+.folder-menu-wrapper {
+  position: relative;
+}
+
+.context-menu {
+  position: fixed;
+  background: #ffffff;
+  border: 1px solid #e2e2ff;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 0;
+  z-index: 999999 !important;
+  min-width: 160px;
+  animation: fadeSlide 0.25s ease forwards;
+  isolation: isolate;
+}
+
+
+.context-menu button {
+  background: transparent;
+  border: none;
+  color: #333;
+  text-align: left;
+  padding: 8px 14px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.context-menu button:hover {
+  background: #6c63ff;
+  color: #fff;
+}
+
+
+/* Animation fluide */
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === ✨ Effet verre givré Gemini - Context Menu === */
+.context-menu.glass-effect {
+  backdrop-filter: blur(10px) saturate(180%);
+  -webkit-backdrop-filter: blur(10px) saturate(180%);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  padding: 8px 0;
+  transition: all 0.25s ease;
+}
+
+.context-menu.glass-effect button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #1a1a1a;
+  font-weight: 500;
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.context-menu.glass-effect button svg {
+  color: #6c63ff;
+  transition: color 0.2s ease;
+}
+
+.context-menu.glass-effect button:hover {
+  background: rgba(108, 99, 255, 0.15);
+  color: #6c63ff;
+}
+
+.context-menu.glass-effect button:hover svg {
+  color: #6c63ff;
+}
+
+/* === ✨ GEMINI+ MENU CONTEXTUEL PREMIUM === */
+
+.context-menu.glass-effect {
+  backdrop-filter: blur(10px) saturate(180%);
+  -webkit-backdrop-filter: blur(10px) saturate(180%);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  padding: 8px 0;
+  transition: all 0.25s ease;
+}
+
+/* Ajout du zoom subtil et fade à l’ouverture */
+.scale-fade {
+  animation: scaleFadeIn 0.25s ease forwards;
+}
+
+@keyframes scaleFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.context-menu.glass-effect button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #1a1a1a;
+  font-weight: 500;
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.context-menu.glass-effect button svg {
+  color: #6c63ff;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.context-menu.glass-effect button:hover {
+  background: rgba(108, 99, 255, 0.15);
+  color: #6c63ff;
+  transform: scale(1.02);
+}
+
+.context-menu.glass-effect button:hover svg {
+  color: #6c63ff;
+  transform: scale(1.15);
+}
+
+/* Ombre douce */
+.context-menu.glass-effect {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* ✨ Petit fade complémentaire au scale-fade */
+.context-menu.glass-effect.scale-fade {
+  animation: scaleFadeIn 0.25s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+/* === Scroll indépendant par section === */
+.section-scroll {
+  max-height: 250px; /* Ajustable selon la taille souhaitée */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  margin-bottom: 10px;
+}
+
+.section-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.section-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(108, 99, 255, 0.3);
+  border-radius: 4px;
+}
+.section-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(108, 99, 255, 0.6);
+}
+
+/* === Correction du contexte z-index du menu contextuel (⋮) === */
+.folder-menu-wrapper {
+  position: relative;
+  z-index: 10; /*permet au menu de se superposer */
+}
+
+.context-menu {
+  z-index: 999999 !important; /* 🔥 assure qu’il reste au-dessus du scroll */
+}
+
+/* === 🧭 MENU CONTEXTUEL MODERNE GEMINI+ (extérieur sidebar) === */
+.context-menu.modern-menu {
+  position: fixed !important;
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px) saturate(180%);
+  -webkit-backdrop-filter: blur(10px) saturate(180%);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  padding: 8px 0;
+  z-index: 999999 !important;
+  width: 180px;
+  animation: scaleFadeIn 0.25s ease forwards;
+}
+
+.context-menu.modern-menu button {
+  background: transparent;
+  border: none;
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  color: #222;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: background 0.25s ease, color 0.25s ease, transform 0.15s ease;
+}
+
+.context-menu.modern-menu button svg {
+  color: #6c63ff;
+  flex-shrink: 0;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.context-menu.modern-menu button:hover {
+  background: rgba(108, 99, 255, 0.12);
+  color: #6c63ff;
+  transform: translateX(2px);
+}
+
+.context-menu.modern-menu button:hover svg {
+  color: #6c63ff;
+  transform: scale(1.15);
+}
+
+/* Adaptation mobile : éviter dépassement bas */
+@media (max-height: 700px) {
+  .context-menu.modern-menu {
+    max-height: 250px;
+    overflow-y: auto;
+  }
+}
+
+/* === Forcer le menu au-dessus du FileManager === */
+.context-menu.modern-menu {
+  isolation: isolate;
+  z-index: 9999999 !important;
+  pointer-events: auto;
+}
+
+/* Fix : évite d’être masqué par les overflow hidden */
+.sidebar,
+.main-content {
+  overflow: visible !important;
+}
+
+
+/* === Forcer le menu contextuel à rester visible au-dessus === */
+.main-content,
+.sidebar {
+  overflow: visible !important;
+}
+
+.context-menu.modern-menu {
+  z-index: 9999999 !important;
+  isolation: isolate;
+  pointer-events: auto;
+}
+
+
+.sidebar,
+.folder-list,
+.folder-name,
+.no-folder-msg1 {
+  color: #f5f6fa !important;
+}

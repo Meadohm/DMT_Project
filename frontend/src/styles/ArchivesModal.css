@@ -1,0 +1,551 @@
+.archive-modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 3000;
+  animation: fadeIn 0.3s ease;
+}
+
+.archive-modal-content {
+  background: #fff;
+  border-radius: 16px;
+  width: 520px;
+  max-height: 80vh;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+
+.archive-modal-content h3 {
+  text-align: center;
+  font-weight: 600;
+  color: hsl(0, 0%, 100%);
+}
+
+.archive-modal-content button {
+  font-family: "Inter", sans-serif;
+}
+
+.archive-modal-header {
+  background: linear-gradient(90deg, #6c63ff, #7c3aed);
+  color: white;
+  padding: 14px 18px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.archive-close-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.archive-close-btn:hover {
+  transform: rotate(90deg);
+  color: #ffd700;
+}
+
+.disabled-btn {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.archive-list {
+  padding: 14px;
+  overflow-y: auto;
+}
+
+.archive-item {
+  border: 1px solid #eee;
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  transition: background 0.2s ease, transform 0.2s;
+}
+.archive-item:hover {
+  background: #f8f6ff;
+  transform: translateY(-2px);
+}
+
+.archive-info h4 {
+  margin: 0;
+  font-size: 15px;
+  color: #333;
+}
+
+.archive-info small {
+  color: #777;
+}
+
+
+.no-archive {
+  text-align: center;
+  color: #777;
+  font-style: italic;
+  padding: 20px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.archive-create-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 15px;
+  padding: 10px 14px;             
+  border-bottom: 1px solid #eee; 
+  background: #fafafa;       
+}
+
+.archive-create-section select {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.archive-create-section .btn-create {
+  background: #6a4ff7;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.archive-create-section .btn-create:hover {
+  background: #5538db;
+}
+
+
+.format-select {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.large-scroll {
+  max-height: 60vh;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+/* Pour que même 1000 archives soient fluides */
+.large-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.large-scroll::-webkit-scrollbar-thumb {
+  background: #aaa;
+  border-radius: 10px;
+}
+.large-scroll::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+
+
+/* === Barre de recherche === */
+.archive-search-section {
+  padding: 10px 14px;
+  background: #f9f9ff;
+  border-bottom: 1px solid #eee;
+}
+
+.archive-search {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: 0.2s;
+}
+.archive-search:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 5px rgba(124, 58, 237, 0.2);
+}
+
+/* === Fluidité et transition === */
+.large-scroll {
+  max-height: 60vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.large-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.large-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #a78bfa, #7c3aed);
+  border-radius: 6px;
+}
+.fade-in {
+  animation: fadeInUp 0.3s ease;
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* === Animation bouton téléchargement === */
+.btn-download.downloading {
+  background: linear-gradient(90deg, #9a8cfb, #7c3aed);
+  cursor: not-allowed;
+  opacity: 0.7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-download.downloading {
+  min-width: 150px;
+}
+
+.btn-download {
+  opacity: 1;
+  color: white;
+  font-size: 12px;
+}
+
+/* Spinner minimaliste */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* === Détails utilisateurs (partage) === */
+.user-infoArchiv {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.user-nameArchiv {
+  font-weight: 600;
+  color: #333;
+}
+
+.user-serviceArchiv {
+  font-size: 12px;
+  color: #777;
+}
+
+.archive-item h4 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.archive-item h4::first-letter {
+  text-transform: uppercase;
+}
+
+.progress-text {
+  font-size: 13px;
+  color: #fff;
+  font-weight: 500;
+  text-align: center;
+  width: 100%;
+}
+
+
+/* === Boutons d’action alignés horizontalement === */
+.archive-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  gap: 10px;
+}
+
+.archive-actions button {
+  flex: 1;
+  font-weight: 500;
+  border-radius: 10px;
+  padding: 8px 0;
+  transition: all 0.25s ease;
+}
+
+
+
+.btn-download, .btn-delete, .btn-unarchive {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.25s;
+}
+
+
+/* Ligne d’infos harmonieuse */
+.archive-meta {
+  color: #555;
+  font-size: 13px;
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+
+/* === Tooltips personnalisés pour les icônes === */
+.archive-actions button[title] {
+  position: relative;
+}
+
+.archive-actions button[title]::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out, bottom 0.2s ease-in-out;
+}
+
+.archive-actions button[title]:hover::after {
+  opacity: 1;
+  bottom: 140%;
+}
+/* === Tooltips personnalisés pour les icônes === */
+.archive-actions button[title] {
+  position: relative;
+}
+
+.archive-actions button[title]::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out, bottom 0.2s ease-in-out;
+}
+
+.archive-actions button[title]:hover::after {
+  opacity: 1;
+  bottom: 140%;
+}
+/* === Tooltips personnalisés pour les icônes === */
+.archive-actions button[title] {
+  position: relative;
+}
+
+.archive-actions button[title]::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out, bottom 0.2s ease-in-out;
+}
+
+.archive-actions button[title]:hover::after {
+  opacity: 1;
+  bottom: 140%;
+}
+/* === Tooltips personnalisés pour les icônes === */
+.archive-actions button[title] {
+  position: relative;
+}
+
+.archive-actions button[title]::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out, bottom 0.2s ease-in-out;
+}
+
+.archive-actions button[title]:hover::after {
+  opacity: 1;
+  bottom: 140%;
+}
+/* === Tooltips personnalisés pour les icônes === */
+.archive-actions button[title] {
+  position: relative;
+}
+
+.archive-actions button[title]::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out, bottom 0.2s ease-in-out;
+}
+
+.archive-actions button[title]:hover::after {
+  opacity: 1;
+  bottom: 140%;
+}
+/* === Tooltips personnalisés pour les icônes === */
+.archive-actions button[title] {
+  position: relative;
+}
+
+.archive-actions button[title]::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out, bottom 0.2s ease-in-out;
+}
+
+.archive-actions button[title]:hover::after {
+  opacity: 1;
+  bottom: 140%;
+}
+/* === Tooltips personnalisés pour les icônes === */
+.archive-actions button[title] {
+  position: relative;
+}
+
+.archive-actions button[title]::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out, bottom 0.2s ease-in-out;
+}
+
+.archive-actions button[title]:hover::after {
+  opacity: 1;
+  bottom: 140%;
+}
+/* === Tooltips personnalisés pour les icônes === */
+.archive-actions button[title] {
+  position: relative;
+}
+
+.archive-actions button[title]::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out, bottom 0.2s ease-in-out;
+}
+
+.archive-actions button[title]:hover::after {
+  opacity: 1;
+  bottom: 140%;
+}
+
+.archive-modal-content {
+  background: var(--card-bg) !important;
+  color: var(--text-color) !important;
+  box-shadow: 0 4px 16px var(--shadow-color);
+  border: 1px solid var(--border-color);
+}
+
+.archive-item {
+  background: var(--card-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  transition: background-color 0.3s ease;
+}
+
+.archive-item:hover {
+  background: var(--hover-bg);
+}

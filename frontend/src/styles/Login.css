@@ -1,0 +1,257 @@
+/* ===== PAGE LOGIN SLIDESHOW ===== */
+.login-page {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;   /*centrage vertical */
+  justify-content: center; /*centrage horizontal */
+  position: relative;
+  overflow: hidden;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/*Slideshow arrière-plan */
+.login-bg-slideshow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0; /* ✅ plus bas */
+}
+
+.login-bg-slideshow img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  animation: fadeSlideShow 30s infinite ease-in-out;
+  transform: scale(1);
+  z-index: 0;
+}
+
+.login-bg-slideshow img:nth-child(1) {
+  animation-delay: 0s;
+}
+.login-bg-slideshow img:nth-child(2) {
+  animation-delay: 6s;
+}
+.login-bg-slideshow img:nth-child(3) {
+  animation-delay: 12s;
+}
+.login-bg-slideshow img:nth-child(4) {
+  animation-delay: 18s;
+}
+.login-bg-slideshow img:nth-child(5) {
+  animation-delay: 24s;
+}
+
+/* ✅ Keyframes avec fondu + zoom léger */
+/*@keyframes fadeSlideShow {
+  0% { opacity: 0; transform: scale(1) translateX(20px); }
+  5% { opacity: 1; transform: scale(1.05) translateX(0); }
+  20% { opacity: 1; transform: scale(1.1) translateX(-20px); }
+  25% { opacity: 0; transform: scale(1.05) translateX(-40px); }
+  100% { opacity: 0; }
+}*/
+
+/* ✅ adoucit l’animation du slideshow pour éviter les clignotements */
+@keyframes fadeSlideShow {
+  0% { opacity: 0; transform: scale(1.02); }
+  5% { opacity: 1; transform: scale(1.05); }
+  20% { opacity: 1; transform: scale(1.08); }
+  25% { opacity: 0; transform: scale(1.1); }
+  100% { opacity: 0; }
+}
+
+/*Voile sombre (ajusté → plus clair/lumineux) */
+.login-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25); /* ✅ luminosité augmentée */
+  z-index: -1;
+}
+
+/* ===== Box de connexion ===== */
+.login-container {
+  position: relative;
+  z-index: 20; /* ✅ priorité plus haute que tout le fond */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 12px;
+  padding: 35px 30px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+  width: 380px;
+  max-width: 95%;
+  text-align: center;
+
+  /* ✅ optimisation GPU pour priorité de rendu */
+  transform: translateZ(0);
+  will-change: opacity, transform;
+
+  /* ✅ plus de disparition : on commence visible */
+  opacity: 1;
+  animation: none;
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+}
+
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ===== Logo ===== */
+.company-logo {
+  width: 260px;
+  margin-bottom: 15px;
+  filter: drop-shadow(0px 3px 6px rgba(0,0,0,0.2));
+}
+
+/* ===== Message ===== */
+.welcome-message h2 {
+  font-size: 1.6em;
+  font-weight: bold;
+  color: #6c63ff;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.welcome-message p {
+  font-size: 1em;
+  color: #444;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+/* ===== Alerts ===== */
+.alert {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.alert.error {
+  background: #ffe5e5;
+  color: #c0392b;
+  border: 1px solid #e74c3c;
+}
+
+.alert.loading {
+  background: #fff7e6;
+  color: #d35400;
+  border: 1px solid #f39c12;
+}
+
+/* ===== Formulaire ===== */
+.login-form {
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* ===== Groupe de saisie ===== */
+.input-group {
+  position: relative;
+  margin-bottom: 18px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 38px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+  border-color: #6c63ff;
+  box-shadow: 0 0 8px rgba(108, 99, 255, 0.4);
+  outline: none;
+}
+
+/* Icône champ */
+.input-icon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: #aaa;
+  pointer-events: none;
+}
+
+.input-group input:focus ~ .input-icon {
+  color: #6c63ff;
+}
+
+/* Toggle password */
+.toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #666;
+}
+
+.toggle-password:hover {
+  color: #6c63ff;
+  transform: scale(1.2);
+}
+
+/* ===== Bouton connexion ===== */
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #ff4b5c, #ff6b81);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.login-btn:hover:not(:disabled) {
+  background: linear-gradient(90deg, #5a55d6, #4834d4);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.login-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+
+.hidden {
+  opacity: 0;
+  transform: translateY(20px) scale(0.98);
+}
+
+.fade-in {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
