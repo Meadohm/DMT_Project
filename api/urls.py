@@ -1,0 +1,65 @@
+from rest_framework.authtoken.views import obtain_auth_token
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    # AUTH
+    path('login/', views.login_view, name='login'),
+    path('token/', obtain_auth_token, name='api_token_auth'),
+    path('user/', views.get_user_view, name='get_user'),
+
+    # USERS
+    path('utilisateurs/', views.get_all_users, name='get_all_users'),
+    path('users/', views.list_users_for_sharing, name='list_users_for_sharing'),  # API employé
+    path('utilisateurs/<int:user_id>/role/', views.update_user_role, name='update_user_role'),
+    path('utilisateurs/<int:user_id>/reset_password/', views.reset_user_password, name='reset_user_password'),
+    path('update_password/', views.update_password_view, name='update_password'),
+
+    # SERVICES
+    path('services/', views.list_services, name='list_services'),
+    path('services/create/', views.create_service, name='create_service'),
+    path('services/<int:service_id>/delete/', views.delete_service, name='delete_service'),
+
+   # FOLDERS
+    path('folders/', views.list_folders, name='list_folders'),
+    path('folders/create/', views.create_folder, name='create_folder'),
+    path('folders/<int:parent_id>/subfolders/', views.create_subfolder, name='create_subfolder'),
+    path('folders/<int:folder_id>/rename/', views.rename_folder, name='rename_folder'),
+    path('folders/<int:folder_id>/delete/', views.delete_folder, name='delete_folder'),
+    path('folders/<int:folder_id>/share/', views.share_folder, name='share_folder'),
+
+
+    # FILES CRUD
+    path('folders/<int:folder_id>/upload/', views.upload_file, name='upload_file'),
+    path('folders/<int:folder_id>/files/', views.list_files_by_folder, name='list_files_by_folder'),
+    path('files/<int:file_id>/rename/', views.rename_file, name='rename_file'),
+    path('files/<int:file_id>/delete/', views.delete_file, name='delete_file'),
+
+    # FILE PREVIEW
+    path('files/<int:file_id>/preview/', views.preview_file, name='preview_file'),
+    path('files/<int:file_id>/view/', views.view_file, name='view_file'),
+
+    # FILE SHARED
+    path('shared-files/', views.list_shared_files, name='list_shared_files'),
+
+    # Mettre à jour les permissions
+    path("shares/<int:share_id>/", views.update_share_permission, name="update_share_permission"),
+
+    # ARCHIVES
+    path('archives/', views.list_archives, name='list_archives'),
+    path('archives/<int:folder_id>/create/', views.create_archive, name='create_archive'),
+    path('archives/<int:archive_id>/download/', views.download_archive, name='download_archive'),
+    path('archives/<int:archive_id>/delete/', views.delete_archive, name='delete_archive'),
+    path('archives/<int:archive_id>/unarchive/', views.unarchive_folder, name='unarchive_folder'),
+    path("archives/<int:archive_id>/share/", views.share_archive, name="share_archive"),
+
+    
+    # Notifications
+    path('notifications/create/', views.create_notification, name='create_notification'),
+    path('notifications/', views.list_notifications, name='list_notifications'),
+    path('notifications/mark_read/', views.mark_notifications_read, name='mark_notifications_read'),
+    path('notifications/clear/', views.clear_notifications, name='clear_notifications'),
+    path('notifications/<int:pk>/', views.delete_notification, name='delete_notification'),
+
+
+]

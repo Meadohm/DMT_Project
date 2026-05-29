@@ -1,0 +1,195 @@
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+from django.utils import timezone
+from django.contrib.auth import get_user_model
+from django.conf import settings
+import os
+import hashlib
+import re   # indispensable pour upload_to_folder
+
+
+# ==============================
+# Utilisateur personnalisé
+# ==============================
+class Utilisateur(AbstractUser):
+    ROLE_CHOICES = [
+        ('admin', 'Administrateur'),
+        ('responsable', 'Responsable de service'),
+        ('employe', 'Employé'),
+    ]
+    role = models.CharField(max_length=225, choices=ROLE_CHOICES, default='employe')
+    service = models.CharField(max_length=255, null=True, blank=True)
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+
+    class Meta:
+        app_label = 'api'
+
+    def __str__(self):
+        return self.username
+
+
+# ==============================
+# Nouveau modèle Folder
+# ==============================
+class Folder(models.Model):
+    nom = models.CharField(max_length=255)
+    proprietaire = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="folders")
+    service = models.CharField(max_length=255, blank=True, null=True)
+    parent = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        related_name="children",
+        on_delete=models.CASCADE
+    )  # Permet la hiérarchie des sous-dossiers
+    is_archived = models.BooleanField(default=False)
+    is_shared = models.BooleanField(default=False)
+    shared_with = models.ManyToManyField(
+        Utilisateur,
+        related_name="shared_folders",
+        through="FolderShare",
+        blank=True,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.nom} ({self.proprietaire.username})"
+
+
+
+# ==============================
+# Nouveau modèle FolderShare → permissions fines
+# ==============================
+class FolderShare(models.Model):
+    folder = models.ForeignKey("Folder", on_delete=models.CASCADE, related_name="shares")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="folder_shares")
+    can_read = models.BooleanField(default=True)
+    can_write = models.BooleanField(default=False)
+    can_update = models.BooleanField(default=False)
+    can_delete = models.BooleanField(default=False)
+    can_delete_folder = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("folder", "user")
+        verbose_name = "Partage de dossier"
+        verbose_name_plural = "Partages de dossier"
+
+    def __str__(self):
+        perms = []
+        if self.can_read: perms.append("lecture")
+        if self.can_write: perms.append("ajout")
+        if self.can_update: perms.append("modif")
+        if self.can_delete: perms.append("suppr fichiers")
+        if self.can_delete_folder: perms.append("suppr dossier")
+        return f"Partage {self.folder.nom} → {self.user.username} ({', '.join(perms) or 'aucun droit'})"
+
+
+# ==============================
+# Helper → chemin dynamique fichier
+# ==============================
+def upload_to_folder(instance, filename):
+    """
+    Stocke le fichier dans uploads/<id_nom>/<filename>
+    """
+    if instance.folder:
+        folder_name = f"{instance.folder.id}_{re.sub(r'[^a-zA-Z0-9_-]', '_', instance.folder.nom)}"
+    else:
+        folder_name = "misc"
+    return os.path.join("uploads", folder_name, filename)
+
+
+# ==============================
+# Modèle File
+# ==============================
+class File(models.Model):
+    folder = models.ForeignKey(Folder, on_delete=models.CASCADE, related_name="files", null=True, blank=True)
+    utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="files")
+    fichier = models.FileField(upload_to=upload_to_folder, null=True, blank=True)
+    nom = models.CharField(max_length=255, default="")
+    taille = models.BigIntegerField(default=0)
+    type_fichier = models.CharField(max_length=255, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    file_hash = models.CharField(max_length=64, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.nom} ({self.folder.nom if self.folder else 'Sans dossier'})"
+
+    @property
+    def extension(self):
+        if self.fichier:
+            return self.fichier.name.split('.')[-1].lower()
+        return None
+
+    def supprimer_fichier(self):
+        if self.fichier and os.path.isfile(self.fichier.path):
+            os.remove(self.fichier.path)
+
+    def calculate_file_hash(self):
+        if self.fichier and os.path.exists(self.fichier.path):
+            hasher = hashlib.sha256()
+            with open(self.fichier.path, 'rb') as f:
+                for chunk in iter(lambda: f.read(4096), b""):
+                    hasher.update(chunk)
+            return hasher.hexdigest()
+        return None
+
+
+# ==============================
+# Service
+# ==============================
+class Service(models.Model):
+    nom = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.nom
+
+
+# ==============================
+# Notifications
+# ==============================
+class Notification(models.Model):
+    NOTIF_TYPES = [
+        ('share', 'Partage de dossier'),
+        ('permission', 'Mise à jour de permissions'),
+        ('upload', 'Nouveau fichier'),
+        ('archive', 'Archive disponible'),
+        ('info', 'Information générale'),
+    ]
+    user = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="notifications")
+    type = models.CharField(max_length=100, choices=NOTIF_TYPES, default="info")
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username} → {self.type} ({'lu' if self.is_read else 'non lu'})"
+
+
+# ==============================
+# Archivage
+# ==============================
+
+User = get_user_model()
+
+class Archive(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="archives")
+    folder_name = models.CharField(max_length=255)
+    file = models.FileField(upload_to="archives/")
+    size = models.BigIntegerField(default=0)  # taille en octets (stockée en base)
+    created_at = models.DateTimeField(auto_now_add=True)
+    # Optionnel : expire après X jours
+    expires_at = models.DateTimeField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        indexes = [models.Index(fields=["owner", "is_active"])]
+
+
+    def __str__(self):
+        return f"Archive {self.folder_name} de {self.owner.username}"
