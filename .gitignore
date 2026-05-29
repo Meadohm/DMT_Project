@@ -1,0 +1,10 @@
+node_modules/
+node_modules_root_backup_1759161957/
+envir1/
+venv/
+.env
+__pycache__/
+*.pyc
+db.sqlite3
+media/
+*.log
