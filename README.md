@@ -19,12 +19,17 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 └───────────────────┬─────────────────────────────┘
                     │ HTTP/HTTPS
 ┌───────────────────▼─────────────────────────────┐
-│             Django REST Framework               │
-│         API REST · RBAC · Authentification      │
-└───────────────────┬─────────────────────────────┘
-                    │
-┌───────────────────▼─────────────────────────────┐
-│                PostgreSQL                       │
+│               Nginx (reverse proxy)             │
+│         Routage · Fichiers statiques            │
+└──────────┬────────────────────┬─────────────────┘
+           │ /api/              │ /
+┌──────────▼──────────┐ ┌──────▼──────────────────┐
+│  Django REST API    │ │    React 18 (frontend)  │
+│  RBAC · Auth · DRF  │ │    Node.js 20           │
+└──────────┬──────────┘ └─────────────────────────┘
+           │
+┌──────────▼──────────────────────────────────────┐
+│              PostgreSQL 16                      │
 │          Base de données centralisée            │
 └─────────────────────────────────────────────────┘
 ```
@@ -48,11 +53,12 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 
 | Couche | Technologie |
 |---|---|
+| Serveur web | Nginx (reverse proxy) |
 | Langage | Python 3.12 |
 | Framework backend | Django 5.1.2 · Django REST Framework 3.15.2 |
-| Base de données | PostgreSQL |
+| Base de données | PostgreSQL 16.14 |
 | Authentification & accès | RBAC (Django auth) |
-| Frontend | HTML/CSS/JS (templates Django) |
+| Frontend | React 18.3.1 · Node.js 20 |
 | Génération de documents | ReportLab (PDF) · OpenPyXL (Excel) |
 | Tâches planifiées | django-cron |
 | Gestion des images | Pillow |
@@ -66,7 +72,9 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 ### Prérequis
 
 - Python 3.12+
-- PostgreSQL (instance locale ou distante)
+- Node.js 20+
+- PostgreSQL 16 (instance locale ou distante)
+- Nginx
 - Git
 
 ### Étapes
@@ -81,23 +89,26 @@ python3 -m venv venv
 source venv/bin/activate        # Linux / Mac
 # venv\Scripts\activate         # Windows
 
-# 3. Installer les dépendances
+# 3. Installer les dépendances Python
 pip install -r requirements.txt
 
-# 4. Configurer les variables d'environnement
+# 4. Installer les dépendances frontend
+cd frontend && npm install && cd ..
+
+# 5. Configurer les variables d'environnement
 cp .env.example .env
 # Éditer .env avec vos credentials PostgreSQL et SECRET_KEY
 
-# 5. Créer la base de données PostgreSQL
+# 6. Créer la base de données PostgreSQL
 # createdb dmt_db  (ou via pgAdmin)
 
-# 6. Initialiser la base de données
+# 7. Initialiser la base de données
 python manage.py migrate
 
-# 7. Créer un superutilisateur (optionnel)
+# 8. Créer un superutilisateur (optionnel)
 python manage.py createsuperuser
 
-# 8. Lancer le serveur
+# 9. Lancer le serveur
 python manage.py runserver
 ```
 
@@ -134,7 +145,7 @@ DMT_Project
 │   ├── urls.py
 │   └── migrations
 ├── centralisation_donnees # Configuration Django (settings, urls, wsgi)
-├── frontend               # Assets frontend statiques
+├── frontend               # Application React
 ├── venv                   # Environnement virtuel (non versionné)
 ├── .env                   # Variables d'environnement (non versionné)
 ├── .gitignore
