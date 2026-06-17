@@ -6,7 +6,7 @@
 
 ## Contexte
 
-Doumbia Moussa Transport exploitait des données opérationnelles dispersées sur **7 postes de travail distincts**, sans source unique de vérité. L'objectif de ce projet : concevoir et implémenter une **API REST de centralisation et de traçabilité** consolidant ces données dans une base unique, accessible et sécurisée.
+Doumbia Moussa Transport exploitait des données opérationnelles dispersées sur **17 postes de travail distincts**, sans source unique de vérité. L'objectif de ce projet : concevoir et implémenter une **API REST de centralisation et de traçabilité** consolidant ces données dans une base unique, accessible et sécurisée.
 
 ---
 
@@ -14,7 +14,7 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 
 ```
 ┌─────────────────────────────────────────────────┐
-│              Clients (7 postes)                 │
+│              Clients (17 postes)                │
 │         navigateurs / applications internes     │
 └───────────────────┬─────────────────────────────┘
                     │ HTTP/HTTPS
@@ -33,14 +33,14 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 
 ## Fonctionnalités clés
 
-- ✅ Centralisation des données depuis 7 sources distribuées
-- ✅ Mise à jour incrémentale avec gestion de la cohérence des données
-- ✅ Système de traçabilité complet (logs d'audit, conformité)
-- ✅ Contrôle d'accès basé sur les rôles (RBAC)
-- ✅ Sécurisation des flux et des données en transit
-- ✅ Génération de rapports (PDF, Excel) via `reportlab` et `openpyxl`
-- ✅ Tâches planifiées via `django-cron`
-- ✅ Gestion des fichiers uploadés (pièces administratives, documents)
+- Centralisation des données depuis 17 sources distribuées
+- Mise à jour incrémentale avec gestion de la cohérence des données
+- Système de traçabilité complet (logs d'audit, conformité)
+- Contrôle d'accès basé sur les rôles (RBAC)
+- Sécurisation des flux et des données en transit
+- Génération de rapports (PDF, Excel) via `reportlab` et `openpyxl`
+- Tâches planifiées via `django-cron`
+- Gestion des fichiers uploadés (pièces administratives, documents)
 
 ---
 
@@ -126,17 +126,17 @@ ALLOWED_HOSTS=localhost,127.0.0.1
 ## Structure du projet
 
 ```
-DMT_Project/
-├── api/                    # App principale — modèles, vues, serializers
+DMT_Project
+├── api                    # App principale — modèles, vues, serializers
 │   ├── models.py
 │   ├── views.py
 │   ├── serializers.py
 │   ├── urls.py
-│   └── migrations/
-├── centralisation_donnees/ # Configuration Django (settings, urls, wsgi)
-├── frontend/               # Assets frontend statiques
-├── venv/                   # Environnement virtuel (non versionné)
-├── .env                    # Variables d'environnement (non versionné)
+│   └── migrations
+├── centralisation_donnees # Configuration Django (settings, urls, wsgi)
+├── frontend               # Assets frontend statiques
+├── venv                   # Environnement virtuel (non versionné)
+├── .env                   # Variables d'environnement (non versionné)
 ├── .gitignore
 ├── manage.py
 └── requirements.txt
@@ -146,7 +146,7 @@ DMT_Project/
 
 ## Confidentialité
 
-Les données opérationnelles réelles de DMT ne sont pas incluses dans ce dépôt. Seul le code source de l'API, les modèles de données et la documentation technique sont publics. Les fichiers `media/`, `.env` et `db.sqlite3` sont exclus du versioning.
+Les données opérationnelles réelles de DMT ne sont pas incluses dans ce dépôt. Seul le code source de l'API, les modèles de données et la documentation technique sont publics. Les fichiers `media`, `.env` et `db.sqlite3` sont exclus du versioning.
 
 ---
 
