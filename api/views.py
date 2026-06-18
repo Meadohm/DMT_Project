@@ -1,44 +1,25 @@
 import os, hashlib, shutil, logging, re, csv, zipfile, mimetypes
-from io import BytesIO
-from datetime import timedelta
-
 from django.contrib.auth import authenticate, get_user_model
 from django.conf import settings
 from django.core.mail import send_mail
-from django.core.files import File
 from django.core.files import File as DjangoFile
 from django.utils.crypto import get_random_string
 from django.http import HttpResponse, FileResponse
 from django.utils import timezone
-
-from rest_framework.decorators import api_view, authentication_classes, permission_classes, action
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
-from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
-from rest_framework import viewsets, status
+from rest_framework import status
 from rest_framework.authtoken.models import Token
-
-
 from .permissions import IsCustomAdminUser
-from .models import File as FileModel, Folder, Service, FolderShare, Utilisateur, Notification, Archive
+from .models import File as FileModel, Folder, Service, FolderShare, Utilisateur, Notification, Archive, AuditLog
+from .serializers import FileSerializer, FolderSerializer, ServiceSerializer, NotificationSerializer, ArchiveSerializer
 
-from .serializers import (
-    FileSerializer,
-    FolderSerializer,
-    ServiceSerializer,
-    NotificationSerializer,
-    ArchiveSerializer
-)
-
-
-# Logger
 logger = logging.getLogger(__name__)
 Utilisateur = get_user_model()
 
-# ==============================
-# HELPER PERMISSIONS
-# ==============================
+##### HELPER PERMISSIONS #####
 def has_folder_permission(user, folder, action: str) -> bool:
     """ Vérifie si un utilisateur a les droits nécessaires sur un dossier via FolderShare """
     if user == folder.proprietaire:
@@ -68,15 +49,11 @@ def safe_folder_name(name: str) -> str:
     """ Nettoie un nom de dossier pour l’OS """
     return re.sub(r'[^a-zA-Z0-9_-]', '_', name)
 
-# ==============================
-# PAGE ACCUEIL
-# ==============================
+##### PAGE ACCUEIL #####
 def home(request):
     return HttpResponse("Bienvenue sur l'API de centralisation des données !")
 
-# ==============================
-# AUTHENTIFICATION & UTILISATEURS
-# ==============================
+##### AUTHENTIFICATION & UTILISATEURS #####
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login_view(request):
@@ -86,6 +63,14 @@ def login_view(request):
     if not user:
         return Response({'error': 'Nom d’utilisateur ou mot de passe incorrect'}, status=status.HTTP_400_BAD_REQUEST)
     token, _ = Token.objects.get_or_create(user=user)
+    
+    AuditLog.objects.create(
+    utilisateur=user,
+    action='LOGIN',
+    objet='Système',
+    adresse_ip=request.META.get('REMOTE_ADDR')
+    )
+    
     return Response({'token': token.key}, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
@@ -138,6 +123,7 @@ def list_users_for_sharing(request):
     return Response(data)
 
 @api_view(['POST'])
+@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def update_password_view(request):
     user = request.user
@@ -147,7 +133,7 @@ def update_password_view(request):
     if not user.check_password(old_password):
         return Response({'error': 'Ancien mot de passe incorrect.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # 🚫 Vérifie si ancien == nouveau
+    # Vérifie si ancien == nouveau
     if old_password == new_password:
         return Response({'error': 'Le nouveau mot de passe doit être différent de l’ancien.'},
                         status=status.HTTP_400_BAD_REQUEST)
@@ -160,6 +146,14 @@ def update_password_view(request):
     user.save()
     Token.objects.filter(user=user).delete()
     token = Token.objects.create(user=user)
+    
+    AuditLog.objects.create(
+    utilisateur=user,
+    action='UPDATE',
+    objet='Mot de passe modifié',
+    adresse_ip=request.META.get('REMOTE_ADDR')
+    )
+    
     return Response({'success': 'Mot de passe mis à jour.', 'token': token.key})
 
 
@@ -179,6 +173,14 @@ def update_user_role(request, user_id):
 
     utilisateur.role = valid_roles[new_role]
     utilisateur.save()
+    
+    AuditLog.objects.create(
+    utilisateur=request.user,
+    action='UPDATE',
+    objet=f"Rôle de {utilisateur.username} → {utilisateur.role}",
+    adresse_ip=request.META.get('REMOTE_ADDR')
+    )
+    
     return Response({'success': 'Rôle mis à jour'})
 
 
@@ -203,11 +205,16 @@ def reset_user_password(request, user_id):
         fail_silently=True,
     )
 
+    AuditLog.objects.create(
+    utilisateur=request.user,
+    action='UPDATE',
+    objet=f"Réinitialisation mot de passe : {utilisateur.username}",
+    adresse_ip=request.META.get('REMOTE_ADDR')
+    )
+    
     return Response({'success': 'Mot de passe réinitialisé et envoyé par email.'})
 
-# ==============================
-# SERVICES
-# ==============================
+##### SERVICES #####
 @api_view(['POST'])
 @permission_classes([IsAdminUser])
 def create_service(request):
@@ -234,9 +241,7 @@ def delete_service(request, service_id):
     except Service.DoesNotExist:
         return Response({'error': 'Service non trouvé'}, status=status.HTTP_404_NOT_FOUND)
 
-# ==============================
-# FOLDERS CRUD
-# ==============================
+##### FOLDERS CRUD #####
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -260,7 +265,6 @@ def list_folders(request):
     return Response(serializer.data)
 
 
-
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -275,7 +279,13 @@ def create_folder(request):
     folder_path = os.path.join(settings.MEDIA_ROOT, "uploads", folder_name)
     os.makedirs(folder_path, exist_ok=True)
 
-    # Fix : retour du folder créé avec context
+    AuditLog.objects.create(
+    utilisateur=request.user,
+    action='CREATE',
+    objet=f"Dossier : {folder.nom}",
+    adresse_ip=request.META.get('REMOTE_ADDR')
+)
+    
     return Response(
         FolderSerializer(folder, context={"request": request}).data,
         status=status.HTTP_201_CREATED
@@ -302,21 +312,27 @@ def create_subfolder(request, parent_id):
     if not nom:
         return Response({'error': 'Nom requis'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # 🔹 Création du sous-dossier
+    # création du sous-dossier
     subfolder = Folder.objects.create(
         nom=nom,
         proprietaire=request.user,
         service=request.user.service,
-        parent=parent_folder  # ⚠️ nécessite que ton modèle Folder ait un champ parent = ForeignKey('self', null=True, blank=True)
+        parent=parent_folder  # nécessite que le modèle Folder ait un champ parent = ForeignKey('self', null=True, blank=True)
     )
 
-    # 🔹 Crée le dossier physique imbriqué
+    # Crée le dossier physique imbriqué
     parent_path = os.path.join(settings.MEDIA_ROOT, "uploads", f"{parent_folder.id}_{safe_folder_name(parent_folder.nom)}")
     sub_path = os.path.join(parent_path, f"{subfolder.id}_{safe_folder_name(subfolder.nom)}")
     os.makedirs(sub_path, exist_ok=True)
 
     logger.info(f"[SUBFOLDER] Sous-dossier '{nom}' créé dans '{parent_folder.nom}' par {request.user.username}")
 
+    AuditLog.objects.create(
+        utilisateur=request.user,
+        action='CREATE',
+        objet=f"Sous-dossier : {nom} dans {parent_folder.nom}",
+        adresse_ip=request.META.get('REMOTE_ADDR')
+    )
     return Response(FolderSerializer(subfolder, context={"request": request}).data, status=status.HTTP_201_CREATED)
 
 
@@ -364,6 +380,13 @@ def rename_folder(request, folder_id):
     folder.nom = new_name
     folder.save(update_fields=["nom"])
 
+    AuditLog.objects.create(
+        utilisateur=request.user,
+        action='UPDATE',
+        objet=f"Dossier renommé : {new_name}",
+        adresse_ip=request.META.get('REMOTE_ADDR')
+    )
+
     return Response(FolderSerializer(folder, context={"request": request}).data)
 
 
@@ -384,7 +407,14 @@ def delete_folder(request, folder_id):
 
     if os.path.exists(folder_path):
         shutil.rmtree(folder_path)
-
+        
+    AuditLog.objects.create(
+        utilisateur=request.user,
+        action='DELETE',
+        objet=f"Dossier : {folder.nom}",
+        adresse_ip=request.META.get('REMOTE_ADDR')
+    )
+    
     folder.delete()
     return Response({'success': 'Dossier supprimé avec son contenu'})
 
@@ -449,15 +479,20 @@ def share_folder(request, folder_id):
     folder.save()
 
     logger.info(f"[SHARE] Dossier '{folder.nom}' partagé par {request.user.username}")
+    
+    AuditLog.objects.create(
+    utilisateur=request.user,
+    action='UPDATE',
+    objet=f"Dossier partagé : {folder.nom}",
+    adresse_ip=request.META.get('REMOTE_ADDR')
+    )
+    
     return Response(
         FolderSerializer(folder, context={"request": request}).data,
         status=status.HTTP_200_OK
     )
 
-
-# ==============================
-# FILES CRUD
-# ==============================
+##### FILES CRUD #####
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -540,10 +575,17 @@ def upload_file(request, folder_id):
                     f"dans le dossier « {folder.nom} »"
         )
 
-
-
     logger.info(f"[UPLOAD] Fichier '{file_instance.nom}' uploadé par {request.user.username}")
+    
+    AuditLog.objects.create(
+    utilisateur=request.user,
+    action='UPLOAD',
+    objet=f"Fichier : {file_instance.nom} → {folder.nom}",
+    adresse_ip=request.META.get('REMOTE_ADDR')
+    )
+    
     return Response(FileSerializer(file_instance, context={'request': request}).data, status=status.HTTP_201_CREATED)
+
 
 @api_view(['PUT'])
 @authentication_classes([TokenAuthentication])
@@ -554,7 +596,7 @@ def rename_file(request, file_id):
     """
     try:
         file_obj = FileModel.objects.get(id=file_id)
-    except File.DoesNotExist:
+    except FileModel.DoesNotExist:
         return Response({'error': 'Fichier non trouvé'}, status=status.HTTP_404_NOT_FOUND)
 
     if not has_folder_permission(request.user, file_obj.folder, "update"):
@@ -569,6 +611,14 @@ def rename_file(request, file_id):
     file_obj.save(update_fields=["nom", "updated_at"])
 
     logger.info(f"[RENAME] Fichier renommé en '{new_name}' par {request.user.username}")
+    
+    AuditLog.objects.create(
+    utilisateur=request.user,
+    action='UPDATE',
+    objet=f"Fichier renommé : {new_name}",
+    adresse_ip=request.META.get('REMOTE_ADDR')
+    )
+    
     return Response(FileSerializer(file_obj, context={"request": request}).data)
 
 
@@ -578,7 +628,7 @@ def rename_file(request, file_id):
 def delete_file(request, file_id):
     try:
         file_obj = FileModel.objects.get(id=file_id)
-    except File.DoesNotExist:
+    except FileModel.DoesNotExist:
         return Response({'error': 'Fichier non trouvé'}, status=status.HTTP_404_NOT_FOUND)
 
     if not has_folder_permission(request.user, file_obj.folder, "delete_file"):
@@ -587,20 +637,25 @@ def delete_file(request, file_id):
     if file_obj.fichier and os.path.exists(file_obj.fichier.path):
         os.remove(file_obj.fichier.path)
 
+    AuditLog.objects.create(
+        utilisateur=request.user,
+        action='DELETE',
+        objet=f"Fichier : {file_obj.nom}",
+        adresse_ip=request.META.get('REMOTE_ADDR')
+    )
+    
     file_obj.delete()
     logger.info(f"[DELETE] Fichier '{file_obj.nom}' supprimé par {request.user.username}")
     return Response({'success': 'Fichier supprimé'})
 
-# ==============================
-# FILE PREVIEW
-# ==============================
+##### FILE PREVIEW #####
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def preview_file(request, file_id):
     try:
         file_obj = FileModel.objects.get(id=file_id)
-    except File.DoesNotExist:
+    except FileModel.DoesNotExist:
         return Response({'error': 'Fichier non trouvé'}, status=404)
 
     if not has_folder_permission(request.user, file_obj.folder, "read"):
@@ -652,7 +707,6 @@ def preview_file(request, file_id):
     return Response({"type": "unsupported", "message": "Pas d’aperçu disponible"})
 
 
-
 @api_view(['GET'])
 @authentication_classes([])  # gestion manuelle
 @permission_classes([])      
@@ -675,7 +729,7 @@ def view_file(request, file_id):
 
     try:
         file_obj = FileModel.objects.get(id=file_id)
-    except File.DoesNotExist:
+    except FileModel.DoesNotExist:
         return Response({'error': 'Fichier introuvable en base'}, status=404)
 
     if not has_folder_permission(user, file_obj.folder, "read"):
@@ -696,16 +750,15 @@ def view_file(request, file_id):
 def list_shared_files(request):
     shared_folders = FolderShare.objects.filter(user=request.user).select_related("folder__proprietaire")
     files = FileModel.objects.filter(folder__in=[s.folder for s in shared_folders]).select_related("folder", "utilisateur")
-
+    share_map = {s.folder_id: s for s in shared_folders}
     data = []
     for file in files:
-        share = shared_folders.filter(folder=file.folder).first()
+        share = share_map.get(file.folder_id)
         data.append({
             **FileSerializer(file, context={'request': request}).data,
             "shared_by": file.folder.proprietaire.username,
             "shared_at": share.created_at if share else None,
         })
-
     return Response(data)
 
 
@@ -763,15 +816,11 @@ def update_share_permission(request, share_id):
 
     return Response({"success": True, "message": "✅ Aucune permission modifiée."})
 
-# ==============================
-# ARCHIVES (Création, Liste, Téléchargement, Suppression)
-# ==============================
-
+##### ARCHIVES (Création, Liste, Téléchargement, Suppression) #####
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def list_archives(request):
-    user = request.user
     """
     Liste toutes les archives actives de l'utilisateur connecté.
     """
@@ -788,7 +837,7 @@ def create_archive(request, folder_id):
     Archive un dossier existant au format .zip ou .rar,
     avec gestion propre des erreurs, taille dynamique et sécurité renforcée.
     """
-    # --- Vérification du dossier ---
+    # Vérification du dossier
     try:
         folder = Folder.objects.get(id=folder_id)
     except Folder.DoesNotExist:
@@ -797,7 +846,7 @@ def create_archive(request, folder_id):
             status=status.HTTP_404_NOT_FOUND
         )
 
-    # --- Vérification des permissions ---
+    # Vérification des permissions
     if not (
         folder.proprietaire == request.user or
         has_folder_permission(request.user, folder, "write") or
@@ -808,7 +857,7 @@ def create_archive(request, folder_id):
             status=status.HTTP_403_FORBIDDEN
         )
 
-    # --- Lecture des paramètres ---
+    # Lecture des paramètres
     archive_format = request.data.get("format", "zip").lower()
     new_name = request.data.get("new_name", None)
 
@@ -828,7 +877,7 @@ def create_archive(request, folder_id):
             status=status.HTTP_404_NOT_FOUND
         )
 
-    # --- Variables de travail ---
+    # Variables de travail
     archive = None
     archive_dir = os.path.join(settings.MEDIA_ROOT, "archives")
     os.makedirs(archive_dir, exist_ok=True)
@@ -837,7 +886,7 @@ def create_archive(request, folder_id):
     archive_path = os.path.join(archive_dir, archive_filename)
 
     try:
-        # --- Création réelle de l’archive ---
+        # Création réelle de l’archive
         if archive_format == "zip":
             with zipfile.ZipFile(archive_path, "w", zipfile.ZIP_DEFLATED) as zipf:
                 for root, _, files in os.walk(folder_path):
@@ -872,13 +921,13 @@ def create_archive(request, folder_id):
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                 )
 
-        # --- Vérification post-création ---
+        # Vérification post-création
         if not os.path.exists(archive_path):
             raise Exception("Le fichier d’archive n’a pas été créé.")
 
         archive_size = os.path.getsize(archive_path)
 
-        # --- Création de l’objet Archive ---
+        # Création de l’objet Archive
         archive = Archive.objects.create(
             owner=request.user,
             folder_name=folder_display_name,
@@ -886,7 +935,7 @@ def create_archive(request, folder_id):
             is_active=True,
         )
 
-        # --- Ouverture du fichier brut (mode binaire) ---
+        # Ouverture du fichier brut (mode binaire)
         with open(archive_path, "rb") as f:
             #django_file = File(f)
             django_file = DjangoFile(f)
@@ -894,7 +943,7 @@ def create_archive(request, folder_id):
             archive.size = os.path.getsize(archive_path)
             archive.save()
 
-        # 🧹 Supprimer le fichier temporaire après la sauvegarde
+        # Supprimer le fichier temporaire après la sauvegarde
         if os.path.exists(archive_path):
             os.remove(archive_path)
 
@@ -902,7 +951,7 @@ def create_archive(request, folder_id):
             f"[ARCHIVE CREATED] {folder_display_name} ({archive_format.upper()}) — Taille : {archive.size / 1024:.2f} Ko")
 
 
-        # --- Notification utilisateur ---
+        # Notification utilisateur
         Notification.objects.create(
             user=request.user,
             type="archive",
@@ -911,14 +960,14 @@ def create_archive(request, folder_id):
 
         logger.info(f"[ARCHIVE CREATED] {folder_display_name} ({archive_format.upper()}) — Taille : {archive_size} octets")
 
-                # --- Marquer le dossier comme archivé ---
+                # Marquer le dossier comme archivé
         folder.is_archived = True
         folder.save(update_fields=["is_archived"])
 
         return Response(ArchiveSerializer(archive).data, status=status.HTTP_201_CREATED)
 
     except Exception as e:
-        # --- Gestion propre des erreurs ---
+        # Gestion propre des erreurs
         logger.error(f"Erreur création archive ({folder.nom}): {e}")
 
         # Nettoyage sécurisé
@@ -927,6 +976,13 @@ def create_archive(request, folder_id):
         elif 'archive_path' in locals() and os.path.exists(archive_path):
             os.remove(archive_path)
 
+        AuditLog.objects.create(
+        utilisateur=request.user,
+        action='CREATE',
+        objet=f"Archive : {folder_display_name}.{archive_format}",
+        adresse_ip=request.META.get('REMOTE_ADDR')
+        )
+        
         return Response(
             {'error': f"⚠️ Une erreur est survenue pendant la création de l’archive : {str(e)}"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -951,7 +1007,7 @@ def download_archive(request, archive_id):
     if not os.path.exists(archive_path):
         return Response({'error': 'Fichier d’archive manquant.'}, status=status.HTTP_404_NOT_FOUND)
 
-    # 🔍 Détection correcte du type MIME
+    # Détection correcte du type MIME
     mime_type, _ = mimetypes.guess_type(archive_path)
     if not mime_type:
         if archive_path.endswith(".rar"):
@@ -966,9 +1022,15 @@ def download_archive(request, archive_id):
     response["Content-Disposition"] = f'attachment; filename="{file_name}"'
     response["Content-Length"] = os.path.getsize(archive_path)
 
-    # 🧾 Log dans la console pour diagnostic
-    print(f"➡️ Téléchargement envoyé : {file_name}, MIME={mime_type}, Taille={os.path.getsize(archive_path)} octets")
+    # Log dans la console pour diagnostic
+    logger.info(f"[DOWNLOAD] Téléchargement envoyé : {file_name}, MIME={mime_type}, Taille={os.path.getsize(archive_path)} octets")
 
+    AuditLog.objects.create(
+        utilisateur=request.user,
+        action='DOWNLOAD',
+        objet=f"Archive : {file_name}",
+        adresse_ip=request.META.get('REMOTE_ADDR')
+    )
     return response
 
 
@@ -996,12 +1058,16 @@ def delete_archive(request, archive_id):
         message=f"L’archive du dossier « {archive.folder_name} » a été supprimée."
     )
 
+    AuditLog.objects.create(
+    utilisateur=request.user,
+    action='DELETE',
+    objet=f"Archive : {archive.folder_name}",
+    adresse_ip=request.META.get('REMOTE_ADDR')
+    )
+    
     return Response({'success': 'Archive supprimée avec succès.'})
 
-# ==============================
-# ARCHIVE SHARING (Partage d’archive)
-# ==============================
-
+##### ARCHIVE SHARING (Partage d’archive) #####
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -1083,10 +1149,7 @@ def unarchive_folder(request, archive_id):
 
     return Response({'success': f"Dossier « {folder.nom} » restauré."}, status=status.HTTP_200_OK)
 
-
-# ==============================
-# GESTION DES NOTIFICATIONS
-# ==============================
+##### GESTION DES NOTIFICATIONS #####
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])

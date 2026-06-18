@@ -22,8 +22,8 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 │               Nginx (reverse proxy)             │
 │         Routage · Fichiers statiques            │
 └──────────┬────────────────────┬─────────────────┘
-           │ /api/              │ /
-┌──────────▼──────────┐ ┌──────▼──────────────────┐
+           │ /api               │ /
+┌──────────▼──────────┐ ┌────── ▼─────────────────┐
 │  Django REST API    │ │    React 18 (frontend)  │
 │  RBAC · Auth · DRF  │ │    Node.js 20           │
 └──────────┬──────────┘ └─────────────────────────┘

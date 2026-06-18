@@ -21,3 +21,14 @@ class UtilisateurAdmin(UserAdmin):
 
 # Enregistrer le modèle Utilisateur avec cette configuration personnalisée
 admin.site.register(Utilisateur, UtilisateurAdmin)
+
+# Enregistrer les autres modèles pour qu'ils soient visibles dans l'admin
+from .models import AuditLog
+
+@admin.register(AuditLog)
+class AuditLogAdmin(admin.ModelAdmin):
+    list_display = ('timestamp', 'utilisateur', 'action', 'objet', 'adresse_ip')
+    list_filter = ('action', 'utilisateur')
+    search_fields = ('objet', 'details', 'utilisateur__username')
+    readonly_fields = ('timestamp', 'utilisateur', 'action', 'objet', 'details', 'adresse_ip')
+    ordering = ('-timestamp',)

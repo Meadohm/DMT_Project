@@ -3,14 +3,16 @@ Django settings for centralisation_donnees project.
 """
 
 from pathlib import Path
-import os  # nécessaire pour chemins fichiers
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-)#t+klmuu6&fn5=^8rv&$9w^ocoikj4-lw&a$7k97p(1*12rp#'
+SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = True
-ALLOWED_HOSTS = ["192.168.56.102", "localhost", "127.0.0.1"]
-CSRF_TRUSTED_ORIGINS = ["http://192.168.56.1:3000"]
+ALLOWED_HOSTS = ["192.168.1.116", "localhost", "127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = ["http://192.168.1.116:3000", "http://localhost:3000"]
 # ALLOWED_HOSTS = ['*']
 
 # ============================
@@ -27,7 +29,7 @@ INSTALLED_APPS = [
     'api',  # Mon application API
     'rest_framework',
     'rest_framework.authtoken',
-    'django_cron',
+   
 ]
 
 MIDDLEWARE = [
@@ -69,11 +71,11 @@ WSGI_APPLICATION = 'centralisation_donnees.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'centralisation_db',
-        'USER': 'osboxes',
-        'PASSWORD': 'Moh2025@DMT',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
 
@@ -140,9 +142,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp-mail.outlook.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'mohamed.fofana2022@esatic.edu.ci'
-EMAIL_HOST_PASSWORD = 'M@hamed@2022'
-DEFAULT_FROM_EMAIL = 'mohamed.fofana2022@esatic.edu.ci'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER')
 
 # ============================
 # Media (fichiers uploadés)
