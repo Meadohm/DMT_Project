@@ -22,7 +22,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
 
-    path('admin/', admin.site.urls),    # Cette ligne permet d'accéder à l'interface admin
+    path('django-admin/', admin.site.urls),    # Cette ligne permet d'accéder à l'interface admin
     path('api/', include('api.urls')),  # Inclusion des routes de l'app 'api'
     path('', home, name='home'),
 
