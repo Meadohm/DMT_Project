@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import {
   getUsers,
   updateUserRole,
-  getAllSubmissions,
   createUser,
   resetUserPassword,
   deleteUserAccount,
@@ -17,7 +16,6 @@ import {
 import { getUser } from "../services/authService";
 import { updatePassword } from "../services/passwordService";
 import { validatePassword } from "../services/validators";
-import { exportAdminSubmissionsCSV, exportAdminSubmissionsPDF } from "../services/exportServiceAdmin";
 
 import { getHistorique, deleteHistorique } from "../services/fileService"; // ✅ Uniformisation
 import AdminFileManager from "../services/AdminFileManager"; // ✅ Composant admin moderne
@@ -29,7 +27,6 @@ function AdminPanel() {
   const [services, setServices] = useState([]);
   const [newService, setNewService] = useState("");
   const [users, setUsers] = useState([]);
-  const [submissions, setSubmissions] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -79,9 +76,7 @@ function AdminPanel() {
   const fetchData = async () => {
     try {
       const usersData = await getUsers();
-      const submissionsData = await getAllSubmissions();
       setUsers(usersData);
-      setSubmissions(submissionsData);
       fetchUserInfo();
       setLoading(false);
     } catch (e) {

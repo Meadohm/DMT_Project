@@ -54,14 +54,6 @@ export const updateUserRole = async (userId, newRole) => {
   );
 };
 
-export const getAllSubmissions = async () => {
-  const token = getToken();
-  const res = await axios.get(`${API_BASE_URL}/soumissions/`, {
-    headers: { Authorization: `Token ${token}` },
-  });
-  return res.data;
-};
-
 export const resetUserPassword = async (userId) => {
   const token = getToken();
   return axios.post(`${API_BASE_URL}/utilisateurs/${userId}/reset_password/`, {}, {
