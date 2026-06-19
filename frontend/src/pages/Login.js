@@ -29,11 +29,10 @@ function Login() {
       await login(username, password);
       const user = await getUser();
 
-      if (user.role === "employe" || "responsable") {
-        navigate("/employe");
-      }
-      else if (user.role === "admin") {
+      if (user.role === "admin") {
         navigate("/admin");
+      } else {
+        navigate("/dashboard");
       }
     } catch (e) {
       setError("⚠️ Nom d'utilisateur ou mot de passe incorrect");

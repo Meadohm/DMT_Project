@@ -1,18 +1,48 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Login from './pages/Login';  // Import de la page de connexion
-import DashboardEmploye from './pages/DashboardEmploye';  // Import du tableau de bord des employés
-// import DashboardResponsable from './pages/DashboardResponsable';  Import du tableau de bord des responsables
-import AdminPanel from './pages/AdminPanel';  // Import du panneau administrateur
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import Login from './pages/Login';
+import DashboardEmploye from './pages/DashboardEmploye';
+// import DashboardResponsable from './pages/DashboardResponsable';
+import AdminPanel from './pages/AdminPanel';
+
+function RoleRedirect() {
+  const role = localStorage.getItem('role');
+  if (!role) return <Login />;
+  if (role === 'admin') return <Navigate to="/admin" replace />;
+  return <Navigate to="/dashboard" replace />;
+}
+
+function ProtectedRoute({ element, allowedRoles }) {
+  const role = localStorage.getItem('role');
+  if (!role) return <Navigate to="/" replace />;
+  if (!allowedRoles.includes(role)) return <Navigate to="/unauthorized" replace />;
+  return element;
+}
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />  {/* Route de connexion par défaut */}
-        <Route path="/employe" element={<DashboardEmploye />} />  {/* Tableau de bord employé */}
-        {/*<Route path="/responsable" element={<DashboardResponsable />} />   Tableau de bord responsable */}
-        <Route path="/admin" element={<AdminPanel />} />  {/* Panneau administrateur */}
+        <Route path="/" element={<RoleRedirect />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute
+              element={<DashboardEmploye />}
+              allowedRoles={['admin', 'responsable', 'employe']}
+            />
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute
+              element={<AdminPanel />}
+              allowedRoles={['admin']}
+            />
+          }
+        />
+        <Route path="/unauthorized" element={<div>Accès non autorisé.</div>} />
       </Routes>
     </Router>
   );

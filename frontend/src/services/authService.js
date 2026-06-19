@@ -15,7 +15,8 @@ export const login = async (username, password) => {
     if (response.ok) {
       const data = await response.json();
       console.log("Token reçu:", data.token); // Log du token reçu
-      localStorage.setItem("token", data.token); // Stocke le token dans le localStorage
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("role", data.role);
       return data;
     } else {
       const errorData = await response.json();

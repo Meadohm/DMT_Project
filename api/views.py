@@ -71,7 +71,7 @@ def login_view(request):
     adresse_ip=request.META.get('REMOTE_ADDR')
     )
     
-    return Response({'token': token.key}, status=status.HTTP_200_OK)
+    return Response({'token': token.key, 'role': user.role}, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
