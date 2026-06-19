@@ -137,7 +137,7 @@ function AdminPanel() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.clear();
     window.location.replace("/");
   };
 
