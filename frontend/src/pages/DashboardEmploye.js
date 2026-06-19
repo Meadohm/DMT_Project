@@ -64,7 +64,7 @@ function DashboardEmploye() {
   (async () => {
     const valid = await checkTokenValidity();
     if (!valid) {
-      localStorage.removeItem("token");
+      localStorage.clear();
       navigate("/");
     }
   })();
@@ -132,7 +132,7 @@ function DashboardEmploye() {
 
   
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.clear();
     setIsAuthenticated(false);
     navigate("/");
   };
@@ -847,14 +847,14 @@ const handleClearNotifications = async () => {
             setNotif(null);
             // redirige uniquement si c’est un changement de mot de passe
             if (notif.context === "password_change") {
-              localStorage.removeItem("token");
+              localStorage.clear();
               navigate("/");
             }
           }}
           onConfirm={() => {
             setNotif(null);
             if (notif.context === "password_change") {
-              localStorage.removeItem("token");
+              localStorage.clear();
               navigate("/");
             }
           }}
