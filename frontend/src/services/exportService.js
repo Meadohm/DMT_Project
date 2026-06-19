@@ -1,9 +1,10 @@
 // exportService.js
+import API_BASE_URL from "../config";
 
 export const exportSubmissionsCSV = async () => {
   try {
     const token = localStorage.getItem('token');
-    const response = await fetch('http://192.168.1.189:8000/api/exporter_soumissions_csv/', {
+    const response = await fetch(`${API_BASE_URL}/exporter_soumissions_csv/`, {
       method: 'GET',
       headers: {
         Authorization: `Token ${token}`,
@@ -23,7 +24,7 @@ export const exportSubmissionsCSV = async () => {
 export const exportSubmissionsPDF = async () => {
   try {
     const token = localStorage.getItem('token');
-    const response = await fetch('http://192.168.1.189:8000/api/exporter_soumissions_pdf/', {
+    const response = await fetch(`${API_BASE_URL}/exporter_soumissions_pdf/`, {
       method: 'GET',
       headers: {
         Authorization: `Token ${token}`,

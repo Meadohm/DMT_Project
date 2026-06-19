@@ -143,7 +143,7 @@ function AdminPanel() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    window.location.replace("http://192.168.1.189:3000/");
+    window.location.replace("/");
   };
 
   // Gestion utilisateurs

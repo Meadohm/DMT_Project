@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { getCentralizedFiles, updateFile, deleteFile } from "../services/adminService";
 import { getToken } from "../services/authService";
+import API_BASE_URL from "../config";
 import axios from "axios";
 
 import "../styles/AdminFileManager.css";
@@ -16,7 +17,7 @@ function AdminFileManager() {
 
   const fetchFiles = useCallback(async () => {
     try {
-      await axios.get("http://192.168.1.189:8000/api/synchroniser_fichiers/", {
+      await axios.get(`${API_BASE_URL}/synchroniser_fichiers/`, {
         headers: { Authorization: `Token ${getToken()}` },
       });
 
