@@ -6,6 +6,7 @@ export default function useNotifications(interval = 10000) {
   const [notifications, setNotifications] = useState([]);
 
   const fetchNotifications = async () => {
+    if (!localStorage.getItem("token")) return;
     try {
       const data = await listNotifications();
       setNotifications(data);
