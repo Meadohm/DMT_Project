@@ -521,7 +521,17 @@ td:last-child {
 }
 
 /* ── Register form ──────────────────────────────────────── */
-.register-section { max-width: 560px; }
+.register-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.register-section .section-header {
+  width: 100%;
+  max-width: 560px;
+}
 
 .register-form-card {
   background: white;
@@ -529,6 +539,10 @@ td:last-child {
   padding: 28px 32px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
   border: 1px solid #e8edf2;
+  width: 100%;
+  max-width: 560px;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
 }
 
 .form-group {
