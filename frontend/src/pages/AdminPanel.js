@@ -51,7 +51,6 @@ function AdminPanel() {
   const [passwordError, setPasswordError] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [editUserData, setEditUserData] = useState({
     username: "",
@@ -170,6 +169,21 @@ function AdminPanel() {
     }
   };
 
+  const handleEditStart = (u) => {
+    setEditingUser(u.id);
+    setEditUserData({ username: u.username, email: u.email || "", service: u.service || "" });
+  };
+
+  const handleEditSubmit = async (userId) => {
+    try {
+      await updateUserAccount(userId, editUserData);
+      setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, ...editUserData } : u)));
+      setEditingUser(null);
+    } catch (e) {
+      setError("Erreur mise à jour utilisateur");
+    }
+  };
+
   // Gestion services
   const handleCreateService = async (e) => {
     e.preventDefault();
@@ -242,33 +256,62 @@ function AdminPanel() {
         {activeSection === "users" && (
           <>
             <h2>Utilisateurs</h2>
+            <input
+              placeholder="Rechercher par nom..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
             <table>
               <thead>
                 <tr>
                   <th>Nom</th>
                   <th>Rôle</th>
                   <th>Service</th>
+                  <th>Email</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {users.map((u) => (
-                  <tr key={u.id}>
-                    <td>{u.username}</td>
-                    <td>
-                      <select value={u.role} onChange={(e) => handleUpdateRole(u.id, e.target.value)}>
-                        <option value="employe">Employé</option>
-                        <option value="responsable">Responsable</option>
-                        <option value="admin">Admin</option>
-                      </select>
-                    </td>
-                    <td>{u.service}</td>
-                    <td>
-                      <button onClick={() => handleResetPassword(u.id)}>Reset Mdp</button>
-                      <button onClick={() => handleDeleteUser(u.id)}>Supprimer</button>
-                    </td>
-                  </tr>
-                ))}
+                {users
+                  .filter((u) => u.username.toLowerCase().includes(searchTerm.toLowerCase()))
+                  .map((u) =>
+                    editingUser === u.id ? (
+                      <tr key={u.id}>
+                        <td><input value={editUserData.username} onChange={(e) => setEditUserData({ ...editUserData, username: e.target.value })} /></td>
+                        <td>
+                          <select value={u.role} onChange={(e) => handleUpdateRole(u.id, e.target.value)}>
+                            <option value="employe">Employé</option>
+                            <option value="responsable">Responsable</option>
+                            <option value="admin">Admin</option>
+                          </select>
+                        </td>
+                        <td><input value={editUserData.service} onChange={(e) => setEditUserData({ ...editUserData, service: e.target.value })} /></td>
+                        <td><input value={editUserData.email} onChange={(e) => setEditUserData({ ...editUserData, email: e.target.value })} /></td>
+                        <td>
+                          <button onClick={() => handleEditSubmit(u.id)}>Sauvegarder</button>
+                          <button onClick={() => setEditingUser(null)}>Annuler</button>
+                        </td>
+                      </tr>
+                    ) : (
+                      <tr key={u.id}>
+                        <td>{u.username}</td>
+                        <td>
+                          <select value={u.role} onChange={(e) => handleUpdateRole(u.id, e.target.value)}>
+                            <option value="employe">Employé</option>
+                            <option value="responsable">Responsable</option>
+                            <option value="admin">Admin</option>
+                          </select>
+                        </td>
+                        <td>{u.service}</td>
+                        <td>{u.email}</td>
+                        <td>
+                          <button onClick={() => handleEditStart(u)}>Éditer</button>
+                          <button onClick={() => handleResetPassword(u.id)}>Reset Mdp</button>
+                          <button onClick={() => handleDeleteUser(u.id)}>Supprimer</button>
+                        </td>
+                      </tr>
+                    )
+                  )}
               </tbody>
             </table>
           </>
@@ -298,10 +341,21 @@ function AdminPanel() {
         )}
 
         {activeSection === "createService" && (
-          <form onSubmit={handleCreateService}>
-            <input value={newService} onChange={(e) => setNewService(e.target.value)} placeholder="Nom du service" />
-            <button type="submit">Créer</button>
-          </form>
+          <>
+            <form onSubmit={handleCreateService}>
+              <input value={newService} onChange={(e) => setNewService(e.target.value)} placeholder="Nom du service" />
+              <button type="submit">Créer</button>
+            </form>
+            <h2>Services existants</h2>
+            <ul>
+              {services.map((s) => (
+                <li key={s.id}>
+                  {s.nom}
+                  <button onClick={() => handleDeleteService(s.id)}>Supprimer</button>
+                </li>
+              ))}
+            </ul>
+          </>
         )}
 
         {activeSection === "register" && (
