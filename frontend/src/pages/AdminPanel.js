@@ -228,7 +228,7 @@ function AdminPanel() {
         </div>
         <button onClick={() => setActiveSection("users")}>Gestion utilisateurs</button>
         <button onClick={() => setActiveSection("files")}>Gestion fichiers</button>
-        <button onClick={() => setActiveSection("submissions")}>Historique</button>
+        <button onClick={() => { setActiveSection("submissions"); fetchHistorique(); }}>Historique</button>
         <button onClick={() => setActiveSection("createService")}>Créer un service</button>
         <button onClick={() => setActiveSection("register")}>Créer utilisateur</button>
         <button onClick={() => setActiveSection("account")}>Compte utilisateur</button>

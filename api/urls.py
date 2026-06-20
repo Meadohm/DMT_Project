@@ -10,10 +10,16 @@ urlpatterns = [
 
     # USERS
     path('utilisateurs/', views.get_all_users, name='get_all_users'),
-    path('users/', views.list_users_for_sharing, name='list_users_for_sharing'),  # API employé
+    path('utilisateurs/creer/', views.create_user_account, name='create_user_account'),
     path('utilisateurs/<int:user_id>/role/', views.update_user_role, name='update_user_role'),
     path('utilisateurs/<int:user_id>/reset_password/', views.reset_user_password, name='reset_user_password'),
+    path('utilisateurs/<int:user_id>/delete/', views.delete_user_account, name='delete_user_account'),
+    path('users/', views.list_users_for_sharing, name='list_users_for_sharing'),  # API employé
     path('update_password/', views.update_password_view, name='update_password'),
+
+    # HISTORIQUE
+    path('historique/', views.get_historique, name='get_historique'),
+    path('historique/<int:log_id>/', views.delete_historique, name='delete_historique'),
 
     # SERVICES
     path('services/', views.list_services, name='list_services'),

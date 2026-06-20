@@ -214,6 +214,101 @@ def reset_user_password(request, user_id):
     
     return Response({'success': 'Mot de passe réinitialisé et envoyé par email.'})
 
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser])
+def create_user_account(request):
+    username = request.data.get('username', '').strip()
+    email = request.data.get('email', '').strip()
+    password = request.data.get('password', '')
+    role = request.data.get('role', 'employe').lower()
+    service = request.data.get('service', '')
+
+    if not username or not password:
+        return Response({'error': 'Nom d\'utilisateur et mot de passe obligatoires.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if Utilisateur.objects.filter(username=username).exists():
+        return Response({'error': 'Ce nom d\'utilisateur est déjà pris.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if email and Utilisateur.objects.filter(email=email).exists():
+        return Response({'error': 'Cet email est déjà utilisé.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    valid_roles = [r[0] for r in Utilisateur.ROLE_CHOICES]
+    if role not in valid_roles:
+        return Response({'error': 'Rôle non valide.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    user = Utilisateur.objects.create_user(username=username, email=email, password=password)
+    user.role = role
+    user.service = service
+    user.save()
+
+    AuditLog.objects.create(
+        utilisateur=request.user,
+        action='CREATE',
+        objet=f"Création utilisateur : {username}",
+        adresse_ip=request.META.get('REMOTE_ADDR'),
+    )
+
+    return Response({'success': 'Utilisateur créé.', 'id': user.id}, status=status.HTTP_201_CREATED)
+
+
+@api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser])
+def delete_user_account(request, user_id):
+    if request.user.id == user_id:
+        return Response({'error': 'Vous ne pouvez pas supprimer votre propre compte.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        utilisateur = Utilisateur.objects.get(id=user_id)
+    except Utilisateur.DoesNotExist:
+        return Response({'error': 'Utilisateur non trouvé.'}, status=status.HTTP_404_NOT_FOUND)
+
+    nom = utilisateur.username
+    utilisateur.delete()
+
+    AuditLog.objects.create(
+        utilisateur=request.user,
+        action='DELETE',
+        objet=f"Suppression utilisateur : {nom}",
+        adresse_ip=request.META.get('REMOTE_ADDR'),
+    )
+
+    return Response({'success': 'Utilisateur supprimé.'})
+
+
+##### HISTORIQUE (AuditLog) #####
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser])
+def get_historique(request):
+    logs = AuditLog.objects.select_related('utilisateur').all()
+    data = [
+        {
+            'id': log.id,
+            'fichier': log.objet,
+            'action': log.get_action_display(),
+            'date': log.timestamp.strftime('%d/%m/%Y %H:%M'),
+            'utilisateur': log.utilisateur.username if log.utilisateur else '—',
+        }
+        for log in logs
+    ]
+    return Response(data)
+
+
+@api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser])
+def delete_historique(request, log_id):
+    try:
+        log = AuditLog.objects.get(id=log_id)
+    except AuditLog.DoesNotExist:
+        return Response({'error': 'Entrée non trouvée.'}, status=status.HTTP_404_NOT_FOUND)
+
+    log.delete()
+    return Response({'success': 'Entrée supprimée.'})
+
+
 ##### SERVICES #####
 @api_view(['POST'])
 @permission_classes([IsAdminUser])
