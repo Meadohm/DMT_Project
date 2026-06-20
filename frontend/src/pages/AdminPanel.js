@@ -298,7 +298,13 @@ function AdminPanel() {
 
       <main className="admin-content">
         <h1>Panneau Administrateur</h1>
-        <p>Bienvenue, {userInfo?.username}</p>
+        <div className="welcome-banner">
+          <span className="welcome-avatar">{userInfo?.username?.charAt(0).toUpperCase()}</span>
+          <div className="welcome-text">
+            <span className="welcome-label">Bienvenue,</span>
+            <span className="welcome-name">{userInfo?.username}</span>
+          </div>
+        </div>
 
         {activeSection === "users" && (
           <>
@@ -511,13 +517,26 @@ function AdminPanel() {
                     ))}
                   </select>
                 </div>
-                <button
-                  type="submit"
-                  className="btn-primary"
-                  disabled={formData.password !== formData.confirmPassword || !formData.username || !formData.password}
-                >
-                  Créer l'utilisateur
-                </button>
+                <div className="register-form-actions">
+                  <button
+                    type="submit"
+                    className="btn-primary"
+                    disabled={formData.password !== formData.confirmPassword || !formData.username || !formData.password}
+                  >
+                    Créer l'utilisateur
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-cancel"
+                    onClick={() => {
+                      setFormData({ username: '', email: '', password: '', confirmPassword: '', role: 'employe', service: '' });
+                      setFormError('');
+                      setFormSuccess('');
+                    }}
+                  >
+                    Annuler
+                  </button>
+                </div>
               </form>
             </div>
           </div>
