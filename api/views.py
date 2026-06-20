@@ -252,6 +252,43 @@ def create_user_account(request):
     return Response({'success': 'Utilisateur créé.', 'id': user.id}, status=status.HTTP_201_CREATED)
 
 
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser])
+def update_user_account(request, user_id):
+    try:
+        utilisateur = Utilisateur.objects.get(id=user_id)
+    except Utilisateur.DoesNotExist:
+        return Response({'error': 'Utilisateur non trouvé.'}, status=status.HTTP_404_NOT_FOUND)
+
+    username = request.data.get('username', '').strip()
+    email = request.data.get('email', '').strip()
+    service = request.data.get('service', '')
+
+    if not username:
+        return Response({'error': 'Le nom d\'utilisateur est obligatoire.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if Utilisateur.objects.filter(username=username).exclude(id=user_id).exists():
+        return Response({'error': 'Ce nom d\'utilisateur est déjà pris.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if email and Utilisateur.objects.filter(email=email).exclude(id=user_id).exists():
+        return Response({'error': 'Cet email est déjà utilisé.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    utilisateur.username = username
+    utilisateur.email = email
+    utilisateur.service = service
+    utilisateur.save()
+
+    AuditLog.objects.create(
+        utilisateur=request.user,
+        action='UPDATE',
+        objet=f"Mise à jour utilisateur : {username}",
+        adresse_ip=request.META.get('REMOTE_ADDR'),
+    )
+
+    return Response({'success': 'Utilisateur mis à jour.', 'username': utilisateur.username, 'email': utilisateur.email, 'service': utilisateur.service})
+
+
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAdminUser | IsCustomAdminUser])
@@ -275,6 +312,86 @@ def delete_user_account(request, user_id):
     )
 
     return Response({'success': 'Utilisateur supprimé.'})
+
+
+##### FICHIERS CENTRALISÉS #####
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser])
+def synchroniser_fichiers(request):
+    for f in FileModel.objects.all():
+        if f.fichier and os.path.exists(f.fichier.path):
+            f.taille = os.path.getsize(f.fichier.path)
+            f.save(update_fields=['taille'])
+    return Response({'success': 'Synchronisation effectuée.'})
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser])
+def list_centralized_files(request):
+    files = FileModel.objects.select_related('utilisateur', 'folder').all()
+    data = [
+        {
+            'id': f.id,
+            'fichier': f.fichier.name if f.fichier else '',
+            'nom': f.nom,
+            'size': f.taille,
+            'date_validation': f.updated_at.strftime('%d/%m/%Y'),
+            'utilisateur': f.utilisateur.username if f.utilisateur else '—',
+        }
+        for f in files
+    ]
+    return Response(data)
+
+
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser])
+def update_centralized_file(request, file_id):
+    try:
+        f = FileModel.objects.get(id=file_id)
+    except FileModel.DoesNotExist:
+        return Response({'error': 'Fichier non trouvé.'}, status=status.HTTP_404_NOT_FOUND)
+
+    nouveau_nom = request.data.get('fichier_nom', '').strip()
+    if not nouveau_nom:
+        return Response({'error': 'Le nom est obligatoire.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    f.nom = nouveau_nom
+    f.save(update_fields=['nom'])
+
+    AuditLog.objects.create(
+        utilisateur=request.user,
+        action='UPDATE',
+        objet=f"Renommage fichier #{file_id} → {nouveau_nom}",
+        adresse_ip=request.META.get('REMOTE_ADDR'),
+    )
+
+    return Response({'success': 'Fichier renommé.', 'nom': f.nom})
+
+
+@api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser])
+def delete_centralized_file(request, file_id):
+    try:
+        f = FileModel.objects.get(id=file_id)
+    except FileModel.DoesNotExist:
+        return Response({'error': 'Fichier non trouvé.'}, status=status.HTTP_404_NOT_FOUND)
+
+    nom = f.nom
+    f.supprimer_fichier()
+    f.delete()
+
+    AuditLog.objects.create(
+        utilisateur=request.user,
+        action='DELETE',
+        objet=f"Suppression fichier : {nom}",
+        adresse_ip=request.META.get('REMOTE_ADDR'),
+    )
+
+    return Response({'success': 'Fichier supprimé.'})
 
 
 ##### HISTORIQUE (AuditLog) #####

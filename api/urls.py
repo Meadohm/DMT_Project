@@ -13,6 +13,7 @@ urlpatterns = [
     path('utilisateurs/creer/', views.create_user_account, name='create_user_account'),
     path('utilisateurs/<int:user_id>/role/', views.update_user_role, name='update_user_role'),
     path('utilisateurs/<int:user_id>/reset_password/', views.reset_user_password, name='reset_user_password'),
+    path('utilisateurs/<int:user_id>/update/', views.update_user_account, name='update_user_account'),
     path('utilisateurs/<int:user_id>/delete/', views.delete_user_account, name='delete_user_account'),
     path('users/', views.list_users_for_sharing, name='list_users_for_sharing'),  # API employé
     path('update_password/', views.update_password_view, name='update_password'),
@@ -20,6 +21,12 @@ urlpatterns = [
     # HISTORIQUE
     path('historique/', views.get_historique, name='get_historique'),
     path('historique/<int:log_id>/', views.delete_historique, name='delete_historique'),
+
+    # FICHIERS CENTRALISÉS (admin)
+    path('synchroniser_fichiers/', views.synchroniser_fichiers, name='synchroniser_fichiers'),
+    path('centralized-files/', views.list_centralized_files, name='list_centralized_files'),
+    path('centralized-files/<int:file_id>/update/', views.update_centralized_file, name='update_centralized_file'),
+    path('centralized-files/<int:file_id>/delete/', views.delete_centralized_file, name='delete_centralized_file'),
 
     # SERVICES
     path('services/', views.list_services, name='list_services'),
