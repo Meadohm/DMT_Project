@@ -92,7 +92,9 @@ def get_user_view(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAdminUser | IsCustomAdminUser])
 def get_all_users(request):
-    utilisateurs = Utilisateur.objects.all().only("id", "username", "email", "role", "service")
+    utilisateurs = Utilisateur.objects.all().only(
+        "id", "username", "email", "role", "service", "last_login", "is_active", "date_joined"
+    )
     data = [
         {
             'id': u.id,
@@ -100,6 +102,9 @@ def get_all_users(request):
             'email': u.email,
             'role': u.role,
             'service': u.service,
+            'last_login': u.last_login.isoformat() if u.last_login else None,
+            'is_active': u.is_active,
+            'date_joined': u.date_joined.isoformat() if u.date_joined else None,
         }
         for u in utilisateurs
     ]
@@ -197,22 +202,30 @@ def reset_user_password(request, user_id):
     utilisateur.set_password(nouveau_mot_de_passe)
     utilisateur.save()
 
-    send_mail(
-        subject='Réinitialisation de mot de passe',
-        message=f'Bonjour {utilisateur.username}, votre nouveau mot de passe est : {nouveau_mot_de_passe}',
-        from_email='admin@centralisation.com',
-        recipient_list=[utilisateur.email],
-        fail_silently=True,
-    )
+    email_envoye = True
+    try:
+        send_mail(
+            subject='Réinitialisation de mot de passe',
+            message=f'Bonjour {utilisateur.username}, votre nouveau mot de passe est : {nouveau_mot_de_passe}',
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[utilisateur.email],
+            fail_silently=False,
+        )
+    except Exception:
+        email_envoye = False
 
     AuditLog.objects.create(
-    utilisateur=request.user,
-    action='UPDATE',
-    objet=f"Réinitialisation mot de passe : {utilisateur.username}",
-    adresse_ip=request.META.get('REMOTE_ADDR')
+        utilisateur=request.user,
+        action='UPDATE',
+        objet=f"Réinitialisation mot de passe : {utilisateur.username}",
+        adresse_ip=request.META.get('REMOTE_ADDR'),
     )
-    
-    return Response({'success': 'Mot de passe réinitialisé et envoyé par email.'})
+
+    return Response({
+        'success': 'Mot de passe réinitialisé.',
+        'new_password': nouveau_mot_de_passe,
+        'email_envoye': email_envoye,
+    })
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])

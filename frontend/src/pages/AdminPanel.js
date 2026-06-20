@@ -13,7 +13,7 @@ import {
   deleteService,
 } from "../services/adminService";
 
-import { getUser } from "../services/authService";
+import { getUser, getToken } from "../services/authService";
 import { updatePassword } from "../services/passwordService";
 import { validatePassword } from "../services/validators";
 
@@ -22,6 +22,20 @@ import AdminFileManager from "../services/AdminFileManager"; // ✅ Composant ad
 
 import logo from "../assets/dmt.png";
 import "../styles/AdminPanel.css";
+
+const getRelativeTime = (dateStr) => {
+  if (!dateStr) return { label: 'Jamais connecté', type: 'inactive' };
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  const hours = Math.floor(mins / 60);
+  const days = Math.floor(hours / 24);
+  if (mins < 10)  return { label: 'En ligne',          type: 'online' };
+  if (mins < 60)  return { label: `Il y a ${mins} min`, type: 'recent' };
+  if (hours < 24) return { label: `Il y a ${hours}h`,   type: 'today' };
+  if (days === 1) return { label: 'Hier',               type: 'yesterday' };
+  if (days < 30)  return { label: `Il y a ${days} j`,   type: 'old' };
+  return { label: `Il y a ${Math.floor(days / 30)} mois`, type: 'old' };
+};
 
 function AdminPanel() {
   const [services, setServices] = useState([]);
@@ -52,11 +66,13 @@ function AdminPanel() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
+  const [resetPasswordModal, setResetPasswordModal] = useState(null);
   const [editUserData, setEditUserData] = useState({
     username: "",
     email: "",
     service: "",
   });
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -151,21 +167,28 @@ function AdminPanel() {
   };
 
   const handleDeleteUser = async (id) => {
-    if (!window.confirm("Supprimer cet utilisateur ?")) return;
+    const token = getToken();
     try {
-      await deleteUserAccount(id);
-      setUsers((prev) => prev.filter((u) => u.id !== id));
-    } catch (e) {
-      alert(e.message);
+      await deleteUserAccount(id, token);
+      setUsers(users.filter(u => u.id !== id));
+      setConfirmDeleteId(null);
+    } catch {
+      alert("Erreur lors de la suppression.");
+      setConfirmDeleteId(null);
     }
   };
 
-  const handleResetPassword = async (id) => {
+  const handleResetPassword = async (id, username) => {
+    const token = getToken();
     try {
-      await resetUserPassword(id);
-      alert("Mot de passe réinitialisé.");
-    } catch (e) {
-      alert(e.message);
+      const result = await resetUserPassword(id, token);
+      setResetPasswordModal({
+        username,
+        newPassword: result.new_password,
+        emailEnvoye: result.email_envoye,
+      });
+    } catch {
+      alert("Erreur lors de la réinitialisation.");
     }
   };
 
@@ -255,65 +278,79 @@ function AdminPanel() {
 
         {activeSection === "users" && (
           <>
-            <h2>Utilisateurs</h2>
-            <input
-              placeholder="Rechercher par nom..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <table>
-              <thead>
-                <tr>
-                  <th>Nom</th>
-                  <th>Rôle</th>
-                  <th>Service</th>
-                  <th>Email</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users
-                  .filter((u) => u.username.toLowerCase().includes(searchTerm.toLowerCase()))
-                  .map((u) =>
-                    editingUser === u.id ? (
-                      <tr key={u.id}>
-                        <td><input value={editUserData.username} onChange={(e) => setEditUserData({ ...editUserData, username: e.target.value })} /></td>
-                        <td>
-                          <select value={u.role} onChange={(e) => handleUpdateRole(u.id, e.target.value)}>
-                            <option value="employe">Employé</option>
-                            <option value="responsable">Responsable</option>
-                            <option value="admin">Admin</option>
-                          </select>
-                        </td>
-                        <td><input value={editUserData.service} onChange={(e) => setEditUserData({ ...editUserData, service: e.target.value })} /></td>
-                        <td><input value={editUserData.email} onChange={(e) => setEditUserData({ ...editUserData, email: e.target.value })} /></td>
-                        <td>
-                          <button onClick={() => handleEditSubmit(u.id)}>Sauvegarder</button>
-                          <button onClick={() => setEditingUser(null)}>Annuler</button>
-                        </td>
-                      </tr>
-                    ) : (
-                      <tr key={u.id}>
-                        <td>{u.username}</td>
-                        <td>
-                          <select value={u.role} onChange={(e) => handleUpdateRole(u.id, e.target.value)}>
-                            <option value="employe">Employé</option>
-                            <option value="responsable">Responsable</option>
-                            <option value="admin">Admin</option>
-                          </select>
-                        </td>
-                        <td>{u.service}</td>
-                        <td>{u.email}</td>
-                        <td>
-                          <button onClick={() => handleEditStart(u)}>Éditer</button>
-                          <button onClick={() => handleResetPassword(u.id)}>Reset Mdp</button>
-                          <button onClick={() => handleDeleteUser(u.id)}>Supprimer</button>
-                        </td>
-                      </tr>
-                    )
-                  )}
-              </tbody>
-            </table>
+            <div className="section-header">
+              <h2>Gestion des utilisateurs</h2>
+              <span className="user-count-badge">
+                {users.filter(u => u.username.toLowerCase().includes(searchTerm.toLowerCase())).length} / {users.length} utilisateur{users.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+            <div className="admin-search-bar">
+              <input
+                placeholder="Rechercher par nom..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className="users-table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nom</th>
+                    <th>Rôle</th>
+                    <th>Service</th>
+                    <th>Email</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users
+                    .filter(u => u.username.toLowerCase().includes(searchTerm.toLowerCase()))
+                    .map(u => {
+                      const { label: statusLabel, type: statusType } = getRelativeTime(u.last_login);
+                      return editingUser === u.id ? (
+                        <tr key={u.id} className="editing-row">
+                          <td data-label="Nom"><input value={editUserData.username} onChange={(e) => setEditUserData({ ...editUserData, username: e.target.value })} /></td>
+                          <td data-label="Rôle">
+                            <select value={u.role} onChange={(e) => handleUpdateRole(u.id, e.target.value)}>
+                              <option value="employe">Employé</option>
+                              <option value="responsable">Responsable</option>
+                              <option value="admin">Admin</option>
+                            </select>
+                          </td>
+                          <td data-label="Service"><input value={editUserData.service} onChange={(e) => setEditUserData({ ...editUserData, service: e.target.value })} /></td>
+                          <td data-label="Email"><input value={editUserData.email} onChange={(e) => setEditUserData({ ...editUserData, email: e.target.value })} /></td>
+                          <td data-label="Statut"><span className={`status-badge ${statusType}`}>{statusLabel}</span></td>
+                          <td data-label="Actions">
+                            <button className="btn-save" onClick={() => handleEditSubmit(u.id)}>Sauvegarder</button>
+                            <button className="btn-cancel" onClick={() => setEditingUser(null)}>Annuler</button>
+                          </td>
+                        </tr>
+                      ) : (
+                        <tr key={u.id}>
+                          <td data-label="Nom">{u.username}</td>
+                          <td data-label="Rôle">
+                            <select value={u.role} onChange={(e) => handleUpdateRole(u.id, e.target.value)}>
+                              <option value="employe">Employé</option>
+                              <option value="responsable">Responsable</option>
+                              <option value="admin">Admin</option>
+                            </select>
+                          </td>
+                          <td data-label="Service">{u.service || '—'}</td>
+                          <td data-label="Email">{u.email || '—'}</td>
+                          <td data-label="Statut"><span className={`status-badge ${statusType}`}>{statusLabel}</span></td>
+                          <td data-label="Actions">
+                            <button className="edit-user-button" onClick={() => handleEditStart(u)}>Éditer</button>
+                            <button className="reset-password-button" onClick={() => handleResetPassword(u.id, u.username)}>Reset Mdp</button>
+                            <button className="delete-user-button" onClick={() => setConfirmDeleteId(u.id)}>Supprimer</button>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  }
+                </tbody>
+              </table>
+            </div>
           </>
         )}
 
@@ -359,36 +396,78 @@ function AdminPanel() {
         )}
 
         {activeSection === "register" && (
-          <form onSubmit={handleFormSubmit}>
-            <input name="username" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} placeholder="Nom utilisateur" />
-            <input name="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} placeholder="Email" />
-            <input type="password" name="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} placeholder="Mot de passe" />
-            <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })} placeholder="Confirmer mot de passe" />
-            <select name="role" value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })}>
-              <option value="employe">Employé</option>
-              <option value="responsable">Responsable</option>
-              <option value="admin">Admin</option>
-            </select>
-            <button type="submit">Créer</button>
-          </form>
+          <div className="admin-register-container">
+            {formError && <div className="error-box"><p>{formError}</p></div>}
+            <form onSubmit={handleFormSubmit}>
+              <input name="username" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} placeholder="Nom utilisateur" />
+              <input name="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} placeholder="Email" />
+              <input type="password" name="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} placeholder="Mot de passe" />
+              <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })} placeholder="Confirmer mot de passe" />
+              <select name="role" value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })}>
+                <option value="employe">Employé</option>
+                <option value="responsable">Responsable</option>
+                <option value="admin">Admin</option>
+              </select>
+              <button type="submit">Créer</button>
+            </form>
+          </div>
         )}
 
         {activeSection === "account" && (
-          <div>
+          <div className="account-info">
             <h2>Mon Compte</h2>
             <p>Email : {userInfo?.email}</p>
-            <button onClick={() => setShowPasswordForm(!showPasswordForm)}>Changer mot de passe</button>
+            <button className="change-password-button" onClick={() => setShowPasswordForm(!showPasswordForm)}>
+              Changer mot de passe
+            </button>
             {showPasswordForm && (
-              <div>
+              <div className="password-form">
                 <input type={passwordVisible ? "text" : "password"} value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} placeholder="Ancien mot de passe" />
                 <input type={passwordVisible ? "text" : "password"} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Nouveau mot de passe" />
                 <input type={passwordVisible ? "text" : "password"} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirmer" />
+                <button type="button" onClick={handlePasswordVisibilityToggle}>
+                  {passwordVisible ? "Masquer" : "Afficher"}
+                </button>
+                {Array.isArray(passwordError) && passwordError.length > 0 && (
+                  <div className="error-box">
+                    <ul>{passwordError.map((e, i) => <li key={i}>{e}</li>)}</ul>
+                  </div>
+                )}
                 <button onClick={handlePasswordChange}>Valider</button>
               </div>
             )}
           </div>
         )}
       </main>
+
+      {resetPasswordModal && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h3>🔑 Mot de passe réinitialisé</h3>
+            <p>Utilisateur : <strong>{resetPasswordModal.username}</strong></p>
+            <p>Nouveau mot de passe :</p>
+            <div className="password-display">{resetPasswordModal.newPassword}</div>
+            {resetPasswordModal.emailEnvoye
+              ? <p className="modal-note success-note">✅ Email envoyé à l'utilisateur.</p>
+              : <p className="modal-note">⚠️ Email non envoyé — communiquez ce mot de passe manuellement.</p>
+            }
+            <button className="btn-primary" onClick={() => setResetPasswordModal(null)}>Fermer</button>
+          </div>
+        </div>
+      )}
+
+      {confirmDeleteId && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h3>⚠️ Confirmer la suppression</h3>
+            <p>Cette action est <strong>irréversible</strong>. Supprimer cet utilisateur ?</p>
+            <div className="modal-actions">
+              <button className="btn-danger" onClick={() => handleDeleteUser(confirmDeleteId)}>Supprimer</button>
+              <button className="btn-cancel" onClick={() => setConfirmDeleteId(null)}>Annuler</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

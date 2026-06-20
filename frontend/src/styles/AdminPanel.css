@@ -1,6 +1,6 @@
 /* src/styles/AdminPanel.css */
 
-/* Layout */
+/* ── Layout ────────────────────────────────────────────── */
 .admin-panel-container {
   display: flex;
   min-height: 100vh;
@@ -8,73 +8,7 @@
   color: #333;
 }
 
-/* AdminFileManager Table */
-.admin-file-container {
-  max-height: 400px;
-  overflow-y: auto;
-  margin-top: 20px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #fff;
-}
-
-.admin-file-container table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.admin-file-container .center-entete {
-  text-align: center;
-}
-
-
-.admin-file-container th,
-.admin-file-container td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: left;
-}
-
-.admin-file-container th {
-  position: sticky;
-  top: 0;
-  background-color: #007bff;
-  color: white;
-  z-index: 2;
-}
-
-/* File Action Buttons */
-.file-action-button {
-  padding: 8px 12px;
-  margin-right: 5px;
-  border: none;
-  border-radius: 4px;
-  color: white;
-  cursor: pointer;
-}
-
-.file-action-button.edit-buttonAdmin {
-  background-color: #007bff;
-}
-
-.file-action-button.delete-buttonAdmin {
-  background-color: #dc3545;
-}
-
-.file-action-button.download-buttonAdmin {
-  background-color: #28a745;
-}
-
-.file-action-button.read-buttonAdmin {
-  background-color: #ffc107;
-}
-
-.file-action-button:hover {
-  opacity: 0.9;
-}
-
-
-/* Sidebar */
+/* ── Sidebar ────────────────────────────────────────────── */
 .admin-sidebar {
   width: 240px;
   background: linear-gradient(180deg, #003366, #00509e);
@@ -114,7 +48,17 @@
   transform: scale(1);
 }
 
-/* Content Area */
+.logout-button {
+  background-color: #dc3545 !important;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.logout-button:hover {
+  background-color: #c82333 !important;
+}
+
+/* ── Content area ───────────────────────────────────────── */
 .admin-content {
   flex: 1;
   padding: 20px 40px;
@@ -128,14 +72,6 @@
   margin-bottom: 20px;
 }
 
-.welcome-message {
-  text-align: center;
-  font-size: 1.1em;
-  color: #555;
-  margin-bottom: 30px;
-}
-
-/* Section Title */
 .admin-content h2 {
   font-size: 1.8em;
   color: #007bff;
@@ -145,204 +81,31 @@
   padding-bottom: 5px;
 }
 
-/* Form: Create a Service */
-.service-form {
-  max-width: 500px;
-  margin: 20px auto;
-  padding: 20px;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  border: 1px solid #ddd;
-}
-
-.service-form h2 {
-  font-size: 1.6em;
-  color: #003366;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.service-form label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 8px;
-  color: #555;
-}
-
-.service-form input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  transition: border-color 0.3s;
-}
-
-.service-form input:focus {
-  border-color: #007bff;
-  outline: none;
-}
-
-.service-form button {
-  width: 48%;
-  padding: 12px;
-  font-size: 1em;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-}
-
-.service-form button[type="submit"] {
-  background-color: #007bff;
-}
-
-.service-form button[type="button"] {
-  background-color: #6c757d;
-}
-
-.service-form button:hover {
-  transform: scale(1.02);
-}
-
-.service-form button[type="submit"]:hover {
-  background-color: #0056b3;
-}
-
-.service-form button[type="button"]:hover {
-  background-color: #5a6268;
-}
-
-.delete-service-button {
-    background-color: #dc3545; /* Rouge vif */
-    color: white; /* Texte en blanc */
-    padding: 8px 12px; /* Espacement interne */
-    border: none; /* Supprime la bordure */
-    border-radius: 4px; /* Coins arrondis */
-    cursor: pointer; /* Pointeur en forme de main */
-    font-size: 0.9em; /* Taille de texte adaptée */
-    transition: background-color 0.3s, transform 0.2s; /* Effets fluides */
-
-}
-
-.delete-service-button:hover {
-    background-color: #c82333; /* Rouge plus sombre au survol */
-    transform: scale(1.05); /* Légère mise en avant */
-}
-
-.delete-service-button:active {
-    background-color: #a71d2a; /* Rouge encore plus sombre au clic */
-    transform: scale(0.98); /* Légère réduction */
-}
-
-
-
-.services-table {
-    position: relative; /* Positionnement relatif pour l'en-tête fixe */
-    background: white;
-    border-radius: 6px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.services-table h3 {
-    font-size: 1.8em;
-    color: #007bff;
-    position: sticky; /* Rendre le titre fixe */
-    top: 0; /* Position en haut du conteneur */
-    z-index: 3; /* Priorité pour être au-dessus des autres éléments */
-    background-color: white; /* Arrière-plan blanc pour masquer le contenu défilant */
-    padding: 10px;
-    border-bottom: 2px solid #007bff;
-    margin: 0; /* Supprime l'espacement pour éviter les sauts visuels */
-    text-align: center;
-  text-transform: uppercase;
-
-}
-
-
-.services-content {
-    overflow-y: auto; /* Permet le défilement uniquement pour le contenu */
-    max-height: 200px; /* Hauteur maximale pour activer le défilement */
-}
-
-
-.service-count {
-    /*float: right;  Place le texte à droite */
-    font-size: 18px; /* Taille légèrement réduite */
-    font-weight: normal; /* Pas trop accentué */
-    color: #ffaa33; /* ou #555 Couleur grise pour différencier du titre*/
-    margin-right: 10px; /* Espacement avec le bord droit */
-    padding: 10px;
-
-}
-
-
-/* Users Container */
-.admin-users-container {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  margin-top: 20px;
-  margin-left: 10px;
-  max-height: 500px;
-  overflow: hidden;
-  position: relative;
-}
-
-/* Submissions Container */
-.admin-submissions-container {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  margin-top: 20px;
-  margin-left: 10px;
-  max-height: 500px;
-  overflow: hidden;
-}
-
-/* Table Styles */
-.admin-table-container {
-    flex: 1;
-    overflow-y: auto; /* Active le défilement vertical */
-    max-height: 400px; /* Hauteur du tableau avec défilement */
-    border-radius: 6px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    background: white;
-}
-
-
+/* ── Global table styles ────────────────────────────────── */
 table {
   width: 100%;
   border-collapse: collapse;
-
 }
-
 
 table, th, td {
   border: 1px solid #ddd;
 }
 
 td, th {
-    padding: 12px;
-    text-align: left;
-    border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd;
 }
-
 
 thead th {
-    position: sticky; /* Fixe les en-têtes */
-    top: 0; /* Distance par rapport au haut */
-    background-color: #003366; /* Arrière-plan bleu */
-    color: white; /* Couleur du texte */
-    z-index: 2; /* Priorité pour rester au-dessus */
-    padding: 10px;
-    text-align: center;
+  position: sticky;
+  top: 0;
+  background-color: #003366;
+  color: white;
+  z-index: 2;
+  padding: 10px;
+  text-align: center;
 }
-
 
 tbody tr:nth-child(even) {
   background-color: #f9f9f9;
@@ -353,20 +116,7 @@ tbody tr:hover {
   cursor: pointer;
 }
 
-/* Fixed User Count */
-.user-count {
-  text-align: right;
-  padding: 10px;
-  font-weight: bold;
-  color: #555;
-  border-top: 1px solid #ddd;
-  background-color: #f9f9f9;
-  position: sticky;
-  bottom: 0;
-  z-index: 2;
-}
-
-/* Buttons */
+/* ── Global button styles ───────────────────────────────── */
 button {
   transition: all 0.3s;
 }
@@ -379,124 +129,7 @@ button:active {
   transform: scale(1);
 }
 
-/* Export Buttons */
-.admin-export-buttons-container {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  padding: 15px 0;
-  background-color: #f9f9f9;
-}
-
-.admin-export-button {
-  padding: 10px 20px;
-  background-color: #28a745;
-  border: none;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.admin-export-button:hover {
-  background-color: #218838;
-}
-
-/* Style for register form */
-.admin-register-container {
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 5px;
-  max-width: 500px;
-  margin: auto;
-  border: 1px solid #ddd;
-}
-
-.admin-register-container h2 {
-  color: #003366;
-  text-align: center;
-}
-
-.admin-register-container form div {
-  margin-bottom: 15px;
-}
-
-.admin-register-container label {
-  font-weight: bold;
-}
-
-.admin-register-container input,
-.admin-register-container select {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-/* Buttons in register form */
-.admin-form-actions {
-  display: flex;
-  justify-content: space-between;
-}
-
-.admin-form-actions button {
-  padding: 10px 15px;
-  font-size: 1em;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.admin-form-actions button[type="submit"] {
-  background-color: #007bff;
-  color: white;
-}
-
-.admin-form-actions button[type="button"] {
-  background-color: #6c757d;
-  color: white;
-}
-
-.admin-form-actions button[type="button"]:hover {
-  background-color: #5a6268;
-}
-
-.admin-form-actions button[type="submit"]:hover {
-  background-color: #0056b3;
-}
-
-
-/* Style for checkbox label */
-.form-group-checkbox label {
-  color: #555;
-  font-size: 0.9em;
-  cursor: pointer;
-}
-.form-group-checkbox input[type="checkbox"] {
-  margin-right: 5px;
-}
-
-.form-group-checkbox {
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-  gap: 8px;
-}
-
-.logout-button {
-  background-color: #dc3545;
-  padding: 10px;
-  border-radius: 6px;
-}
-
-.logout-button:hover {
-  background-color: #c82333;
-}
-
-
-/* Search bar */
+/* ── Search bar ─────────────────────────────────────────── */
 .admin-search-bar {
   margin: 20px 0;
   text-align: center;
@@ -517,15 +150,69 @@ button:active {
   outline: none;
 }
 
-/* Account info section */
+/* ── User table action buttons ──────────────────────────── */
+.reset-password-button,
+.delete-user-button,
+.edit-user-button {
+  padding: 8px 12px;
+  margin-right: 5px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+}
+
+.edit-user-button {
+  background-color: #007bff;
+}
+
+.reset-password-button {
+  background-color: #ffc107;
+}
+
+.delete-user-button {
+  background-color: #dc3545;
+}
+
+.edit-user-button:hover {
+  background-color: #0056b3;
+}
+
+.reset-password-button:hover {
+  background-color: #e0a800;
+}
+
+.delete-user-button:hover {
+  background-color: #c82333;
+}
+
+/* ── Register form ──────────────────────────────────────── */
+.admin-register-container {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 500px;
+  margin: auto;
+  border: 1px solid #ddd;
+}
+
+.admin-register-container input,
+.admin-register-container select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+/* ── Account section ────────────────────────────────────── */
 .account-info {
   background-color: #f9f9f9;
   padding: 20px;
   border: 2px solid #ddd;
   border-radius: 10px;
   max-width: 500px;
-  margin: auto;
-  margin-top: 20px;
+  margin: 20px auto;
 }
 
 .change-password-button {
@@ -542,17 +229,11 @@ button:active {
   background-color: #0056b3;
 }
 
-/* Formulaire de modification de mot de passe */
 .password-form {
   margin-top: 15px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-}
-
-.password-form label {
-  font-weight: bold;
-  margin-bottom: 5px;
 }
 
 .password-form input {
@@ -562,198 +243,74 @@ button:active {
   border-radius: 4px;
 }
 
-.password-form .form-buttons {
+/* ── Reset password modal ───────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
-.password-form .submit-button {
-  background-color: #007bff;
-  color: white;
+.modal-box {
+  background: #fff;
+  border-radius: 10px;
+  padding: 30px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.password-form .cancel-button {
-  background-color: #dc3545;
-  color: white;
+.modal-box h3 {
+  font-size: 1.3em;
+  color: #003366;
+  margin: 0;
 }
 
-.password-form .submit-button:hover {
-  background-color: #0056b3;
-}
-
-.password-form .cancel-button:hover {
-  background-color: #c82333;
-}
-
-/* Edit User Form */
-.edit-user-form {
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 5px;
-  max-width: 500px;
-  margin: auto;
-  border: 1px solid #ddd;
-}
-
-.edit-user-form h2 {
+.password-display {
+  background: #f0f4ff;
+  border: 1px solid #c0cfe8;
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-family: monospace;
+  font-size: 1.2em;
+  letter-spacing: 0.1em;
   color: #003366;
   text-align: center;
+  user-select: all;
 }
 
-.edit-user-form label {
-  font-weight: bold;
-  display: block;
-  margin-top: 10px;
+.modal-note {
+  font-size: 0.9em;
+  color: #555;
+  margin: 0;
 }
 
-.edit-user-form input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-top: 5px;
+.success-note {
+  color: #1a7a3f;
 }
 
-.edit-form-actions {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 15px;
-}
-
-.edit-form-actions button {
-  padding: 10px 15px;
-  font-size: 1em;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.edit-form-actions button:first-child {
-  background-color: #28a745;
-  color: white;
-}
-
-.edit-form-actions button:last-child {
-  background-color: #6c757d;
-  color: white;
-}
-
-.edit-form-actions button:first-child:hover {
-  background-color: #218838;
-}
-
-.edit-form-actions button:last-child:hover {
-  background-color: #5a6268;
-}
-
-/* Buttons in the user management table */
-.reset-password-button, .delete-user-button, .edit-user-button {
-  padding: 8px 12px;
-  margin-right: 5px;
-  border: none;
-  border-radius: 4px;
-  color: white;
-  cursor: pointer;
-}
-
-.reset-password-button {
-  background-color: #ffc107;
-}
-
-.delete-user-button {
-  background-color: #dc3545;
-}
-
-.edit-user-button {
+.btn-primary {
+  align-self: flex-end;
+  padding: 10px 20px;
   background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1em;
 }
 
-.reset-password-button:hover {
-  background-color: #e0a800;
-}
-
-.delete-user-button:hover {
-  background-color: #c82333;
-}
-
-.edit-user-button:hover {
+.btn-primary:hover {
   background-color: #0056b3;
 }
 
-
-.styled-button {
-    padding: 10px 20px;
-    font-size: 1em;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.admin-delete-button {
-    background-color: #dc3545;
-}
-
-.admin-delete-button:hover {
-    background-color: #c82333;
-}
-
-.admin-reset-button {
-    background-color: #007bff;
-}
-
-.admin-reset-button:hover {
-    background-color: #0056b3;
-}
-
-
-/* User Info Badge */
-.user-infoAdmin {
-  font-size: 1em;
-  font-weight: bold;
-  color: #003366;
-  padding: 8px 15px;
-  border: 2px solid #003366;
-  border-radius: 6px;
-  display: inline-block;
-  background-color: rgba(0, 51, 102, 0.1);
-}
-
-.user-infoAdmin:before {
-  content: "👤 ";
-  margin-right: 8px;
-}
-
-/* Titre CLD */
-/*.titrecld{
-  font-size: 1em;
-  font-weight: bold;
-  color: #003366; 
-  border: 2px solid #003366;
-  padding: 10px 10px;
-  border-radius: 80px; 
-  display: inline-block;
-  margin-left: 100vh;
-  background-color: rgba(0, 51, 102, 0.05);
-}*/
-
-
-.titrecld{
-  font-size: 1em;
-  font-weight: bold;
-  color: white; /* Texte en blanc */
-  background-color: #007bff; /* Bleu vif */
-  padding: 8px 15px;
-  border-radius: 15px; /* Coins arrondis */
-  display: inline-block;
-  margin-bottom: 10px;
-  margin-left: 100vh;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Légère ombre pour un effet de badge */
-}
-
-/* Message d'erreur de Modification de Mot de passe */
+/* ── Error box ──────────────────────────────────────────── */
 .error-box {
   background-color: #f8d7da;
   color: #721c24;
@@ -762,6 +319,7 @@ button:active {
   padding: 15px;
   margin-top: 10px;
   font-size: 14px;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
 .error-box p {
@@ -778,11 +336,6 @@ button:active {
   margin-bottom: 5px;
 }
 
-
-.error-box {
-  animation: fadeIn 0.5s ease-in-out;
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -794,4 +347,138 @@ button:active {
   }
 }
 
+/* ── Section header ────────────────────────────────────── */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.section-header h2 { margin: 0; border: none; }
 
+.user-count-badge {
+  background: #e8f0fe;
+  color: #003366;
+  border: 1px solid #b3c8f5;
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+/* ── Status badges ─────────────────────────────────────── */
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.78em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.status-badge.online    { background: #d4edda; color: #155724; }
+.status-badge.recent    { background: #cce5ff; color: #004085; }
+.status-badge.today     { background: #fff3cd; color: #856404; }
+.status-badge.yesterday { background: #fde8c8; color: #7a4800; }
+.status-badge.old       { background: #f0f0f0; color: #555; }
+.status-badge.inactive  { background: #f8d7da; color: #721c24; }
+
+/* ── Table wrapper ─────────────────────────────────────── */
+.users-table-wrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  background: white;
+}
+.editing-row { background-color: #f0f8ff !important; }
+.editing-row input {
+  width: 100%; padding: 5px;
+  border: 1px solid #007bff; border-radius: 4px;
+}
+
+/* ── Inline action buttons ─────────────────────────────── */
+.btn-save {
+  background: #28a745; color: white; border: none;
+  padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-right: 5px;
+}
+.btn-save:hover { background: #218838; }
+
+.btn-cancel {
+  background: #6c757d; color: white; border: none;
+  padding: 6px 12px; border-radius: 4px; cursor: pointer;
+}
+.btn-cancel:hover { background: #5a6268; }
+
+.btn-danger {
+  background: #dc3545; color: white; border: none;
+  padding: 10px 24px; border-radius: 6px; cursor: pointer; font-weight: 600;
+}
+.btn-danger:hover { background: #c82333; }
+
+/* ── Modal actions row ─────────────────────────────────── */
+.modal-actions {
+  display: flex; gap: 12px;
+  justify-content: center; margin-top: 20px;
+}
+
+/* ── Responsive ────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .admin-sidebar { width: 200px; }
+  .admin-content { padding: 20px; }
+}
+
+@media (max-width: 768px) {
+  .admin-panel-container { flex-direction: column; }
+
+  .admin-sidebar {
+    width: 100%; flex-direction: row;
+    flex-wrap: wrap; gap: 6px;
+    padding: 10px; min-height: auto;
+  }
+  .admin-sidebar button {
+    flex: 1 1 120px; padding: 8px 10px;
+    font-size: 0.78em; border-radius: 6px;
+  }
+  .admin-sidebar button.active {
+    border-left: none;
+    border-bottom: 3px solid #ffc107;
+    padding-left: 10px;
+  }
+  .admin-sidebar .logo { display: none; }
+  .admin-content { padding: 16px; }
+
+  .users-table-wrapper table,
+  .users-table-wrapper thead,
+  .users-table-wrapper tbody,
+  .users-table-wrapper th,
+  .users-table-wrapper td,
+  .users-table-wrapper tr { display: block; }
+
+  .users-table-wrapper thead tr { display: none; }
+
+  .users-table-wrapper tbody tr {
+    margin-bottom: 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px; padding: 12px;
+    background: white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  }
+  .users-table-wrapper td {
+    border: none; padding: 6px 4px;
+    display: flex; align-items: center;
+    gap: 8px; font-size: 0.9em;
+  }
+  .users-table-wrapper td::before {
+    content: attr(data-label);
+    font-weight: 700; min-width: 75px;
+    color: #666; font-size: 0.82em;
+    text-transform: uppercase;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-box { padding: 20px 16px; }
+  .edit-user-button, .reset-password-button, .delete-user-button {
+    padding: 6px 8px; font-size: 0.78em; margin-right: 3px;
+  }
+}
