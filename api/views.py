@@ -113,7 +113,7 @@ def get_all_users(request):
             'email': u.email,
             'role': u.role,
             'service': u.service,
-            'last_seen': u.last_seen.isoformat() if u.last_seen else None,
+            'last_seen': (u.last_seen or u.last_login).isoformat() if (u.last_seen or u.last_login) else None,
             'is_active': u.is_active,
             'date_joined': u.date_joined.isoformat() if u.date_joined else None,
         }
@@ -217,7 +217,7 @@ def reset_user_password(request, user_id):
     try:
         send_mail(
             subject='Réinitialisation de mot de passe',
-            message=f'Bonjour {utilisateur.username}, votre nouveau mot de passe est : {nouveau_mot_de_passe}',
+            message=f'Bonjour {utilisateur.username},\n\nVotre mot de passe a été réinitialisé par un administrateur.\n\nNouveau mot de passe : {nouveau_mot_de_passe}\n\nVous pouvez le modifier dans les paramètres de votre compte une fois connecté.\n\nCordialement,\nL\'équipe DMT',
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[utilisateur.email],
             fail_silently=False,
