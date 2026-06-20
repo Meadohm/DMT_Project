@@ -482,3 +482,35 @@ button:active {
     padding: 6px 8px; font-size: 0.78em; margin-right: 3px;
   }
 }
+
+/* ── Actions column — boutons compacts ─────────────────── */
+td:last-child {
+  white-space: nowrap;
+  min-width: 180px;
+}
+
+.edit-user-button,
+.reset-password-button,
+.delete-user-button {
+  display: inline-block;
+  padding: 5px 8px;
+  margin: 2px 1px;
+  font-size: 0.78em;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* ── Tableau scrollable sans bouger la page ────────────── */
+.users-table-wrapper {
+  max-height: 65vh;
+  overflow-y: auto;
+  overflow-x: auto;
+  position: relative;
+}
+
+.users-table-wrapper thead th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background-color: #003366;
+}

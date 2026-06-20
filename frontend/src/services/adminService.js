@@ -56,9 +56,10 @@ export const updateUserRole = async (userId, newRole) => {
 
 export const resetUserPassword = async (userId) => {
   const token = getToken();
-  return axios.post(`${API_BASE_URL}/utilisateurs/${userId}/reset_password/`, {}, {
+  const response = await axios.post(`${API_BASE_URL}/utilisateurs/${userId}/reset_password/`, {}, {
     headers: { Authorization: `Token ${token}` },
   });
+  return response.data;
 };
 
 export const deleteUserAccount = async (userId) => {

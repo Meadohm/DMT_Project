@@ -63,7 +63,9 @@ def login_view(request):
     if not user:
         return Response({'error': 'Nom d’utilisateur ou mot de passe incorrect'}, status=status.HTTP_400_BAD_REQUEST)
     token, _ = Token.objects.get_or_create(user=user)
-    
+    user.last_login = timezone.now()
+    user.save(update_fields=['last_login'])
+
     AuditLog.objects.create(
     utilisateur=user,
     action='LOGIN',
