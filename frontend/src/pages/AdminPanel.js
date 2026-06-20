@@ -76,6 +76,8 @@ function AdminPanel() {
   });
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [resettingId, setResettingId] = useState(null);
+  const [formSuccess, setFormSuccess] = useState("");
+  const [formPasswordVisible, setFormPasswordVisible] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -256,23 +258,23 @@ function AdminPanel() {
   // Gestion création utilisateur
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    setFormError('');
+    setFormSuccess('');
     if (formData.password !== formData.confirmPassword) {
-      setFormError("Mots de passe différents");
+      setFormError('Les mots de passe ne correspondent pas.');
+      return;
+    }
+    if (formData.password.length < 6) {
+      setFormError('Le mot de passe doit contenir au moins 6 caractères.');
       return;
     }
     try {
       await createUser(formData);
+      setFormSuccess(`✅ Utilisateur "${formData.username}" créé avec succès.`);
+      setFormData({ username: '', email: '', password: '', confirmPassword: '', role: 'employe', service: '' });
       fetchData();
-      setFormData({
-        username: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        role: "employe",
-        service: "",
-      });
-    } catch (e) {
-      setFormError("Erreur création utilisateur");
+    } catch (err) {
+      setFormError(err.response?.data?.error || 'Erreur lors de la création.');
     }
   };
 
@@ -432,20 +434,92 @@ function AdminPanel() {
         )}
 
         {activeSection === "register" && (
-          <div className="admin-register-container">
+          <div className="register-section">
+            <div className="section-header">
+              <h2>Créer un utilisateur</h2>
+            </div>
             {formError && <div className="error-box"><p>{formError}</p></div>}
-            <form onSubmit={handleFormSubmit}>
-              <input name="username" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} placeholder="Nom utilisateur" />
-              <input name="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} placeholder="Email" />
-              <input type="password" name="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} placeholder="Mot de passe" />
-              <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })} placeholder="Confirmer mot de passe" />
-              <select name="role" value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })}>
-                <option value="employe">Employé</option>
-                <option value="responsable">Responsable</option>
-                <option value="admin">Admin</option>
-              </select>
-              <button type="submit">Créer</button>
-            </form>
+            {formSuccess && <div className="success-box"><p>{formSuccess}</p></div>}
+            <div className="register-form-card">
+              <form onSubmit={handleFormSubmit}>
+                <div className="form-group">
+                  <label>Nom d'utilisateur *</label>
+                  <input
+                    name="username"
+                    value={formData.username}
+                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                    placeholder="ex: jean.dupont"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Email</label>
+                  <input
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="ex: jean.dupont@dmt.ci"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Mot de passe *</label>
+                  <div className="input-with-eye">
+                    <input
+                      type={formPasswordVisible ? "text" : "password"}
+                      name="password"
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      placeholder="Minimum 6 caractères"
+                    />
+                    <button type="button" className="eye-btn" onClick={() => setFormPasswordVisible(!formPasswordVisible)}>
+                      {formPasswordVisible ? '🙈' : '👁️'}
+                    </button>
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label>Confirmer le mot de passe *</label>
+                  <div className="input-with-eye">
+                    <input
+                      type={formPasswordVisible ? "text" : "password"}
+                      name="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                      placeholder="Répéter le mot de passe"
+                    />
+                  </div>
+                  {formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword && (
+                    <p className="field-error">Les mots de passe ne correspondent pas</p>
+                  )}
+                  {formData.password && formData.confirmPassword && formData.password === formData.confirmPassword && (
+                    <p className="field-success">✓ Les mots de passe correspondent</p>
+                  )}
+                </div>
+                <div className="form-group">
+                  <label>Rôle *</label>
+                  <select name="role" value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })}>
+                    <option value="employe">Employé</option>
+                    <option value="responsable">Responsable</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Service</label>
+                  <select name="service" value={formData.service || ''} onChange={(e) => setFormData({ ...formData, service: e.target.value })}>
+                    <option value="">— Aucun service —</option>
+                    {services.map(s => (
+                      <option key={s.id} value={s.nom}>{s.nom}</option>
+                    ))}
+                  </select>
+                </div>
+                <button
+                  type="submit"
+                  className="btn-primary"
+                  disabled={formData.password !== formData.confirmPassword || !formData.username || !formData.password}
+                >
+                  Créer l'utilisateur
+                </button>
+              </form>
+            </div>
           </div>
         )}
 
