@@ -615,6 +615,7 @@ td:last-child {
   display: flex;
   gap: 12px;
   margin-top: 4px;
+  justify-content: center;
 }
 
 /* ── Welcome banner ─────────────────────────────────────── */
