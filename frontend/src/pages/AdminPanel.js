@@ -1,6 +1,7 @@
 // src/pages/AdminPanel.js
 
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import {
   getUsers,
   updateUserRole,
@@ -20,6 +21,7 @@ import { validatePassword } from "../services/validators";
 import { getHistorique, deleteHistorique } from "../services/fileService"; // ✅ Uniformisation
 import AdminFileManager from "../services/AdminFileManager"; // ✅ Composant admin moderne
 
+import API_BASE_URL from "../config";
 import logo from "../assets/dmt.png";
 import "../styles/AdminPanel.css";
 
@@ -73,10 +75,28 @@ function AdminPanel() {
     service: "",
   });
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [resettingId, setResettingId] = useState(null);
 
   useEffect(() => {
     fetchData();
     fetchServices();
+    const refreshInterval = setInterval(() => {
+      fetchData();
+    }, 5000);
+    return () => clearInterval(refreshInterval);
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    const heartbeat = () => {
+      axios.post(`${API_BASE_URL}/last-seen/`, {}, {
+        headers: { Authorization: `Token ${token}` }
+      }).catch(() => {});
+    };
+    heartbeat();
+    const interval = setInterval(heartbeat, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const fetchServices = async () => {
@@ -179,9 +199,9 @@ function AdminPanel() {
   };
 
   const handleResetPassword = async (id, username) => {
-    const token = getToken();
+    setResettingId(id);
     try {
-      const result = await resetUserPassword(id, token);
+      const result = await resetUserPassword(id);
       setResetPasswordModal({
         username,
         newPassword: result.new_password,
@@ -189,6 +209,8 @@ function AdminPanel() {
       });
     } catch {
       alert("Erreur lors de la réinitialisation.");
+    } finally {
+      setResettingId(null);
     }
   };
 
@@ -295,6 +317,7 @@ function AdminPanel() {
               <table>
                 <thead>
                   <tr>
+                    <th>#</th>
                     <th>Nom</th>
                     <th>Rôle</th>
                     <th>Service</th>
@@ -306,10 +329,16 @@ function AdminPanel() {
                 <tbody>
                   {users
                     .filter(u => u.username.toLowerCase().includes(searchTerm.toLowerCase()))
-                    .map(u => {
-                      const { label: statusLabel, type: statusType } = getRelativeTime(u.last_login);
+                    .sort((a, b) => {
+                      if (a.id === userInfo?.id) return -1;
+                      if (b.id === userInfo?.id) return 1;
+                      return 0;
+                    })
+                    .map((u, index) => {
+                      const { label: statusLabel, type: statusType } = getRelativeTime(u.last_seen);
                       return editingUser === u.id ? (
                         <tr key={u.id} className="editing-row">
+                          <td data-label="#">{index + 1}</td>
                           <td data-label="Nom"><input value={editUserData.username} onChange={(e) => setEditUserData({ ...editUserData, username: e.target.value })} /></td>
                           <td data-label="Rôle">
                             <select value={u.role} onChange={(e) => handleUpdateRole(u.id, e.target.value)}>
@@ -328,6 +357,7 @@ function AdminPanel() {
                         </tr>
                       ) : (
                         <tr key={u.id}>
+                          <td data-label="#">{index + 1}</td>
                           <td data-label="Nom">{u.username}</td>
                           <td data-label="Rôle">
                             <select value={u.role} onChange={(e) => handleUpdateRole(u.id, e.target.value)}>
@@ -341,7 +371,13 @@ function AdminPanel() {
                           <td data-label="Statut"><span className={`status-badge ${statusType}`}>{statusLabel}</span></td>
                           <td data-label="Actions">
                             <button className="edit-user-button" onClick={() => handleEditStart(u)}>Éditer</button>
-                            <button className="reset-password-button" onClick={() => handleResetPassword(u.id, u.username)}>Reset Mdp</button>
+                            <button
+                              className="reset-password-button"
+                              onClick={() => handleResetPassword(u.id, u.username)}
+                              disabled={resettingId === u.id}
+                            >
+                              {resettingId === u.id ? '⏳' : 'Reset Mdp'}
+                            </button>
                             <button className="delete-user-button" onClick={() => setConfirmDeleteId(u.id)}>Supprimer</button>
                           </td>
                         </tr>

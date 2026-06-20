@@ -15,6 +15,7 @@ class Utilisateur(AbstractUser):
         ('employe', 'Employé'),
     ]
     role = models.CharField(max_length=225, choices=ROLE_CHOICES, default='employe')
+    last_seen = models.DateTimeField(null=True, blank=True)
     service = models.CharField(max_length=255, null=True, blank=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
 

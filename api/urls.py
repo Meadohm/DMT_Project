@@ -17,6 +17,7 @@ urlpatterns = [
     path('utilisateurs/<int:user_id>/delete/', views.delete_user_account, name='delete_user_account'),
     path('users/', views.list_users_for_sharing, name='list_users_for_sharing'),  # API employé
     path('update_password/', views.update_password_view, name='update_password'),
+    path('last-seen/', views.update_last_seen, name='update_last_seen'),
 
     # HISTORIQUE
     path('historique/', views.get_historique, name='get_historique'),

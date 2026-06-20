@@ -75,6 +75,15 @@ def login_view(request):
     
     return Response({'token': token.key, 'role': user.role}, status=status.HTTP_200_OK)
 
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_last_seen(request):
+    from django.utils import timezone
+    request.user.last_seen = timezone.now()
+    request.user.save(update_fields=['last_seen'])
+    return Response({'ok': True})
+
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -95,7 +104,7 @@ def get_user_view(request):
 @permission_classes([IsAdminUser | IsCustomAdminUser])
 def get_all_users(request):
     utilisateurs = Utilisateur.objects.all().only(
-        "id", "username", "email", "role", "service", "last_login", "is_active", "date_joined"
+        "id", "username", "email", "role", "service", "last_seen", "is_active", "date_joined"
     )
     data = [
         {
@@ -104,7 +113,7 @@ def get_all_users(request):
             'email': u.email,
             'role': u.role,
             'service': u.service,
-            'last_login': u.last_login.isoformat() if u.last_login else None,
+            'last_seen': u.last_seen.isoformat() if u.last_seen else None,
             'is_active': u.is_active,
             'date_joined': u.date_joined.isoformat() if u.date_joined else None,
         }

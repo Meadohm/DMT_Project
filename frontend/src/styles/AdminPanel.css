@@ -514,3 +514,8 @@ td:last-child {
   z-index: 3;
   background-color: #003366;
 }
+
+.reset-password-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
