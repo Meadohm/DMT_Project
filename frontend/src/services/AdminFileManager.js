@@ -189,9 +189,15 @@ function AdminFileManager() {
       ⬇️ Télécharger pour ouvrir
     </button>
     <div style={{marginTop:'12px'}}>
-      <button className="btn-cancel" style={{fontSize:'0.82em'}} onClick={() => window.open(getMediaUrl(previewFile.fichier), '_blank')}>
+      <a
+        href={getMediaUrl(previewFile.fichier)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="btn-cancel"
+        style={{fontSize:'0.82em', textDecoration:'none', display:'inline-block', padding:'6px 12px'}}
+      >
         Ouvrir dans un nouvel onglet
-      </button>
+      </a>
     </div>
   </div>
 )}
@@ -252,7 +258,7 @@ function AdminFileManager() {
           </>
         )}
         <div className="stat-card-modern stat-chart">
-          <ResponsiveContainer width="100%" height={120}>
+          <ResponsiveContainer width="100%" height={160}>
             <PieChart>
               <Pie
                 data={fileStats.typeDistribution}
@@ -260,7 +266,7 @@ function AdminFileManager() {
                 nameKey="name"
                 cx="50%"
                 cy="50%"
-                outerRadius={45}
+                outerRadius={40}
                 label={({ name, value }) => `${name}:${value}`}
                 labelLine={true}
                 fontSize={10}
