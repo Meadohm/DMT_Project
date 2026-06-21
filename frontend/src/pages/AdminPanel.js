@@ -325,10 +325,6 @@ function AdminPanel() {
             <span className="welcome-label">Bienvenue,</span>
             <span className="welcome-name">{userInfo?.username}</span>
           </div>
-          <div className="welcome-datetime">
-            <span className="welcome-date">{formatDate(currentTime)}</span>
-            <span className="welcome-time">{formatTime(currentTime)}</span>
-          </div>
         </div>
 
         {activeSection === "users" && (
