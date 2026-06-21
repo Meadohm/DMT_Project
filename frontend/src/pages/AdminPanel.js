@@ -81,6 +81,11 @@ function AdminPanel() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [toast, setToast] = useState(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [historiqueSearch, setHistoriqueSearch] = useState('');
+  const [historiqueAction, setHistoriqueAction] = useState('');
+  const [historiquePage, setHistoriquePage] = useState(1);
+  const [historiqueTotal, setHistoriqueTotal] = useState(0);
+  const [confirmDeleteHistoriqueId, setConfirmDeleteHistoriqueId] = useState(null);
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
@@ -155,12 +160,18 @@ function AdminPanel() {
   };
 
   // Historique
-  const fetchHistorique = async () => {
+  const fetchHistorique = async (page = 1, action = '', search = '') => {
     try {
-      const response = await getHistorique();
-      setHistorique(response);
+      const token = localStorage.getItem('token');
+      const params = new URLSearchParams({ page, ...(action && { action }), ...(search && { search }) });
+      const res = await axios.get(`${API_BASE_URL}/historique/?${params}`, {
+        headers: { Authorization: `Token ${token}` }
+      });
+      setHistorique(res.data.results);
+      setHistoriqueTotal(res.data.total);
+      setHistoriquePage(res.data.page);
     } catch (e) {
-      setError("Erreur récupération historique");
+      console.error('Erreur historique', e);
     }
   };
 
@@ -454,22 +465,80 @@ function AdminPanel() {
 
         {activeSection === "submissions" && (
           <>
-            <h2>Historique des actions</h2>
-            <table>
-              <thead>
-                <tr><th>Fichier</th><th>Action</th><th>Date</th><th>Supprimer</th></tr>
-              </thead>
-              <tbody>
-                {historique.map((h) => (
-                  <tr key={h.id}>
-                    <td>{h.fichier}</td>
-                    <td>{h.action}</td>
-                    <td>{h.date}</td>
-                    <td><button onClick={() => handleDeleteHistorique(h.id)}>❌</button></td>
+            <div className="section-header">
+              <h2>Historique des actions</h2>
+              <span className="user-count-badge">{historiqueTotal} entrée{historiqueTotal !== 1 ? 's' : ''}</span>
+            </div>
+            <div className="historique-filters">
+              <input
+                className="historique-search"
+                placeholder="Rechercher par utilisateur..."
+                value={historiqueSearch}
+                onChange={(e) => { setHistoriqueSearch(e.target.value); fetchHistorique(1, historiqueAction, e.target.value); setHistoriquePage(1); }}
+              />
+              <select
+                className="historique-select"
+                value={historiqueAction}
+                onChange={(e) => { setHistoriqueAction(e.target.value); fetchHistorique(1, e.target.value, historiqueSearch); setHistoriquePage(1); }}
+              >
+                <option value="">Toutes les actions</option>
+                <option value="LOGIN">Connexion</option>
+                <option value="UPDATE">Modification</option>
+                <option value="DELETE">Suppression</option>
+                <option value="CREATE">Création</option>
+                <option value="UPLOAD">Upload</option>
+                <option value="SHARE">Partage</option>
+              </select>
+              <button className="btn-cancel" onClick={() => { setHistoriqueSearch(''); setHistoriqueAction(''); fetchHistorique(1, '', ''); }}>
+                Réinitialiser
+              </button>
+            </div>
+            <div className="users-table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Utilisateur</th>
+                    <th>Action</th>
+                    <th>Objet</th>
+                    <th>Date</th>
+                    <th>Supprimer</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {historique.map((h, index) => (
+                    <tr key={h.id}>
+                      <td>{(historiquePage - 1) * 20 + index + 1}</td>
+                      <td>{h.utilisateur}</td>
+                      <td><span className={`action-badge action-${h.action.toLowerCase()}`}>{h.action_display}</span></td>
+                      <td className="objet-cell">{h.objet}</td>
+                      <td>{h.date}</td>
+                      <td>
+                        <button className="delete-user-button" onClick={() => setConfirmDeleteHistoriqueId(h.id)}>Supprimer</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="pagination">
+              <button className="btn-cancel" disabled={historiquePage === 1} onClick={() => { const p = historiquePage - 1; fetchHistorique(p, historiqueAction, historiqueSearch); }}>← Précédent</button>
+              <span className="pagination-info">Page {historiquePage} / {Math.ceil(historiqueTotal / 20) || 1}</span>
+              <button className="btn-cancel" disabled={historiquePage * 20 >= historiqueTotal} onClick={() => { const p = historiquePage + 1; fetchHistorique(p, historiqueAction, historiqueSearch); }}>Suivant →</button>
+            </div>
+
+            {confirmDeleteHistoriqueId && (
+              <div className="modal-overlay">
+                <div className="modal-box">
+                  <h3>⚠️ Supprimer cette entrée ?</h3>
+                  <p>Cette action est <strong>irréversible</strong>.</p>
+                  <div className="modal-actions">
+                    <button className="btn-danger" onClick={() => { handleDeleteHistorique(confirmDeleteHistoriqueId); setConfirmDeleteHistoriqueId(null); }}>Supprimer</button>
+                    <button className="btn-cancel" onClick={() => setConfirmDeleteHistoriqueId(null)}>Annuler</button>
+                  </div>
+                </div>
+              </div>
+            )}
           </>
         )}
 

@@ -423,18 +423,35 @@ def delete_centralized_file(request, file_id):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAdminUser | IsCustomAdminUser])
 def get_historique(request):
-    logs = AuditLog.objects.select_related('utilisateur').all()
+    logs = AuditLog.objects.select_related('utilisateur').order_by('-timestamp')
+
+    action_filter = request.GET.get('action', '')
+    search = request.GET.get('search', '')
+
+    if action_filter:
+        logs = logs.filter(action=action_filter)
+    if search:
+        logs = logs.filter(utilisateur__username__icontains=search)
+
+    total = logs.count()
+    page = int(request.GET.get('page', 1))
+    page_size = 20
+    start = (page - 1) * page_size
+    end = start + page_size
+    logs = logs[start:end]
+
     data = [
         {
             'id': log.id,
-            'fichier': log.objet,
-            'action': log.get_action_display(),
+            'objet': log.objet,
+            'action': log.action,
+            'action_display': log.get_action_display(),
             'date': log.timestamp.strftime('%d/%m/%Y %H:%M'),
             'utilisateur': log.utilisateur.username if log.utilisateur else '—',
         }
         for log in logs
     ]
-    return Response(data)
+    return Response({'results': data, 'total': total, 'page': page, 'page_size': page_size})
 
 
 @api_view(['DELETE'])

@@ -977,3 +977,78 @@ td:last-child {
 .users-table-wrapper td:nth-child(2) {
   text-align: left;
 }
+
+/* ── Historique filters ──────────────────────────────────── */
+.historique-filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.historique-search {
+  padding: 9px 14px;
+  border: 1px solid #dde3ea;
+  border-radius: 6px;
+  font-size: 0.9em;
+  min-width: 220px;
+  flex: 1;
+}
+
+.historique-select {
+  padding: 9px 14px;
+  border: 1px solid #dde3ea;
+  border-radius: 6px;
+  font-size: 0.9em;
+  background: white;
+  cursor: pointer;
+}
+
+.historique-search:focus,
+.historique-select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+}
+
+/* ── Action badges ───────────────────────────────────────── */
+.action-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.78em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.action-login   { background: #d4edda; color: #155724; }
+.action-update  { background: #fff3cd; color: #856404; }
+.action-delete  { background: #f8d7da; color: #721c24; }
+.action-create  { background: #cce5ff; color: #004085; }
+.action-upload  { background: #e2d9f3; color: #4a235a; }
+.action-share   { background: #fde8c8; color: #7a4800; }
+
+/* ── Objet cell ──────────────────────────────────────────── */
+.objet-cell {
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+
+/* ── Pagination ──────────────────────────────────────────── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+  padding: 8px 0;
+}
+
+.pagination-info {
+  font-size: 0.9em;
+  color: #555;
+  font-weight: 600;
+}
