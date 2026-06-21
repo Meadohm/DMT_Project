@@ -18,8 +18,8 @@ import { getUser, getToken } from "../services/authService";
 import { updatePassword } from "../services/passwordService";
 import { validatePassword } from "../services/validators";
 
-import { getHistorique, deleteHistorique } from "../services/fileService"; // ✅ Uniformisation
-import AdminFileManager from "../services/AdminFileManager"; // ✅ Composant admin moderne
+import { getHistorique, deleteHistorique } from "../services/fileService";
+import AdminFileManager from "../services/AdminFileManager";
 
 import API_BASE_URL from "../config";
 import logo from "../assets/dmt.png";
@@ -78,6 +78,16 @@ function AdminPanel() {
   const [resettingId, setResettingId] = useState(null);
   const [formSuccess, setFormSuccess] = useState("");
   const [formPasswordVisible, setFormPasswordVisible] = useState(false);
+
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatDate = (date) => date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const formatTime = (date) => date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
   useEffect(() => {
     fetchData();
@@ -284,25 +294,40 @@ function AdminPanel() {
   return (
     <div className="admin-panel-container">
       <aside className="admin-sidebar">
-        <div className="logo">
-          <img src={logo} alt="Logo" className="app-logo" />
-        </div>
         <button onClick={() => setActiveSection("users")}>Gestion utilisateurs</button>
         <button onClick={() => setActiveSection("files")}>Gestion fichiers</button>
         <button onClick={() => { setActiveSection("submissions"); fetchHistorique(); }}>Historique</button>
         <button onClick={() => setActiveSection("createService")}>Créer un service</button>
         <button onClick={() => setActiveSection("register")}>Créer utilisateur</button>
         <button onClick={() => setActiveSection("account")}>Compte utilisateur</button>
-        <button onClick={handleLogout} className="logout-button">Déconnexion</button>
+        <div className="sidebar-bottom">
+          <div className="sidebar-logo">
+            <img src={logo} alt="Logo" className="app-logo" />
+          </div>
+          <button onClick={handleLogout} className="logout-button">Déconnexion</button>
+        </div>
       </aside>
 
       <main className="admin-content">
-        <h1>Panneau Administrateur</h1>
+        <div className="admin-topbar">
+          <div className="admin-topbar-left">
+            <span className="admin-topbar-title">Panneau Administrateur</span>
+            <span className="admin-topbar-subtitle">DMT — Doumbia Moussa Transport</span>
+          </div>
+          <div className="admin-topbar-right">
+            <span className="admin-topbar-date">{formatDate(currentTime)}</span>
+            <span className="admin-topbar-time">{formatTime(currentTime)}</span>
+          </div>
+        </div>
         <div className="welcome-banner">
           <span className="welcome-avatar">{userInfo?.username?.charAt(0).toUpperCase()}</span>
           <div className="welcome-text">
             <span className="welcome-label">Bienvenue,</span>
             <span className="welcome-name">{userInfo?.username}</span>
+          </div>
+          <div className="welcome-datetime">
+            <span className="welcome-date">{formatDate(currentTime)}</span>
+            <span className="welcome-time">{formatTime(currentTime)}</span>
           </div>
         </div>
 
@@ -454,7 +479,7 @@ function AdminPanel() {
                     name="username"
                     value={formData.username}
                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                    placeholder="ex: jean.dupont"
+                    placeholder="ex: namisata.diomande"
                   />
                 </div>
                 <div className="form-group">
@@ -464,7 +489,7 @@ function AdminPanel() {
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="ex: jean.dupont@dmt.ci"
+                    placeholder="ex: namisata.diomande@dmt.ci"
                   />
                 </div>
                 <div className="form-group">
