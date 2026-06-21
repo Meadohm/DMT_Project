@@ -23,7 +23,7 @@ const getCleanName = (filepath) => {
 };
 
 const getMediaUrl = (filepath) => {
-  const base = API_BASE_URL.replace('/api', '');
+  const base = API_BASE_URL.replace(':8000/api', '').replace('/api', '');
   return `${base}/media/${filepath}`;
 };
 
