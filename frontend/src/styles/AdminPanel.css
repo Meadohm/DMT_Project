@@ -48,6 +48,27 @@
   transform: scale(1);
 }
 
+.admin-sidebar button.active {
+  background: white;
+  color: #003366;
+  font-weight: 700;
+  border-left: 4px solid #ffc107;
+  padding-left: 16px;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+  position: relative;
+}
+
+.admin-sidebar button.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #ffc107;
+  border-radius: 0 3px 3px 0;
+}
+
 .logout-button {
   background-color: #dc3545 !important;
   padding: 10px;
