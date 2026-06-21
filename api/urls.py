@@ -22,6 +22,7 @@ urlpatterns = [
     # HISTORIQUE
     path('historique/', views.get_historique, name='get_historique'),
     path('historique/<int:log_id>/', views.delete_historique, name='delete_historique'),
+    path('historique/clear/', views.delete_all_historique, name='delete_all_historique'),
 
     # FICHIERS CENTRALISÉS (admin)
     path('synchroniser_fichiers/', views.synchroniser_fichiers, name='synchroniser_fichiers'),

@@ -467,6 +467,14 @@ def delete_historique(request, log_id):
     return Response({'success': 'Entrée supprimée.'})
 
 
+@api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser])
+def delete_all_historique(request):
+    AuditLog.objects.all().delete()
+    return Response({'success': 'Journal effacé.'})
+
+
 ##### SERVICES #####
 @api_view(['POST'])
 @permission_classes([IsAdminUser])

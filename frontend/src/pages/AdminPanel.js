@@ -86,6 +86,7 @@ function AdminPanel() {
   const [historiquePage, setHistoriquePage] = useState(1);
   const [historiqueTotal, setHistoriqueTotal] = useState(0);
   const [confirmDeleteHistoriqueId, setConfirmDeleteHistoriqueId] = useState(null);
+  const [confirmClearAll, setConfirmClearAll] = useState(false);
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
@@ -185,6 +186,23 @@ function AdminPanel() {
       fetchHistorique(historiquePage, historiqueAction, historiqueSearch);
     } catch (e) {
       alert('Erreur lors de la suppression.');
+    }
+  };
+
+  const handleClearAllHistorique = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`${API_BASE_URL}/historique/clear/`, {
+        headers: { Authorization: `Token ${token}` }
+      });
+      showToast('Journal d\'activité effacé.');
+      fetchHistorique(1, '', '');
+      setHistoriqueSearch('');
+      setHistoriqueAction('');
+      setConfirmClearAll(false);
+    } catch (e) {
+      alert('Erreur lors de la suppression.');
+      setConfirmClearAll(false);
     }
   };
 
@@ -496,6 +514,9 @@ function AdminPanel() {
               <button className="btn-cancel" onClick={() => { setHistoriqueSearch(''); setHistoriqueAction(''); fetchHistorique(1, '', ''); showToast('Filtres réinitialisés.', 'success'); }}>
                 Réinitialiser
               </button>
+              <button className="btn-danger" onClick={() => setConfirmClearAll(true)}>
+                🗑️ Tout effacer
+              </button>
             </div>
             <div className="users-table-wrapper">
               <table>
@@ -544,6 +565,19 @@ function AdminPanel() {
                   <div className="modal-actions">
                     <button className="btn-danger" onClick={() => { handleDeleteHistorique(confirmDeleteHistoriqueId); setConfirmDeleteHistoriqueId(null); }}>Supprimer</button>
                     <button className="btn-cancel" onClick={() => setConfirmDeleteHistoriqueId(null)}>Annuler</button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {confirmClearAll && (
+              <div className="modal-overlay">
+                <div className="modal-box">
+                  <h3>⚠️ Effacer tout le journal ?</h3>
+                  <p>Cette action supprime <strong>toutes les {historiqueTotal} entrées</strong> de façon irréversible.</p>
+                  <div className="modal-actions">
+                    <button className="btn-danger" onClick={handleClearAllHistorique}>Tout effacer</button>
+                    <button className="btn-cancel" onClick={() => setConfirmClearAll(false)}>Annuler</button>
                   </div>
                 </div>
               </div>
