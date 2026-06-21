@@ -46,7 +46,9 @@ function AdminPanel() {
   const [userInfo, setUserInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeSection, setActiveSection] = useState("users");
+  const [activeSection, setActiveSection] = useState(
+    localStorage.getItem('adminActiveSection') || "users"
+  );
   const [historique, setHistorique] = useState([]);
 
   // Formulaire utilisateur
@@ -126,6 +128,10 @@ function AdminPanel() {
     const interval = setInterval(heartbeat, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('adminActiveSection', activeSection);
+  }, [activeSection]);
 
   const fetchServices = async () => {
     try {
