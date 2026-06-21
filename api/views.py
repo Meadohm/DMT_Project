@@ -490,6 +490,19 @@ def delete_all_historique(request):
     return Response({'success': 'Journal effacé.'})
 
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser])
+def get_disk_usage(request):
+    import shutil
+    total, used, free = shutil.disk_usage('/')
+    return Response({
+        'total': total,
+        'used': used,
+        'free': free,
+    })
+
+
 ##### SERVICES #####
 @api_view(['POST'])
 @permission_classes([IsAdminUser])

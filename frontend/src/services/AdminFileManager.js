@@ -22,6 +22,11 @@ const getCleanName = (filepath) => {
   return filepath.split('/').pop();
 };
 
+const getMediaUrl = (filepath) => {
+  const base = API_BASE_URL.replace('/api', '');
+  return `${base}/media/${filepath}`;
+};
+
 const PAGE_SIZE = 15;
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#d0ed57', '#ff8042', '#a4de6c'];
 
@@ -38,6 +43,7 @@ function AdminFileManager() {
   const [renameValue, setRenameValue] = useState('');
   const [toast, setToast] = useState(null);
   const [previewFile, setPreviewFile] = useState(null);
+  const [diskUsage, setDiskUsage] = useState(null);
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
@@ -63,6 +69,14 @@ function AdminFileManager() {
         totalSize,
         typeDistribution: Object.entries(typeDist).map(([k, v]) => ({ name: k.toUpperCase(), value: v })),
       });
+      try {
+        const diskRes = await axios.get(`${API_BASE_URL}/disk-usage/`, {
+          headers: { Authorization: `Token ${getToken()}` },
+        });
+        setDiskUsage(diskRes.data);
+      } catch (e) {
+        console.error('Disk usage error', e);
+      }
     } catch (e) {
       setError('Erreur lors de la récupération des fichiers.');
     }
@@ -97,10 +111,12 @@ function AdminFileManager() {
     }
   };
 
-  const handleDownload = (url) => {
+  const handleDownload = (filepath) => {
+    const url = getMediaUrl(filepath);
     const link = document.createElement('a');
-    link.href = url.replace(/\/media\/+/g, '/media/');
-    link.download = link.href.split('/').pop();
+    link.href = url;
+    link.download = filepath.split('/').pop();
+    link.target = '_blank';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -126,8 +142,8 @@ function AdminFileManager() {
       <div className="modal-overlay" onClick={() => setPreviewFile(null)}>
         <div className="modal-box modal-box-large" onClick={e => e.stopPropagation()}>
           <h3>👁️ Aperçu — {getCleanName(previewFile.fichier)}</h3>
-          {ext === 'pdf' && <embed src={previewFile.fichier} type="application/pdf" width="100%" height="500px" />}
-          {['jpg','jpeg','png','gif'].includes(ext) && <img src={previewFile.fichier} alt="aperçu" style={{width:'100%',borderRadius:'8px'}} />}
+          {ext === 'pdf' && <embed src={getMediaUrl(previewFile.fichier)} type="application/pdf" width="100%" height="500px" />}
+          {['jpg','jpeg','png','gif'].includes(ext) && <img src={getMediaUrl(previewFile.fichier)} alt="aperçu" style={{width:'100%',borderRadius:'8px'}} />}
           {!['pdf','jpg','jpeg','png','gif'].includes(ext) && <p style={{padding:'20px',textAlign:'center',color:'#666'}}>Aperçu non disponible pour ce type de fichier ({ext.toUpperCase()})</p>}
           <button className="btn-primary" style={{marginTop:'16px'}} onClick={() => setPreviewFile(null)}>Fermer</button>
         </div>
@@ -156,9 +172,27 @@ function AdminFileManager() {
           <span className="stat-icon">💾</span>
           <div>
             <div className="stat-value">{(fileStats.totalSize / 1024 / 1024).toFixed(2)} MB</div>
-            <div className="stat-label">Espace utilisé</div>
+            <div className="stat-label">Espace fichiers</div>
           </div>
         </div>
+        {diskUsage && (
+          <>
+            <div className="stat-card-modern">
+              <span className="stat-icon">🟢</span>
+              <div>
+                <div className="stat-value">{(diskUsage.free / 1024 / 1024 / 1024).toFixed(1)} GB</div>
+                <div className="stat-label">Espace libre</div>
+              </div>
+            </div>
+            <div className="stat-card-modern">
+              <span className="stat-icon">📊</span>
+              <div>
+                <div className="stat-value">{Math.round((diskUsage.used / diskUsage.total) * 100)}%</div>
+                <div className="stat-label">Disque utilisé</div>
+              </div>
+            </div>
+          </>
+        )}
         <div className="stat-card-modern stat-chart">
           <ResponsiveContainer width="100%" height={120}>
             <PieChart>

@@ -27,8 +27,10 @@ urlpatterns = [
     # FICHIERS CENTRALISÉS (admin)
     path('synchroniser_fichiers/', views.synchroniser_fichiers, name='synchroniser_fichiers'),
     path('centralized-files/', views.list_centralized_files, name='list_centralized_files'),
+    path('disk-usage/', views.get_disk_usage, name='get_disk_usage'),
     path('centralized-files/<int:file_id>/update/', views.update_centralized_file, name='update_centralized_file'),
     path('centralized-files/<int:file_id>/delete/', views.delete_centralized_file, name='delete_centralized_file'),
+    
 
     # SERVICES
     path('services/', views.list_services, name='list_services'),
@@ -42,6 +44,7 @@ urlpatterns = [
     path('folders/<int:folder_id>/rename/', views.rename_folder, name='rename_folder'),
     path('folders/<int:folder_id>/delete/', views.delete_folder, name='delete_folder'),
     path('folders/<int:folder_id>/share/', views.share_folder, name='share_folder'),
+    
 
 
     # FILES CRUD
