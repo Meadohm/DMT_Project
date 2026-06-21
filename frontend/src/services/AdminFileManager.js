@@ -115,6 +115,9 @@ function AdminFileManager() {
     try {
       await updateFile(renameModal.id, { fichier_nom: renameValue.trim() });
       showToast('Fichier renommé.');
+      setFiles(prev => prev.map(file =>
+        file.id === renameModal.id ? { ...file, nom: renameValue.trim() } : file
+      ));
       setRenameModal(null);
       fetchFiles();
     } catch {
@@ -157,13 +160,37 @@ function AdminFileManager() {
   const renderPreview = () => {
     if (!previewFile) return null;
     const ext = previewFile.fichier.split('.').pop().toLowerCase();
+    const mediaUrl = getMediaUrl(previewFile.fichier);
+    const officeExts = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'csv'];
+    const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+
     return (
       <div className="modal-overlay" onClick={() => setPreviewFile(null)}>
         <div className="modal-box modal-box-large" onClick={e => e.stopPropagation()}>
           <h3>👁️ Aperçu — {getCleanName(previewFile.fichier)}</h3>
-          {ext === 'pdf' && <embed src={getMediaUrl(previewFile.fichier)} type="application/pdf" width="100%" height="500px" />}
-          {['jpg','jpeg','png','gif'].includes(ext) && <img src={getMediaUrl(previewFile.fichier)} alt="aperçu" style={{width:'100%',borderRadius:'8px'}} />}
-          {!['pdf','jpg','jpeg','png','gif'].includes(ext) && <p style={{padding:'20px',textAlign:'center',color:'#666'}}>Aperçu non disponible pour ce type de fichier ({ext.toUpperCase()})</p>}
+          {ext === 'pdf' && (
+            <embed src={mediaUrl} type="application/pdf" width="100%" height="500px" />
+          )}
+          {imageExts.includes(ext) && (
+            <img src={mediaUrl} alt="aperçu" style={{width:'100%', borderRadius:'8px', maxHeight:'500px', objectFit:'contain'}} />
+          )}
+          {officeExts.includes(ext) && (
+            <iframe
+              src={`https://docs.google.com/viewer?url=${encodeURIComponent(mediaUrl)}&embedded=true`}
+              width="100%"
+              height="500px"
+              style={{border:'none', borderRadius:'8px'}}
+              title="aperçu"
+            />
+          )}
+          {!['pdf', ...imageExts, ...officeExts].includes(ext) && (
+            <p style={{padding:'20px', textAlign:'center', color:'#666'}}>
+              Aperçu non disponible pour ce type ({ext.toUpperCase()}).<br/>
+              <button className="btn-primary" style={{marginTop:'12px'}} onClick={() => handleDownload(previewFile.fichier)}>
+                Télécharger à la place
+              </button>
+            </p>
+          )}
           <button className="btn-primary" style={{marginTop:'16px'}} onClick={() => setPreviewFile(null)}>Fermer</button>
         </div>
       </div>
@@ -221,13 +248,14 @@ function AdminFileManager() {
                 nameKey="name"
                 cx="50%"
                 cy="50%"
-                outerRadius={50}
-                label={({ name, value }) => `${name}: ${value}`}
-                labelLine={false}
+                outerRadius={45}
+                label={({ name, value }) => `${name}:${value}`}
+                labelLine={true}
+                fontSize={10}
               >
                 {fileStats.typeDistribution.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
               </Pie>
-              <Tooltip />
+              <Tooltip formatter={(value, name) => [`${value} fichier(s)`, name]} />
             </PieChart>
           </ResponsiveContainer>
         </div>
@@ -268,7 +296,7 @@ function AdminFileManager() {
                 <tr key={f.id}>
                   <td>{(page - 1) * PAGE_SIZE + index + 1}</td>
                   <td><span className="file-type-badge">{icon} {ext}</span></td>
-                  <td className="objet-cell" title={cleanName}>{cleanName}</td>
+                  <td className="objet-cell" title={f.nom || cleanName}>{f.nom || cleanName}</td>
                   <td>{f.utilisateur || '—'}</td>
                   <td>{f.date_validation}</td>
                   <td>{size}</td>
