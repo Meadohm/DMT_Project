@@ -195,69 +195,53 @@ function AdminFileManager() {
     const officeExts = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'csv'];
     const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
+    const ActionButtons = () => (
+      <div style={{display:'flex', gap:'12px', justifyContent:'center', marginTop:'12px', paddingTop:'12px', borderTop:'1px solid #e8edf2'}}>
+        <button className="btn-primary" onClick={() => handleDownload(previewFile.fichier)}>
+          ⬇️ Télécharger
+        </button>
+        <button className="btn-cancel" onClick={() => setPreviewFile(null)}>
+          ✕ Fermer
+        </button>
+      </div>
+    );
+
     return (
       <div className="modal-overlay" onClick={() => setPreviewFile(null)}>
-        <div className="modal-box modal-box-large" onClick={e => e.stopPropagation()}>
+        <div className="modal-box modal-box-large" onClick={e => e.stopPropagation()} style={{display:'flex', flexDirection:'column', maxHeight:'90vh'}}>
           <h3>👁️ Aperçu — {getCleanName(previewFile.fichier)}</h3>
-          {ext === 'pdf' && (
-            <embed src={mediaUrl} type="application/pdf" width="100%" height="500px" />
-          )}
-          {imageExts.includes(ext) && (
-            <img src={mediaUrl} alt="aperçu" style={{width:'100%', borderRadius:'8px', maxHeight:'500px', objectFit:'contain'}} />
-          )}
-          {officeExts.includes(ext) && (
-  <div style={{width:'100%'}}>
-    {previewLoading && (
-      <div style={{textAlign:'center', padding:'40px', color:'#666'}}>
-        ⏳ Chargement de l'aperçu...
-      </div>
-    )}
-    {!previewLoading && previewContent?.type === 'spreadsheet' && (
-      <div
-        style={{
-          maxHeight:'450px', overflowY:'auto', overflowX:'auto',
-          border:'1px solid #e0e0e0', borderRadius:'6px',
-          fontSize:'0.82em'
-        }}
-        dangerouslySetInnerHTML={{ __html: previewContent.html }}
-      />
-    )}
-    {!previewLoading && previewContent?.type === 'document' && (
-      <div
-        style={{
-          maxHeight:'450px', overflowY:'auto', padding:'16px',
-          border:'1px solid #e0e0e0', borderRadius:'6px',
-          fontSize:'0.88em', lineHeight:'1.6', background:'white'
-        }}
-        dangerouslySetInnerHTML={{ __html: previewContent.html }}
-      />
-    )}
-    {!previewLoading && previewContent?.type === 'error' && (
-      <p style={{textAlign:'center', color:'#dc3545', padding:'20px'}}>
-        Erreur lors du chargement de l'aperçu.
-      </p>
-    )}
-    {!previewLoading && !previewContent && (
-      <div style={{textAlign:'center', padding:'30px'}}>
-        <p style={{color:'#888'}}>Aperçu non disponible pour ce type ({ext.toUpperCase()})</p>
-      </div>
-    )}
-    <div style={{textAlign:'center', marginTop:'12px', display:'flex', gap:'8px', justifyContent:'center'}}>
-      <button className="btn-primary" onClick={() => handleDownload(previewFile.fichier)}>
-        ⬇️ Télécharger
-      </button>
-    </div>
-  </div>
-)}
-          {!['pdf', ...imageExts, ...officeExts].includes(ext) && (
-            <p style={{padding:'20px', textAlign:'center', color:'#666'}}>
-              Aperçu non disponible pour ce type ({ext.toUpperCase()}).<br/>
-              <button className="btn-primary" style={{marginTop:'12px'}} onClick={() => handleDownload(previewFile.fichier)}>
-                Télécharger à la place
-              </button>
-            </p>
-          )}
-          <button className="btn-primary" style={{marginTop:'16px'}} onClick={() => setPreviewFile(null)}>Fermer</button>
+          <div style={{flex:1, overflow:'auto', minHeight:0}}>
+            {ext === 'pdf' && (
+              <embed src={mediaUrl} type="application/pdf" width="100%" height="420px" />
+            )}
+            {imageExts.includes(ext) && (
+              <img src={mediaUrl} alt="aperçu" style={{width:'100%', borderRadius:'8px', maxHeight:'420px', objectFit:'contain'}} />
+            )}
+            {officeExts.includes(ext) && (
+              <div>
+                {previewLoading && (
+                  <div style={{textAlign:'center', padding:'40px', color:'#666'}}>⏳ Chargement...</div>
+                )}
+                {!previewLoading && previewContent?.type === 'spreadsheet' && (
+                  <div style={{maxHeight:'360px', overflowY:'auto', overflowX:'auto', border:'1px solid #e0e0e0', borderRadius:'6px', fontSize:'0.82em'}}
+                    dangerouslySetInnerHTML={{ __html: previewContent.html }} />
+                )}
+                {!previewLoading && previewContent?.type === 'document' && (
+                  <div style={{maxHeight:'360px', overflowY:'auto', padding:'16px', border:'1px solid #e0e0e0', borderRadius:'6px', fontSize:'0.88em', lineHeight:'1.6', background:'white'}}
+                    dangerouslySetInnerHTML={{ __html: previewContent.html }} />
+                )}
+                {!previewLoading && previewContent?.type === 'error' && (
+                  <p style={{textAlign:'center', color:'#dc3545', padding:'20px'}}>Erreur lors du chargement.</p>
+                )}
+              </div>
+            )}
+            {!['pdf', ...imageExts, ...officeExts].includes(ext) && (
+              <p style={{textAlign:'center', padding:'20px', color:'#666'}}>
+                Aperçu non disponible pour ce type ({ext.toUpperCase()})
+              </p>
+            )}
+          </div>
+          <ActionButtons />
         </div>
       </div>
     );

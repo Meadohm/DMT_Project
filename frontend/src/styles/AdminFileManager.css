@@ -49,3 +49,16 @@
   color: #555;
   white-space: nowrap;
 }
+
+.modal-preview-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #e8edf2;
+  position: sticky;
+  bottom: 0;
+  background: white;
+  padding-bottom: 4px;
+}
