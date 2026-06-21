@@ -962,3 +962,18 @@ td:last-child {
 .admin-sidebar {
   transition: width 0.25s ease, padding 0.25s ease;
 }
+
+/* ── Center table cells content ─────────────────────────── */
+.users-table-wrapper td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.users-table-wrapper th {
+  text-align: center;
+}
+
+/* Garder le texte nom aligné à gauche */
+.users-table-wrapper td:nth-child(2) {
+  text-align: left;
+}
