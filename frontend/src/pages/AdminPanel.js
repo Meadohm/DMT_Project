@@ -87,6 +87,8 @@ function AdminPanel() {
   const [historiqueTotal, setHistoriqueTotal] = useState(0);
   const [confirmDeleteHistoriqueId, setConfirmDeleteHistoriqueId] = useState(null);
   const [confirmClearAll, setConfirmClearAll] = useState(false);
+  const [dateDebut, setDateDebut] = useState('');
+  const [dateFin, setDateFin] = useState('');
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
@@ -161,10 +163,16 @@ function AdminPanel() {
   };
 
   // Historique
-  const fetchHistorique = async (page = 1, action = '', search = '') => {
+  const fetchHistorique = async (page = 1, action = '', search = '', debut = '', fin = '') => {
     try {
       const token = localStorage.getItem('token');
-      const params = new URLSearchParams({ page, ...(action && { action }), ...(search && { search }) });
+      const params = new URLSearchParams({
+        page,
+        ...(action && { action }),
+        ...(search && { search }),
+        ...(debut && { date_debut: debut }),
+        ...(fin && { date_fin: fin }),
+      });
       const res = await axios.get(`${API_BASE_URL}/historique/?${params}`, {
         headers: { Authorization: `Token ${token}` }
       });
@@ -511,7 +519,21 @@ function AdminPanel() {
                 <option value="UPLOAD">Upload</option>
                 <option value="SHARE">Partage</option>
               </select>
-              <button className="btn-cancel" onClick={() => { setHistoriqueSearch(''); setHistoriqueAction(''); fetchHistorique(1, '', ''); showToast('Filtres réinitialisés.', 'success'); }}>
+              <input
+                type="date"
+                className="historique-date"
+                value={dateDebut}
+                onChange={(e) => { setDateDebut(e.target.value); fetchHistorique(1, historiqueAction, historiqueSearch, e.target.value, dateFin); }}
+                title="Date début"
+              />
+              <input
+                type="date"
+                className="historique-date"
+                value={dateFin}
+                onChange={(e) => { setDateFin(e.target.value); fetchHistorique(1, historiqueAction, historiqueSearch, dateDebut, e.target.value); }}
+                title="Date fin"
+              />
+              <button className="btn-cancel" onClick={() => { setHistoriqueSearch(''); setHistoriqueAction(''); setDateDebut(''); setDateFin(''); fetchHistorique(1, '', '', '', ''); showToast('Filtres réinitialisés.', 'success'); }}>
                 Réinitialiser
               </button>
               <button className="btn-danger" onClick={() => setConfirmClearAll(true)}>

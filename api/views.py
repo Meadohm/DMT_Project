@@ -433,6 +433,21 @@ def get_historique(request):
     if search:
         logs = logs.filter(utilisateur__username__icontains=search)
 
+    date_debut = request.GET.get('date_debut', '')
+    date_fin = request.GET.get('date_fin', '')
+
+    if date_debut:
+        from django.utils.dateparse import parse_date
+        d = parse_date(date_debut)
+        if d:
+            logs = logs.filter(timestamp__date__gte=d)
+
+    if date_fin:
+        from django.utils.dateparse import parse_date
+        d = parse_date(date_fin)
+        if d:
+            logs = logs.filter(timestamp__date__lte=d)
+
     total = logs.count()
     page = int(request.GET.get('page', 1))
     page_size = 20
