@@ -418,14 +418,18 @@ function AdminPanel() {
                           <td data-label="Statut"><span className={`status-badge ${statusType}`}>{statusLabel}</span></td>
                           <td data-label="Actions">
                             <button className="edit-user-button" onClick={() => handleEditStart(u)}>Éditer</button>
-                            <button
-                              className="reset-password-button"
-                              onClick={() => handleResetPassword(u.id, u.username)}
-                              disabled={resettingId === u.id}
-                            >
-                              {resettingId === u.id ? '⏳ Réinitialisation...' : 'Réinitialiser Mdp'}
-                            </button>
-                            <button className="delete-user-button" onClick={() => setConfirmDeleteId(u.id)}>Supprimer</button>
+                            {u.id !== userInfo?.id && (
+                              <>
+                                <button
+                                  className="reset-password-button"
+                                  onClick={() => handleResetPassword(u.id, u.username)}
+                                  disabled={resettingId === u.id}
+                                >
+                                  {resettingId === u.id ? '⏳ Réinitialisation...' : 'Réinitialiser Mdp'}
+                                </button>
+                                <button className="delete-user-button" onClick={() => setConfirmDeleteId(u.id)}>Supprimer</button>
+                              </>
+                            )}
                           </td>
                         </tr>
                       );
