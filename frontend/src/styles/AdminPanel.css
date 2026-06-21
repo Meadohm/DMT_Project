@@ -774,41 +774,46 @@ td:last-child {
   border-color: transparent;
 }
 
-/* ── Sticky columns #  + Nom ────────────────────────────── */
-.users-table-wrapper th:nth-child(1),
-.users-table-wrapper td:nth-child(1) {
+/* ── Sticky columns # + Nom ─────────────────────────────── */
+.users-table-wrapper th:nth-child(1) {
   position: sticky;
   left: 0;
-  z-index: 2;
+  z-index: 4;
   background-color: #003366;
   color: white;
-  min-width: 40px;
+  min-width: 44px;
+}
+
+.users-table-wrapper th:nth-child(2) {
+  position: sticky;
+  left: 44px;
+  z-index: 4;
+  background-color: #003366;
+  color: white;
+  min-width: 110px;
+  border-right: 2px solid rgba(255,255,255,0.25);
 }
 
 .users-table-wrapper td:nth-child(1) {
+  position: sticky;
+  left: 0;
+  z-index: 1;
   background-color: #f9f9f9;
   color: #333;
+  font-weight: 600;
+}
+
+.users-table-wrapper td:nth-child(2) {
+  position: sticky;
+  left: 44px;
+  z-index: 1;
+  background-color: #fff;
+  color: #333;
+  border-right: 2px solid #e0e0e0;
 }
 
 .users-table-wrapper tbody tr:nth-child(even) td:nth-child(1) {
   background-color: #f0f0f0;
-}
-
-.users-table-wrapper th:nth-child(2),
-.users-table-wrapper td:nth-child(2) {
-  position: sticky;
-  left: 40px;
-  z-index: 2;
-  background-color: #003366;
-  color: white;
-  min-width: 100px;
-  border-right: 2px solid rgba(255,255,255,0.2);
-}
-
-.users-table-wrapper td:nth-child(2) {
-  background-color: #fff;
-  color: #333;
-  border-right: 2px solid #e0e0e0;
 }
 
 .users-table-wrapper tbody tr:nth-child(even) td:nth-child(2) {
