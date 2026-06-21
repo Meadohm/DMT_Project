@@ -23,6 +23,17 @@ const getCleanName = (filepath) => {
 };
 
 const getMediaUrl = (filepath) => {
+  if (!filepath) return '';
+  if (filepath.startsWith('http')) {
+    try {
+      const url = new URL(filepath);
+      const path = url.pathname.replace(/^\/media\//, '');
+      const base = API_BASE_URL.replace(':8000/api', '').replace('/api', '');
+      return `${base}/media/${path}`;
+    } catch (e) {
+      return filepath;
+    }
+  }
   const base = API_BASE_URL.replace(':8000/api', '').replace('/api', '');
   return `${base}/media/${filepath}`;
 };
@@ -111,15 +122,23 @@ function AdminFileManager() {
     }
   };
 
-  const handleDownload = (filepath) => {
+  const handleDownload = async (filepath) => {
     const url = getMediaUrl(filepath);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filepath.split('/').pop();
-    link.target = '_blank';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = filepath.split('/').pop();
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+      showToast('Téléchargement lancé.');
+    } catch (e) {
+      window.open(url, '_blank');
+    }
   };
 
   const filtered = files.filter(f => {
@@ -196,7 +215,16 @@ function AdminFileManager() {
         <div className="stat-card-modern stat-chart">
           <ResponsiveContainer width="100%" height={120}>
             <PieChart>
-              <Pie data={fileStats.typeDistribution} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={50}>
+              <Pie
+                data={fileStats.typeDistribution}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius={50}
+                label={({ name, value }) => `${name}: ${value}`}
+                labelLine={false}
+              >
                 {fileStats.typeDistribution.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
               </Pie>
               <Tooltip />
