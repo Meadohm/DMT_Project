@@ -824,3 +824,35 @@ td:last-child {
 .users-table-wrapper tbody tr:hover td:nth-child(2) {
   background-color: #e8f0fe;
 }
+
+.btn-create-user {
+  background: linear-gradient(135deg, #003366, #00509e);
+  color: white;
+  border: none;
+  padding: 9px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.88em;
+  font-weight: 600;
+  white-space: nowrap;
+  margin-left: auto;
+  transition: all 0.2s;
+}
+
+.btn-create-user:hover {
+  background: linear-gradient(135deg, #00509e, #0070cc);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,51,102,0.25);
+}
+
+.modal-box-large {
+  max-width: 560px;
+  width: 95%;
+  max-height: 90vh;
+  overflow-y: auto;
+  text-align: left;
+}
+
+.modal-box-large h3 {
+  margin-bottom: 20px;
+}

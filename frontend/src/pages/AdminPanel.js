@@ -78,6 +78,7 @@ function AdminPanel() {
   const [resettingId, setResettingId] = useState(null);
   const [formSuccess, setFormSuccess] = useState("");
   const [formPasswordVisible, setFormPasswordVisible] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -338,6 +339,9 @@ function AdminPanel() {
               <span className="user-count-badge">
                 {users.filter(u => u.username.toLowerCase().includes(searchTerm.toLowerCase())).length} / {users.length} utilisateur{users.length !== 1 ? 's' : ''}
               </span>
+              <button className="btn-create-user" onClick={() => { setShowCreateModal(true); setFormError(''); setFormSuccess(''); setFormData({ username: '', email: '', password: '', confirmPassword: '', role: 'employe', service: '' }); }}>
+                + Créer un utilisateur
+              </button>
             </div>
             <div className="admin-search-bar">
               <input
@@ -619,6 +623,70 @@ function AdminPanel() {
               <button className="btn-danger" onClick={() => handleDeleteUser(confirmDeleteId)}>Supprimer</button>
               <button className="btn-cancel" onClick={() => setConfirmDeleteId(null)}>Annuler</button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showCreateModal && (
+        <div className="modal-overlay">
+          <div className="modal-box modal-box-large">
+            <h3>➕ Créer un utilisateur</h3>
+            {formError && <div className="error-box"><p>{formError}</p></div>}
+            {formSuccess && <div className="success-box"><p>{formSuccess}</p></div>}
+            <form onSubmit={async (e) => { await handleFormSubmit(e); if (!formError) setShowCreateModal(false); }}>
+              <div className="form-group">
+                <label>Nom d'utilisateur *</label>
+                <input name="username" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} placeholder="ex: jean.dupont" />
+              </div>
+              <div className="form-group">
+                <label>Email</label>
+                <input name="email" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} placeholder="ex: jean.dupont@dmt.ci" />
+              </div>
+              <div className="form-group">
+                <label>Mot de passe *</label>
+                <div className="input-with-eye">
+                  <input type={formPasswordVisible ? "text" : "password"} name="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} placeholder="Minimum 6 caractères" />
+                  <button type="button" className="eye-btn" onClick={() => setFormPasswordVisible(!formPasswordVisible)}>
+                    {formPasswordVisible ? '🙈' : '👁️'}
+                  </button>
+                </div>
+              </div>
+              <div className="form-group">
+                <label>Confirmer le mot de passe *</label>
+                <input type={formPasswordVisible ? "text" : "password"} name="confirmPassword" value={formData.confirmPassword} onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })} placeholder="Répéter le mot de passe" />
+                {formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword && (
+                  <p className="field-error">Les mots de passe ne correspondent pas</p>
+                )}
+                {formData.password && formData.confirmPassword && formData.password === formData.confirmPassword && (
+                  <p className="field-success">✓ Les mots de passe correspondent</p>
+                )}
+              </div>
+              <div className="form-group">
+                <label>Rôle *</label>
+                <select name="role" value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })}>
+                  <option value="employe">Employé</option>
+                  <option value="responsable">Responsable</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Service</label>
+                <select name="service" value={formData.service || ''} onChange={(e) => setFormData({ ...formData, service: e.target.value })}>
+                  <option value="">— Aucun service —</option>
+                  {services.map(s => (
+                    <option key={s.id} value={s.nom}>{s.nom}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="modal-actions">
+                <button type="submit" className="btn-primary" disabled={formData.password !== formData.confirmPassword || !formData.username || !formData.password}>
+                  Créer l'utilisateur
+                </button>
+                <button type="button" className="btn-cancel" onClick={() => setShowCreateModal(false)}>
+                  Annuler
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
