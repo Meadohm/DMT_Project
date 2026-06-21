@@ -311,7 +311,7 @@ function AdminPanel() {
         <div className="admin-topbar">
           <div className="admin-topbar-left">
             <span className="admin-topbar-title">Panneau Administrateur</span>
-            <span className="admin-topbar-subtitle">DMT — Doumbia Moussa Transport</span>
+            <span className="admin-topbar-subtitle">DMT - Doumbia Moussa Transport</span>
           </div>
           <div className="admin-topbar-right">
             <div className="admin-topbar-clock">
