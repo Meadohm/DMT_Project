@@ -5,6 +5,8 @@ import { getCentralizedFiles, updateFile, deleteFile } from "../services/adminSe
 import { getToken } from "../services/authService";
 import API_BASE_URL from "../config";
 import axios from "axios";
+import * as XLSX from 'xlsx';
+import mammoth from 'mammoth';
 import "../styles/AdminFileManager.css";
 
 const FILE_ICONS = {
@@ -54,6 +56,8 @@ function AdminFileManager() {
   const [renameValue, setRenameValue] = useState('');
   const [toast, setToast] = useState(null);
   const [previewFile, setPreviewFile] = useState(null);
+  const [previewContent, setPreviewContent] = useState(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
   const [diskUsage, setDiskUsage] = useState(null);
 
   const showToast = (message, type = 'success') => {
@@ -143,6 +147,34 @@ function AdminFileManager() {
     }
   };
 
+  const loadPreviewContent = async (f) => {
+    const ext = f.fichier.split('.').pop().toLowerCase();
+    const url = getMediaUrl(f.fichier);
+    setPreviewContent(null);
+    setPreviewLoading(true);
+    try {
+      if (['xlsx', 'xls', 'csv'].includes(ext)) {
+        const response = await fetch(url);
+        const arrayBuffer = await response.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const html = XLSX.utils.sheet_to_html(sheet, { editable: false });
+        setPreviewContent({ type: 'spreadsheet', html });
+      } else if (['docx', 'doc'].includes(ext)) {
+        const response = await fetch(url);
+        const arrayBuffer = await response.arrayBuffer();
+        const result = await mammoth.convertToHtml({ arrayBuffer });
+        setPreviewContent({ type: 'document', html: result.value });
+      } else {
+        setPreviewContent(null);
+      }
+    } catch (e) {
+      setPreviewContent({ type: 'error', html: '' });
+    }
+    setPreviewLoading(false);
+  };
+
   const filtered = files.filter(f => {
     const name = getCleanName(f.fichier || '').toLowerCase();
     const owner = (f.utilisateur || '').toLowerCase();
@@ -174,30 +206,46 @@ function AdminFileManager() {
             <img src={mediaUrl} alt="aperçu" style={{width:'100%', borderRadius:'8px', maxHeight:'500px', objectFit:'contain'}} />
           )}
           {officeExts.includes(ext) && (
-  <div style={{textAlign:'center', padding:'30px'}}>
-    <p style={{fontSize:'3em', marginBottom:'12px'}}>
-      {ext === 'docx' || ext === 'doc' ? '📝' : ext === 'xlsx' || ext === 'xls' ? '📊' : ext === 'csv' ? '📋' : '📄'}
-    </p>
-    <p style={{color:'#555', marginBottom:'8px', fontWeight:'600'}}>
-      Fichier {ext.toUpperCase()}
-    </p>
-    <p style={{color:'#888', fontSize:'0.85em', marginBottom:'20px'}}>
-      L'aperçu en ligne n'est pas disponible pour ce type de fichier.<br/>
-      Télécharge-le pour l'ouvrir avec l'application appropriée.
-    </p>
-    <button className="btn-primary" onClick={() => handleDownload(previewFile.fichier)}>
-      ⬇️ Télécharger pour ouvrir
-    </button>
-    <div style={{marginTop:'12px'}}>
-      <a
-        href={getMediaUrl(previewFile.fichier)}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="btn-cancel"
-        style={{fontSize:'0.82em', textDecoration:'none', display:'inline-block', padding:'6px 12px'}}
-      >
-        Ouvrir dans un nouvel onglet
-      </a>
+  <div style={{width:'100%'}}>
+    {previewLoading && (
+      <div style={{textAlign:'center', padding:'40px', color:'#666'}}>
+        ⏳ Chargement de l'aperçu...
+      </div>
+    )}
+    {!previewLoading && previewContent?.type === 'spreadsheet' && (
+      <div
+        style={{
+          maxHeight:'450px', overflowY:'auto', overflowX:'auto',
+          border:'1px solid #e0e0e0', borderRadius:'6px',
+          fontSize:'0.82em'
+        }}
+        dangerouslySetInnerHTML={{ __html: previewContent.html }}
+      />
+    )}
+    {!previewLoading && previewContent?.type === 'document' && (
+      <div
+        style={{
+          maxHeight:'450px', overflowY:'auto', padding:'16px',
+          border:'1px solid #e0e0e0', borderRadius:'6px',
+          fontSize:'0.88em', lineHeight:'1.6', background:'white'
+        }}
+        dangerouslySetInnerHTML={{ __html: previewContent.html }}
+      />
+    )}
+    {!previewLoading && previewContent?.type === 'error' && (
+      <p style={{textAlign:'center', color:'#dc3545', padding:'20px'}}>
+        Erreur lors du chargement de l'aperçu.
+      </p>
+    )}
+    {!previewLoading && !previewContent && (
+      <div style={{textAlign:'center', padding:'30px'}}>
+        <p style={{color:'#888'}}>Aperçu non disponible pour ce type ({ext.toUpperCase()})</p>
+      </div>
+    )}
+    <div style={{textAlign:'center', marginTop:'12px', display:'flex', gap:'8px', justifyContent:'center'}}>
+      <button className="btn-primary" onClick={() => handleDownload(previewFile.fichier)}>
+        ⬇️ Télécharger
+      </button>
     </div>
   </div>
 )}
@@ -320,7 +368,7 @@ function AdminFileManager() {
                   <td>{size}</td>
                   <td>
                     <button className="edit-user-button" onClick={() => { setRenameModal({ id: f.id, currentName: f.nom || cleanName }); setRenameValue(f.nom || cleanName); }}>Renommer</button>
-                    <button className="btn-primary" style={{padding:'5px 8px',fontSize:'0.78em',marginRight:'3px'}} onClick={() => setPreviewFile(f)}>Aperçu</button>
+                    <button className="btn-primary" style={{padding:'5px 8px',fontSize:'0.78em',marginRight:'3px'}} onClick={() => { setPreviewFile(f); loadPreviewContent(f); }}>Aperçu</button>
                     <button className="reset-password-button" onClick={() => handleDownload(f.fichier)}>Télécharger</button>
                     <button className="delete-user-button" onClick={() => setConfirmDeleteId(f.id)}>Supprimer</button>
                   </td>
