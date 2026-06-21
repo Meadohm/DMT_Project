@@ -226,6 +226,7 @@ function AdminPanel() {
         newPassword: result.new_password,
         emailEnvoye: result.email_envoye,
       });
+      showToast(`Mot de passe de "${username}" réinitialisé.`);
     } catch {
       alert("Erreur lors de la réinitialisation.");
     } finally {
@@ -420,7 +421,7 @@ function AdminPanel() {
                               onClick={() => handleResetPassword(u.id, u.username)}
                               disabled={resettingId === u.id}
                             >
-                              {resettingId === u.id ? '⏳' : 'Reset Mdp'}
+                              {resettingId === u.id ? '⏳ Réinitialisation...' : 'Réinitialiser Mdp'}
                             </button>
                             <button className="delete-user-button" onClick={() => setConfirmDeleteId(u.id)}>Supprimer</button>
                           </td>
@@ -643,11 +644,11 @@ function AdminPanel() {
             <form onSubmit={async (e) => { await handleFormSubmit(e); if (!formError) setShowCreateModal(false); }}>
               <div className="form-group">
                 <label>Nom d'utilisateur *</label>
-                <input name="username" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} placeholder="ex: jean.dupont" />
+                <input name="username" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} placeholder="ex: namisata.diomande" />
               </div>
               <div className="form-group">
                 <label>Email</label>
-                <input name="email" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} placeholder="ex: jean.dupont@dmt.ci" />
+                <input name="email" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} placeholder="ex: namisata.diomande@dmt.ci" />
               </div>
               <div className="form-group">
                 <label>Mot de passe *</label>
