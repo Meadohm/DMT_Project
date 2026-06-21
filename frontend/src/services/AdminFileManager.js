@@ -1,147 +1,276 @@
-// src/components/AdminFileManager.js
+// src/services/AdminFileManager.js
 import React, { useState, useEffect, useCallback } from "react";
-import Swal from "sweetalert2";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { getCentralizedFiles, updateFile, deleteFile } from "../services/adminService";
 import { getToken } from "../services/authService";
 import API_BASE_URL from "../config";
 import axios from "axios";
-
 import "../styles/AdminFileManager.css";
+
+const FILE_ICONS = {
+  pdf: '📄', doc: '📝', docx: '📝', xls: '📊', xlsx: '📊',
+  png: '🖼️', jpg: '🖼️', jpeg: '🖼️', gif: '🖼️',
+  csv: '📋', txt: '📃', zip: '🗜️', rar: '🗜️',
+};
+
+const getIcon = (filename) => {
+  const ext = filename.split('.').pop().toLowerCase();
+  return FILE_ICONS[ext] || '📁';
+};
+
+const getCleanName = (filepath) => {
+  return filepath.split('/').pop();
+};
+
+const PAGE_SIZE = 15;
+const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#d0ed57', '#ff8042', '#a4de6c'];
 
 function AdminFileManager() {
   const [files, setFiles] = useState([]);
   const [fileStats, setFileStats] = useState({ totalFiles: 0, totalSize: 0, typeDistribution: [] });
-  const [previewFile, setPreviewFile] = useState(null);
   const [error, setError] = useState(null);
+  const [search, setSearch] = useState('');
+  const [dateDebut, setDateDebut] = useState('');
+  const [dateFin, setDateFin] = useState('');
+  const [page, setPage] = useState(1);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [renameModal, setRenameModal] = useState(null);
+  const [renameValue, setRenameValue] = useState('');
+  const [toast, setToast] = useState(null);
+  const [previewFile, setPreviewFile] = useState(null);
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3500);
+  };
 
   const fetchFiles = useCallback(async () => {
     try {
       await axios.get(`${API_BASE_URL}/synchroniser_fichiers/`, {
         headers: { Authorization: `Token ${getToken()}` },
       });
-
       const response = await getCentralizedFiles();
-      setFiles(response);
-
-      const totalSize = response.reduce((acc, file) => acc + file.size, 0);
-      const typeDistribution = response.reduce((acc, file) => {
-        const ext = file.fichier.split(".").pop().toLowerCase();
+      const data = response.data || response;
+      setFiles(data);
+      const totalSize = data.reduce((acc, f) => acc + (f.size || 0), 0);
+      const typeDist = data.reduce((acc, f) => {
+        const ext = (f.fichier || '').split('.').pop().toLowerCase();
         acc[ext] = (acc[ext] || 0) + 1;
         return acc;
       }, {});
-
       setFileStats({
-        totalFiles: response.length,
+        totalFiles: data.length,
         totalSize,
-        typeDistribution: Object.entries(typeDistribution).map(([key, value]) => ({
-          name: key.toUpperCase(),
-          value,
-        })),
+        typeDistribution: Object.entries(typeDist).map(([k, v]) => ({ name: k.toUpperCase(), value: v })),
       });
     } catch (e) {
-      console.error("Erreur récupération fichiers :", e.response || e.message);
-      setError("Erreur lors de la récupération des fichiers.");
+      setError('Erreur lors de la récupération des fichiers.');
     }
   }, []);
 
-  useEffect(() => {
-    fetchFiles();
-  }, [fetchFiles]);
+  useEffect(() => { fetchFiles(); }, [fetchFiles]);
 
-  const handleDelete = async (fileId) => {
-    Swal.fire({
-      title: "Supprimer ?",
-      text: "Cette action est irréversible.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Oui, supprimer",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          await deleteFile(fileId);
-          setFiles((prev) => prev.filter((f) => f.id !== fileId));
-          Swal.fire("Supprimé !", "Le fichier a été supprimé.", "success");
-          fetchFiles();
-        } catch {
-          setError("Erreur lors de la suppression.");
-        }
-      }
-    });
-  };
-
-  const handleUpdate = async (fileId, currentName) => {
-    const newName = prompt("Nouveau nom :", currentName);
-    if (!newName || newName.trim() === currentName) return;
+  const handleDelete = async (id) => {
     try {
-      await updateFile(fileId, { fichier_nom: newName.trim() });
+      await deleteFile(id);
+      showToast('Fichier supprimé.');
+      setConfirmDeleteId(null);
       fetchFiles();
     } catch {
-      alert("Erreur lors du renommage.");
+      showToast('Erreur lors de la suppression.', 'error');
+      setConfirmDeleteId(null);
+    }
+  };
+
+  const handleRename = async () => {
+    if (!renameValue.trim() || renameValue.trim() === renameModal.currentName) {
+      setRenameModal(null);
+      return;
+    }
+    try {
+      await updateFile(renameModal.id, { fichier_nom: renameValue.trim() });
+      showToast('Fichier renommé.');
+      setRenameModal(null);
+      fetchFiles();
+    } catch {
+      showToast('Erreur lors du renommage.', 'error');
     }
   };
 
   const handleDownload = (url) => {
-    const cleanUrl = url.replace(/\/media\/+/g, "/media/");
-    const link = document.createElement("a");
-    link.href = cleanUrl;
-    link.download = cleanUrl.split("/").pop();
+    const link = document.createElement('a');
+    link.href = url.replace(/\/media\/+/g, '/media/');
+    link.download = link.href.split('/').pop();
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  const renderFilePreview = () => {
-    if (!previewFile) return null;
-    const ext = previewFile.fichier.split(".").pop().toLowerCase();
-    if (ext === "pdf") return <embed src={previewFile.fichier} type="application/pdf" width="100%" height="500px" />;
-    if (["jpg", "jpeg", "png"].includes(ext)) return <img src={previewFile.fichier} alt="aperçu" style={{ width: "100%" }} />;
-    return <p>Type non supporté : {ext}</p>;
-  };
+  const filtered = files.filter(f => {
+    const name = getCleanName(f.fichier || '').toLowerCase();
+    const owner = (f.utilisateur || '').toLowerCase();
+    const matchSearch = name.includes(search.toLowerCase()) || owner.includes(search.toLowerCase());
+    const fileDate = f.date_validation ? f.date_validation.split('/').reverse().join('-') : '';
+    const matchDebut = dateDebut ? fileDate >= dateDebut : true;
+    const matchFin = dateFin ? fileDate <= dateFin : true;
+    return matchSearch && matchDebut && matchFin;
+  });
 
-  const renderFileStats = () => {
-    const colors = ["#8884d8", "#82ca9d", "#ffc658", "#d0ed57"];
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE) || 1;
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  const renderPreview = () => {
+    if (!previewFile) return null;
+    const ext = previewFile.fichier.split('.').pop().toLowerCase();
     return (
-      <div className="file-stats">
-        <div className="stats-card"><h3>Total Fichiers</h3><p>{fileStats.totalFiles}</p></div>
-        <div className="stats-card"><h3>Taille Totale</h3><p>{(fileStats.totalSize / 1024 / 1024).toFixed(2)} MB</p></div>
-        <ResponsiveContainer width="100%" height={200}>
-          <PieChart>
-            <Pie data={fileStats.typeDistribution} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80}>
-              {fileStats.typeDistribution.map((entry, i) => <Cell key={i} fill={colors[i % colors.length]} />)}
-            </Pie>
-            <Tooltip />
-          </PieChart>
-        </ResponsiveContainer>
+      <div className="modal-overlay" onClick={() => setPreviewFile(null)}>
+        <div className="modal-box modal-box-large" onClick={e => e.stopPropagation()}>
+          <h3>👁️ Aperçu — {getCleanName(previewFile.fichier)}</h3>
+          {ext === 'pdf' && <embed src={previewFile.fichier} type="application/pdf" width="100%" height="500px" />}
+          {['jpg','jpeg','png','gif'].includes(ext) && <img src={previewFile.fichier} alt="aperçu" style={{width:'100%',borderRadius:'8px'}} />}
+          {!['pdf','jpg','jpeg','png','gif'].includes(ext) && <p style={{padding:'20px',textAlign:'center',color:'#666'}}>Aperçu non disponible pour ce type de fichier ({ext.toUpperCase()})</p>}
+          <button className="btn-primary" style={{marginTop:'16px'}} onClick={() => setPreviewFile(null)}>Fermer</button>
+        </div>
       </div>
     );
   };
 
   return (
     <div>
-      <h2>Serveur de stockage - Gestion Admin</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {renderFileStats()}
-      {renderFilePreview()}
-      <table>
-        <thead><tr><th>Nom</th><th>Date</th><th>Actions</th></tr></thead>
-        <tbody>
-          {files.map((f) => (
-            <tr key={f.id}>
-              <td>{f.fichier}</td>
-              <td>{f.date_validation}</td>
-              <td>
-                <button onClick={() => handleUpdate(f.id, f.fichier.split("/").pop())}>Renommer</button>
-                <button onClick={() => handleDelete(f.id)}>Supprimer</button>
-                <button onClick={() => handleDownload(f.fichier)}>Télécharger</button>
-                <button onClick={() => setPreviewFile(f)}>Lire</button>
-              </td>
+      <div className="section-header">
+        <h2>Espace de stockage</h2>
+        <span className="user-count-badge">{filtered.length} / {files.length} fichier{files.length !== 1 ? 's' : ''}</span>
+      </div>
+
+      {error && <div className="error-box"><p>{error}</p></div>}
+
+      <div className="file-stats-modern">
+        <div className="stat-card-modern">
+          <span className="stat-icon">📁</span>
+          <div>
+            <div className="stat-value">{fileStats.totalFiles}</div>
+            <div className="stat-label">Fichiers total</div>
+          </div>
+        </div>
+        <div className="stat-card-modern">
+          <span className="stat-icon">💾</span>
+          <div>
+            <div className="stat-value">{(fileStats.totalSize / 1024 / 1024).toFixed(2)} MB</div>
+            <div className="stat-label">Espace utilisé</div>
+          </div>
+        </div>
+        <div className="stat-card-modern stat-chart">
+          <ResponsiveContainer width="100%" height={120}>
+            <PieChart>
+              <Pie data={fileStats.typeDistribution} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={50}>
+                {fileStats.typeDistribution.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="historique-filters">
+        <input
+          className="historique-search"
+          placeholder="Rechercher par nom ou propriétaire..."
+          value={search}
+          onChange={e => { setSearch(e.target.value); setPage(1); }}
+        />
+        <input type="date" className="historique-date" value={dateDebut} onChange={e => { setDateDebut(e.target.value); setPage(1); }} title="Date début" />
+        <input type="date" className="historique-date" value={dateFin} onChange={e => { setDateFin(e.target.value); setPage(1); }} title="Date fin" />
+        <button className="btn-cancel" onClick={() => { setSearch(''); setDateDebut(''); setDateFin(''); setPage(1); }}>Réinitialiser</button>
+      </div>
+
+      <div className="users-table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Type</th>
+              <th>Nom du fichier</th>
+              <th>Propriétaire</th>
+              <th>Date</th>
+              <th>Taille</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {paginated.map((f, index) => {
+              const cleanName = getCleanName(f.fichier || '');
+              const icon = getIcon(cleanName);
+              const ext = cleanName.split('.').pop().toUpperCase();
+              const size = f.size ? (f.size / 1024).toFixed(1) + ' KB' : '—';
+              return (
+                <tr key={f.id}>
+                  <td>{(page - 1) * PAGE_SIZE + index + 1}</td>
+                  <td><span className="file-type-badge">{icon} {ext}</span></td>
+                  <td className="objet-cell" title={cleanName}>{cleanName}</td>
+                  <td>{f.utilisateur || '—'}</td>
+                  <td>{f.date_validation}</td>
+                  <td>{size}</td>
+                  <td>
+                    <button className="edit-user-button" onClick={() => { setRenameModal({ id: f.id, currentName: cleanName }); setRenameValue(cleanName); }}>Renommer</button>
+                    <button className="btn-primary" style={{padding:'5px 8px',fontSize:'0.78em',marginRight:'3px'}} onClick={() => setPreviewFile(f)}>Aperçu</button>
+                    <button className="reset-password-button" onClick={() => handleDownload(f.fichier)}>Télécharger</button>
+                    <button className="delete-user-button" onClick={() => setConfirmDeleteId(f.id)}>Supprimer</button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="pagination">
+        <button className="btn-cancel" disabled={page === 1} onClick={() => setPage(p => p - 1)}>← Précédent</button>
+        <span className="pagination-info">Page {page} / {totalPages}</span>
+        <button className="btn-cancel" disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}>Suivant →</button>
+      </div>
+
+      {confirmDeleteId && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h3>⚠️ Supprimer ce fichier ?</h3>
+            <p>Cette action est <strong>irréversible</strong>.</p>
+            <div className="modal-actions">
+              <button className="btn-danger" onClick={() => handleDelete(confirmDeleteId)}>Supprimer</button>
+              <button className="btn-cancel" onClick={() => setConfirmDeleteId(null)}>Annuler</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {renameModal && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h3>✏️ Renommer le fichier</h3>
+            <div className="form-group" style={{marginTop:'12px'}}>
+              <label>Nouveau nom</label>
+              <input
+                value={renameValue}
+                onChange={e => setRenameValue(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleRename()}
+                style={{padding:'10px',border:'1px solid #dde3ea',borderRadius:'6px',width:'100%',boxSizing:'border-box'}}
+              />
+            </div>
+            <div className="modal-actions">
+              <button className="btn-primary" onClick={handleRename}>Renommer</button>
+              <button className="btn-cancel" onClick={() => setRenameModal(null)}>Annuler</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {renderPreview()}
+
+      {toast && (
+        <div className={`toast-notification toast-${toast.type}`}>
+          <span className="toast-icon">{toast.type === 'success' ? '✅' : '❌'}</span>
+          <span className="toast-message">{toast.message}</span>
+        </div>
+      )}
     </div>
   );
 }
