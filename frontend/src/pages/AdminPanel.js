@@ -211,6 +211,7 @@ function AdminPanel() {
       await deleteUserAccount(id, token);
       setUsers(users.filter(u => u.id !== id));
       setConfirmDeleteId(null);
+      showToast('Utilisateur supprimé.');
     } catch {
       alert("Erreur lors de la suppression.");
       setConfirmDeleteId(null);
@@ -244,6 +245,7 @@ function AdminPanel() {
       await updateUserAccount(userId, editUserData);
       setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, ...editUserData } : u)));
       setEditingUser(null);
+      showToast(`Utilisateur mis à jour.`);
     } catch (e) {
       setError("Erreur mise à jour utilisateur");
     }
