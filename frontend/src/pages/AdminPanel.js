@@ -564,7 +564,7 @@ function AdminPanel() {
                       <td>{(historiquePage - 1) * 20 + index + 1}</td>
                       <td>{h.utilisateur}</td>
                       <td><span className={`action-badge action-${h.action.toLowerCase()}`}>{h.action_display}</span></td>
-                      <td className="objet-cell">{h.objet}</td>
+                      <td className="objet-cell" title={h.objet}>{h.objet}</td>
                       <td>{h.date}</td>
                       <td>
                         {h.utilisateur !== userInfo?.username && (

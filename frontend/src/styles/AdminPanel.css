@@ -1054,6 +1054,8 @@ td:last-child {
   text-overflow: ellipsis;
   white-space: nowrap;
   text-align: left;
+  cursor: help;
+  position: relative;
 }
 
 /* ── Pagination ──────────────────────────────────────────── */
