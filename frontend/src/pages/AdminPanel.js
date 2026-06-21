@@ -79,6 +79,12 @@ function AdminPanel() {
   const [formSuccess, setFormSuccess] = useState("");
   const [formPasswordVisible, setFormPasswordVisible] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3500);
+  };
 
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -282,6 +288,8 @@ function AdminPanel() {
     try {
       await createUser(formData);
       setFormSuccess(`✅ Utilisateur "${formData.username}" créé avec succès.`);
+      showToast(`Utilisateur "${formData.username}" créé avec succès.`);
+      setShowCreateModal(false);
       setFormData({ username: '', email: '', password: '', confirmPassword: '', role: 'employe', service: '' });
       fetchData();
     } catch (err) {
@@ -299,7 +307,6 @@ function AdminPanel() {
         <button onClick={() => setActiveSection("files")}>Gestion fichiers</button>
         <button onClick={() => { setActiveSection("submissions"); fetchHistorique(); }}>Historique</button>
         <button onClick={() => setActiveSection("createService")}>Créer un service</button>
-        <button onClick={() => setActiveSection("register")}>Créer utilisateur</button>
         <button onClick={() => setActiveSection("account")}>Compte utilisateur</button>
         <div className="sidebar-bottom">
           <div className="sidebar-logo">
@@ -688,6 +695,13 @@ function AdminPanel() {
               </div>
             </form>
           </div>
+        </div>
+      )}
+
+      {toast && (
+        <div className={`toast-notification toast-${toast.type}`}>
+          <span className="toast-icon">{toast.type === 'success' ? '✅' : '❌'}</span>
+          <span className="toast-message">{toast.message}</span>
         </div>
       )}
     </div>
