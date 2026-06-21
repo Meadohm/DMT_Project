@@ -80,6 +80,7 @@ function AdminPanel() {
   const [formPasswordVisible, setFormPasswordVisible] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [toast, setToast] = useState(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
@@ -310,7 +311,10 @@ function AdminPanel() {
 
   return (
     <div className="admin-panel-container">
-      <aside className="admin-sidebar">
+      <aside className={`admin-sidebar${sidebarCollapsed ? ' sidebar-collapsed' : ''}`}>
+        <button className="sidebar-toggle" onClick={() => setSidebarCollapsed(!sidebarCollapsed)} title={sidebarCollapsed ? 'Déplier' : 'Replier'}>
+          {sidebarCollapsed ? '→' : '←'}
+        </button>
         <button onClick={() => setActiveSection("users")}>Gestion utilisateurs</button>
         <button onClick={() => setActiveSection("files")}>Gestion fichiers</button>
         <button onClick={() => { setActiveSection("submissions"); fetchHistorique(); }}>Historique</button>

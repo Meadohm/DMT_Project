@@ -904,3 +904,61 @@ td:last-child {
   width: 100%;
   text-align: center;
 }
+
+/* ── Sidebar toggle ──────────────────────────────────────── */
+.sidebar-toggle {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-end;
+  margin-bottom: 8px;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.sidebar-toggle:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+.sidebar-collapsed {
+  width: 56px !important;
+  padding: 12px 8px !important;
+  overflow: hidden;
+}
+
+.sidebar-collapsed button:not(.sidebar-toggle):not(.logout-button) {
+  opacity: 0;
+  pointer-events: none;
+  font-size: 0;
+  padding: 10px 0;
+}
+
+.sidebar-collapsed .logout-button {
+  font-size: 0;
+  padding: 10px 0;
+}
+
+.sidebar-collapsed .logout-button::before {
+  content: '⏻';
+  font-size: 1.1rem;
+}
+
+.sidebar-collapsed .sidebar-bottom {
+  padding-top: 8px;
+}
+
+.sidebar-collapsed .sidebar-logo {
+  display: none;
+}
+
+.admin-sidebar {
+  transition: width 0.25s ease, padding 0.25s ease;
+}
