@@ -899,3 +899,8 @@ td:last-child {
   from { opacity: 1; }
   to   { opacity: 0; transform: translateY(10px); }
 }
+
+.actions-cell-solo .edit-user-button {
+  width: 100%;
+  text-align: center;
+}

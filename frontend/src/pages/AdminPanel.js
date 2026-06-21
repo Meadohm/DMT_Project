@@ -133,8 +133,13 @@ function AdminPanel() {
       setUsers(usersData);
       fetchUserInfo();
       setLoading(false);
-    } catch (e) {
-      setError("Erreur récupération données");
+    } catch (err) {
+      if (err.response?.status === 403 || err.response?.status === 401) {
+        localStorage.clear();
+        window.location.href = '/';
+      } else {
+        setError("Erreur récupération données");
+      }
       setLoading(false);
     }
   };
@@ -388,7 +393,7 @@ function AdminPanel() {
                           <td data-label="#">{index + 1}</td>
                           <td data-label="Nom"><input value={editUserData.username} onChange={(e) => setEditUserData({ ...editUserData, username: e.target.value })} /></td>
                           <td data-label="Rôle">
-                            <select value={u.role} onChange={(e) => handleUpdateRole(u.id, e.target.value)}>
+                            <select value={u.role} onChange={(e) => handleUpdateRole(u.id, e.target.value)} disabled={u.id === userInfo?.id}>
                               <option value="employe">Employé</option>
                               <option value="responsable">Responsable</option>
                               <option value="admin">Admin</option>
@@ -416,7 +421,7 @@ function AdminPanel() {
                           <td data-label="Service">{u.service || '—'}</td>
                           <td data-label="Email">{u.email || '—'}</td>
                           <td data-label="Statut"><span className={`status-badge ${statusType}`}>{statusLabel}</span></td>
-                          <td data-label="Actions">
+                          <td data-label="Actions" className={u.id === userInfo?.id ? 'actions-cell-solo' : ''}>
                             <button className="edit-user-button" onClick={() => handleEditStart(u)}>Éditer</button>
                             {u.id !== userInfo?.id && (
                               <>
