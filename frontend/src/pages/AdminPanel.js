@@ -301,7 +301,6 @@ function AdminPanel() {
         <button onClick={() => setActiveSection("register")}>Créer utilisateur</button>
         <button onClick={() => setActiveSection("account")}>Compte utilisateur</button>
         <div className="sidebar-bottom">
-          <button onClick={handleLogout} className="logout-button">Déconnexion</button>
           <div className="sidebar-logo">
             <img src={logo} alt="Logo" className="app-logo" />
           </div>
@@ -315,8 +314,13 @@ function AdminPanel() {
             <span className="admin-topbar-subtitle">DMT — Doumbia Moussa Transport</span>
           </div>
           <div className="admin-topbar-right">
-            <span className="admin-topbar-date">{formatDate(currentTime)}</span>
-            <span className="admin-topbar-time">{formatTime(currentTime)}</span>
+            <div className="admin-topbar-clock">
+              <span className="admin-topbar-date">{formatDate(currentTime)}</span>
+              <span className="admin-topbar-time">{formatTime(currentTime)}</span>
+            </div>
+            <button onClick={handleLogout} className="topbar-logout-button">
+              ⏻ Déconnexion
+            </button>
           </div>
         </div>
         <div className="welcome-banner">
