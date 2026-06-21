@@ -301,10 +301,10 @@ function AdminPanel() {
         <button onClick={() => setActiveSection("register")}>Créer utilisateur</button>
         <button onClick={() => setActiveSection("account")}>Compte utilisateur</button>
         <div className="sidebar-bottom">
+          <button onClick={handleLogout} className="logout-button">Déconnexion</button>
           <div className="sidebar-logo">
             <img src={logo} alt="Logo" className="app-logo" />
           </div>
-          <button onClick={handleLogout} className="logout-button">Déconnexion</button>
         </div>
       </aside>
 
