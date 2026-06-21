@@ -1052,3 +1052,28 @@ td:last-child {
   color: #555;
   font-weight: 600;
 }
+
+.protected-log {
+  font-size: 1em;
+  opacity: 0.5;
+  cursor: not-allowed;
+  display: block;
+  text-align: center;
+}
+
+.pagination .btn-cancel {
+  background: linear-gradient(135deg, #003366, #00509e);
+  color: white;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.pagination .btn-cancel:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination .btn-cancel:not(:disabled):hover {
+  background: linear-gradient(135deg, #00509e, #0070cc);
+}

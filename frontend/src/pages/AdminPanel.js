@@ -177,10 +177,14 @@ function AdminPanel() {
 
   const handleDeleteHistorique = async (id) => {
     try {
-      await deleteHistorique(id);
-      setHistorique(historique.filter((h) => h.id !== id));
+      const token = localStorage.getItem('token');
+      await axios.delete(`${API_BASE_URL}/historique/${id}/`, {
+        headers: { Authorization: `Token ${token}` }
+      });
+      showToast('Entrée supprimée du journal.');
+      fetchHistorique(historiquePage, historiqueAction, historiqueSearch);
     } catch (e) {
-      setError("Erreur suppression historique");
+      alert('Erreur lors de la suppression.');
     }
   };
 
@@ -328,7 +332,7 @@ function AdminPanel() {
         </button>
         <button onClick={() => setActiveSection("users")}>Gestion utilisateurs</button>
         <button onClick={() => setActiveSection("files")}>Gestion fichiers</button>
-        <button onClick={() => { setActiveSection("submissions"); fetchHistorique(); }}>Historique</button>
+        <button onClick={() => { setActiveSection("submissions"); fetchHistorique(); }}>Journal d'activité</button>
         <button onClick={() => setActiveSection("createService")}>Créer un service</button>
         <button onClick={() => setActiveSection("account")}>Compte utilisateur</button>
         <div className="sidebar-bottom">
@@ -466,7 +470,7 @@ function AdminPanel() {
         {activeSection === "submissions" && (
           <>
             <div className="section-header">
-              <h2>Historique des actions</h2>
+              <h2>Journal d'activité</h2>
               <span className="user-count-badge">{historiqueTotal} entrée{historiqueTotal !== 1 ? 's' : ''}</span>
             </div>
             <div className="historique-filters">
@@ -489,7 +493,7 @@ function AdminPanel() {
                 <option value="UPLOAD">Upload</option>
                 <option value="SHARE">Partage</option>
               </select>
-              <button className="btn-cancel" onClick={() => { setHistoriqueSearch(''); setHistoriqueAction(''); fetchHistorique(1, '', ''); }}>
+              <button className="btn-cancel" onClick={() => { setHistoriqueSearch(''); setHistoriqueAction(''); fetchHistorique(1, '', ''); showToast('Filtres réinitialisés.', 'success'); }}>
                 Réinitialiser
               </button>
             </div>
@@ -514,7 +518,12 @@ function AdminPanel() {
                       <td className="objet-cell">{h.objet}</td>
                       <td>{h.date}</td>
                       <td>
-                        <button className="delete-user-button" onClick={() => setConfirmDeleteHistoriqueId(h.id)}>Supprimer</button>
+                        {h.utilisateur !== userInfo?.username && (
+                          <button className="delete-user-button" onClick={() => setConfirmDeleteHistoriqueId(h.id)}>Supprimer</button>
+                        )}
+                        {h.utilisateur === userInfo?.username && (
+                          <span className="protected-log">🔒</span>
+                        )}
                       </td>
                     </tr>
                   ))}
