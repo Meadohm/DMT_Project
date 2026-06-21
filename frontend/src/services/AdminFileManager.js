@@ -114,12 +114,11 @@ function AdminFileManager() {
     }
     try {
       await updateFile(renameModal.id, { fichier_nom: renameValue.trim() });
-      showToast('Fichier renommé.');
       setFiles(prev => prev.map(file =>
         file.id === renameModal.id ? { ...file, nom: renameValue.trim() } : file
       ));
+      showToast('Fichier renommé.');
       setRenameModal(null);
-      fetchFiles();
     } catch {
       showToast('Erreur lors du renommage.', 'error');
     }
@@ -175,14 +174,27 @@ function AdminFileManager() {
             <img src={mediaUrl} alt="aperçu" style={{width:'100%', borderRadius:'8px', maxHeight:'500px', objectFit:'contain'}} />
           )}
           {officeExts.includes(ext) && (
-            <iframe
-              src={`https://docs.google.com/viewer?url=${encodeURIComponent(mediaUrl)}&embedded=true`}
-              width="100%"
-              height="500px"
-              style={{border:'none', borderRadius:'8px'}}
-              title="aperçu"
-            />
-          )}
+  <div style={{textAlign:'center', padding:'30px'}}>
+    <p style={{fontSize:'3em', marginBottom:'12px'}}>
+      {ext === 'docx' || ext === 'doc' ? '📝' : ext === 'xlsx' || ext === 'xls' ? '📊' : ext === 'csv' ? '📋' : '📄'}
+    </p>
+    <p style={{color:'#555', marginBottom:'8px', fontWeight:'600'}}>
+      Fichier {ext.toUpperCase()}
+    </p>
+    <p style={{color:'#888', fontSize:'0.85em', marginBottom:'20px'}}>
+      L'aperçu en ligne n'est pas disponible pour ce type de fichier.<br/>
+      Télécharge-le pour l'ouvrir avec l'application appropriée.
+    </p>
+    <button className="btn-primary" onClick={() => handleDownload(previewFile.fichier)}>
+      ⬇️ Télécharger pour ouvrir
+    </button>
+    <div style={{marginTop:'12px'}}>
+      <button className="btn-cancel" style={{fontSize:'0.82em'}} onClick={() => window.open(getMediaUrl(previewFile.fichier), '_blank')}>
+        Ouvrir dans un nouvel onglet
+      </button>
+    </div>
+  </div>
+)}
           {!['pdf', ...imageExts, ...officeExts].includes(ext) && (
             <p style={{padding:'20px', textAlign:'center', color:'#666'}}>
               Aperçu non disponible pour ce type ({ext.toUpperCase()}).<br/>
@@ -301,7 +313,7 @@ function AdminFileManager() {
                   <td>{f.date_validation}</td>
                   <td>{size}</td>
                   <td>
-                    <button className="edit-user-button" onClick={() => { setRenameModal({ id: f.id, currentName: cleanName }); setRenameValue(cleanName); }}>Renommer</button>
+                    <button className="edit-user-button" onClick={() => { setRenameModal({ id: f.id, currentName: f.nom || cleanName }); setRenameValue(f.nom || cleanName); }}>Renommer</button>
                     <button className="btn-primary" style={{padding:'5px 8px',fontSize:'0.78em',marginRight:'3px'}} onClick={() => setPreviewFile(f)}>Aperçu</button>
                     <button className="reset-password-button" onClick={() => handleDownload(f.fichier)}>Télécharger</button>
                     <button className="delete-user-button" onClick={() => setConfirmDeleteId(f.id)}>Supprimer</button>
