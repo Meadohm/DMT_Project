@@ -20,7 +20,9 @@ export const login = async (username, password) => {
       return data;
     } else {
       const errorData = await response.json();
-      throw new Error(errorData.message || "Échec de la connexion");
+      const err = new Error(errorData.error || errorData.message || "Échec de la connexion");
+      err.response = { status: response.status, data: errorData };
+      throw err;
     }
   } catch (error) {
     console.error("Erreur dans le service d'authentification:", error.message);
