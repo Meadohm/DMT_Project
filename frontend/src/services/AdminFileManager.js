@@ -59,6 +59,14 @@ function AdminFileManager() {
   const [previewContent, setPreviewContent] = useState(null);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [diskUsage, setDiskUsage] = useState(null);
+  const [tooltip, setTooltip] = useState(null);
+
+  const handleTooltipShow = (e, text) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setTooltip({ text, x: rect.left, y: rect.top });
+  };
+
+  const handleTooltipHide = () => setTooltip(null);
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
@@ -347,7 +355,13 @@ function AdminFileManager() {
                   <td>{(page - 1) * PAGE_SIZE + index + 1}</td>
                   <td><span className="file-type-badge">{icon} {ext}</span></td>
                   <td className="file-name-cell">
-                    <span className="objet-text" data-tooltip={f.nom || cleanName}>{f.nom || cleanName}</span>
+                    <span
+                      className="objet-text"
+                      onMouseEnter={(e) => handleTooltipShow(e, f.nom || cleanName)}
+                      onMouseLeave={handleTooltipHide}
+                    >
+                      {f.nom || cleanName}
+                    </span>
                   </td>
                   <td>{f.utilisateur || '—'}</td>
                   <td>{f.date_validation}</td>
@@ -411,6 +425,27 @@ function AdminFileManager() {
         <div className={`toast-notification toast-${toast.type}`}>
           <span className="toast-icon">{toast.type === 'success' ? '✅' : '❌'}</span>
           <span className="toast-message">{toast.message}</span>
+        </div>
+      )}
+
+      {tooltip && (
+        <div style={{
+          position: 'fixed',
+          left: tooltip.x,
+          top: tooltip.y - 40,
+          background: '#003366',
+          color: 'white',
+          padding: '6px 10px',
+          borderRadius: '6px',
+          fontSize: '0.82em',
+          maxWidth: '320px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+          zIndex: 99999,
+          pointerEvents: 'none',
+          lineHeight: '1.4',
+          whiteSpace: 'normal',
+        }}>
+          {tooltip.text}
         </div>
       )}
     </div>

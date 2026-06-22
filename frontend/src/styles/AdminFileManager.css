@@ -84,28 +84,3 @@
   cursor: default;
   position: relative;
 }
-
-.objet-text::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  bottom: calc(100% + 4px);
-  left: 0;
-  background: #003366;
-  color: white;
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 0.82em;
-  white-space: normal;
-  max-width: 300px;
-  min-width: 160px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-  z-index: 9999;
-  line-height: 1.4;
-}
-
-.objet-text:hover::after {
-  opacity: 1;
-}

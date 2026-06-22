@@ -91,6 +91,7 @@ function AdminPanel() {
   const [confirmClearAll, setConfirmClearAll] = useState(false);
   const [dateDebut, setDateDebut] = useState('');
   const [dateFin, setDateFin] = useState('');
+  const [tooltip, setTooltip] = useState(null);
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
@@ -356,6 +357,13 @@ function AdminPanel() {
     }
   };
 
+  const handleTooltipShow = (e, text) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setTooltip({ text, x: rect.left, y: rect.top });
+  };
+
+  const handleTooltipHide = () => setTooltip(null);
+
   if (loading) return <p>Chargement...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
@@ -568,7 +576,13 @@ function AdminPanel() {
                       <td>{h.utilisateur}</td>
                       <td><span className={`action-badge action-${h.action.toLowerCase()}`}>{h.action_display}</span></td>
                       <td className="objet-cell">
-                        <span className="objet-text" data-tooltip={h.objet}>{h.objet}</span>
+                        <span
+                          className="objet-text"
+                          onMouseEnter={(e) => handleTooltipShow(e, h.objet)}
+                          onMouseLeave={handleTooltipHide}
+                        >
+                          {h.objet}
+                        </span>
                       </td>
                       <td>{h.date}</td>
                       <td>
@@ -863,6 +877,27 @@ function AdminPanel() {
         <div className={`toast-notification toast-${toast.type}`}>
           <span className="toast-icon">{toast.type === 'success' ? '✅' : '❌'}</span>
           <span className="toast-message">{toast.message}</span>
+        </div>
+      )}
+
+      {tooltip && (
+        <div style={{
+          position: 'fixed',
+          left: tooltip.x,
+          top: tooltip.y - 40,
+          background: '#003366',
+          color: 'white',
+          padding: '6px 10px',
+          borderRadius: '6px',
+          fontSize: '0.82em',
+          maxWidth: '320px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+          zIndex: 99999,
+          pointerEvents: 'none',
+          lineHeight: '1.4',
+          whiteSpace: 'normal',
+        }}>
+          {tooltip.text}
         </div>
       )}
     </div>
