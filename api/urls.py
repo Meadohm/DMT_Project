@@ -21,6 +21,7 @@ urlpatterns = [
 
     # HISTORIQUE
     path('historique/', views.get_historique, name='get_historique'),
+    path('historique/export-csv/', views.export_historique_csv, name='export_historique_csv'),
     path('historique/<int:log_id>/', views.delete_historique, name='delete_historique'),
     path('historique/clear/', views.delete_all_historique, name='delete_all_historique'),
 

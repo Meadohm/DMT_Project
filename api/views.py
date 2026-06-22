@@ -474,6 +474,54 @@ def get_historique(request):
     return Response({'results': data, 'total': total, 'page': page, 'page_size': page_size})
 
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser])
+def export_historique_csv(request):
+    logs = AuditLog.objects.select_related('utilisateur').order_by('-timestamp')
+
+    action_filter = request.GET.get('action', '')
+    search = request.GET.get('search', '')
+    date_debut = request.GET.get('date_debut', '')
+    date_fin = request.GET.get('date_fin', '')
+
+    if action_filter:
+        logs = logs.filter(action=action_filter)
+    if search:
+        logs = logs.filter(utilisateur__username__icontains=search)
+    if date_debut:
+        from django.utils.dateparse import parse_date
+        d = parse_date(date_debut)
+        if d:
+            logs = logs.filter(timestamp__date__gte=d)
+    if date_fin:
+        from django.utils.dateparse import parse_date
+        d = parse_date(date_fin)
+        if d:
+            logs = logs.filter(timestamp__date__lte=d)
+
+    from django.utils.timezone import now
+    filename = f"journal_activite_{now().strftime('%Y%m%d_%H%M%S')}.csv"
+
+    response = HttpResponse(content_type='text/csv; charset=utf-8')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    response.write('﻿')
+
+    writer = csv.writer(response)
+    writer.writerow(['#', 'Utilisateur', 'Action', 'Objet', 'Date'])
+
+    for i, log in enumerate(logs, 1):
+        writer.writerow([
+            i,
+            log.utilisateur.username if log.utilisateur else '—',
+            log.get_action_display(),
+            log.objet,
+            log.timestamp.strftime('%d/%m/%Y %H:%M'),
+        ])
+
+    return response
+
+
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAdminUser | IsCustomAdminUser])

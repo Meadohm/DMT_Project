@@ -235,6 +235,28 @@ function AdminPanel() {
     }
   };
 
+  const handleExportCSV = () => {
+    const token = localStorage.getItem('token');
+    const params = new URLSearchParams();
+    if (historiqueAction) params.append('action', historiqueAction);
+    if (historiqueSearch) params.append('search', historiqueSearch);
+    if (dateDebut) params.append('date_debut', dateDebut);
+    if (dateFin) params.append('date_fin', dateFin);
+    const url = `${API_BASE_URL}/historique/export-csv/?${params.toString()}`;
+    fetch(url, { headers: { Authorization: `Token ${token}` } })
+      .then(res => res.blob())
+      .then(blob => {
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = `journal_activite_${new Date().toISOString().slice(0,10)}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast('Export CSV téléchargé.');
+      })
+      .catch(() => showToast('Erreur lors de l\'export.', 'error'));
+  };
+
   const handleClearAllHistorique = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -684,6 +706,9 @@ function AdminPanel() {
               />
               <button className="btn-cancel" onClick={() => { setHistoriqueSearch(''); setHistoriqueAction(''); setDateDebut(''); setDateFin(''); setHistoriquePage(1); localStorage.setItem('historiquePage', 1); fetchHistorique(1, '', '', '', ''); showToast('Filtres réinitialisés.', 'success'); }}>
                 Réinitialiser
+              </button>
+              <button className="btn-primary" style={{background:'#28a745'}} onClick={handleExportCSV}>
+                ⬇️ Exporter CSV
               </button>
               <button className="btn-danger" onClick={() => setConfirmClearAll(true)}>
                 🗑️ Tout effacer
