@@ -1059,14 +1059,11 @@ td:last-child {
   text-overflow: ellipsis;
   white-space: nowrap;
   cursor: default;
-  position: relative;
 }
 
 .objet-text::after {
   content: attr(data-tooltip);
-  position: absolute;
-  bottom: calc(100% + 6px);
-  left: 0;
+  position: fixed;
   background: #003366;
   color: white;
   padding: 6px 10px;
@@ -1079,8 +1076,9 @@ td:last-child {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease;
-  z-index: 100;
+  z-index: 9999;
   line-height: 1.4;
+  transform: translateY(-110%);
 }
 
 .objet-text:hover::after {

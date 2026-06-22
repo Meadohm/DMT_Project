@@ -346,7 +346,9 @@ function AdminFileManager() {
                 <tr key={f.id}>
                   <td>{(page - 1) * PAGE_SIZE + index + 1}</td>
                   <td><span className="file-type-badge">{icon} {ext}</span></td>
-                  <td className="objet-cell" title={f.nom || cleanName}>{f.nom || cleanName}</td>
+                  <td className="file-name-cell">
+                    <span className="objet-text" data-tooltip={f.nom || cleanName}>{f.nom || cleanName}</span>
+                  </td>
                   <td>{f.utilisateur || '—'}</td>
                   <td>{f.date_validation}</td>
                   <td>{size}</td>
