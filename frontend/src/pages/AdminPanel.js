@@ -520,6 +520,7 @@ function AdminPanel() {
                   <div className="dashboard-card-main">{dashboardStats?.users?.total ?? '—'}</div>
                   <div className="dashboard-card-details">
                     <span className="dash-detail online">🟢 {dashboardStats?.users?.online ?? 0} en ligne</span>
+                    <span className="dash-detail inactive">🔴 {dashboardStats?.users?.inactive ?? 0} désactivés</span>
                     <span className="dash-detail inactive">⚫ {dashboardStats?.users?.never_connected ?? 0} jamais connectés</span>
                   </div>
                 </div>

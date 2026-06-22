@@ -778,9 +778,11 @@ def get_dashboard_stats(request):
 
     # Users
     total_users = Utilisateur.objects.count()
+    active_users = Utilisateur.objects.filter(is_active=True).count()
+    inactive_users = Utilisateur.objects.filter(is_active=False).count()
     threshold = now() - datetime.timedelta(minutes=10)
-    online_users = Utilisateur.objects.filter(last_seen__gte=threshold).count()
-    never_connected = Utilisateur.objects.filter(last_seen__isnull=True, last_login__isnull=True).count()
+    online_users = Utilisateur.objects.filter(last_seen__gte=threshold, is_active=True).count()
+    never_connected = Utilisateur.objects.filter(last_seen__isnull=True, last_login__isnull=True, is_active=True).count()
 
     # Services
     total_services = Service.objects.count()
@@ -801,6 +803,8 @@ def get_dashboard_stats(request):
     return Response({
         'users': {
             'total': total_users,
+            'active': active_users,
+            'inactive': inactive_users,
             'online': online_users,
             'never_connected': never_connected,
         },
