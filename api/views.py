@@ -401,7 +401,7 @@ def update_centralized_file(request, file_id):
 @permission_classes([IsAdminUser | IsCustomAdminUser])
 def delete_centralized_file(request, file_id):
     try:
-        f = FileModel.objects.get(id=file_id)
+        f = FileModel.objects.select_related('folder').get(id=file_id)
     except FileModel.DoesNotExist:
         return Response({'error': 'Fichier non trouvé.'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -417,6 +417,29 @@ def delete_centralized_file(request, file_id):
     )
 
     return Response({'success': 'Fichier supprimé.'})
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser])
+def check_file_shared(request, file_id):
+    try:
+        f = FileModel.objects.select_related('folder').get(id=file_id)
+    except FileModel.DoesNotExist:
+        return Response({'is_shared': False, 'shared_count': 0})
+
+    is_shared = False
+    shared_count = 0
+
+    if f.folder:
+        shared_count = FolderShare.objects.filter(folder=f.folder).count()
+        is_shared = f.folder.is_shared or shared_count > 0
+
+    return Response({
+        'is_shared': is_shared,
+        'shared_count': shared_count,
+        'folder_nom': f.folder.nom if f.folder else None,
+    })
 
 
 ##### HISTORIQUE (AuditLog) #####

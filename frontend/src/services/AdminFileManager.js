@@ -61,6 +61,7 @@ function AdminFileManager() {
   const [previewLoading, setPreviewLoading] = useState(false);
   const [diskUsage, setDiskUsage] = useState(null);
   const [tooltip, setTooltip] = useState(null);
+  const [deleteWarning, setDeleteWarning] = useState(null);
 
   const handleTooltipShow = (e, text) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -110,7 +111,23 @@ function AdminFileManager() {
 
   useEffect(() => { localStorage.setItem('filesPage', page); }, [page]);
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (fileId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.get(`${API_BASE_URL}/centralized-files/${fileId}/check-shared/`, {
+        headers: { Authorization: `Token ${token}` }
+      });
+      if (res.data.is_shared) {
+        setDeleteWarning({ fileId, sharedCount: res.data.shared_count, folderNom: res.data.folder_nom });
+      } else {
+        setConfirmDeleteId(fileId);
+      }
+    } catch {
+      setConfirmDeleteId(fileId);
+    }
+  };
+
+  const confirmDelete = async (id) => {
     try {
       await deleteFile(id);
       showToast('Fichier supprimé.');
@@ -373,7 +390,7 @@ function AdminFileManager() {
                     <button className="edit-user-button" onClick={() => { setRenameModal({ id: f.id, currentName: f.nom || cleanName }); setRenameValue(f.nom || cleanName); }}>Renommer</button>
                     <button className="btn-primary" style={{padding:'5px 8px',fontSize:'0.78em',marginRight:'3px'}} onClick={() => { setPreviewFile(f); loadPreviewContent(f); }}>Aperçu</button>
                     <button className="reset-password-button" onClick={() => handleDownload(f.fichier)}>Télécharger</button>
-                    <button className="delete-user-button" onClick={() => setConfirmDeleteId(f.id)}>Supprimer</button>
+                    <button className="delete-user-button" onClick={() => handleDelete(f.id)}>Supprimer</button>
                   </td>
                 </tr>
               );
@@ -430,7 +447,7 @@ function AdminFileManager() {
             <h3>⚠️ Supprimer ce fichier ?</h3>
             <p>Cette action est <strong>irréversible</strong>.</p>
             <div className="modal-actions">
-              <button className="btn-danger" onClick={() => handleDelete(confirmDeleteId)}>Supprimer</button>
+              <button className="btn-danger" onClick={() => confirmDelete(confirmDeleteId)}>Supprimer</button>
               <button className="btn-cancel" onClick={() => setConfirmDeleteId(null)}>Annuler</button>
             </div>
           </div>
@@ -464,6 +481,25 @@ function AdminFileManager() {
         <div className={`toast-notification toast-${toast.type}`}>
           <span className="toast-icon">{toast.type === 'success' ? '✅' : '❌'}</span>
           <span className="toast-message">{toast.message}</span>
+        </div>
+      )}
+
+      {deleteWarning && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h3>⚠️ Fichier partagé</h3>
+            <p>Ce fichier est dans le dossier <strong>"{deleteWarning.folderNom}"</strong> partagé avec <strong>{deleteWarning.sharedCount} utilisateur(s)</strong>.</p>
+            <p style={{marginTop:'8px', color:'#dc3545', fontSize:'0.9em'}}>
+              Sa suppression le rendra inaccessible pour tous les destinataires du partage.
+            </p>
+            <div className="modal-actions">
+              <button className="btn-danger" onClick={() => {
+                setConfirmDeleteId(deleteWarning.fileId);
+                setDeleteWarning(null);
+              }}>Supprimer quand même</button>
+              <button className="btn-cancel" onClick={() => setDeleteWarning(null)}>Annuler</button>
+            </div>
+          </div>
         </div>
       )}
 

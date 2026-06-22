@@ -31,6 +31,7 @@ urlpatterns = [
     path('disk-usage/', views.get_disk_usage, name='get_disk_usage'),
     path('centralized-files/<int:file_id>/update/', views.update_centralized_file, name='update_centralized_file'),
     path('centralized-files/<int:file_id>/delete/', views.delete_centralized_file, name='delete_centralized_file'),
+    path('centralized-files/<int:file_id>/check-shared/', views.check_file_shared, name='check_file_shared'),
     
 
     # SERVICES
