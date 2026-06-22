@@ -393,9 +393,6 @@ const handleClearNotifications = async () => {
 
       {/* --- HEADER --- */}
       <header className="header">
-        <div className="logo-container">
-          <img src={logo} alt="Logo" className="app-logoEmp" />
-        </div>
 
         {/* 🔍 Barre de recherche moderne */}
           <div className="search-bar">
@@ -778,7 +775,9 @@ const handleClearNotifications = async () => {
           )}
         </div>
 
-
+        <div className="sidebar-logo-bottom">
+          <img src={logo} alt="DMT Logo" className="app-logoEmp" />
+        </div>
       </aside>
 
       {/* --- MAIN --- */}
