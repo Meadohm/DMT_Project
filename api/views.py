@@ -626,6 +626,61 @@ def update_service(request, service_id):
 
     return Response({'success': 'Service mis à jour.'})
 
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser])
+def get_dashboard_stats(request):
+    from django.utils import timezone
+    from django.utils.timezone import now
+    import datetime
+
+    # Users
+    total_users = Utilisateur.objects.count()
+    threshold = now() - datetime.timedelta(minutes=10)
+    online_users = Utilisateur.objects.filter(last_seen__gte=threshold).count()
+    never_connected = Utilisateur.objects.filter(last_seen__isnull=True, last_login__isnull=True).count()
+
+    # Services
+    total_services = Service.objects.count()
+    active_services = Service.objects.filter(statut='actif').count()
+    inactive_services = Service.objects.filter(statut='inactif').count()
+
+    # Files
+    from api.models import File as FileModel
+    total_files = FileModel.objects.count()
+    total_size = sum(f.taille or 0 for f in FileModel.objects.only('taille'))
+
+    # Journal
+    total_logs = AuditLog.objects.count()
+    today = now().date()
+    today_logs = AuditLog.objects.filter(timestamp__date=today).count()
+    last_log = AuditLog.objects.order_by('-timestamp').first()
+
+    return Response({
+        'users': {
+            'total': total_users,
+            'online': online_users,
+            'never_connected': never_connected,
+        },
+        'services': {
+            'total': total_services,
+            'active': active_services,
+            'inactive': inactive_services,
+        },
+        'files': {
+            'total': total_files,
+            'size_mb': round(total_size / 1024 / 1024, 2),
+        },
+        'journal': {
+            'total': total_logs,
+            'today': today_logs,
+            'last_action': last_log.objet if last_log else '—',
+            'last_user': last_log.utilisateur.username if last_log and last_log.utilisateur else '—',
+            'last_date': last_log.timestamp.strftime('%d/%m/%Y %H:%M') if last_log else '—',
+        }
+    })
+
 ##### FOLDERS CRUD #####
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])

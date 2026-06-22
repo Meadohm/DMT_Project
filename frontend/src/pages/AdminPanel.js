@@ -48,7 +48,7 @@ function AdminPanel() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeSection, setActiveSection] = useState(
-    localStorage.getItem('adminActiveSection') || "users"
+    localStorage.getItem('adminActiveSection') || "dashboard"
   );
   const [historique, setHistorique] = useState([]);
 
@@ -100,6 +100,7 @@ function AdminPanel() {
   const [editServiceModal, setEditServiceModal] = useState(null);
   const [editServiceForm, setEditServiceForm] = useState({ nom: '', description: '', statut: 'actif', responsable_id: '' });
   const [editServiceError, setEditServiceError] = useState('');
+  const [dashboardStats, setDashboardStats] = useState(null);
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
@@ -119,9 +120,11 @@ function AdminPanel() {
   useEffect(() => {
     fetchData();
     fetchServices();
+    fetchDashboardStats();
     const refreshInterval = setInterval(() => {
       fetchData();
       fetchServices();
+      fetchDashboardStats();
     }, 5000);
     const section = localStorage.getItem('adminActiveSection');
     if (section === 'submissions') {
@@ -146,6 +149,18 @@ function AdminPanel() {
   useEffect(() => {
     localStorage.setItem('adminActiveSection', activeSection);
   }, [activeSection]);
+
+  const fetchDashboardStats = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.get(`${API_BASE_URL}/dashboard-stats/`, {
+        headers: { Authorization: `Token ${token}` }
+      });
+      setDashboardStats(res.data);
+    } catch (e) {
+      console.error('Erreur dashboard stats', e);
+    }
+  };
 
   const fetchServices = async () => {
     try {
@@ -410,6 +425,7 @@ function AdminPanel() {
         <button className="sidebar-toggle" onClick={() => setSidebarCollapsed(!sidebarCollapsed)} title={sidebarCollapsed ? 'Déplier' : 'Replier'}>
           {sidebarCollapsed ? '→' : '←'}
         </button>
+        <button className={activeSection === "dashboard" ? "active" : ""} onClick={() => setActiveSection("dashboard")}>📊 Tableau de bord</button>
         <button className={activeSection === "users" ? "active" : ""} onClick={() => setActiveSection("users")}>Gestion utilisateurs</button>
         <button className={activeSection === "files" ? "active" : ""} onClick={() => setActiveSection("files")}>Gestion fichiers</button>
         <button className={activeSection === "submissions" ? "active" : ""} onClick={() => { setActiveSection("submissions"); fetchHistorique(1, historiqueAction, historiqueSearch, dateDebut, dateFin); }}>Journal d'activité</button>
@@ -450,6 +466,69 @@ function AdminPanel() {
             <span className="welcome-name">{userInfo?.username}</span>
           </div>
         </div>
+
+        {activeSection === "dashboard" && (
+          <>
+            <div className="section-header">
+              <h2>Tableau de bord</h2>
+              <span className="user-count-badge">Vue d'ensemble</span>
+            </div>
+            <div className="dashboard-grid">
+              <div className="dashboard-card dashboard-card-users" onClick={() => setActiveSection("users")}>
+                <div className="dashboard-card-icon">👥</div>
+                <div className="dashboard-card-content">
+                  <h3>Utilisateurs</h3>
+                  <div className="dashboard-card-main">{dashboardStats?.users?.total ?? '—'}</div>
+                  <div className="dashboard-card-details">
+                    <span className="dash-detail online">🟢 {dashboardStats?.users?.online ?? 0} en ligne</span>
+                    <span className="dash-detail inactive">⚫ {dashboardStats?.users?.never_connected ?? 0} jamais connectés</span>
+                  </div>
+                </div>
+                <div className="dashboard-card-arrow">→</div>
+              </div>
+
+              <div className="dashboard-card dashboard-card-services" onClick={() => setActiveSection("createService")}>
+                <div className="dashboard-card-icon">🏢</div>
+                <div className="dashboard-card-content">
+                  <h3>Services</h3>
+                  <div className="dashboard-card-main">{dashboardStats?.services?.total ?? '—'}</div>
+                  <div className="dashboard-card-details">
+                    <span className="dash-detail online">✅ {dashboardStats?.services?.active ?? 0} actifs</span>
+                    <span className="dash-detail inactive">⏸ {dashboardStats?.services?.inactive ?? 0} inactifs</span>
+                  </div>
+                </div>
+                <div className="dashboard-card-arrow">→</div>
+              </div>
+
+              <div className="dashboard-card dashboard-card-files" onClick={() => setActiveSection("files")}>
+                <div className="dashboard-card-icon">📁</div>
+                <div className="dashboard-card-content">
+                  <h3>Fichiers</h3>
+                  <div className="dashboard-card-main">{dashboardStats?.files?.total ?? '—'}</div>
+                  <div className="dashboard-card-details">
+                    <span className="dash-detail">💾 {dashboardStats?.files?.size_mb ?? 0} MB utilisés</span>
+                  </div>
+                </div>
+                <div className="dashboard-card-arrow">→</div>
+              </div>
+
+              <div className="dashboard-card dashboard-card-journal" onClick={() => { setActiveSection("submissions"); fetchHistorique(1, '', '', '', ''); }}>
+                <div className="dashboard-card-icon">📋</div>
+                <div className="dashboard-card-content">
+                  <h3>Journal d'activité</h3>
+                  <div className="dashboard-card-main">{dashboardStats?.journal?.total ?? '—'}</div>
+                  <div className="dashboard-card-details">
+                    <span className="dash-detail online">📅 {dashboardStats?.journal?.today ?? 0} aujourd'hui</span>
+                    <span className="dash-detail" style={{fontSize:'0.75em', marginTop:'4px'}}>
+                      Dernière : {dashboardStats?.journal?.last_user ?? '—'} — {dashboardStats?.journal?.last_date ?? '—'}
+                    </span>
+                  </div>
+                </div>
+                <div className="dashboard-card-arrow">→</div>
+              </div>
+            </div>
+          </>
+        )}
 
         {activeSection === "users" && (
           <>

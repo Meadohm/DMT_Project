@@ -37,6 +37,7 @@ urlpatterns = [
     path('services/create/', views.create_service, name='create_service'),
     path('services/<int:service_id>/delete/', views.delete_service, name='delete_service'),
     path('services/<int:service_id>/update/', views.update_service, name='update_service'),
+    path('dashboard-stats/', views.get_dashboard_stats, name='dashboard_stats'),
 
    # FOLDERS
     path('folders/', views.list_folders, name='list_folders'),
