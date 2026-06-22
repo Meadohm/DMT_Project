@@ -1119,3 +1119,19 @@ td:last-child {
   outline: none;
   box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
 }
+
+.admin-topbar-stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.topbar-stat {
+  font-size: 0.78em;
+  background: rgba(255,255,255,0.15);
+  padding: 3px 10px;
+  border-radius: 12px;
+  opacity: 0.9;
+  white-space: nowrap;
+}

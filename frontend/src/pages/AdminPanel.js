@@ -426,6 +426,11 @@ function AdminPanel() {
           <div className="admin-topbar-left">
             <span className="admin-topbar-title">Panneau Administrateur</span>
             <span className="admin-topbar-subtitle">DMT - Doumbia Moussa Transport</span>
+            <div className="admin-topbar-stats">
+              <span className="topbar-stat">👥 {users.length} utilisateur{users.length !== 1 ? 's' : ''}</span>
+              <span className="topbar-stat">🏢 {services.length} service{services.length !== 1 ? 's' : ''}</span>
+              <span className="topbar-stat">🟢 {users.filter(u => { const diff = u.last_seen ? Date.now() - new Date(u.last_seen).getTime() : Infinity; return diff < 600000; }).length} en ligne</span>
+            </div>
           </div>
           <div className="admin-topbar-right">
             <div className="admin-topbar-clock">
