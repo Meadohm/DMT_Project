@@ -355,18 +355,37 @@ def synchroniser_fichiers(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAdminUser | IsCustomAdminUser])
 def list_centralized_files(request):
-    files = FileModel.objects.select_related('utilisateur', 'folder').all()
-    data = [
-        {
+    files = FileModel.objects.select_related('utilisateur', 'folder').prefetch_related('folder__shares__user__utilisateur').all()
+    data = []
+    for f in files:
+        shares = []
+        shared_date = None
+        if f.folder:
+            folder_shares = f.folder.shares.select_related('user').all()
+            for share in folder_shares:
+                shares.append({
+                    'username': share.user.username if hasattr(share.user, 'username') else str(share.user),
+                    'service': share.user.service if hasattr(share.user, 'service') else '—',
+                    'date': share.created_at.strftime('%d/%m/%Y %H:%M'),
+                })
+            if folder_shares:
+                shared_date = folder_shares.order_by('-created_at').first().created_at.strftime('%d/%m/%Y %H:%M')
+
+        data.append({
             'id': f.id,
             'fichier': f.fichier.name if f.fichier else '',
             'nom': f.nom,
             'size': f.taille,
-            'date_validation': f.updated_at.strftime('%d/%m/%Y'),
+            'date_validation': f.updated_at.strftime('%d/%m/%Y %H:%M'),
             'utilisateur': f.utilisateur.username if f.utilisateur else '—',
-        }
-        for f in files
-    ]
+            'utilisateur_service': f.utilisateur.service if f.utilisateur and hasattr(f.utilisateur, 'service') else '—',
+            'is_shared': len(shares) > 0,
+            'shared_count': len(shares),
+            'shared_with': shares,
+            'shared_date': shared_date,
+            'is_orphan': f.folder is None,
+            'folder_nom': f.folder.nom if f.folder else None,
+        })
     return Response(data)
 
 

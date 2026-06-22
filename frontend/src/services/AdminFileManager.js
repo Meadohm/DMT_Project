@@ -62,6 +62,30 @@ function AdminFileManager() {
   const [diskUsage, setDiskUsage] = useState(null);
   const [tooltip, setTooltip] = useState(null);
   const [deleteWarning, setDeleteWarning] = useState(null);
+  const [sortConfig, setSortConfig] = useState({ key: 'date_validation', direction: 'desc' });
+  const [shareTooltip, setShareTooltip] = useState(null);
+
+  const handleSort = (key) => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
+    }));
+  };
+
+  const getSortedFiles = (filesList) => {
+    return [...filesList].sort((a, b) => {
+      let aVal = a[sortConfig.key] ?? '';
+      let bVal = b[sortConfig.key] ?? '';
+      if (sortConfig.key === 'size') {
+        aVal = Number(aVal); bVal = Number(bVal);
+      } else {
+        aVal = String(aVal).toLowerCase(); bVal = String(bVal).toLowerCase();
+      }
+      if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  };
 
   const handleTooltipShow = (e, text) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -213,8 +237,9 @@ function AdminFileManager() {
     return matchSearch && matchDebut && matchFin;
   });
 
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE) || 1;
-  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const sortedFiles = getSortedFiles(filtered);
+  const totalPages = Math.ceil(sortedFiles.length / PAGE_SIZE) || 1;
+  const paginated = sortedFiles.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const renderPreview = () => {
     if (!previewFile) return null;
@@ -356,11 +381,12 @@ function AdminFileManager() {
           <thead>
             <tr>
               <th>#</th>
-              <th>Type</th>
-              <th>Nom du fichier</th>
-              <th>Propriétaire</th>
-              <th>Date</th>
-              <th>Taille</th>
+              <th onClick={() => handleSort('type_fichier')} style={{cursor:'pointer'}}>Type {sortConfig.key === 'type_fichier' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : '↕'}</th>
+              <th onClick={() => handleSort('nom')} style={{cursor:'pointer'}}>Nom du fichier {sortConfig.key === 'nom' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : '↕'}</th>
+              <th onClick={() => handleSort('utilisateur')} style={{cursor:'pointer'}}>Propriétaire {sortConfig.key === 'utilisateur' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : '↕'}</th>
+              <th onClick={() => handleSort('date_validation')} style={{cursor:'pointer'}}>Date {sortConfig.key === 'date_validation' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : '↕'}</th>
+              <th onClick={() => handleSort('size')} style={{cursor:'pointer'}}>Taille {sortConfig.key === 'size' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : '↕'}</th>
+              <th>Partage</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -386,6 +412,26 @@ function AdminFileManager() {
                   <td>{f.utilisateur || '—'}</td>
                   <td>{f.date_validation}</td>
                   <td>{size}</td>
+                  <td style={{textAlign:'center'}}>
+                    {f.is_orphan ? (
+                      <span
+                        style={{color:'#dc3545', cursor:'help', fontSize:'1.1em'}}
+                        onMouseEnter={(e) => handleTooltipShow(e, 'Fichier orphelin — dossier supprimé')}
+                        onMouseLeave={handleTooltipHide}
+                      >⚠️</span>
+                    ) : f.is_shared ? (
+                      <span
+                        style={{color:'#0066cc', cursor:'help', fontSize:'0.85em', fontWeight:'600'}}
+                        onMouseEnter={(e) => {
+                          const names = f.shared_with.map(s => `${s.username} (${s.service})`).join('\n');
+                          handleTooltipShow(e, `Partagé avec ${f.shared_count} pers.:\n${names}`);
+                        }}
+                        onMouseLeave={handleTooltipHide}
+                      >🔗 {f.shared_count}</span>
+                    ) : (
+                      <span style={{color:'#aaa', fontSize:'0.8em'}}>—</span>
+                    )}
+                  </td>
                   <td>
                     <button className="edit-user-button" onClick={() => { setRenameModal({ id: f.id, currentName: f.nom || cleanName }); setRenameValue(f.nom || cleanName); }}>Renommer</button>
                     <button className="btn-primary" style={{padding:'5px 8px',fontSize:'0.78em',marginRight:'3px'}} onClick={() => { setPreviewFile(f); loadPreviewContent(f); }}>Aperçu</button>

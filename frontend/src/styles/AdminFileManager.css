@@ -114,3 +114,13 @@
 .pagination-goto input::-webkit-outer-spin-button {
   -webkit-appearance: none;
 }
+
+.users-table-wrapper th[onclick],
+.users-table-wrapper th[style*="cursor"] {
+  user-select: none;
+  transition: background 0.15s;
+}
+
+.users-table-wrapper th:hover {
+  background: #002855;
+}
