@@ -30,7 +30,7 @@ def has_folder_permission(user, folder, action: str) -> bool:
     if not share:
         return False
 
-    # Lecture autorisée par défaut si l’utilisateur a accès au partage
+    # Lecture autorisée par défaut si l'utilisateur a accès au partage
     if action == "read":
         return True
 
@@ -47,7 +47,7 @@ def has_folder_permission(user, folder, action: str) -> bool:
 
 
 def safe_folder_name(name: str) -> str:
-    """ Nettoie un nom de dossier pour l’OS """
+    """ Nettoie un nom de dossier pour l'OS """
     return re.sub(r'[^a-zA-Z0-9_-]', '_', name)
 
 ##### PAGE ACCUEIL #####
@@ -65,10 +65,10 @@ def login_view(request):
         try:
             existing = Utilisateur.objects.get(username=username)
             if not existing.is_active:
-                return Response({‘error’: ‘Compte désactivé. Contactez votre administrateur.’}, status=status.HTTP_403_FORBIDDEN)
+                return Response({'error': 'Compte désactivé. Contactez votre administrateur.'}, status=status.HTTP_403_FORBIDDEN)
         except Utilisateur.DoesNotExist:
             pass
-        return Response({‘error’: ‘Nom d\’utilisateur ou mot de passe incorrect.’}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({'error': 'Nom d\'utilisateur ou mot de passe incorrect.'}, status=status.HTTP_401_UNAUTHORIZED)
     token, _ = Token.objects.get_or_create(user=user)
     user.last_login = timezone.now()
     user.save(update_fields=['last_login'])
@@ -158,7 +158,7 @@ def update_password_view(request):
 
     # Vérifie si ancien == nouveau
     if old_password == new_password:
-        return Response({'error': 'Le nouveau mot de passe doit être différent de l’ancien.'},
+        return Response({'error': 'Le nouveau mot de passe doit être différent de l'ancien.'},
                         status=status.HTTP_400_BAD_REQUEST)
 
     # Vérification robustesse
@@ -886,7 +886,7 @@ def create_subfolder(request, parent_id):
         return Response({'error': 'Dossier parent introuvable'}, status=status.HTTP_404_NOT_FOUND)
 
     if not has_folder_permission(request.user, parent_folder, "write"):
-        return Response({'error': '⛔ Vous n’avez pas la permission de créer un sous-dossier ici.'},
+        return Response({'error': '⛔ Vous n'avez pas la permission de créer un sous-dossier ici.'},
                         status=status.HTTP_403_FORBIDDEN)
 
     nom = request.data.get('nom')
@@ -1012,7 +1012,7 @@ def share_folder(request, folder_id):
     payload = request.data
     if not isinstance(payload, list):
         return Response(
-            {'error': 'Format attendu : liste d’utilisateurs avec permissions.'},
+            {'error': 'Format attendu : liste d'utilisateurs avec permissions.'},
             status=status.HTTP_400_BAD_REQUEST
         )
 
@@ -1147,7 +1147,7 @@ def upload_file(request, folder_id):
     file_hash=hasher.hexdigest()
     )
 
-    # Notifier le propriétaire si ce n’est pas lui qui a uploadé
+    # Notifier le propriétaire si ce n'est pas lui qui a uploadé
     if request.user != folder.proprietaire:
         Notification.objects.create(
             user=folder.proprietaire,
@@ -1285,7 +1285,7 @@ def preview_file(request, file_id):
         return Response({"type": "video", "url": secure_url})
 
     # Sinon
-    return Response({"type": "unsupported", "message": "Pas d’aperçu disponible"})
+    return Response({"type": "unsupported", "message": "Pas d'aperçu disponible"})
 
 
 @api_view(['GET'])
@@ -1444,7 +1444,7 @@ def create_archive(request, folder_id):
 
     if archive_format not in ["zip", "rar"]:
         return Response(
-            {'error': "⚠️ Format d’archive invalide. Utilisez 'zip' ou 'rar'."},
+            {'error': "⚠️ Format d'archive invalide. Utilisez 'zip' ou 'rar'."},
             status=status.HTTP_400_BAD_REQUEST
         )
 
@@ -1467,7 +1467,7 @@ def create_archive(request, folder_id):
     archive_path = os.path.join(archive_dir, archive_filename)
 
     try:
-        # Création réelle de l’archive
+        # Création réelle de l'archive
         if archive_format == "zip":
             with zipfile.ZipFile(archive_path, "w", zipfile.ZIP_DEFLATED) as zipf:
                 for root, _, files in os.walk(folder_path):
@@ -1504,11 +1504,11 @@ def create_archive(request, folder_id):
 
         # Vérification post-création
         if not os.path.exists(archive_path):
-            raise Exception("Le fichier d’archive n’a pas été créé.")
+            raise Exception("Le fichier d'archive n'a pas été créé.")
 
         archive_size = os.path.getsize(archive_path)
 
-        # Création de l’objet Archive
+        # Création de l'objet Archive
         archive = Archive.objects.create(
             owner=request.user,
             folder_name=folder_display_name,
@@ -1565,7 +1565,7 @@ def create_archive(request, folder_id):
         )
         
         return Response(
-            {'error': f"⚠️ Une erreur est survenue pendant la création de l’archive : {str(e)}"},
+            {'error': f"⚠️ Une erreur est survenue pendant la création de l'archive : {str(e)}"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
@@ -1586,7 +1586,7 @@ def download_archive(request, archive_id):
 
     archive_path = archive.file.path
     if not os.path.exists(archive_path):
-        return Response({'error': 'Fichier d’archive manquant.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Fichier d'archive manquant.'}, status=status.HTTP_404_NOT_FOUND)
 
     # Détection correcte du type MIME
     mime_type, _ = mimetypes.guess_type(archive_path)
@@ -1636,7 +1636,7 @@ def delete_archive(request, archive_id):
     Notification.objects.create(
         user=request.user,
         type="archive",
-        message=f"L’archive du dossier « {archive.folder_name} » a été supprimée."
+        message=f"L'archive du dossier « {archive.folder_name} » a été supprimée."
     )
 
     AuditLog.objects.create(
@@ -1648,7 +1648,7 @@ def delete_archive(request, archive_id):
     
     return Response({'success': 'Archive supprimée avec succès.'})
 
-##### ARCHIVE SHARING (Partage d’archive) #####
+##### ARCHIVE SHARING (Partage d'archive) #####
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -1669,7 +1669,7 @@ def share_archive(request, archive_id):
 
     payload = request.data
     if not isinstance(payload, list):
-        return Response({'error': "Format attendu : liste d’utilisateurs."},
+        return Response({'error': "Format attendu : liste d'utilisateurs."},
                         status=status.HTTP_400_BAD_REQUEST)
 
     shared_users = []
@@ -1711,12 +1711,12 @@ def unarchive_folder(request, archive_id):
 
     folder = Folder.objects.filter(nom=archive.folder_name, proprietaire=request.user).first()
     if not folder:
-        return Response({'error': 'Dossier d’origine introuvable.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Dossier d'origine introuvable.'}, status=status.HTTP_404_NOT_FOUND)
 
     folder.is_archived = False
     folder.save(update_fields=["is_archived"])
 
-    # Supprimer l’archive correspondante
+    # Supprimer l'archive correspondante
     if archive.file and os.path.exists(archive.file.path):
         os.remove(archive.file.path)
     archive.delete()
@@ -1760,7 +1760,7 @@ def create_notification(request):
                 Notification.objects.create(user=user, type=notif_type, message=message)
             logger.info(f"[NOTIF] Notification personnalisée envoyée à {len(users)} utilisateur(s).")
         else:
-            # Sinon, notification uniquement pour l’émetteur
+            # Sinon, notification uniquement pour l'émetteur
             Notification.objects.create(user=request.user, type=notif_type, message=message)
             logger.info(f"[NOTIF] Notification enregistrée pour {request.user.username}.")
 
@@ -1794,7 +1794,7 @@ def list_notifications(request):
 @permission_classes([IsAuthenticated])
 def clear_notifications(request):
     """
-    Supprime toutes les notifications de l’utilisateur avant l’expiration automatique (24h).
+    Supprime toutes les notifications de l'utilisateur avant l'expiration automatique (24h).
     """
     Notification.objects.filter(user=request.user).delete()
     return Response({'success': 'Toutes les notifications ont été supprimées.'})
@@ -1817,7 +1817,7 @@ def delete_notification(request, pk):
 @permission_classes([IsAuthenticated])
 def mark_notifications_read(request):
     """
-    Marque toutes les notifications de l’utilisateur comme lues (mais ne supprime pas).
+    Marque toutes les notifications de l'utilisateur comme lues (mais ne supprime pas).
     """
     Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
     return Response({'success': 'Toutes les notifications ont été marquées comme lues.'})
