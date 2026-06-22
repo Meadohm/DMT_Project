@@ -1,4 +1,5 @@
 import os, hashlib, shutil, logging, re, csv, zipfile, mimetypes
+from django.db.models import Count
 from django.contrib.auth import authenticate, get_user_model
 from django.conf import settings
 from django.core.mail import send_mail
@@ -505,20 +506,64 @@ def get_disk_usage(request):
 
 ##### SERVICES #####
 @api_view(['POST'])
-@permission_classes([IsAdminUser])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser])
 def create_service(request):
-    serializer = ServiceSerializer(data=request.data)
-    if serializer.is_valid():
-        service = serializer.save()
-        os.makedirs(os.path.join(settings.MEDIA_ROOT, 'soumissions', service.nom), exist_ok=True)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    nom = request.data.get('nom', '').strip()
+    description = request.data.get('description', '').strip()
+    statut = request.data.get('statut', 'actif')
+    responsable_id = request.data.get('responsable_id')
+
+    if not nom:
+        return Response({'error': 'Le nom est obligatoire.'}, status=status.HTTP_400_BAD_REQUEST)
+    if Service.objects.filter(nom=nom).exists():
+        return Response({'error': 'Ce service existe déjà.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    responsable = None
+    if responsable_id:
+        try:
+            responsable = Utilisateur.objects.get(id=responsable_id)
+        except Utilisateur.DoesNotExist:
+            pass
+
+    service = Service.objects.create(
+        nom=nom,
+        description=description,
+        statut=statut,
+        responsable=responsable,
+    )
+
+    AuditLog.objects.create(
+        utilisateur=request.user,
+        action='CREATE',
+        objet=f"Création service : {nom}",
+        adresse_ip=request.META.get('REMOTE_ADDR'),
+    )
+
+    return Response({'success': 'Service créé.', 'id': service.id}, status=status.HTTP_201_CREATED)
 
 
 @api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def list_services(request):
-    services = Service.objects.all()
-    return Response(ServiceSerializer(services, many=True).data)
+    services = Service.objects.select_related('responsable').annotate(
+        nb_employes=Count('utilisateur')
+    )
+    data = [
+        {
+            'id': s.id,
+            'nom': s.nom,
+            'description': s.description or '',
+            'statut': s.statut,
+            'responsable': s.responsable.username if s.responsable else '—',
+            'responsable_id': s.responsable.id if s.responsable else None,
+            'nb_employes': s.nb_employes,
+            'date_creation': s.date_creation.strftime('%d/%m/%Y') if s.date_creation else '—',
+        }
+        for s in services
+    ]
+    return Response(data)
 
 
 @api_view(['DELETE'])

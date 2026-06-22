@@ -123,7 +123,18 @@ class File(models.Model):
 
 ############ Service ###########
 class Service(models.Model):
+    STATUT_CHOICES = [
+        ('actif', 'Actif'),
+        ('inactif', 'Inactif'),
+    ]
     nom = models.CharField(max_length=255, unique=True)
+    description = models.TextField(blank=True, null=True)
+    statut = models.CharField(max_length=10, choices=STATUT_CHOICES, default='actif')
+    responsable = models.ForeignKey(
+        'Utilisateur', on_delete=models.SET_NULL,
+        null=True, blank=True, related_name='services_geres'
+    )
+    date_creation = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.nom

@@ -92,6 +92,10 @@ function AdminPanel() {
   const [dateDebut, setDateDebut] = useState('');
   const [dateFin, setDateFin] = useState('');
   const [tooltip, setTooltip] = useState(null);
+  const [showCreateServiceModal, setShowCreateServiceModal] = useState(false);
+  const [confirmDeleteServiceId, setConfirmDeleteServiceId] = useState(null);
+  const [serviceForm, setServiceForm] = useState({ nom: '', description: '', statut: 'actif', responsable_id: '' });
+  const [serviceFormError, setServiceFormError] = useState('');
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
@@ -307,24 +311,34 @@ function AdminPanel() {
   // Gestion services
   const handleCreateService = async (e) => {
     e.preventDefault();
-    if (!newService.trim()) return;
+    setServiceFormError('');
+    if (!serviceForm.nom.trim()) {
+      setServiceFormError('Le nom est obligatoire.');
+      return;
+    }
     try {
-      await createService(newService.trim());
+      const token = localStorage.getItem('token');
+      await axios.post(`${API_BASE_URL}/services/create/`, serviceForm, {
+        headers: { Authorization: `Token ${token}` }
+      });
+      showToast(`Service "${serviceForm.nom}" créé.`);
+      setServiceForm({ nom: '', description: '', statut: 'actif', responsable_id: '' });
+      setShowCreateServiceModal(false);
       fetchServices();
-      setNewService("");
-      setActiveSection("users");
-    } catch (e) {
-      console.error("Erreur création service", e);
+    } catch (err) {
+      setServiceFormError(err.response?.data?.error || 'Erreur lors de la création.');
     }
   };
 
   const handleDeleteService = async (id) => {
-    if (!window.confirm("Supprimer ce service ?")) return;
     try {
       await deleteService(id);
+      showToast('Service supprimé.');
+      setConfirmDeleteServiceId(null);
       fetchServices();
-    } catch (e) {
-      console.error("Erreur suppression service", e);
+    } catch {
+      showToast('Erreur lors de la suppression.', 'error');
+      setConfirmDeleteServiceId(null);
     }
   };
 
@@ -638,19 +652,109 @@ function AdminPanel() {
 
         {activeSection === "createService" && (
           <>
-            <form onSubmit={handleCreateService}>
-              <input value={newService} onChange={(e) => setNewService(e.target.value)} placeholder="Nom du service" />
-              <button type="submit">Créer</button>
-            </form>
-            <h2>Services existants</h2>
-            <ul>
-              {services.map((s) => (
-                <li key={s.id}>
-                  {s.nom}
-                  <button onClick={() => handleDeleteService(s.id)}>Supprimer</button>
-                </li>
-              ))}
-            </ul>
+            <div className="section-header">
+              <h2>Gestion des services</h2>
+              <span className="user-count-badge">{services.length} service{services.length !== 1 ? 's' : ''}</span>
+              <button className="btn-create-user" onClick={() => { setShowCreateServiceModal(true); setServiceFormError(''); }}>
+                + Créer un service
+              </button>
+            </div>
+            <div className="users-table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Nom du service</th>
+                    <th>Description</th>
+                    <th>Responsable</th>
+                    <th>Employés</th>
+                    <th>Statut</th>
+                    <th>Créé le</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {services.map((s, index) => (
+                    <tr key={s.id}>
+                      <td>{index + 1}</td>
+                      <td><strong>{s.nom}</strong></td>
+                      <td className="objet-cell">
+                        <span className="objet-text"
+                          onMouseEnter={(e) => handleTooltipShow(e, s.description || '—')}
+                          onMouseLeave={handleTooltipHide}>
+                          {s.description || '—'}
+                        </span>
+                      </td>
+                      <td>{s.responsable}</td>
+                      <td><span className="user-count-badge">{s.nb_employes}</span></td>
+                      <td>
+                        <span className={`status-badge ${s.statut === 'actif' ? 'online' : 'inactive'}`}>
+                          {s.statut === 'actif' ? 'Actif' : 'Inactif'}
+                        </span>
+                      </td>
+                      <td>{s.date_creation}</td>
+                      <td>
+                        <button className="delete-user-button" onClick={() => setConfirmDeleteServiceId(s.id)}>
+                          Supprimer
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {showCreateServiceModal && (
+              <div className="modal-overlay">
+                <div className="modal-box modal-box-large">
+                  <h3>🏢 Créer un service</h3>
+                  {serviceFormError && <div className="error-box"><p>{serviceFormError}</p></div>}
+                  <form onSubmit={handleCreateService}>
+                    <div className="form-group">
+                      <label>Nom du service *</label>
+                      <input value={serviceForm.nom} onChange={(e) => setServiceForm({...serviceForm, nom: e.target.value})} placeholder="ex: Service Informatique" />
+                    </div>
+                    <div className="form-group">
+                      <label>Description</label>
+                      <textarea value={serviceForm.description} onChange={(e) => setServiceForm({...serviceForm, description: e.target.value})} placeholder="Rôle et mission du service..." rows={3} style={{width:'100%', padding:'10px', borderRadius:'6px', border:'1px solid #dde3ea', resize:'vertical'}} />
+                    </div>
+                    <div className="form-group">
+                      <label>Responsable</label>
+                      <select value={serviceForm.responsable_id} onChange={(e) => setServiceForm({...serviceForm, responsable_id: e.target.value})}>
+                        <option value="">— Aucun responsable —</option>
+                        {users.filter(u => u.role === 'responsable' || u.role === 'admin').map(u => (
+                          <option key={u.id} value={u.id}>{u.username}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>Statut</label>
+                      <select value={serviceForm.statut} onChange={(e) => setServiceForm({...serviceForm, statut: e.target.value})}>
+                        <option value="actif">Actif</option>
+                        <option value="inactif">Inactif</option>
+                      </select>
+                    </div>
+                    <div className="modal-actions">
+                      <button type="submit" className="btn-primary">Créer le service</button>
+                      <button type="button" className="btn-cancel" onClick={() => setShowCreateServiceModal(false)}>Annuler</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {confirmDeleteServiceId && (
+              <div className="modal-overlay">
+                <div className="modal-box">
+                  <h3>⚠️ Supprimer ce service ?</h3>
+                  <p>Les utilisateurs rattachés à ce service ne seront <strong>pas supprimés</strong> mais perdront leur service assigné.</p>
+                  <div className="modal-actions">
+                    <button className="btn-danger" onClick={() => handleDeleteService(confirmDeleteServiceId)}>Supprimer</button>
+                    <button className="btn-cancel" onClick={() => setConfirmDeleteServiceId(null)}>Annuler</button>
+                  </div>
+                </div>
+              </div>
+            )}
           </>
         )}
 
