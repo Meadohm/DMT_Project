@@ -450,7 +450,10 @@ def get_historique(request):
             logs = logs.filter(timestamp__date__lte=d)
 
     total = logs.count()
-    page = int(request.GET.get('page', 1))
+    try:
+        page = max(1, int(request.GET.get('page', 1)))
+    except (ValueError, TypeError):
+        page = 1
     page_size = 20
     start = (page - 1) * page_size
     end = start + page_size
@@ -464,6 +467,7 @@ def get_historique(request):
             'action_display': log.get_action_display(),
             'date': log.timestamp.strftime('%d/%m/%Y %H:%M'),
             'utilisateur': log.utilisateur.username if log.utilisateur else '—',
+            'utilisateur_id': log.utilisateur.id if log.utilisateur else None,
         }
         for log in logs
     ]

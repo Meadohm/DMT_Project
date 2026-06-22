@@ -520,7 +520,7 @@ function AdminPanel() {
                   <div className="dashboard-card-details">
                     <span className="dash-detail online">📅 {dashboardStats?.journal?.today ?? 0} aujourd'hui</span>
                     <span className="dash-detail" style={{fontSize:'0.75em', marginTop:'4px'}}>
-                      Dernière : {dashboardStats?.journal?.last_user ?? '—'} — {dashboardStats?.journal?.last_date ?? '—'}
+                      Dernière : {dashboardStats?.journal?.last_user ?? '—'} - {dashboardStats?.journal?.last_date ?? '-'}
                     </span>
                   </div>
                 </div>
