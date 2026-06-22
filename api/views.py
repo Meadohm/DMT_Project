@@ -355,7 +355,7 @@ def synchroniser_fichiers(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAdminUser | IsCustomAdminUser])
 def list_centralized_files(request):
-    files = FileModel.objects.select_related('utilisateur', 'folder').prefetch_related('folder__shares__user__utilisateur').all()
+    files = FileModel.objects.select_related('utilisateur', 'folder').prefetch_related('folder__shares__user').all()
     data = []
     for f in files:
         shares = []
