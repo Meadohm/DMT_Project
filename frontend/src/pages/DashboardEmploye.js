@@ -23,6 +23,8 @@ import ContextMenu from "../components/ContextMenu";
 import AllNotificationsModal from "../components/AllNotificationsModal";
 import useNotifications from "../hooks/useNotifications";
 import { markAllRead, clearAll } from "../services/notificationService";
+import useClock from "../hooks/useClock";
+import { markAllRead } from "../services/notificationService";
 
 import "../styles/FileManager.css";
 import "../styles/SidebarGemini.css";
@@ -38,6 +40,7 @@ function DashboardEmploye() {
   const [searchTerm, setSearchTerm] = useState("");
   const [archivesOpen, setArchivesOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const now = useClock();
 
 
   // Favoris
@@ -189,7 +192,8 @@ useEffect(() => {
   // Un seul menu peut rester ouvert à la fois
   const toggleNotif = () => {
     setNotifOpen((prev) => !prev);
-    setAccountOpen(false); // ferme compte
+    setAccountOpen(false);
+    if (!notifOpen) markAllRead().catch(() => {});
   };
 
   const toggleAccount = () => {
@@ -379,7 +383,11 @@ const handleClearNotifications = async () => {
   };
 
 
-  if (loading) return <p>Chargement...</p>;
+  if (loading) return (
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <div className="spinner" />
+    </div>
+  );
 
   return (
     <div className={`dashboard-container ${theme === "dark" ? "dark" : ""}`}>
@@ -388,7 +396,6 @@ const handleClearNotifications = async () => {
       <header className="header">
         <div className="logo-container">
           <img src={logo} alt="Logo" className="app-logoEmp" />
-          <h2>C&nbsp;.&nbsp;L&nbsp;.&nbsp;D</h2>
         </div>
 
         {/* 🔍 Barre de recherche moderne */}
@@ -418,22 +425,15 @@ const handleClearNotifications = async () => {
         {isAuthenticated && userInfo ? (
           <div className="user-info">
             <div className="welcome-message">
-              <div className="welcome-top">
-                <span className="wave">👋</span>
-                <span className="welcome-text">
-                  Bienvenue <strong>{userInfo.username}</strong> !
-                </span>
-              </div>
-              <small className="subtitle">Heureux de vous revoir, prêt à collaborer ?</small>
+              <span className="welcome-text">
+                Bonjour, <strong>{userInfo.username}</strong>
+              </span>
               <small className="datetime">
-                📅 {new Date().toLocaleDateString("fr-FR", {
-                  weekday: "long",
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric"
-                })} — ⏰ {new Date().toLocaleTimeString("fr-FR", {
-                  hour: "2-digit",
-                  minute: "2-digit"
+                {now.toLocaleDateString("fr-FR", {
+                  weekday: "long", day: "numeric",
+                  month: "long", year: "numeric"
+                })} — {now.toLocaleTimeString("fr-FR", {
+                  hour: "2-digit", minute: "2-digit", second: "2-digit"
                 })}
               </small>
             </div>
@@ -559,8 +559,8 @@ const handleClearNotifications = async () => {
                       📦 Archives
                     </li>
 
-                    <li>⚙️ Paramètres</li>
-                    <li>❓ Aide</li>
+                    <li style={{ opacity: 0.45, cursor: "not-allowed" }} title="Bientôt disponible">⚙️ Paramètres</li>
+                    <li style={{ opacity: 0.45, cursor: "not-allowed" }} title="Bientôt disponible">❓ Aide</li>
                   </ul>
                 </div>
               )}
@@ -840,24 +840,11 @@ const handleClearNotifications = async () => {
         </Modal>
       )}
 
-      {notif && (
+      {notif && notif.context === "password_change" && (
         <Modal
           title={notif.title}
-          onClose={() => {
-            setNotif(null);
-            // redirige uniquement si c’est un changement de mot de passe
-            if (notif.context === "password_change") {
-              localStorage.clear();
-              navigate("/");
-            }
-          }}
-          onConfirm={() => {
-            setNotif(null);
-            if (notif.context === "password_change") {
-              localStorage.clear();
-              navigate("/");
-            }
-          }}
+          onClose={() => { setNotif(null); localStorage.clear(); navigate("/"); }}
+          onConfirm={() => { setNotif(null); localStorage.clear(); navigate("/"); }}
           className={notif.type === "success" ? "success-modal" : "error-modal"}
           mode="notif"
         >
