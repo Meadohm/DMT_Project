@@ -1050,12 +1050,41 @@ td:last-child {
 /* ── Objet cell ──────────────────────────────────────────── */
 .objet-cell {
   max-width: 250px;
+  text-align: left;
+}
+
+.objet-text {
+  display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  text-align: left;
-  cursor: help;
+  cursor: default;
   position: relative;
+}
+
+.objet-text::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  background: #003366;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.82em;
+  white-space: normal;
+  max-width: 320px;
+  min-width: 180px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 100;
+  line-height: 1.4;
+}
+
+.objet-text:hover::after {
+  opacity: 1;
 }
 
 /* ── Pagination ──────────────────────────────────────────── */
