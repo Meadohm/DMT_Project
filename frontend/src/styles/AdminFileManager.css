@@ -124,3 +124,8 @@
 .users-table-wrapper th:hover {
   background: #002855;
 }
+
+.users-table-wrapper th {
+  white-space: nowrap;
+  padding: 12px 10px;
+}
