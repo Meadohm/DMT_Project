@@ -565,13 +565,66 @@ def list_services(request):
 
 
 @api_view(['DELETE'])
-@permission_classes([IsAdminUser])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser])
 def delete_service(request, service_id):
     try:
-        Service.objects.get(id=service_id).delete()
-        return Response({'success': 'Service supprimé'})
+        service = Service.objects.get(id=service_id)
+        nom = service.nom
+        service.delete()
+        AuditLog.objects.create(
+            utilisateur=request.user,
+            action='DELETE',
+            objet=f"Suppression service : {nom}",
+            adresse_ip=request.META.get('REMOTE_ADDR'),
+        )
+        return Response({'success': 'Service supprimé.'})
     except Service.DoesNotExist:
-        return Response({'error': 'Service non trouvé'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Service non trouvé.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser])
+def update_service(request, service_id):
+    try:
+        service = Service.objects.get(id=service_id)
+    except Service.DoesNotExist:
+        return Response({'error': 'Service non trouvé.'}, status=status.HTTP_404_NOT_FOUND)
+
+    nom = request.data.get('nom', '').strip()
+    description = request.data.get('description', '').strip()
+    statut = request.data.get('statut', service.statut)
+    responsable_id = request.data.get('responsable_id')
+
+    if not nom:
+        return Response({'error': 'Le nom est obligatoire.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if Service.objects.filter(nom=nom).exclude(id=service_id).exists():
+        return Response({'error': 'Ce nom de service existe déjà.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    service.nom = nom
+    service.description = description
+    service.statut = statut
+
+    if responsable_id:
+        try:
+            service.responsable = Utilisateur.objects.get(id=responsable_id)
+        except Utilisateur.DoesNotExist:
+            service.responsable = None
+    else:
+        service.responsable = None
+
+    service.save()
+
+    AuditLog.objects.create(
+        utilisateur=request.user,
+        action='UPDATE',
+        objet=f"Mise à jour service : {nom}",
+        adresse_ip=request.META.get('REMOTE_ADDR'),
+    )
+
+    return Response({'success': 'Service mis à jour.'})
 
 ##### FOLDERS CRUD #####
 @api_view(['GET'])

@@ -101,3 +101,11 @@ export const deleteService = async (serviceId) => {
     headers: { Authorization: `Token ${token}` },
   });
 };
+
+export const updateService = async (serviceId, data) => {
+  const token = getToken();
+  const res = await axios.put(`${API_BASE_URL}/services/${serviceId}/update/`, data, {
+    headers: { Authorization: `Token ${token}` },
+  });
+  return res.data;
+};

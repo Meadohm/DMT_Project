@@ -12,6 +12,7 @@ import {
   createService,
   getServices,
   deleteService,
+  updateService,
 } from "../services/adminService";
 
 import { getUser, getToken } from "../services/authService";
@@ -96,6 +97,9 @@ function AdminPanel() {
   const [confirmDeleteServiceId, setConfirmDeleteServiceId] = useState(null);
   const [serviceForm, setServiceForm] = useState({ nom: '', description: '', statut: 'actif', responsable_id: '' });
   const [serviceFormError, setServiceFormError] = useState('');
+  const [editServiceModal, setEditServiceModal] = useState(null);
+  const [editServiceForm, setEditServiceForm] = useState({ nom: '', description: '', statut: 'actif', responsable_id: '' });
+  const [editServiceError, setEditServiceError] = useState('');
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
@@ -117,7 +121,12 @@ function AdminPanel() {
     fetchServices();
     const refreshInterval = setInterval(() => {
       fetchData();
+      fetchServices();
     }, 5000);
+    const section = localStorage.getItem('adminActiveSection');
+    if (section === 'submissions') {
+      setTimeout(() => fetchHistorique(1, '', '', '', ''), 300);
+    }
     return () => clearInterval(refreshInterval);
   }, []);
 
@@ -309,6 +318,23 @@ function AdminPanel() {
   };
 
   // Gestion services
+  const handleUpdateService = async (e) => {
+    e.preventDefault();
+    setEditServiceError('');
+    if (!editServiceForm.nom.trim()) {
+      setEditServiceError('Le nom est obligatoire.');
+      return;
+    }
+    try {
+      await updateService(editServiceModal.id, editServiceForm);
+      showToast(`Service "${editServiceForm.nom}" mis à jour.`);
+      setEditServiceModal(null);
+      fetchServices();
+    } catch (err) {
+      setEditServiceError(err.response?.data?.error || 'Erreur lors de la mise à jour.');
+    }
+  };
+
   const handleCreateService = async (e) => {
     e.preventDefault();
     setServiceFormError('');
@@ -694,9 +720,12 @@ function AdminPanel() {
                       </td>
                       <td>{s.date_creation}</td>
                       <td>
-                        <button className="delete-user-button" onClick={() => setConfirmDeleteServiceId(s.id)}>
-                          Supprimer
-                        </button>
+                        <button className="edit-user-button" style={{marginRight:'5px'}} onClick={() => {
+                          setEditServiceModal(s);
+                          setEditServiceForm({ nom: s.nom, description: s.description || '', statut: s.statut, responsable_id: s.responsable_id || '' });
+                          setEditServiceError('');
+                        }}>Éditer</button>
+                        <button className="delete-user-button" onClick={() => setConfirmDeleteServiceId(s.id)}>Supprimer</button>
                       </td>
                     </tr>
                   ))}
@@ -985,6 +1014,45 @@ function AdminPanel() {
         <div className={`toast-notification toast-${toast.type}`}>
           <span className="toast-icon">{toast.type === 'success' ? '✅' : '❌'}</span>
           <span className="toast-message">{toast.message}</span>
+        </div>
+      )}
+
+      {editServiceModal && (
+        <div className="modal-overlay">
+          <div className="modal-box modal-box-large">
+            <h3>✏️ Modifier le service</h3>
+            {editServiceError && <div className="error-box"><p>{editServiceError}</p></div>}
+            <form onSubmit={handleUpdateService}>
+              <div className="form-group">
+                <label>Nom du service *</label>
+                <input value={editServiceForm.nom} onChange={(e) => setEditServiceForm({...editServiceForm, nom: e.target.value})} />
+              </div>
+              <div className="form-group">
+                <label>Description</label>
+                <textarea value={editServiceForm.description} onChange={(e) => setEditServiceForm({...editServiceForm, description: e.target.value})} rows={3} style={{width:'100%', padding:'10px', borderRadius:'6px', border:'1px solid #dde3ea', resize:'vertical'}} />
+              </div>
+              <div className="form-group">
+                <label>Responsable</label>
+                <select value={editServiceForm.responsable_id} onChange={(e) => setEditServiceForm({...editServiceForm, responsable_id: e.target.value})}>
+                  <option value="">— Aucun responsable —</option>
+                  {users.filter(u => u.role === 'responsable' || u.role === 'admin').map(u => (
+                    <option key={u.id} value={u.id}>{u.username}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Statut</label>
+                <select value={editServiceForm.statut} onChange={(e) => setEditServiceForm({...editServiceForm, statut: e.target.value})}>
+                  <option value="actif">Actif</option>
+                  <option value="inactif">Inactif</option>
+                </select>
+              </div>
+              <div className="modal-actions">
+                <button type="submit" className="btn-primary">Sauvegarder</button>
+                <button type="button" className="btn-cancel" onClick={() => setEditServiceModal(null)}>Annuler</button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 
