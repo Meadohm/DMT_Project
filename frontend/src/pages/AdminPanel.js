@@ -149,9 +149,6 @@ function AdminPanel() {
       setUsers(usersData);
       fetchUserInfo();
       setLoading(false);
-      if (localStorage.getItem('adminActiveSection') === 'submissions') {
-        fetchHistorique(1, '', '', '', '');
-      }
     } catch (err) {
       if (err.response?.status === 403 || err.response?.status === 401) {
         localStorage.clear();
