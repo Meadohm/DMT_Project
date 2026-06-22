@@ -24,8 +24,7 @@ import AllNotificationsModal from "../components/AllNotificationsModal";
 import useNotifications from "../hooks/useNotifications";
 import { markAllRead, clearAll } from "../services/notificationService";
 import useClock from "../hooks/useClock";
-import { markAllRead } from "../services/notificationService";
-
+  
 import "../styles/FileManager.css";
 import "../styles/SidebarGemini.css";
 import { formatRelativeTime } from "../utils/timeUtils";
