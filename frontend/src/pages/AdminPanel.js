@@ -414,7 +414,7 @@ function AdminPanel() {
         <button className={activeSection === "files" ? "active" : ""} onClick={() => setActiveSection("files")}>Gestion fichiers</button>
         <button className={activeSection === "submissions" ? "active" : ""} onClick={() => { setActiveSection("submissions"); fetchHistorique(1, historiqueAction, historiqueSearch, dateDebut, dateFin); }}>Journal d'activité</button>
         <button className={activeSection === "createService" ? "active" : ""} onClick={() => setActiveSection("createService")}>Créer un service</button>
-        <button className={activeSection === "account" ? "active" : ""} onClick={() => setActiveSection("account")}>Compte utilisateur</button>
+        <button className={activeSection === "account" ? "active" : ""} onClick={() => setActiveSection("account")}>Mon Profil</button>
         <div className="sidebar-bottom">
           <div className="sidebar-logo">
             <img src={logo} alt="Logo" className="app-logo" />
