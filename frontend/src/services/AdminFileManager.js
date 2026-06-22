@@ -50,7 +50,8 @@ function AdminFileManager() {
   const [search, setSearch] = useState('');
   const [dateDebut, setDateDebut] = useState('');
   const [dateFin, setDateFin] = useState('');
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(() => parseInt(localStorage.getItem('filesPage') || '1'));
+  const [pageInput, setPageInput] = useState('');
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [renameModal, setRenameModal] = useState(null);
   const [renameValue, setRenameValue] = useState('');
@@ -106,6 +107,8 @@ function AdminFileManager() {
   }, []);
 
   useEffect(() => { fetchFiles(); }, [fetchFiles]);
+
+  useEffect(() => { localStorage.setItem('filesPage', page); }, [page]);
 
   const handleDelete = async (id) => {
     try {
@@ -379,10 +382,46 @@ function AdminFileManager() {
         </table>
       </div>
 
-      <div className="pagination">
-        <button className="btn-cancel" disabled={page === 1} onClick={() => setPage(p => p - 1)}>← Précédent</button>
+      <div className="pagination-controls">
+        <button className="btn-cancel" disabled={page === 1}
+          onClick={() => setPage(1)}>
+          ⏮ Première
+        </button>
+        <button className="btn-cancel" disabled={page === 1}
+          onClick={() => setPage(p => Math.max(1, p - 1))}>
+          ← Précédent
+        </button>
         <span className="pagination-info">Page {page} / {totalPages}</span>
-        <button className="btn-cancel" disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}>Suivant →</button>
+        <button className="btn-cancel" disabled={page >= totalPages}
+          onClick={() => setPage(p => p + 1)}>
+          Suivant →
+        </button>
+        <button className="btn-cancel" disabled={page >= totalPages}
+          onClick={() => setPage(totalPages)}>
+          Dernière ⏭
+        </button>
+        <div className="pagination-goto">
+          <input
+            type="number"
+            min="1"
+            max={totalPages}
+            placeholder="Page..."
+            value={pageInput}
+            onChange={(e) => setPageInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                const p = Math.min(Math.max(1, parseInt(pageInput) || 1), totalPages);
+                setPage(p);
+                setPageInput('');
+              }
+            }}
+          />
+          <button className="btn-primary" onClick={() => {
+            const p = Math.min(Math.max(1, parseInt(pageInput) || 1), totalPages);
+            setPage(p);
+            setPageInput('');
+          }}>Aller</button>
+        </div>
       </div>
 
       {confirmDeleteId && (

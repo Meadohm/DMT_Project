@@ -84,3 +84,33 @@
   cursor: default;
   position: relative;
 }
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.pagination-goto {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 8px;
+}
+
+.pagination-goto input {
+  width: 70px;
+  padding: 6px 8px;
+  border: 1px solid #dde3ea;
+  border-radius: 6px;
+  font-size: 0.85em;
+  text-align: center;
+}
+
+.pagination-goto input::-webkit-inner-spin-button,
+.pagination-goto input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}

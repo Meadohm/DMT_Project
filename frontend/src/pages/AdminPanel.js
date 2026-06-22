@@ -88,6 +88,7 @@ function AdminPanel() {
   const [historiqueAction, setHistoriqueAction] = useState('');
   const [historiquePage, setHistoriquePage] = useState(1);
   const [historiqueTotal, setHistoriqueTotal] = useState(0);
+  const [historiquePageInput, setHistoriquePageInput] = useState('');
   const [confirmDeleteHistoriqueId, setConfirmDeleteHistoriqueId] = useState(null);
   const [confirmClearAll, setConfirmClearAll] = useState(false);
   const [dateDebut, setDateDebut] = useState('');
@@ -128,7 +129,9 @@ function AdminPanel() {
     }, 5000);
     const section = localStorage.getItem('adminActiveSection');
     if (section === 'submissions') {
-      setTimeout(() => fetchHistorique(1, '', '', '', ''), 300);
+      const savedPage = parseInt(localStorage.getItem('historiquePage') || '1');
+      setTimeout(() => fetchHistorique(savedPage, '', '', '', ''), 300);
+      setHistoriquePage(savedPage);
     }
     return () => clearInterval(refreshInterval);
   }, []);
@@ -213,6 +216,7 @@ function AdminPanel() {
       });
       setHistorique(res.data.results);
       setHistoriqueTotal(res.data.total);
+      localStorage.setItem('historiquePage', page);
     } catch (e) {
       console.error('Erreur historique', e);
     }
@@ -649,12 +653,12 @@ function AdminPanel() {
                 className="historique-search"
                 placeholder="Rechercher par utilisateur..."
                 value={historiqueSearch}
-                onChange={(e) => { setHistoriqueSearch(e.target.value); fetchHistorique(1, historiqueAction, e.target.value); setHistoriquePage(1); }}
+                onChange={(e) => { setHistoriqueSearch(e.target.value); fetchHistorique(1, historiqueAction, e.target.value); setHistoriquePage(1); localStorage.setItem('historiquePage', 1); }}
               />
               <select
                 className="historique-select"
                 value={historiqueAction}
-                onChange={(e) => { setHistoriqueAction(e.target.value); fetchHistorique(1, e.target.value, historiqueSearch); setHistoriquePage(1); }}
+                onChange={(e) => { setHistoriqueAction(e.target.value); fetchHistorique(1, e.target.value, historiqueSearch); setHistoriquePage(1); localStorage.setItem('historiquePage', 1); }}
               >
                 <option value="">Toutes les actions</option>
                 <option value="LOGIN">Connexion</option>
@@ -668,17 +672,17 @@ function AdminPanel() {
                 type="date"
                 className="historique-date"
                 value={dateDebut}
-                onChange={(e) => { setDateDebut(e.target.value); fetchHistorique(1, historiqueAction, historiqueSearch, e.target.value, dateFin); }}
+                onChange={(e) => { setDateDebut(e.target.value); fetchHistorique(1, historiqueAction, historiqueSearch, e.target.value, dateFin); setHistoriquePage(1); localStorage.setItem('historiquePage', 1); }}
                 title="Date début"
               />
               <input
                 type="date"
                 className="historique-date"
                 value={dateFin}
-                onChange={(e) => { setDateFin(e.target.value); fetchHistorique(1, historiqueAction, historiqueSearch, dateDebut, e.target.value); }}
+                onChange={(e) => { setDateFin(e.target.value); fetchHistorique(1, historiqueAction, historiqueSearch, dateDebut, e.target.value); setHistoriquePage(1); localStorage.setItem('historiquePage', 1); }}
                 title="Date fin"
               />
-              <button className="btn-cancel" onClick={() => { setHistoriqueSearch(''); setHistoriqueAction(''); setDateDebut(''); setDateFin(''); fetchHistorique(1, '', '', '', ''); showToast('Filtres réinitialisés.', 'success'); }}>
+              <button className="btn-cancel" onClick={() => { setHistoriqueSearch(''); setHistoriqueAction(''); setDateDebut(''); setDateFin(''); setHistoriquePage(1); localStorage.setItem('historiquePage', 1); fetchHistorique(1, '', '', '', ''); showToast('Filtres réinitialisés.', 'success'); }}>
                 Réinitialiser
               </button>
               <button className="btn-danger" onClick={() => setConfirmClearAll(true)}>
@@ -726,18 +730,48 @@ function AdminPanel() {
                 </tbody>
               </table>
             </div>
-            <div className="pagination">
-              <button className="btn-cancel" disabled={historiquePage === 1} onClick={() => {
-                const p = historiquePage - 1;
-                setHistoriquePage(p);
-                fetchHistorique(p, historiqueAction, historiqueSearch, dateDebut, dateFin);
-              }}>← Précédent</button>
+            <div className="pagination-controls">
+              <button className="btn-cancel" disabled={historiquePage === 1}
+                onClick={() => { setHistoriquePage(1); fetchHistorique(1, historiqueAction, historiqueSearch, dateDebut, dateFin); }}>
+                ⏮ Première
+              </button>
+              <button className="btn-cancel" disabled={historiquePage === 1}
+                onClick={() => { const p = historiquePage - 1; setHistoriquePage(p); fetchHistorique(p, historiqueAction, historiqueSearch, dateDebut, dateFin); }}>
+                ← Précédent
+              </button>
               <span className="pagination-info">Page {historiquePage} / {Math.ceil(historiqueTotal / 20) || 1}</span>
-              <button className="btn-cancel" disabled={historiquePage * 20 >= historiqueTotal} onClick={() => {
-                const p = historiquePage + 1;
-                setHistoriquePage(p);
-                fetchHistorique(p, historiqueAction, historiqueSearch, dateDebut, dateFin);
-              }}>Suivant →</button>
+              <button className="btn-cancel" disabled={historiquePage * 20 >= historiqueTotal}
+                onClick={() => { const p = historiquePage + 1; setHistoriquePage(p); fetchHistorique(p, historiqueAction, historiqueSearch, dateDebut, dateFin); }}>
+                Suivant →
+              </button>
+              <button className="btn-cancel" disabled={historiquePage >= Math.ceil(historiqueTotal / 20)}
+                onClick={() => { const p = Math.ceil(historiqueTotal / 20); setHistoriquePage(p); fetchHistorique(p, historiqueAction, historiqueSearch, dateDebut, dateFin); }}>
+                Dernière ⏭
+              </button>
+              <div className="pagination-goto">
+                <input
+                  type="number"
+                  min="1"
+                  max={Math.ceil(historiqueTotal / 20)}
+                  placeholder="Page..."
+                  value={historiquePageInput}
+                  onChange={(e) => setHistoriquePageInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const p = Math.min(Math.max(1, parseInt(historiquePageInput) || 1), Math.ceil(historiqueTotal / 20));
+                      setHistoriquePage(p);
+                      setHistoriquePageInput('');
+                      fetchHistorique(p, historiqueAction, historiqueSearch, dateDebut, dateFin);
+                    }
+                  }}
+                />
+                <button className="btn-primary" onClick={() => {
+                  const p = Math.min(Math.max(1, parseInt(historiquePageInput) || 1), Math.ceil(historiqueTotal / 20));
+                  setHistoriquePage(p);
+                  setHistoriquePageInput('');
+                  fetchHistorique(p, historiqueAction, historiqueSearch, dateDebut, dateFin);
+                }}>Aller</button>
+              </div>
             </div>
 
             {confirmDeleteHistoriqueId && (
