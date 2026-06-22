@@ -573,7 +573,7 @@ const handleClearNotifications = async () => {
           onClick={() => setSidebarCollapsed(prev => !prev)}
           title={sidebarCollapsed ? "Déplier" : "Replier"}
         >
-          {sidebarCollapsed ? "▶" : "◀"}
+          <span>{sidebarCollapsed ? "▶" : "◀"}</span>
         </button>
 
         <button className="new-folder-btn" onClick={handleCreateFolder}>
