@@ -246,6 +246,7 @@ function AdminPanel() {
     }
     try {
       await updatePassword(oldPassword, newPassword);
+      showToast('Mot de passe changé avec succès.');
       handleLogout();
     } catch (error) {
       setPasswordError([error.message]);
@@ -914,7 +915,7 @@ function AdminPanel() {
                 </div>
                 <div className="account-profile-info">
                   <h3 className="account-username">{userInfo?.username}</h3>
-                  <p className="account-email">{userInfo?.email || '—'}</p>
+                  <p className="account-email">{userInfo?.email || 'Aucun email renseigné'}</p>
                   <div className="account-badges">
                     <span className={`status-badge ${userInfo?.role === 'admin' ? 'online' : 'recent'}`}>
                       {userInfo?.role === 'admin' ? '👑 Admin' : userInfo?.role === 'responsable' ? '🎯 Responsable' : '👤 Employé'}
@@ -928,7 +929,11 @@ function AdminPanel() {
 
               <div className="account-form-card">
                 <h4 className="account-form-title">🔐 Changer le mot de passe</h4>
-                <button className="btn-primary" style={{marginBottom:'16px', width:'100%'}} onClick={() => setShowPasswordForm(!showPasswordForm)}>
+                <button
+                  className={showPasswordForm ? 'btn-cancel' : 'btn-primary'}
+                  style={{marginBottom:'16px', width:'100%'}}
+                  onClick={() => setShowPasswordForm(!showPasswordForm)}
+                >
                   {showPasswordForm ? 'Annuler' : 'Modifier mon mot de passe'}
                 </button>
                 {showPasswordForm && (
