@@ -188,7 +188,6 @@ function AdminPanel() {
       });
       setHistorique(res.data.results);
       setHistoriqueTotal(res.data.total);
-      setHistoriquePage(res.data.page);
     } catch (e) {
       console.error('Erreur historique', e);
     }
@@ -599,9 +598,17 @@ function AdminPanel() {
               </table>
             </div>
             <div className="pagination">
-              <button className="btn-cancel" disabled={historiquePage === 1} onClick={() => { const p = historiquePage - 1; fetchHistorique(p, historiqueAction, historiqueSearch); }}>← Précédent</button>
+              <button className="btn-cancel" disabled={historiquePage === 1} onClick={() => {
+                const p = historiquePage - 1;
+                setHistoriquePage(p);
+                fetchHistorique(p, historiqueAction, historiqueSearch, dateDebut, dateFin);
+              }}>← Précédent</button>
               <span className="pagination-info">Page {historiquePage} / {Math.ceil(historiqueTotal / 20) || 1}</span>
-              <button className="btn-cancel" disabled={historiquePage * 20 >= historiqueTotal} onClick={() => { const p = historiquePage + 1; fetchHistorique(p, historiqueAction, historiqueSearch); }}>Suivant →</button>
+              <button className="btn-cancel" disabled={historiquePage * 20 >= historiqueTotal} onClick={() => {
+                const p = historiquePage + 1;
+                setHistoriquePage(p);
+                fetchHistorique(p, historiqueAction, historiqueSearch, dateDebut, dateFin);
+              }}>Suivant →</button>
             </div>
 
             {confirmDeleteHistoriqueId && (
