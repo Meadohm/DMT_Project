@@ -109,3 +109,11 @@ export const updateService = async (serviceId, data) => {
   });
   return res.data;
 };
+
+export const toggleUserActive = async (userId) => {
+  const token = getToken();
+  const res = await axios.put(`${API_BASE_URL}/utilisateurs/${userId}/toggle-active/`, {}, {
+    headers: { Authorization: `Token ${token}` },
+  });
+  return res.data;
+};

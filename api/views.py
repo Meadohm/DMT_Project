@@ -339,6 +339,35 @@ def delete_user_account(request, user_id):
     return Response({'success': 'Utilisateur supprimé.'})
 
 
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser])
+def toggle_user_active(request, user_id):
+    try:
+        user = Utilisateur.objects.get(id=user_id)
+    except Utilisateur.DoesNotExist:
+        return Response({'error': 'Utilisateur non trouvé.'}, status=status.HTTP_404_NOT_FOUND)
+
+    if user.id == request.user.id:
+        return Response({'error': 'Vous ne pouvez pas désactiver votre propre compte.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    user.is_active = not user.is_active
+    user.save(update_fields=['is_active'])
+
+    action = 'activé' if user.is_active else 'désactivé'
+    AuditLog.objects.create(
+        utilisateur=request.user,
+        action='UPDATE',
+        objet=f"Compte {action} : {user.username}",
+        adresse_ip=request.META.get('REMOTE_ADDR'),
+    )
+
+    return Response({
+        'success': f'Compte {action}.',
+        'is_active': user.is_active,
+    })
+
+
 ##### FICHIERS CENTRALISÉS #####
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])

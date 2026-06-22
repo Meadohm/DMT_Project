@@ -13,6 +13,7 @@ import {
   getServices,
   deleteService,
   updateService,
+  toggleUserActive,
 } from "../services/adminService";
 
 import { getUser, getToken } from "../services/authService";
@@ -26,7 +27,8 @@ import API_BASE_URL from "../config";
 import logo from "../assets/dmt.png";
 import "../styles/AdminPanel.css";
 
-const getRelativeTime = (dateStr) => {
+const getRelativeTime = (dateStr, isActive = true) => {
+  if (!isActive) return { label: 'Inactif', type: 'inactive' };
   if (!dateStr) return { label: 'Jamais connecté', type: 'inactive' };
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
@@ -232,6 +234,17 @@ function AdminPanel() {
       fetchHistorique(historiquePage, historiqueAction, historiqueSearch);
     } catch (e) {
       alert('Erreur lors de la suppression.');
+    }
+  };
+
+  const handleToggleActive = async (userId, currentStatus) => {
+    try {
+      await toggleUserActive(userId);
+      const action = currentStatus ? 'désactivé' : 'activé';
+      showToast(`Compte ${action}.`);
+      fetchData();
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Erreur lors de la modification.', 'error');
     }
   };
 
@@ -596,7 +609,7 @@ function AdminPanel() {
                       return 0;
                     })
                     .map((u, index) => {
-                      const { label: statusLabel, type: statusType } = getRelativeTime(u.last_seen);
+                      const { label: statusLabel, type: statusType } = getRelativeTime(u.last_seen, u.is_active);
                       return editingUser === u.id ? (
                         <tr key={u.id} className="editing-row">
                           <td data-label="#">{index + 1}</td>
@@ -624,7 +637,7 @@ function AdminPanel() {
                           </td>
                         </tr>
                       ) : (
-                        <tr key={u.id}>
+                        <tr key={u.id} className={!u.is_active ? 'user-inactive' : ''}>
                           <td data-label="#">{index + 1}</td>
                           <td data-label="Nom">{u.username}</td>
                           <td data-label="Rôle">
@@ -647,6 +660,23 @@ function AdminPanel() {
                                   disabled={resettingId === u.id}
                                 >
                                   {resettingId === u.id ? '⏳ Réinitialisation...' : 'Réinitialiser Mdp'}
+                                </button>
+                                <button
+                                  style={{
+                                    padding:'4px 8px',
+                                    fontSize:'0.78em',
+                                    borderRadius:'5px',
+                                    border:'none',
+                                    cursor:'pointer',
+                                    background: u.is_active ? '#fd7e14' : '#28a745',
+                                    color:'white',
+                                    marginLeft:'4px'
+                                  }}
+                                  onClick={() => handleToggleActive(u.id, u.is_active)}
+                                  disabled={u.id === userInfo?.id}
+                                  title={u.is_active ? 'Désactiver ce compte' : 'Réactiver ce compte'}
+                                >
+                                  {u.is_active ? '⏸ Désactiver' : '▶ Réactiver'}
                                 </button>
                                 <button className="delete-user-button" onClick={() => setConfirmDeleteId(u.id)}>Supprimer</button>
                               </>
