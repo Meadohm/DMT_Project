@@ -1051,6 +1051,8 @@ td:last-child {
 .objet-cell {
   max-width: 250px;
   text-align: left;
+  position: relative;
+  overflow: visible;
 }
 
 .objet-text {
@@ -1063,7 +1065,9 @@ td:last-child {
 
 .objet-text::after {
   content: attr(data-tooltip);
-  position: fixed;
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 0;
   background: #003366;
   color: white;
   padding: 6px 10px;
@@ -1078,7 +1082,7 @@ td:last-child {
   transition: opacity 0.2s ease;
   z-index: 9999;
   line-height: 1.4;
-  transform: translateY(-110%);
+  transform: none;
 }
 
 .objet-text:hover::after {
