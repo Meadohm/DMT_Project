@@ -559,7 +559,7 @@ def list_services(request):
             'responsable': s.responsable.username if s.responsable else '—',
             'responsable_id': s.responsable.id if s.responsable else None,
             'nb_employes': nb,
-            'date_creation': s.date_creation.strftime('%d/%m/%Y') if s.date_creation else '—',
+            'date_creation': s.date_creation.strftime('%d/%m/%Y %H:%M') if s.date_creation else '—',
         })
     return Response(services_list)
 

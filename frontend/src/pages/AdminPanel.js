@@ -497,7 +497,14 @@ function AdminPanel() {
                               <option value="admin">Admin</option>
                             </select>
                           </td>
-                          <td data-label="Service"><input value={editUserData.service} onChange={(e) => setEditUserData({ ...editUserData, service: e.target.value })} /></td>
+                          <td data-label="Service">
+                            <select value={editUserData.service} onChange={(e) => setEditUserData({ ...editUserData, service: e.target.value })}>
+                              <option value="">— Aucun service —</option>
+                              {services.map(s => (
+                                <option key={s.id} value={s.nom}>{s.nom}</option>
+                              ))}
+                            </select>
+                          </td>
                           <td data-label="Email"><input value={editUserData.email} onChange={(e) => setEditUserData({ ...editUserData, email: e.target.value })} /></td>
                           <td data-label="Statut"><span className={`status-badge ${statusType}`}>{statusLabel}</span></td>
                           <td data-label="Actions">
