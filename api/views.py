@@ -547,23 +547,21 @@ def create_service(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def list_services(request):
-    services = Service.objects.select_related('responsable').annotate(
-        nb_employes=Count('utilisateur')
-    )
-    data = [
-        {
+    services = Service.objects.select_related('responsable').all()
+    services_list = []
+    for s in services:
+        nb = Utilisateur.objects.filter(service=s.nom).count()
+        services_list.append({
             'id': s.id,
             'nom': s.nom,
             'description': s.description or '',
             'statut': s.statut,
             'responsable': s.responsable.username if s.responsable else '—',
             'responsable_id': s.responsable.id if s.responsable else None,
-            'nb_employes': s.nb_employes,
+            'nb_employes': nb,
             'date_creation': s.date_creation.strftime('%d/%m/%Y') if s.date_creation else '—',
-        }
-        for s in services
-    ]
-    return Response(data)
+        })
+    return Response(services_list)
 
 
 @api_view(['DELETE'])
