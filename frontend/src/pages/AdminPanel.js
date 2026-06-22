@@ -651,13 +651,14 @@ function AdminPanel() {
                           <td data-label="Email">{u.email || '—'}</td>
                           <td data-label="Statut"><span className={`status-badge ${statusType}`}>{statusLabel}</span></td>
                           <td data-label="Actions" className={u.id === userInfo?.id ? 'actions-cell-solo' : ''}>
-                            <button className="edit-user-button" onClick={() => handleEditStart(u)}>Éditer</button>
+                            <button className="edit-user-button" onClick={() => handleEditStart(u)} disabled={!u.is_active} style={{opacity: !u.is_active ? 0.4 : 1, cursor: !u.is_active ? 'not-allowed' : 'pointer'}}>Éditer</button>
                             {u.id !== userInfo?.id && (
                               <>
                                 <button
                                   className="reset-password-button"
                                   onClick={() => handleResetPassword(u.id, u.username)}
-                                  disabled={resettingId === u.id}
+                                  disabled={resettingId === u.id || !u.is_active}
+                                  style={{opacity: !u.is_active ? 0.4 : 1, cursor: !u.is_active ? 'not-allowed' : 'pointer'}}
                                 >
                                   {resettingId === u.id ? '⏳ Réinitialisation...' : 'Réinitialiser Mdp'}
                                 </button>

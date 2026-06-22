@@ -1364,6 +1364,11 @@ td:last-child {
 }
 
 tr.user-inactive {
-  opacity: 0.6;
-  background: #f8f9fa !important;
+  opacity: 0.55;
+  background: #f0f0f0 !important;
+  color: #999 !important;
+}
+
+tr.user-inactive td {
+  color: #999 !important;
 }

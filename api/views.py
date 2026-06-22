@@ -61,8 +61,14 @@ def login_view(request):
     username = request.data.get('username')
     password = request.data.get('password')
     user = authenticate(username=username, password=password)
-    if not user:
-        return Response({'error': 'Nom d’utilisateur ou mot de passe incorrect'}, status=status.HTTP_400_BAD_REQUEST)
+    if user is None:
+        try:
+            existing = Utilisateur.objects.get(username=username)
+            if not existing.is_active:
+                return Response({‘error’: ‘Compte désactivé. Contactez votre administrateur.’}, status=status.HTTP_403_FORBIDDEN)
+        except Utilisateur.DoesNotExist:
+            pass
+        return Response({‘error’: ‘Nom d\’utilisateur ou mot de passe incorrect.’}, status=status.HTTP_401_UNAUTHORIZED)
     token, _ = Token.objects.get_or_create(user=user)
     user.last_login = timezone.now()
     user.save(update_fields=['last_login'])
@@ -353,6 +359,18 @@ def toggle_user_active(request, user_id):
 
     user.is_active = not user.is_active
     user.save(update_fields=['is_active'])
+
+    if not user.is_active:
+        from api.models import FolderShare
+        revoked = FolderShare.objects.filter(user=user).count()
+        FolderShare.objects.filter(user=user).delete()
+        if revoked > 0:
+            AuditLog.objects.create(
+                utilisateur=request.user,
+                action='DELETE',
+                objet=f"Révocation de {revoked} partage(s) suite désactivation : {user.username}",
+                adresse_ip=request.META.get('REMOTE_ADDR'),
+            )
 
     action = 'activé' if user.is_active else 'désactivé'
     AuditLog.objects.create(

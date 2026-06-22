@@ -35,7 +35,13 @@ function Login() {
         navigate("/dashboard");
       }
     } catch (e) {
-      setError("⚠️ Nom d'utilisateur ou mot de passe incorrect");
+      const status = e.response?.status;
+      const message = e.response?.data?.error || 'Erreur de connexion.';
+      if (status === 403) {
+        setError('🚫 ' + message);
+      } else {
+        setError('⚠️ ' + message);
+      }
     } finally {
       setLoading(false);
     }
