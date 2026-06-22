@@ -158,7 +158,7 @@ def update_password_view(request):
 
     # Vérifie si ancien == nouveau
     if old_password == new_password:
-        return Response({'error': 'Le nouveau mot de passe doit être différent de l'ancien.'},
+        return Response({'error': 'Le nouveau mot de passe doit être différent de l ancien.'},
                         status=status.HTTP_400_BAD_REQUEST)
 
     # Vérification robustesse
@@ -886,7 +886,7 @@ def create_subfolder(request, parent_id):
         return Response({'error': 'Dossier parent introuvable'}, status=status.HTTP_404_NOT_FOUND)
 
     if not has_folder_permission(request.user, parent_folder, "write"):
-        return Response({'error': '⛔ Vous n'avez pas la permission de créer un sous-dossier ici.'},
+        return Response({'error': '⛔ Vous n avez pas la permission de creer un sous-dossier ici.'},
                         status=status.HTTP_403_FORBIDDEN)
 
     nom = request.data.get('nom')
@@ -1012,7 +1012,7 @@ def share_folder(request, folder_id):
     payload = request.data
     if not isinstance(payload, list):
         return Response(
-            {'error': 'Format attendu : liste d'utilisateurs avec permissions.'},
+            {'error': "Format attendu : liste d'utilisateurs avec permissions."},
             status=status.HTTP_400_BAD_REQUEST
         )
 
@@ -1361,7 +1361,7 @@ def update_share_permission(request, share_id):
 
     if request.user != share.folder.proprietaire:
         return Response(
-            {"error": "⛔ Vous n'êtes pas autorisé à modifier ce partage."},
+            {"error": "⛔ Vous n etes pas autorise a modifier ce partage."},
             status=status.HTTP_403_FORBIDDEN
         )
 
@@ -1423,7 +1423,7 @@ def create_archive(request, folder_id):
         folder = Folder.objects.get(id=folder_id)
     except Folder.DoesNotExist:
         return Response(
-            {'error': "📁 Le dossier demandé n'existe pas."},
+            {'error': "📁 Le dossier demande n existe pas."},
             status=status.HTTP_404_NOT_FOUND
         )
 
@@ -1434,7 +1434,7 @@ def create_archive(request, folder_id):
         has_folder_permission(request.user, folder, "update")
     ):
         return Response(
-            {'error': "⛔ Vous n'avez pas les droits nécessaires pour archiver ce dossier."},
+            {'error': "⛔ Vous n avez pas les droits necessaires pour archiver ce dossier."},
             status=status.HTTP_403_FORBIDDEN
         )
 
@@ -1444,7 +1444,7 @@ def create_archive(request, folder_id):
 
     if archive_format not in ["zip", "rar"]:
         return Response(
-            {'error': "⚠️ Format d'archive invalide. Utilisez 'zip' ou 'rar'."},
+            {'error': "Format archive invalide. Utilisez zip ou rar."},
             status=status.HTTP_400_BAD_REQUEST
         )
 
@@ -1586,7 +1586,7 @@ def download_archive(request, archive_id):
 
     archive_path = archive.file.path
     if not os.path.exists(archive_path):
-        return Response({'error': 'Fichier d'archive manquant.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': "Fichier d'archive manquant."}, status=status.HTTP_404_NOT_FOUND)
 
     # Détection correcte du type MIME
     mime_type, _ = mimetypes.guess_type(archive_path)
@@ -1711,7 +1711,7 @@ def unarchive_folder(request, archive_id):
 
     folder = Folder.objects.filter(nom=archive.folder_name, proprietaire=request.user).first()
     if not folder:
-        return Response({'error': 'Dossier d'origine introuvable.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': "Dossier d'origine introuvable."}, status=status.HTTP_404_NOT_FOUND)
 
     folder.is_archived = False
     folder.save(update_fields=["is_archived"])
