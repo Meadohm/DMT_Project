@@ -707,8 +707,8 @@ function AdminPanel() {
               <button className="btn-cancel" onClick={() => { setHistoriqueSearch(''); setHistoriqueAction(''); setDateDebut(''); setDateFin(''); setHistoriquePage(1); localStorage.setItem('historiquePage', 1); fetchHistorique(1, '', '', '', ''); showToast('Filtres réinitialisés.', 'success'); }}>
                 Réinitialiser
               </button>
-              <button className="btn-primary" style={{background:'#28a745'}} onClick={handleExportCSV}>
-                ⬇️ Exporter CSV
+              <button className="btn-cancel" style={{background:'#28a745', color:'white', border:'none', fontSize:'0.85em'}} onClick={handleExportCSV}>
+                ⬇️ CSV
               </button>
               <button className="btn-danger" onClick={() => setConfirmClearAll(true)}>
                 🗑️ Tout effacer
