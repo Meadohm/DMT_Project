@@ -40,7 +40,7 @@ function DashboardEmploye() {
   const [archivesOpen, setArchivesOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const now = useClock();
-
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Favoris
   const [favorites, setFavorites] = useState(
@@ -567,7 +567,14 @@ const handleClearNotifications = async () => {
       </header>
 
       {/* --- SIDEBAR --- */}
-      <aside className="sidebar sidebar-layout-fix">
+      <aside className={`sidebar sidebar-layout-fix${sidebarCollapsed ? " collapsed" : ""}`}>
+        <button
+          className="sidebar-toggle"
+          onClick={() => setSidebarCollapsed(prev => !prev)}
+          title={sidebarCollapsed ? "Déplier" : "Replier"}
+        >
+          {sidebarCollapsed ? "▶" : "◀"}
+        </button>
 
         <button className="new-folder-btn" onClick={handleCreateFolder}>
           + Nouveau dossier
