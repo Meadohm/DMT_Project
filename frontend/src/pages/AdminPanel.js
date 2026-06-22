@@ -903,28 +903,95 @@ function AdminPanel() {
         )}
 
         {activeSection === "account" && (
-          <div className="account-info">
-            <h2>Mon Compte</h2>
-            <p>Email : {userInfo?.email}</p>
-            <button className="change-password-button" onClick={() => setShowPasswordForm(!showPasswordForm)}>
-              Changer mot de passe
-            </button>
-            {showPasswordForm && (
-              <div className="password-form">
-                <input type={passwordVisible ? "text" : "password"} value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} placeholder="Ancien mot de passe" />
-                <input type={passwordVisible ? "text" : "password"} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Nouveau mot de passe" />
-                <input type={passwordVisible ? "text" : "password"} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirmer" />
-                <button type="button" onClick={handlePasswordVisibilityToggle}>
-                  {passwordVisible ? "Masquer" : "Afficher"}
+          <div className="account-section">
+            <div className="section-header">
+              <h2>Mon Compte</h2>
+            </div>
+            <div className="account-layout">
+              <div className="account-profile-card">
+                <div className="account-avatar-large">
+                  {userInfo?.username?.charAt(0).toUpperCase()}
+                </div>
+                <div className="account-profile-info">
+                  <h3 className="account-username">{userInfo?.username}</h3>
+                  <p className="account-email">{userInfo?.email || '—'}</p>
+                  <div className="account-badges">
+                    <span className={`status-badge ${userInfo?.role === 'admin' ? 'online' : 'recent'}`}>
+                      {userInfo?.role === 'admin' ? '👑 Admin' : userInfo?.role === 'responsable' ? '🎯 Responsable' : '👤 Employé'}
+                    </span>
+                    {userInfo?.service && (
+                      <span className="status-badge today">🏢 {userInfo.service}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="account-form-card">
+                <h4 className="account-form-title">🔐 Changer le mot de passe</h4>
+                <button className="btn-primary" style={{marginBottom:'16px', width:'100%'}} onClick={() => setShowPasswordForm(!showPasswordForm)}>
+                  {showPasswordForm ? 'Annuler' : 'Modifier mon mot de passe'}
                 </button>
-                {Array.isArray(passwordError) && passwordError.length > 0 && (
-                  <div className="error-box">
-                    <ul>{passwordError.map((e, i) => <li key={i}>{e}</li>)}</ul>
+                {showPasswordForm && (
+                  <div className="account-password-form">
+                    <div className="form-group">
+                      <label>Ancien mot de passe</label>
+                      <div className="input-with-eye">
+                        <input
+                          type={passwordVisible ? "text" : "password"}
+                          value={oldPassword}
+                          onChange={(e) => setOldPassword(e.target.value)}
+                          placeholder="Votre mot de passe actuel"
+                        />
+                        <button type="button" className="eye-btn" onClick={handlePasswordVisibilityToggle}>
+                          {passwordVisible ? '🙈' : '👁️'}
+                        </button>
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <label>Nouveau mot de passe</label>
+                      <div className="input-with-eye">
+                        <input
+                          type={passwordVisible ? "text" : "password"}
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          placeholder="Minimum 6 caractères"
+                        />
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <label>Confirmer le nouveau mot de passe</label>
+                      <div className="input-with-eye">
+                        <input
+                          type={passwordVisible ? "text" : "password"}
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          placeholder="Répéter le nouveau mot de passe"
+                        />
+                      </div>
+                      {newPassword && confirmPassword && newPassword !== confirmPassword && (
+                        <p className="field-error">Les mots de passe ne correspondent pas</p>
+                      )}
+                      {newPassword && confirmPassword && newPassword === confirmPassword && (
+                        <p className="field-success">✓ Les mots de passe correspondent</p>
+                      )}
+                    </div>
+                    {Array.isArray(passwordError) && passwordError.length > 0 && (
+                      <div className="error-box">
+                        <ul>{passwordError.map((e, i) => <li key={i}>{e}</li>)}</ul>
+                      </div>
+                    )}
+                    <button
+                      className="btn-primary"
+                      style={{width:'100%'}}
+                      onClick={handlePasswordChange}
+                      disabled={!oldPassword || !newPassword || newPassword !== confirmPassword}
+                    >
+                      ✓ Valider le changement
+                    </button>
                   </div>
                 )}
-                <button onClick={handlePasswordChange}>Valider</button>
               </div>
-            )}
+            </div>
           </div>
         )}
       </main>

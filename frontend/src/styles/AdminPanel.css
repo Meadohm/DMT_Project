@@ -1135,3 +1135,84 @@ td:last-child {
   opacity: 0.9;
   white-space: nowrap;
 }
+
+/* ── Account section ────────────────────────────────────── */
+.account-section { max-width: 800px; }
+
+.account-layout {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.account-profile-card {
+  background: white;
+  border-radius: 12px;
+  padding: 28px 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  border: 1px solid #e8edf2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 220px;
+  text-align: center;
+}
+
+.account-avatar-large {
+  width: 72px;
+  height: 72px;
+  background: linear-gradient(135deg, #003366, #00509e);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2em;
+  font-weight: 700;
+}
+
+.account-username {
+  font-size: 1.3em;
+  font-weight: 700;
+  color: #003366;
+  margin: 0;
+}
+
+.account-email {
+  color: #888;
+  font-size: 0.9em;
+  margin: 0;
+}
+
+.account-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.account-form-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  border: 1px solid #e8edf2;
+  flex: 2;
+  min-width: 280px;
+}
+
+.account-form-title {
+  font-size: 1em;
+  color: #003366;
+  margin: 0 0 16px 0;
+  font-weight: 700;
+}
+
+.account-password-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
