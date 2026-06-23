@@ -816,7 +816,8 @@ const handleClearNotifications = async () => {
       <footer
         className="footer"
         style={{
-          paddingLeft: sidebarCollapsed ? "48px" : "240px",
+          paddingLeft: sidebarCollapsed ? "60px" : "252px",
+          paddingRight: "20px",
           transition: "padding-left 0.2s ease"
         }}
       >
