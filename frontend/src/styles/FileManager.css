@@ -1887,6 +1887,7 @@ body.dark .folder-title {
   display: flex;
   align-items: center;
   gap: 20px;
+  flex-shrink: 0;
 }
 
 .emp-topbar-clock {
@@ -1922,8 +1923,9 @@ body.dark .folder-title {
 }
 
 .emp-topbar-search {
-  flex: 1;
-  min-width: 0;
+  width: 280px;
+  flex-shrink: 1;
+  min-width: 120px;
   margin: 0 16px;
 }
 
