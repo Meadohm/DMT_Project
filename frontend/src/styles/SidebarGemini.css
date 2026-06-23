@@ -49,29 +49,44 @@
 }
 
 /* 📂 Sections de la sidebar */
+.sidebar-top-fixed {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #002b5c;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* ➕ Bouton Nouveau dossier */
+.new-folder-btn {
+  flex: 1;
+  background: #6c63ff;
+  color: white;
+  font-weight: 600;
+  padding: 6px 10px;
+  font-size: 0.82rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  margin: 0;
+}
+
 .sidebar-section {
-  margin-top: 18px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #002b5c;
+  margin-top: 12px;
   margin-bottom: 6px;
   font-weight: 600;
   color: #f5f5f5;
   letter-spacing: 0.5px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-  padding-bottom: 4px;
-}
-
-/* ➕ Bouton Nouveau dossier */
-.new-folder-btn {
-  width: 100%;
-  background: #6c63ff;
-  color: white;
-  font-weight: 600;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-top: 12px;
-  margin-bottom: 20px;
+  padding: 4px 0;
 }
 
 .new-folder-btn:hover {

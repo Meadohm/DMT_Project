@@ -1913,3 +1913,41 @@ body.dark .folder-title {
   align-items: center;
   gap: 12px;
 }
+
+.emp-topbar-welcome {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.emp-topbar-search {
+  flex: 1;
+  max-width: 380px;
+  margin: 0 24px;
+}
+
+.emp-topbar-search input {
+  width: 100%;
+  padding: 8px 16px 8px 36px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.15);
+  color: white;
+  outline: none;
+  font-size: 0.9rem;
+}
+
+.emp-topbar-search input::placeholder { color: rgba(255,255,255,0.6); }
+
+.emp-topbar-search-wrapper {
+  position: relative;
+}
+
+.emp-topbar-search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.7;
+}

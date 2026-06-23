@@ -397,18 +397,21 @@ const handleClearNotifications = async () => {
 
       {/* --- SIDEBAR --- */}
       <aside className={`sidebar${sidebarCollapsed ? " collapsed" : ""}`}>
-        <button
-          className="sidebar-toggle"
-          onClick={() => setSidebarCollapsed(prev => !prev)}
-          title={sidebarCollapsed ? "Déplier" : "Replier"}
-        >
-          <span>{sidebarCollapsed ? "▶" : "◀"}</span>
-        </button>
+        <div className="sidebar-top-fixed">
+          <button
+            className="sidebar-toggle"
+            onClick={() => setSidebarCollapsed(prev => !prev)}
+            title={sidebarCollapsed ? "Déplier" : "Replier"}
+          >
+            <span>{sidebarCollapsed ? "▶" : "◀"}</span>
+          </button>
+
+          {!sidebarCollapsed && (
+            <button className="new-folder-btn" onClick={handleCreateFolder}>+ Nouveau</button>
+          )}
+        </div>
 
         <div className="sidebar-layout-fix">
-        <button className="new-folder-btn" onClick={handleCreateFolder}>
-          + Nouveau dossier
-        </button>
 
         {/* ⭐ Favoris */}
         <h4 className="sidebar-section">⭐ Favoris</h4>
@@ -634,6 +637,20 @@ const handleClearNotifications = async () => {
               </div>
             </div>
 
+            <div className="emp-topbar-search">
+              <div className="emp-topbar-search-wrapper">
+                <svg className="emp-topbar-search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+                </svg>
+                <input
+                  type="text"
+                  placeholder="Rechercher un dossier..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+            </div>
+
             <div className="emp-topbar-right">
               <div className="emp-topbar-clock">
                 <span className="emp-topbar-date">
@@ -789,7 +806,7 @@ const handleClearNotifications = async () => {
           <strong>DMT</strong> – Filiale de <strong>GENICI GROUPE</strong>
         </p>
         <p className="footer-line">
-          +225 01 02 19 19 55 • dmt-genici@gmail.com • © 2024 — Développé par{" "}
+          +225 01 02 19 19 55 • dmt-genici@gmail.com • © 2025 - Développé par{" "}
           <strong>M. Mohamed Fofana</strong>
         </p>
       </footer>
