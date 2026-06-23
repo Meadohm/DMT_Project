@@ -389,7 +389,7 @@ const handleClearNotifications = async () => {
   );
 
   return (
-    <div className={`dashboard-container ${theme === "dark" ? "dark" : ""}`}>
+    <div className={`dashboard-container ${theme === "dark" ? "dark" : ""}${sidebarCollapsed ? " sidebar-collapsed" : ""}`}>
 
       {/* --- HEADER --- */}
       <header className="header">
@@ -788,7 +788,7 @@ const handleClearNotifications = async () => {
       </aside>
 
       {/* --- MAIN --- */}
-      <main className={`main-content${sidebarCollapsed ? " sidebar-collapsed" : ""}`}>
+      <main className="main-content">
         {activeFolder ? (
           <FileManager 
           activeFolder={activeFolder} 
