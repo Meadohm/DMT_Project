@@ -1518,6 +1518,7 @@ def create_archive(request, folder_id):
             folder_name=folder_display_name,
             expires_at=timezone.now() + timezone.timedelta(days=7),
             is_active=True,
+            type_archive=archive_format,
         )
 
         # Ouverture du fichier brut (mode binaire)

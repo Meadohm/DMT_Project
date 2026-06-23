@@ -172,6 +172,7 @@ class Archive(models.Model):
     # Optionnel : expire après X jours
     expires_at = models.DateTimeField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
+    type_archive = models.CharField(max_length=10, default="zip")
 
     class Meta:
         indexes = [models.Index(fields=["owner", "is_active"])]
