@@ -76,17 +76,14 @@
 }
 
 .sidebar-section {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  background: #002b5c;
   margin-top: 12px;
   margin-bottom: 6px;
   font-weight: 600;
   color: #f5f5f5;
   letter-spacing: 0.5px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 4px 0;
+  padding-bottom: 4px;
+  background: #002b5c;
 }
 
 .new-folder-btn:hover {

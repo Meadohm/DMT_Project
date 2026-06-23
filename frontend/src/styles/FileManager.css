@@ -1923,8 +1923,8 @@ body.dark .folder-title {
 
 .emp-topbar-search {
   flex: 1;
-  max-width: 380px;
-  margin: 0 24px;
+  min-width: 0;
+  margin: 0 16px;
 }
 
 .emp-topbar-search input {
