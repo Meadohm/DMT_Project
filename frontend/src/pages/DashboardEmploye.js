@@ -815,6 +815,7 @@ const handleClearNotifications = async () => {
         style={{
           left: sidebarCollapsed ? "48px" : "240px",
           right: 0,
+          width: "auto",
           transition: "left 0.2s ease"
         }}
       >
