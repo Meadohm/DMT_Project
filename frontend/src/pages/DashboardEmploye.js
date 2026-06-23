@@ -980,7 +980,8 @@ const handleClearNotifications = async () => {
                 {archivesOpen && (
                   <ArchivesModal
                     onClose={() => setArchivesOpen(false)}
-                    onRefreshFolders={fetchFolders}   //rafraîchit la sidebar automatiquement
+                    onRefreshFolders={fetchFolders}
+                    userInfo={userInfo}
                   />
                 )}
 

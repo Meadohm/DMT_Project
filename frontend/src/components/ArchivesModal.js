@@ -10,9 +10,8 @@ import {
   unarchive,
 } from "../services/archiveService";
 import { listFolders } from "../services/folderService";
-import { getUserInfo } from "../services/userService";
 
-export default function ArchivesModal({ onClose, onRefreshFolders }) {
+export default function ArchivesModal({ onClose, onRefreshFolders, userInfo }) {
   const [archives, setArchives] = useState([]);
   const [folders, setFolders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,7 +21,6 @@ export default function ArchivesModal({ onClose, onRefreshFolders }) {
   const [toast, setToast] = useState(null);
   const [downloadingId, setDownloadingId] = useState(null);
   const [downloadProgress, setDownloadProgress] = useState(0);
-  const [userInfo, setUserInfo] = useState(null);
 
   // === Charger les archives et dossiers ===
   const fetchData = async () => {
@@ -46,16 +44,7 @@ export default function ArchivesModal({ onClose, onRefreshFolders }) {
   };
 
   useEffect(() => {
-    const loadData = async () => {
-      await fetchData();
-      try {
-        const user = await getUserInfo();
-        setUserInfo(user);
-      } catch (err) {
-        console.error("❌ Erreur chargement userInfo :", err);
-      }
-    };
-    loadData();
+    fetchData();
   }, []);
 
   // === Création d’une archive ===
@@ -97,20 +86,13 @@ export default function ArchivesModal({ onClose, onRefreshFolders }) {
 
   // === Suppression d’une archive ===
   const handleDelete = async (id) => {
-    if (!id) return;
+    if (!window.confirm("Supprimer cette archive définitivement ?")) return;
     try {
       await deleteArchive(id);
       await fetchData();
-      setToast({
-        type: "success",
-        message: "🗑️ Archive supprimée avec succès.",
-      });
+      setToast({ type: "success", message: "🗑️ Archive supprimée." });
     } catch (err) {
-      console.error("❌ Erreur suppression archive :", err);
-      setToast({
-        type: "error",
-        message: "❌ Une erreur est survenue lors de la suppression.",
-      });
+      setToast({ type: "error", message: "❌ Erreur suppression." });
     }
   };
 
@@ -248,12 +230,12 @@ export default function ArchivesModal({ onClose, onRefreshFolders }) {
 
         <div className="archive-list large-scroll">
           {loading ? (
-            <p>Chargement...</p>
+            <div className="spinner" />
           ) : filteredArchives.length === 0 ? (
             <p className="no-archive">Aucune archive trouvée.</p>
           ) : (
             filteredArchives.map((a) => (
-              <div key={a.id} className="archive-item fade-in">
+              <div key={a.id} className={`archive-item fade-in${new Date(a.expires_at) < new Date() ? " expired" : ""}`}>
                 <div className="archive-info">
                   <h4>
                     {a.type_archive === "zip" && "📦 "}

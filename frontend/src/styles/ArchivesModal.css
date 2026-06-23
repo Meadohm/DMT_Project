@@ -549,3 +549,8 @@
 .archive-item:hover {
   background: var(--hover-bg);
 }
+
+.archive-item.expired {
+  opacity: 0.5;
+  border-left: 3px solid #ef4444;
+}
