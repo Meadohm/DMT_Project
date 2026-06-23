@@ -376,8 +376,7 @@
 
 /* === Scroll indépendant par section === */
 .section-scroll {
-  max-height: 250px; /* Ajustable selon la taille souhaitée */
-  overflow-y: auto;
+  overflow-y: visible;
   overflow-x: hidden;
   padding-right: 4px;
   margin-bottom: 10px;
@@ -549,5 +548,4 @@
   flex-shrink: 0;
 }
 .sidebar-layout-fix {
-  padding-bottom: 80px;
 }

@@ -1768,7 +1768,7 @@ body.dark .folder-title {
 .footer {
   position: fixed;
   bottom: 0;
-  left: 240px;
+  left: 0;
   right: 0;
   width: auto;
   background: #ffffff;
