@@ -21,6 +21,7 @@ export default function ArchivesModal({ onClose, onRefreshFolders, userInfo }) {
   const [toast, setToast] = useState(null);
   const [downloadingId, setDownloadingId] = useState(null);
   const [downloadProgress, setDownloadProgress] = useState(0);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
   // === Charger les archives et dossiers ===
   const fetchData = async () => {
@@ -86,13 +87,14 @@ export default function ArchivesModal({ onClose, onRefreshFolders, userInfo }) {
 
   // === Suppression d’une archive ===
   const handleDelete = async (id) => {
-    if (!window.confirm("Supprimer cette archive définitivement ?")) return;
     try {
       await deleteArchive(id);
       await fetchData();
       setToast({ type: "success", message: "🗑️ Archive supprimée." });
     } catch (err) {
       setToast({ type: "error", message: "❌ Erreur suppression." });
+    } finally {
+      setConfirmDeleteId(null);
     }
   };
 
@@ -282,7 +284,7 @@ export default function ArchivesModal({ onClose, onRefreshFolders, userInfo }) {
                     title="Supprimer"
                     className={`btn-delete ${downloadingId === a.id ? "disabled-btn" : ""}`}
                     onClick={() => {
-                      if (downloadingId !== a.id) handleDelete(a.id);
+                      if (downloadingId !== a.id) setConfirmDeleteId(a.id);
                     }}
                     disabled={downloadingId === a.id}
                   >
@@ -296,6 +298,18 @@ export default function ArchivesModal({ onClose, onRefreshFolders, userInfo }) {
           )}
         </div>
       </div>
+
+      {confirmDeleteId && (
+        <div className="archive-confirm-overlay">
+          <div className="archive-confirm-box">
+            <p>🗑️ Supprimer cette archive définitivement ?</p>
+            <div className="archive-confirm-actions">
+              <button className="btn-cancel-confirm" onClick={() => setConfirmDeleteId(null)}>Annuler</button>
+              <button className="btn-delete-confirm" onClick={() => handleDelete(confirmDeleteId)}>Supprimer</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Toast */}
       {toast && (
