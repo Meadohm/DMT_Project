@@ -43,12 +43,6 @@ function DashboardEmploye() {
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  useEffect(() => {
-    document.documentElement.style.setProperty(
-      '--sidebar-width', sidebarCollapsed ? '48px' : '240px'
-    );
-  }, [sidebarCollapsed]);
-
   // Favoris
   const [favorites, setFavorites] = useState(
     JSON.parse(localStorage.getItem("favorites")) || []
