@@ -41,12 +41,13 @@ function DashboardEmploye() {
   const { theme, toggleTheme } = useTheme();
   const now = useClock();
 
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
   useEffect(() => {
     document.documentElement.style.setProperty(
       '--sidebar-width', sidebarCollapsed ? '48px' : '240px'
     );
   }, [sidebarCollapsed]);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Favoris
   const [favorites, setFavorites] = useState(
