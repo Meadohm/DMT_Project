@@ -1770,8 +1770,7 @@ body.dark .folder-title {
   bottom: 0;
   left: 0;
   right: 0;
-  width: auto;
-  transition: left 0.2s ease;
+  width: 100%;
   background: #ffffff;
   border-top: 1px solid #ddd;
   text-align: center;
@@ -1779,7 +1778,7 @@ body.dark .folder-title {
   font-size: 0.85rem;
   color: #333;
   box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.08);
-  z-index: 100; /* ⬅️ abaissé pour ne pas bloquer les menus */
+  z-index: 50;
 }
 
 
