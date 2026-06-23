@@ -570,7 +570,8 @@ const handleClearNotifications = async () => {
       </header>
 
       {/* --- SIDEBAR --- */}
-      <aside className={`sidebar sidebar-layout-fix${sidebarCollapsed ? " collapsed" : ""}`}>
+      <aside className={`sidebar${sidebarCollapsed ? " collapsed" : ""}`}>
+        <div className="sidebar-layout-fix">
         <button
           className="sidebar-toggle"
           onClick={() => setSidebarCollapsed(prev => !prev)}
@@ -785,6 +786,7 @@ const handleClearNotifications = async () => {
           )}
         </div>
 
+        </div>
         <div className="sidebar-logo-bottom">
           <img src={logo} alt="DMT Logo" className="app-logoEmp" />
         </div>
@@ -816,6 +818,7 @@ const handleClearNotifications = async () => {
           left: sidebarCollapsed ? "48px" : "240px",
           right: 0,
           width: "auto",
+          maxWidth: "100%",
           transition: "left 0.2s ease"
         }}
       >
