@@ -21,7 +21,7 @@ import "react-h5-audio-player/lib/styles.css"; */
 
 import API_BASE_URL from "../config";
 
-function FileManager({ activeFolder, setActiveFolder, userInfo }) {
+function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed = false }) {
   const [files, setFiles] = useState([]);
   const [sharedFiles, setSharedFiles] = useState([]);
   const [dragOver, setDragOver] = useState(false);
@@ -555,7 +555,7 @@ function FileManager({ activeFolder, setActiveFolder, userInfo }) {
 
             {/*PREVIEW EN MODE PLEIN ÉCRAN - MODERNE ET FLUIDE */}
             {previewFileData && previewMeta && (
-              <div className="file-preview-container">
+              <div className="file-preview-container" style={{ left: sidebarCollapsed ? "48px" : "240px" }}>
                 {/* Bande supérieure flottante */}
                 <div className="preview-topbar">
                   <h4 className="preview-title">

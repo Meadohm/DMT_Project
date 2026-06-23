@@ -787,10 +787,11 @@ const handleClearNotifications = async () => {
         )}
 
         {activeFolder ? (
-          <FileManager 
-          activeFolder={activeFolder} 
-          setActiveFolder={setActiveFolder} // on passe le setter
-          userInfo={userInfo}              // utile pour savoir si propriétaire
+          <FileManager
+            activeFolder={activeFolder}
+            setActiveFolder={setActiveFolder}
+            userInfo={userInfo}
+            sidebarCollapsed={sidebarCollapsed}
           />
         ) : (
           <div className="empty-state">
