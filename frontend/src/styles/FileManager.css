@@ -1923,10 +1923,11 @@ body.dark .folder-title {
 }
 
 .emp-topbar-search {
-  width: 280px;
+  width: 200px;
+  max-width: 200px;
   flex-shrink: 1;
-  min-width: 120px;
-  margin: 0 16px;
+  min-width: 100px;
+  margin: 0 12px;
 }
 
 .emp-topbar-search input {
@@ -1944,6 +1945,7 @@ body.dark .folder-title {
 
 .emp-topbar-search-wrapper {
   position: relative;
+  width: 100%;
 }
 
 .emp-topbar-search-icon {
