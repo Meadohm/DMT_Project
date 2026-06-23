@@ -502,6 +502,7 @@
   border: none;
   cursor: pointer;
   padding: 6px 10px;
+  margin-top: 12px;
   margin-bottom: 8px;
   color: inherit;
 }
