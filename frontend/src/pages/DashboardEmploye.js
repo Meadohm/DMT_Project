@@ -395,188 +395,6 @@ const handleClearNotifications = async () => {
       style={{ paddingLeft: sidebarCollapsed ? "48px" : "240px", transition: "padding-left 0.2s ease" }}
     >
 
-      {/* --- HEADER --- */}
-      <header
-        className="header"
-        style={{
-          left: sidebarCollapsed ? "48px" : "240px",
-          width: sidebarCollapsed ? "calc(100% - 48px)" : "calc(100% - 240px)",
-          transition: "left 0.2s ease, width 0.2s ease"
-        }}
-      >
-
-        {/* 🔍 Barre de recherche moderne */}
-          <div className="search-bar">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="search-icon"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
-              />
-            </svg>
-            <input
-              type="text"
-              placeholder="Rechercher un dossier..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-
-        {isAuthenticated && userInfo ? (
-          <div className="user-info">
-            <div className="welcome-message">
-              <span className="welcome-text">
-                <strong>{userInfo.username}</strong>
-              </span>
-              <small className="datetime">
-                {now.toLocaleDateString("fr-FR", {
-                  weekday: "long", day: "numeric",
-                  month: "long", year: "numeric"
-                })} — {now.toLocaleTimeString("fr-FR", {
-                  hour: "2-digit", minute: "2-digit", second: "2-digit"
-                })}
-              </small>
-            </div>
-
-            {/* 🔔 Notifications avec dropdown */}
-            <div className="notif-wrapper" ref={notifRef}>
-              <button 
-                className="notif-btn" 
-                onClick={toggleNotif}
-                title="Notifications"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    strokeWidth="1.5" 
-                    stroke="currentColor" 
-                    className="icon-bell">
-                  <path strokeLinecap="round" strokeLinejoin="round" 
-                    d="M14.25 18.75a1.5 1.5 0 01-3 0m6-6V9a6 6 0 00-12 0v3a6 6 0 01-1.8 4.2c-.3.3-.45.9-.15 1.35.3.45.9.45 1.35.45h16.2c.45 0 1.05 0 1.35-.45.3-.45.15-1.05-.15-1.35A6 6 0 0117.25 12.75z" />
-                </svg>
-                  {notifications.filter(n => !n.is_read).length > 0 && (
-                    <span className="notif-count">
-                      {notifications.filter(n => !n.is_read).length}
-                    </span>
-                  )}
-              </button>
-
-              {notifOpen && (
-                  <div className="notif-dropdown">
-                    <p className="notif-title">🔔 Notifications</p>
-                      <ul className="notif-list">
-                        {notifications.length === 0 ? (
-                          <li>Aucune notification</li>
-                        ) : (
-                          notifications
-                            .slice(0, 5)
-                            .map((n) => {
-                              const tooltipDate = new Date(n.created_at).toLocaleString("fr-FR", {
-                                weekday: "long",
-                                day: "numeric",
-                                month: "long",
-                                year: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                second: "2-digit",
-                              });
-
-                              return (
-                                <li key={n.id} className="notif-item">
-                                  <div className="notif-message">
-                                    {n.type === "share" && <>{n.message}</>}
-                                    {n.type === "permission" &&<>{n.message}</>}
-                                    {n.type === "upload" && <>{n.message}</>}
-                                    {n.type === "archive" && <>{n.message}</>}
-                                    {n.type === "info" && <>ℹ️{n.message}</>}
-                                  </div>
-
-                                  {/* Heure alignée à droite, affichée toujours */}
-                                  <div className="notif-time-right" title={tooltipDate}>
-                                    {formatRelativeTime(n.created_at)} ⏰
-                                  </div>
-                                </li>
-                              );
-                            })
-
-                        )}
-                      </ul>
-
-
-                      {notifications.length > 5 && (
-                        <button className="notif-more" onClick={() => setAllNotifOpen(true)}>
-                          Voir toutes les notifications
-                        </button>
-                      )}
-
-                    <button className="notif-clear" onClick={handleClearNotifications}>
-                      Effacer tout
-                    </button>
-                  </div>
-                )}
-            </div>
-
-            {/* 👤 Menu compte avec dropdown */}
-            <div className="account-wrapper" ref={accountRef}>
-              <button 
-                className="account-btn" 
-                onClick={toggleAccount}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    strokeWidth="1.5" 
-                    stroke="currentColor" 
-                    className="icon-account">
-                  <path strokeLinecap="round" strokeLinejoin="round" 
-                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 1115 0v.75H4.5v-.75z" />
-                </svg>
-              </button>
-
-              {accountOpen && (
-                <div className="account-dropdown">
-                  <p className="account-title">👤 Mon Compte</p>
-                  <ul>
-                    <li onClick={handleLogout}>🔓 Déconnexion</li>
-
-                    <li onClick={() => {
-                        setPasswordModalOpen(true);
-                        setNotifOpen(false);
-                        setAccountOpen(false);
-                      }}>
-                      🔑 Modifier le mot de passe
-                    </li>
-
-                    <li onClick={toggleTheme}>
-                      {theme === "light" ? "🌙 Mode sombre" : "☀️ Mode clair"}
-                    </li>
-
-                    <li onClick={() => {
-                      setAllNotifOpen(false);
-                      setAccountOpen(false);
-                      setArchivesOpen(true);
-                    }}>
-                      📦 Archives
-                    </li>
-
-                    <li style={{ opacity: 0.45, cursor: "not-allowed" }} title="Bientôt disponible">⚙️ Paramètres</li>
-                    <li style={{ opacity: 0.45, cursor: "not-allowed" }} title="Bientôt disponible">❓ Aide</li>
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
-        ) : null}
-
-      </header>
-
       {/* --- SIDEBAR --- */}
       <aside className={`sidebar${sidebarCollapsed ? " collapsed" : ""}`}>
         <button
@@ -802,6 +620,152 @@ const handleClearNotifications = async () => {
 
       {/* --- MAIN --- */}
       <main className="main-content">
+        {isAuthenticated && userInfo && (
+          <div className="emp-topbar">
+            <div className="emp-topbar-left">
+              <div className="emp-topbar-welcome">
+                <span className="emp-welcome-avatar">
+                  {userInfo.username?.charAt(0).toUpperCase()}
+                </span>
+                <div>
+                  <span className="emp-topbar-greeting">BIENVENUE,</span>
+                  <span className="emp-topbar-username">{userInfo.username}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="emp-topbar-right">
+              <div className="emp-topbar-clock">
+                <span className="emp-topbar-date">
+                  {now.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+                </span>
+                <span className="emp-topbar-time">
+                  {now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+                </span>
+              </div>
+
+              <div className="emp-topbar-actions">
+                <div className="notif-wrapper" ref={notifRef}>
+                  <button
+                    className="notif-btn"
+                    onClick={toggleNotif}
+                    title="Notifications"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        className="icon-bell">
+                      <path strokeLinecap="round" strokeLinejoin="round"
+                        d="M14.25 18.75a1.5 1.5 0 01-3 0m6-6V9a6 6 0 00-12 0v3a6 6 0 01-1.8 4.2c-.3.3-.45.9-.15 1.35.3.45.9.45 1.35.45h16.2c.45 0 1.05 0 1.35-.45.3-.45.15-1.05-.15-1.35A6 6 0 0117.25 12.75z" />
+                    </svg>
+                    {notifications.filter(n => !n.is_read).length > 0 && (
+                      <span className="notif-count">
+                        {notifications.filter(n => !n.is_read).length}
+                      </span>
+                    )}
+                  </button>
+
+                  {notifOpen && (
+                    <div className="notif-dropdown">
+                      <p className="notif-title">🔔 Notifications</p>
+                      <ul className="notif-list">
+                        {notifications.length === 0 ? (
+                          <li>Aucune notification</li>
+                        ) : (
+                          notifications
+                            .slice(0, 5)
+                            .map((n) => {
+                              const tooltipDate = new Date(n.created_at).toLocaleString("fr-FR", {
+                                weekday: "long",
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                              });
+                              return (
+                                <li key={n.id} className="notif-item">
+                                  <div className="notif-message">
+                                    {n.type === "share" && <>{n.message}</>}
+                                    {n.type === "permission" && <>{n.message}</>}
+                                    {n.type === "upload" && <>{n.message}</>}
+                                    {n.type === "archive" && <>{n.message}</>}
+                                    {n.type === "info" && <>ℹ️{n.message}</>}
+                                  </div>
+                                  <div className="notif-time-right" title={tooltipDate}>
+                                    {formatRelativeTime(n.created_at)} ⏰
+                                  </div>
+                                </li>
+                              );
+                            })
+                        )}
+                      </ul>
+
+                      {notifications.length > 5 && (
+                        <button className="notif-more" onClick={() => setAllNotifOpen(true)}>
+                          Voir toutes les notifications
+                        </button>
+                      )}
+
+                      <button className="notif-clear" onClick={handleClearNotifications}>
+                        Effacer tout
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="account-wrapper" ref={accountRef}>
+                  <button
+                    className="account-btn"
+                    onClick={toggleAccount}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        className="icon-account">
+                      <path strokeLinecap="round" strokeLinejoin="round"
+                        d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 1115 0v.75H4.5v-.75z" />
+                    </svg>
+                  </button>
+
+                  {accountOpen && (
+                    <div className="account-dropdown">
+                      <p className="account-title">👤 Mon Compte</p>
+                      <ul>
+                        <li onClick={handleLogout}>🔓 Déconnexion</li>
+                        <li onClick={() => {
+                          setPasswordModalOpen(true);
+                          setNotifOpen(false);
+                          setAccountOpen(false);
+                        }}>
+                          🔑 Modifier le mot de passe
+                        </li>
+                        <li onClick={toggleTheme}>
+                          {theme === "light" ? "🌙 Mode sombre" : "☀️ Mode clair"}
+                        </li>
+                        <li onClick={() => {
+                          setAllNotifOpen(false);
+                          setAccountOpen(false);
+                          setArchivesOpen(true);
+                        }}>
+                          📦 Archives
+                        </li>
+                        <li style={{ opacity: 0.45, cursor: "not-allowed" }} title="Bientôt disponible">⚙️ Paramètres</li>
+                        <li style={{ opacity: 0.45, cursor: "not-allowed" }} title="Bientôt disponible">❓ Aide</li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {activeFolder ? (
           <FileManager 
           activeFolder={activeFolder} 
