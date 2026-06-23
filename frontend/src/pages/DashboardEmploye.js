@@ -813,7 +813,13 @@ const handleClearNotifications = async () => {
       </main>
 
       {/* --- FOOTER --- */}
-      <footer className="footer">
+      <footer
+        className="footer"
+        style={{
+          left: sidebarCollapsed ? "48px" : "240px",
+          transition: "left 0.2s ease"
+        }}
+      >
         <p className="footer-line">
           <strong>DMT</strong> – Filiale de <strong>GENICI GROUPE</strong>
         </p>
