@@ -153,6 +153,9 @@ function DashboardEmploye() {
   const [loadingPassword, setLoadingPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [showOldPwd, setShowOldPwd] = useState(false);
+  const [showNewPwd, setShowNewPwd] = useState(false);
+  const [showConfirmPwd, setShowConfirmPwd] = useState(false);
   const [notif, setNotif] = useState(null);
   const [alertPermission, setAlertPermission] = useState(null);
   const [notifOpen, setNotifOpen] = useState(false);
@@ -905,36 +908,61 @@ const handleClearNotifications = async () => {
                 showCancel={true}
               >
                 <div className="password-modal-form">
-                  <label>Ancien mot de passe</label>
-                  <input
-                    type="password"
-                    placeholder="Entrez l’ancien mot de passe"
-                    value={oldPassword}
-                    onChange={(e) => setOldPassword(e.target.value)}
-                  />
+                  <div className="form-group">
+                    <label>Ancien mot de passe</label>
+                    <div className="input-with-eye">
+                      <input
+                        type={showOldPwd ? "text" : "password"}
+                        placeholder="Mot de passe actuel"
+                        value={oldPassword}
+                        onChange={(e) => setOldPassword(e.target.value)}
+                      />
+                      <button type="button" className="eye-btn" onClick={() => setShowOldPwd(p => !p)}>
+                        {showOldPwd ? "🙈" : "👁️"}
+                      </button>
+                    </div>
+                  </div>
 
-                  <label>Nouveau mot de passe</label>
-                  <input
-                    type="password"
-                    placeholder="Entrez le nouveau mot de passe"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                  />
+                  <div className="form-group">
+                    <label>Nouveau mot de passe</label>
+                    <div className="input-with-eye">
+                      <input
+                        type={showNewPwd ? "text" : "password"}
+                        placeholder="Nouveau mot de passe"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                      />
+                      <button type="button" className="eye-btn" onClick={() => setShowNewPwd(p => !p)}>
+                        {showNewPwd ? "🙈" : "👁️"}
+                      </button>
+                    </div>
+                  </div>
 
-                  <label>Confirmer le nouveau mot de passe</label>
-                  <input
-                    type="password"
-                    placeholder="Confirmez le nouveau mot de passe"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                  />
+                  <div className="form-group">
+                    <label>Confirmer le mot de passe</label>
+                    <div className="input-with-eye">
+                      <input
+                        type={showConfirmPwd ? "text" : "password"}
+                        placeholder="Confirmer le mot de passe"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                      />
+                      <button type="button" className="eye-btn" onClick={() => setShowConfirmPwd(p => !p)}>
+                        {showConfirmPwd ? "🙈" : "👁️"}
+                      </button>
+                    </div>
 
-                  {/* Affichage des erreurs */}
+                    {confirmPassword && (
+                      <small style={{ color: newPassword === confirmPassword ? "#22c55e" : "#ef4444", marginTop: "4px", display: "block" }}>
+                        {newPassword === confirmPassword ? "✅ Les mots de passe correspondent" : "❌ Les mots de passe ne correspondent pas"}
+                      </small>
+                    )}
+                  </div>
+
                   {passwordError && <p className="error-text">{passwordError}</p>}
 
-                  <small>
-                    ⚠️ Le mot de passe doit contenir au moins <strong>8 caractères</strong>, 
-                    un <strong>chiffre</strong> et une <strong>majuscule</strong>.
+                  <small className="password-hint">
+                    ⚠️ Min. <strong>8 caractères</strong>, un <strong>chiffre</strong> et une <strong>majuscule</strong>.
                   </small>
                 </div>
               </Modal>
