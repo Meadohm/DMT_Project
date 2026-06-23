@@ -426,7 +426,7 @@ const handleClearNotifications = async () => {
           <div className="user-info">
             <div className="welcome-message">
               <span className="welcome-text">
-                Bonjour, <strong>{userInfo.username}</strong>
+                <strong>{userInfo.username}</strong>
               </span>
               <small className="datetime">
                 {now.toLocaleDateString("fr-FR", {
@@ -572,7 +572,6 @@ const handleClearNotifications = async () => {
 
       {/* --- SIDEBAR --- */}
       <aside className={`sidebar${sidebarCollapsed ? " collapsed" : ""}`}>
-        <div className="sidebar-layout-fix">
         <button
           className="sidebar-toggle"
           onClick={() => setSidebarCollapsed(prev => !prev)}
@@ -581,6 +580,7 @@ const handleClearNotifications = async () => {
           <span>{sidebarCollapsed ? "▶" : "◀"}</span>
         </button>
 
+        <div className="sidebar-layout-fix">
         <button className="new-folder-btn" onClick={handleCreateFolder}>
           + Nouveau dossier
         </button>
