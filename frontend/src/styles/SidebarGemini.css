@@ -536,6 +536,10 @@
   display: none;
 }
 
+.sidebar.collapsed .sidebar-logo-bottom {
+  display: none;
+}
+
 .sidebar.collapsed .sidebar-toggle {
   justify-content: center;
   padding: 6px 0;
