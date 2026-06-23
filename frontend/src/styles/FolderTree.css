@@ -1,6 +1,6 @@
 /* FolderTree.css */
 .folder-tree {
-  margin-left: 0.8rem;
+  margin-left: 0;
   font-size: 0.95rem;
   color: var(--text-color, #f1f1f1);
   position: relative;
@@ -11,6 +11,11 @@
   color: #f7f7f7;
   font-weight: 500;
   transition: color 0.2s ease;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .folder-node:hover .folder-name {

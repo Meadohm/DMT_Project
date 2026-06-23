@@ -40,6 +40,12 @@ function DashboardEmploye() {
   const [archivesOpen, setArchivesOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const now = useClock();
+
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      '--sidebar-width', sidebarCollapsed ? '48px' : '240px'
+    );
+  }, [sidebarCollapsed]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Favoris
@@ -812,16 +818,7 @@ const handleClearNotifications = async () => {
       </main>
 
       {/* --- FOOTER --- */}
-      <footer
-        className="footer"
-        style={{
-          left: sidebarCollapsed ? "48px" : "240px",
-          right: 0,
-          width: "auto",
-          maxWidth: "100%",
-          transition: "left 0.2s ease"
-        }}
-      >
+      <footer className="footer">
         <p className="footer-line">
           <strong>DMT</strong> – Filiale de <strong>GENICI GROUPE</strong>
         </p>
