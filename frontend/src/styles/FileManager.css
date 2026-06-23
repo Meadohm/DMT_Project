@@ -407,15 +407,6 @@ button[aria-label="partager"]:hover .icon-action {
   overflow: auto;
 }
 
-.dashboard-container {
-  transition: padding-left 0.2s ease;
-}
-
-.dashboard-container.sidebar-collapsed {
-  padding-left: 48px;
-  transition: padding-left 0.2s ease;
-}
-
 /* ====== FILE MANAGER ====== */
 
 .file-manager {

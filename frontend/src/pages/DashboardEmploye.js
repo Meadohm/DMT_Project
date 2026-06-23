@@ -389,7 +389,10 @@ const handleClearNotifications = async () => {
   );
 
   return (
-    <div className={`dashboard-container ${theme === "dark" ? "dark" : ""}${sidebarCollapsed ? " sidebar-collapsed" : ""}`}>
+    <div
+      className={`dashboard-container ${theme === "dark" ? "dark" : ""}`}
+      style={{ paddingLeft: sidebarCollapsed ? "48px" : "240px", transition: "padding-left 0.2s ease" }}
+    >
 
       {/* --- HEADER --- */}
       <header className="header">
