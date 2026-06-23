@@ -788,7 +788,7 @@ const handleClearNotifications = async () => {
       </aside>
 
       {/* --- MAIN --- */}
-      <main className="main-content">
+      <main className={`main-content${sidebarCollapsed ? " sidebar-collapsed" : ""}`}>
         {activeFolder ? (
           <FileManager 
           activeFolder={activeFolder} 
