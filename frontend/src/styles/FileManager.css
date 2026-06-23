@@ -1155,11 +1155,11 @@ button[aria-label="partager"]:hover .icon-action {
 
 .file-preview-container {
   position: fixed;
-  top: 80px;
-  left: 220px;
+  top: 0;
+  left: 240px;
   right: 0;
-  bottom: 55px;
-  width: calc(100% - 240px);
+  bottom: 0;
+  width: auto;
   background: #ffffff;
   border-radius: 14px;
   box-shadow: 0 4px 25px rgba(0, 0, 0, 0.2);
@@ -1231,7 +1231,7 @@ button[aria-label="partager"]:hover .icon-action {
 /* Contenu du fichier */
 .file-preview-content {
   margin-top: 20px;
-  margin-left: 50px;
+  margin-left: 0;
   padding: 0 10px;
 }
 
