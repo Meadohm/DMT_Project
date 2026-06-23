@@ -1158,7 +1158,7 @@ button[aria-label="partager"]:hover .icon-action {
   top: 0;
   left: 240px;
   right: 0;
-  bottom: 0;
+  bottom: 55px;
   width: auto;
   background: #ffffff;
   border-radius: 14px;
@@ -1237,7 +1237,7 @@ button[aria-label="partager"]:hover .icon-action {
 
 .file-preview-content iframe {
   width: 100%;
-  height: calc(100vh - 230px);
+  height: calc(100vh - 180px);
   border-radius: 12px;
   border: none;
   display: block;
