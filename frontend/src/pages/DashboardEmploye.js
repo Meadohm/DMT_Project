@@ -396,7 +396,14 @@ const handleClearNotifications = async () => {
     >
 
       {/* --- HEADER --- */}
-      <header className="header">
+      <header
+        className="header"
+        style={{
+          left: sidebarCollapsed ? "48px" : "240px",
+          width: sidebarCollapsed ? "calc(100% - 48px)" : "calc(100% - 240px)",
+          transition: "left 0.2s ease, width 0.2s ease"
+        }}
+      >
 
         {/* 🔍 Barre de recherche moderne */}
           <div className="search-bar">
