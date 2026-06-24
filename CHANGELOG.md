@@ -1,5 +1,44 @@
 # Changelog
 
+## [v1.2.0] — 2026-06-24
+
+### DashboardEmployé — Modernisation complète
+
+#### UI/Layout
+
+- Refonte topbar style AdminPanel (gradient #003366→#00509e, avatar, horloge live)
+- Sidebar collapsible ◀/▶ vert/orange
+- Logo DMT fixe en bas sidebar
+- Footer centré définitif
+- Barre de recherche intégrée topbar
+- Bouton "+ Nouveau" compact sidebar
+
+#### Fonctionnalités
+
+- Modal mot de passe : eye toggle, match indicator
+- Archives : 2 onglets (Créer / Mes archives), archivage multiple, tout effacer
+- Cron job suppression archives expirées (2h00) + AuditLog
+- Historique fichiers partagés : pagination, filtres, CSV, aperçu inline
+- AllNotificationsModal : confirmation custom, badge non-lu
+- Mode sombre : couverture complète
+
+#### Corrections
+
+- Footer z-index définitif
+- Sous-dossiers : limite 2 niveaux
+- Renommage/suppression sous-dossiers : récursif instantané
+- FolderShare.can_* permissions vérifiées
+
+### Backend
+
+- Migration 0014 type_archive
+- clean_expired_archives cron
+- bulk_create_archive, delete_all_archives endpoints
+- list_shared_files pagination + filtres
+- Limite 2 niveaux create_subfolder
+
+---
+
 ## [v1.1.0] — 2026-06-22
 
 ### AdminPanel - Refonte complète
