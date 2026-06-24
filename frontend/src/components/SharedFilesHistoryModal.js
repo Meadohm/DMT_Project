@@ -1,5 +1,7 @@
 // src/components/SharedFilesHistoryModal.js
 import React, { useState, useEffect } from "react";
+import * as XLSX from "xlsx";
+import mammoth from "mammoth";
 import API_BASE_URL from "../config";
 import "../styles/SharedFilesHistoryModal.css";
 
@@ -146,8 +148,25 @@ export default function SharedFilesHistoryModal({ onClose, onOpen }) {
                               headers: { Authorization: `Token ${localStorage.getItem("token")}` }
                             });
                             const data = await res.json();
+                            const fileName = f.nom.toLowerCase();
+                            if (fileName.endsWith(".docx")) {
+                              const response = await fetch(data.url);
+                              const arrayBuffer = await response.arrayBuffer();
+                              const result = await mammoth.extractRawText({ arrayBuffer });
+                              setInlinePreview({ type: "text", content: result.value });
+                            } else if (fileName.match(/\.(xlsx|xls)$/)) {
+                              const response = await fetch(data.url);
+                              const arrayBuffer = await response.arrayBuffer();
+                              const workbook = XLSX.read(arrayBuffer, { type: "array" });
+                              const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                              const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                              setInlinePreview({ type: "table", rows });
+                            } else if (fileName.match(/\.(png|jpg|jpeg|gif|webp|svg)$/)) {
+                              setInlinePreview({ type: "image", url: data.url });
+                            } else {
+                              setInlinePreview(data);
+                            }
                             setInlinePreviewFile(f);
-                            setInlinePreview(data);
                           } catch (err) {
                             console.error("Erreur preview", err);
                           } finally {
@@ -162,10 +181,14 @@ export default function SharedFilesHistoryModal({ onClose, onOpen }) {
                               headers: { Authorization: `Token ${localStorage.getItem("token")}` }
                             });
                             const data = await res.json();
+                            const response = await fetch(data.url);
+                            const blob = await response.blob();
+                            const url = URL.createObjectURL(blob);
                             const link = document.createElement("a");
-                            link.href = data.url;
+                            link.href = url;
                             link.download = f.nom;
                             link.click();
+                            URL.revokeObjectURL(url);
                           } catch (err) {
                             console.error("Erreur téléchargement", err);
                           }
@@ -185,14 +208,19 @@ export default function SharedFilesHistoryModal({ onClose, onOpen }) {
           <div className="sfh-preview-panel">
             <div className="sfh-preview-header">
               <span>👁️ {inlinePreviewFile.nom}</span>
-              <button onClick={() => { setInlinePreview(null); setInlinePreviewFile(null); }}>✖</button>
+              <button className="sfh-preview-close" onClick={() => { setInlinePreview(null); setInlinePreviewFile(null); }}>
+                ✖ Fermer
+              </button>
             </div>
             <div className="sfh-preview-body">
+              {inlinePreview.type === "image" && (
+                <img src={inlinePreview.url} alt={inlinePreviewFile.nom} style={{maxWidth:"100%", maxHeight:"400px", display:"block", margin:"0 auto"}} />
+              )}
               {inlinePreview.type === "url" && (
                 <iframe src={inlinePreview.url} title="preview" style={{width:"100%", height:"400px", border:"none"}} />
               )}
               {inlinePreview.type === "text" && (
-                <pre style={{padding:"12px", fontSize:"0.85rem", overflow:"auto", maxHeight:"400px"}}>{inlinePreview.content}</pre>
+                <pre style={{padding:"12px", fontSize:"0.85rem", overflow:"auto", maxHeight:"400px", whiteSpace:"pre-wrap"}}>{inlinePreview.content}</pre>
               )}
               {inlinePreview.type === "table" && (
                 <div style={{overflow:"auto", maxHeight:"400px"}}>

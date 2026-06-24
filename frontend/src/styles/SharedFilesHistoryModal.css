@@ -212,3 +212,14 @@
 .sfh-preview-body {
   padding: 0 16px 12px;
 }
+
+.sfh-preview-close {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
