@@ -1827,7 +1827,7 @@ def mark_notifications_read(request):
     Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
     return Response({'success': 'Toutes les notifications ont été marquées comme lues.'})
 
-@api_view([DELETE])
+@api_view(["DELETE"])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def delete_all_archives(request):
