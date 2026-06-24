@@ -715,7 +715,7 @@ const handleClearNotifications = async () => {
                                     {n.type === "archive" && <>{n.message}</>}
                                     {n.type === "info" && <>ℹ️{n.message}</>}
                                   </div>
-                                  <div className="notif-time-right" title={tooltipDate}>
+                                  <div className="notif-time-right">
                                     {formatRelativeTime(n.created_at)} ⏰
                                   </div>
                                 </li>
