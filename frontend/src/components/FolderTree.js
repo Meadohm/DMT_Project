@@ -161,8 +161,8 @@ function FolderTree({
             </button>
           )}
 
-          {/* ➕ actif pour parent / désactivé pour enfant */}
-          {!folder.parent ? (
+          {/* ➕ visible uniquement pour les dossiers racine */}
+          {!folder.parent && (
             <button
               className="add-subfolder"
               title="Créer un sous-dossier"
@@ -198,10 +198,6 @@ function FolderTree({
                 };
               }}
             >
-              ➕
-            </button>
-          ) : (
-            <button className="add-subfolder disabled" title="Sous-sous-dossier non autorisé" disabled>
               ➕
             </button>
           )}
