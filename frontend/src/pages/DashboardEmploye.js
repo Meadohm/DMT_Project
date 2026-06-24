@@ -133,8 +133,17 @@ function DashboardEmploye() {
     }
   };
 
+  const renameInTree = (folders, id, newName) =>
+    folders.map(f => f.id === id
+      ? { ...f, nom: newName }
+      : { ...f, children: renameInTree(f.children || [], id, newName) }
+    );
 
-  
+  const deleteFromTree = (folders, id) =>
+    folders
+      .filter(f => f.id !== id)
+      .map(f => ({ ...f, children: deleteFromTree(f.children || [], id) }));
+
   const handleLogout = () => {
     localStorage.clear();
     setIsAuthenticated(false);
@@ -276,19 +285,14 @@ const handleClearNotifications = async () => {
         }
 
         const updated = await renameFolder(currentFolder.id, inputValue);
-        setFolders(prev =>
-          prev.map(f =>
-            f.id === currentFolder.id ? { ...f, nom: updated.nom } : f
-          )
-        );
+        setFolders(prev => renameInTree(prev, currentFolder.id, updated.nom));
       }
 
       if (modalType === "delete" && currentFolder) {
         await deleteFolder(currentFolder.id);
-        setFolders(prev => prev.filter(f => f.id !== currentFolder.id));
+        setFolders(prev => deleteFromTree(prev, currentFolder.id));
         if (activeFolder?.id === currentFolder.id) setActiveFolder(null);
 
-        // 🔹 Supprime aussi des favoris
         setFavorites(prev => prev.filter(favId => favId !== currentFolder.id));
         localStorage.setItem(
           "favorites",
