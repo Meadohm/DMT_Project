@@ -626,3 +626,66 @@
   transition: background 0.2s;
 }
 .btn-delete-all:hover { background: #dc2626; }
+
+.archive-mode-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.btn-mode {
+  flex: 1;
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background: #f8f9fa;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.btn-mode.active {
+  background: #6c63ff;
+  color: white;
+  border-color: #6c63ff;
+}
+.archive-single {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.bulk-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.bulk-folder-list {
+  max-height: 160px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.bulk-folder-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+}
+.bulk-folder-item:hover {
+  background: rgba(108, 99, 255, 0.08);
+}
+.bulk-select-all {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}

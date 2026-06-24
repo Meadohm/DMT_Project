@@ -145,3 +145,19 @@ export const unarchive = async (archiveId) => {
     throw error;
   }
 };
+
+// --- Archivage multiple ---
+export const bulkCreateArchive = async (folderIds, format = "zip") => {
+  const token = getToken();
+  try {
+    const res = await axios.post(
+      `${API_BASE_URL}/archives/bulk-create/`,
+      { folder_ids: folderIds, format },
+      { headers: { Authorization: `Token ${token}` } }
+    );
+    return res.data;
+  } catch (error) {
+    console.error("❌ Erreur archivage multiple :", error);
+    throw error;
+  }
+};

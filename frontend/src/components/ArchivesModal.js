@@ -9,6 +9,7 @@ import {
   createArchive,
   unarchive,
   deleteAllArchives,
+  bulkCreateArchive,
 } from "../services/archiveService";
 import { listFolders } from "../services/folderService";
 
@@ -18,6 +19,9 @@ export default function ArchivesModal({ onClose, onRefreshFolders, userInfo }) {
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState("");
+  const [selectedFolders, setSelectedFolders] = useState([]);
+  const [bulkMode, setBulkMode] = useState(false);
+  const [selectAll, setSelectAll] = useState(false);
   const [archiveFormat, setArchiveFormat] = useState("zip");
   const [toast, setToast] = useState(null);
   const [downloadingId, setDownloadingId] = useState(null);
@@ -203,36 +207,82 @@ export default function ArchivesModal({ onClose, onRefreshFolders, userInfo }) {
 
         {/* === Création section === */}
         <div className="archive-create-section">
-          <select
-            value={selectedFolder}
-            onChange={(e) => setSelectedFolder(e.target.value)}
-          >
-            <option value="">-- Sélectionner un dossier à archiver --</option>
-            {folders
-              .filter((f) => f.proprietaire?.id === userInfo?.id)
-              .map((f) => (
-                <option key={f.id} value={f.id}>
-                  {f.nom}
-                </option>
-              ))}
-          </select>
+          <div className="archive-mode-toggle">
+            <button
+              className={`btn-mode ${!bulkMode ? "active" : ""}`}
+              onClick={() => { setBulkMode(false); setSelectedFolders([]); }}
+            >📦 Dossier unique</button>
+            <button
+              className={`btn-mode ${bulkMode ? "active" : ""}`}
+              onClick={() => { setBulkMode(true); setSelectedFolder(""); }}
+            >☑️ Sélection multiple</button>
+          </div>
 
-          <select
-            className="format-select"
-            value={archiveFormat}
-            onChange={(e) => setArchiveFormat(e.target.value)}
-          >
-            <option value="zip">.zip</option>
-            <option value="rar">.rar</option>
-          </select>
-
-          <button
-            className="btn-create"
-            onClick={handleCreateArchive}
-            disabled={!selectedFolder || creating}
-          >
-            {creating ? "⏳ Création..." : "📦 Créer"}
-          </button>
+          {!bulkMode ? (
+            <div className="archive-single">
+              <select value={selectedFolder} onChange={(e) => setSelectedFolder(e.target.value)}>
+                <option value="">-- Sélectionner un dossier --</option>
+                {folders.filter((f) => f.proprietaire?.id === userInfo?.id).map((f) => (
+                  <option key={f.id} value={f.id}>{f.nom}</option>
+                ))}
+              </select>
+              <select className="format-select" value={archiveFormat} onChange={(e) => setArchiveFormat(e.target.value)}>
+                <option value="zip">.zip</option>
+                <option value="rar">.rar</option>
+              </select>
+              <button className="btn-create" onClick={handleCreateArchive} disabled={!selectedFolder || creating}>
+                {creating ? "⏳..." : "📦 Créer"}
+              </button>
+            </div>
+          ) : (
+            <div className="archive-bulk">
+              <div className="bulk-header">
+                <label className="bulk-select-all">
+                  <input type="checkbox" checked={selectAll} onChange={(e) => {
+                    setSelectAll(e.target.checked);
+                    setSelectedFolders(e.target.checked ? folders.filter(f => f.proprietaire?.id === userInfo?.id).map(f => f.id) : []);
+                  }} />
+                  Tout sélectionner
+                </label>
+                <select className="format-select" value={archiveFormat} onChange={(e) => setArchiveFormat(e.target.value)}>
+                  <option value="zip">.zip</option>
+                  <option value="rar">.rar</option>
+                </select>
+              </div>
+              <div className="bulk-folder-list">
+                {folders.filter(f => f.proprietaire?.id === userInfo?.id).map(f => (
+                  <label key={f.id} className="bulk-folder-item">
+                    <input type="checkbox" checked={selectedFolders.includes(f.id)}
+                      onChange={(e) => {
+                        setSelectedFolders(prev =>
+                          e.target.checked ? [...prev, f.id] : prev.filter(id => id !== f.id)
+                        );
+                      }}
+                    />
+                    📁 {f.nom}
+                  </label>
+                ))}
+              </div>
+              <button className="btn-create" disabled={selectedFolders.length === 0 || creating}
+                onClick={async () => {
+                  setCreating(true);
+                  try {
+                    const res = await bulkCreateArchive(selectedFolders, archiveFormat);
+                    await fetchData();
+                    setSelectedFolders([]);
+                    setSelectAll(false);
+                    setToast({ type: "success", message: `✅ ${res.created} archive(s) créée(s).` });
+                  } catch (err) {
+                    setToast({ type: "error", message: "❌ Erreur archivage multiple." });
+                  } finally {
+                    setCreating(false);
+                  }
+                }}
+              >
+                {creating ? "⏳..." : `📦 Archiver (${selectedFolders.length})`}
+              </button>
+            </div>
+          )}
 
           {archives.length > 0 && (
             <button className="btn-delete-all" onClick={() => setConfirmDeleteAll(true)}>
