@@ -26,6 +26,7 @@ import useNotifications from "../hooks/useNotifications";
 import { clearAll } from "../services/notificationService";
 import useClock from "../hooks/useClock";
 import DashboardTopbar from "../components/DashboardTopbar";
+import DashboardSidebar from "../components/DashboardSidebar";
 import "../styles/FileManager.css";
 import "../styles/SidebarGemini.css";
 import logo from "../assets/dmt.png";
@@ -152,7 +153,6 @@ function DashboardEmploye() {
   // ==== Gestion modales ====
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState(null);
-  const [openMenuId, setOpenMenuId] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [currentFolder, setCurrentFolder] = useState(null);
   const [shareModalOpen, setShareModalOpen] = useState(false);
@@ -169,16 +169,6 @@ function DashboardEmploye() {
   const [alertPermission, setAlertPermission] = useState(null);
   const [allNotifOpen, setAllNotifOpen] = useState(false);
   const [historiqueSharedOpen, setHistoriqueSharedOpen] = useState(false);
-
-// Ferme le menu contextuel si clic extérieur
-useEffect(() => {
-  const closeMenu = (e) => {
-    if (!e.target.closest(".folder-menu-wrapper")) setOpenMenuId(null);
-  };
-  document.addEventListener("click", closeMenu);
-  return () => document.removeEventListener("click", closeMenu);
-}, []);
-
 
   const handleCreateFolder = () => {
     setModalType("create");
@@ -307,6 +297,50 @@ const handleClearNotifications = async () => {
 };
 
 
+  const handleCreateSubfolder = async (parentId, name) => {
+    try {
+      const baseURL = process.env.REACT_APP_API_URL || "http://localhost:8000/api";
+      const res = await fetch(`${baseURL}/folders/${parentId}/subfolders/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ nom: name }),
+      });
+      if (!res.ok) throw new Error("Erreur création sous-dossier");
+      const newSub = await res.json();
+      setFolders((prev) =>
+        prev.map((f) =>
+          f.id === parentId
+            ? { ...f, children: [...(f.children || []), newSub] }
+            : f
+        )
+      );
+    } catch (err) {
+      alert("⛔ Impossible de créer le sous-dossier.");
+    }
+  };
+
+  const handleDeleteSharedFolder = async (folder) => {
+    try {
+      await deleteFolder(folder.id);
+      setFolders((prev) => prev.filter((f) => f.id !== folder.id));
+      setNotif({
+        type: "success",
+        title: "Succès 🎉",
+        message: `Le dossier « ${folder.nom} » a été supprimé.`,
+      });
+    } catch (err) {
+      console.error("Erreur suppression dossier partagé", err);
+      setNotif({
+        type: "error",
+        title: "Erreur",
+        message: "⛔ Vous n'avez pas la permission de supprimer ce dossier.",
+      });
+    }
+  };
+
   // ⭐ Gestion Favoris
   const toggleFavorite = (folderId) => {
     let updated;
@@ -332,29 +366,6 @@ const handleClearNotifications = async () => {
     };
   }, [folders, searchTerm, userInfo, favorites]);
 
-  const menuRef = useRef(null);
-  const menuRefs = useRef({});
-
-  // === 🔧 Gestion du menu contextuel universel pour "Partagés avec moi" ===
-  const handleRenameShared = (folder) => {
-    // Ouvre ta modale de renommage réutilisable
-    setModalType("rename");
-    setInputValue(folder.nom);
-    setCurrentFolder(folder);
-    setModalOpen(true);
-  };
-
-  const handleShareShared = (folder) => {
-    // Utilise ta logique existante
-    handleShareFolder(folder);
-  };
-
-  const handleDeleteShared = (folder) => {
-    // Réutilise ta logique existante de suppression
-    handleDeleteFolder(folder);
-  };
-
-
   if (loading) return (
     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
       <div className="spinner" />
@@ -368,230 +379,24 @@ const handleClearNotifications = async () => {
     >
 
       {/* --- SIDEBAR --- */}
-      <aside className={`sidebar${sidebarCollapsed ? " collapsed" : ""}`}>
-        <div className="sidebar-top-fixed">
-          <button
-            className="sidebar-toggle"
-            onClick={() => setSidebarCollapsed(prev => !prev)}
-            title={sidebarCollapsed ? "Déplier" : "Replier"}
-          >
-            <span>{sidebarCollapsed ? "▶" : "◀"}</span>
-          </button>
-
-          {!sidebarCollapsed && (
-            <button className="new-folder-btn" onClick={handleCreateFolder}>+ Nouveau</button>
-          )}
-        </div>
-
-        <div className="sidebar-layout-fix">
-
-        {/* ⭐ Favoris */}
-        <h4 className="sidebar-section">⭐ Favoris</h4>
-        <div className="section-scroll">
-        {favoriteFolders.length === 0 ? (
-          <p className="no-folder-msg1">Aucun favori</p>
-        ) : (
-          <ul className="folder-list">
-            {favoriteFolders.map((folder) => (
-              <li
-                key={folder.id}
-                className={`${
-                  activeFolder?.id === folder.id ? "active" : ""
-                } favorite`}
-                onClick={() => setActiveFolder(folder)}
-                title={folder.nom}
-              >
-                📂 <span className="folder-name">{folder.nom}</span>
-                <button
-                  className="star"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleFavorite(folder.id);
-                  }}
-                  title="Retirer des favoris"
-                >
-                  ❌
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-        </div>
-
-        {/* Mes dossiers */}
-        <h4 className="sidebar-section">📂 Mes dossiers</h4>
-        <div className="section-scroll">
-        {myFolders.length === 0 ? (
-          <p className="no-folder-msg1">Aucun dossier</p>
-        ) : (
-          myFolders
-            .filter((f) => !f.parent)
-            .map((folder) => (
-              <FolderTree
-                key={folder.id}
-                folder={folder}
-                activeFolder={activeFolder}
-                onSelect={setActiveFolder}
-                onCreateSubfolder={async (parentId, name) => {
-                  try {
-                    const baseURL = process.env.REACT_APP_API_URL || "http://localhost:8000/api";
-                    const res = await fetch(`${baseURL}/folders/${parentId}/subfolders/`, {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Token ${localStorage.getItem("token")}`,
-                      },
-                      body: JSON.stringify({ nom: name }),
-                    });
-
-                    if (!res.ok) throw new Error("Erreur création sous-dossier");
-
-                    const newSub = await res.json();
-                      setFolders((prev) => {
-                        return prev.map((f) =>
-                          f.id === parentId
-                            ? { ...f, children: [...(f.children || []), newSub] }
-                            : f
-                        );
-                      });
-
-                  } catch (err) {
-                    alert("⛔ Impossible de créer le sous-dossier.");
-                  }
-                }}
-
-                onRename={handleRenameFolder}
-                onDelete={handleDeleteFolder}
-                onShare={handleShareFolder}
-                onToggleFavorite={toggleFavorite}
-                isFavorite={favorites.includes(folder.id)}
-              />
-            ))
-        )}
-        </div>
-
-        {/* Dossiers partagés */}
-        <h4 className="sidebar-section">🤝 Partagés avec moi</h4>
-        <div className="section-scroll">
-          {sharedFolders.length === 0 ? (
-            <p className="no-folder-msg1">Aucun dossier partagé</p>
-          ) : (
-            <ul className="folder-list">
-              {sharedFolders.map((folder) => {
-                // 🔍 Détection robuste des permissions selon structure backend
-                const canDeleteFolder =
-                  folder.share_permissions?.can_delete_folder ??
-                  folder.permissions?.can_delete_folder ??
-                  folder.shares?.[0]?.can_delete_folder ??
-                  folder.can_delete_folder ??
-                  false;
-
-                return (
-                  <li
-                    key={folder.id}
-                    className={activeFolder?.id === folder.id ? "active" : ""}
-                    onClick={() => setActiveFolder(folder)}
-                    data-title={folder.nom}
-                  >
-                    <div className="folder-item">
-                      <span className="folder-icon">📂</span>
-                      <span className="folder-name" data-title={folder.nom}>
-                        {folder.nom}
-                      </span>
-
-                      <div className="folder-actions">
-                        {/* Favori */}
-                        <button
-                          className={`star ${favorites.includes(folder.id) ? "active" : "inactive"}`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleFavorite(folder.id);
-                          }}
-                          title={
-                            favorites.includes(folder.id)
-                              ? "Retirer des favoris"
-                              : "Ajouter aux favoris"
-                          }
-                        >
-                          {favorites.includes(folder.id) ? "⭐" : "☆"}
-                        </button>
-
-                        {/* Menu contextuel si suppression autorisée */}
-                        {canDeleteFolder ? (
-                          <div
-                            className="folder-menu-wrapper"
-                            onClick={(e) => e.stopPropagation()}
-                            ref={(el) => (menuRefs.current[folder.id] = el)}
-                          >
-                            <button
-                              className="context-btn"
-                              title="Options"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setCurrentFolder(folder);
-                                setTimeout(() => {
-                                  setOpenMenuId((prev) => (prev === folder.id ? null : folder.id));
-                                }, 0);
-                              }}
-                            >
-                              ⋮
-                            </button>
-
-                            {openMenuId === folder.id && (
-                              <ContextMenu
-                                anchorRef={menuRefs.current[folder.id]}
-                                onDelete={async () => {
-                                  try {
-                                    await deleteFolder(folder.id);
-                                    setFolders((prev) =>
-                                      prev.filter((f) => f.id !== folder.id)
-                                    );
-                                    setOpenMenuId(null);
-
-                                    // Toast success
-                                    setNotif({
-                                      type: "success",
-                                      title: "Succès 🎉",
-                                      message: `Le dossier « ${folder.nom} » a été supprimé.`,
-                                    });
-                                  } catch (err) {
-                                    console.error("Erreur suppression dossier partagé", err);
-                                    setNotif({
-                                      type: "error",
-                                      title: "Erreur",
-                                      message:
-                                        "⛔ Vous n'avez pas la permission de supprimer ce dossier.",
-                                    });
-                                  }
-                                }}
-                                onClose={() => setOpenMenuId(null)}
-                                mode="shared"
-                              />
-                            )}
-                          </div>
-                        ) : (
-                          // ⋮ inactif (grisé)
-                          <span
-                            className="context-btn disabled"
-                            title="Suppression non autorisée"
-                          >
-                            ⋮
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </div>
-
-        </div>
-        <div className="sidebar-logo-bottom">
-          <img src={logo} alt="DMT Logo" className="app-logoEmp" />
-        </div>
-      </aside>
+      <DashboardSidebar
+        collapsed={sidebarCollapsed}
+        onToggle={() => setSidebarCollapsed((prev) => !prev)}
+        myFolders={myFolders}
+        sharedFolders={sharedFolders}
+        favoriteFolders={favoriteFolders}
+        activeFolder={activeFolder}
+        onSelect={setActiveFolder}
+        favorites={favorites}
+        onToggleFavorite={toggleFavorite}
+        onCreateFolder={handleCreateFolder}
+        onCreateSubfolder={handleCreateSubfolder}
+        onRenameFolder={handleRenameFolder}
+        onDeleteFolder={handleDeleteFolder}
+        onShareFolder={handleShareFolder}
+        onDeleteShared={handleDeleteSharedFolder}
+        role="employe"
+      />
 
       {/* --- MAIN --- */}
       <main className="main-content">
