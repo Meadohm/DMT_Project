@@ -982,6 +982,7 @@ const handleClearNotifications = async () => {
                     onClose={() => setArchivesOpen(false)}
                     onRefreshFolders={fetchFolders}
                     userInfo={userInfo}
+                    onRefreshNotifications={refresh}
                   />
                 )}
 

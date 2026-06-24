@@ -13,7 +13,7 @@ import {
 } from "../services/archiveService";
 import { listFolders } from "../services/folderService";
 
-export default function ArchivesModal({ onClose, onRefreshFolders, userInfo }) {
+export default function ArchivesModal({ onClose, onRefreshFolders, userInfo, onRefreshNotifications }) {
   const [archives, setArchives] = useState([]);
   const [folders, setFolders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -73,6 +73,7 @@ export default function ArchivesModal({ onClose, onRefreshFolders, userInfo }) {
       await createArchive(selectedFolder, payload);
       await fetchData();
       if (onRefreshFolders) onRefreshFolders();
+      if (onRefreshNotifications) onRefreshNotifications();
       setToast({
         type: "success",
         message: `✅ Archive .${archiveFormat} créée avec succès !`,
@@ -269,6 +270,7 @@ export default function ArchivesModal({ onClose, onRefreshFolders, userInfo }) {
                   try {
                     const res = await bulkCreateArchive(selectedFolders, archiveFormat);
                     await fetchData();
+                    if (onRefreshNotifications) onRefreshNotifications();
                     setSelectedFolders([]);
                     setSelectAll(false);
                     setToast({ type: "success", message: `✅ ${res.created} archive(s) créée(s).` });
