@@ -893,6 +893,9 @@ def create_subfolder(request, parent_id):
         return Response({'error': '⛔ Vous n avez pas la permission de creer un sous-dossier ici.'},
                         status=status.HTTP_403_FORBIDDEN)
 
+    if parent_folder.parent is not None:
+        return Response({'error': 'Niveau max atteint. 2 niveaux maximum autorises.'}, status=status.HTTP_400_BAD_REQUEST)
+
     nom = request.data.get('nom')
     if not nom:
         return Response({'error': 'Nom requis'}, status=status.HTTP_400_BAD_REQUEST)
