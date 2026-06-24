@@ -189,3 +189,323 @@ body.dark {
     transform: scale(1);
   }
 }
+
+/* ================================
+   DARK MODE — NOUVEAUX COMPOSANTS
+   ================================ */
+
+/* Topbar employé */
+body.dark .emp-topbar {
+  background: linear-gradient(135deg, #0f1a2e, #1a2a4a);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+body.dark .emp-topbar-search input {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.2);
+  color: #e6e8f0;
+}
+body.dark .emp-topbar-search input::placeholder {
+  color: rgba(255,255,255,0.5);
+}
+
+/* Dropdowns notif + compte */
+body.dark .notif-dropdown,
+body.dark .account-dropdown {
+  background: #161b33;
+  border: 1px solid #2d3555;
+  color: #e6e8f0;
+}
+body.dark .notif-dropdown p,
+body.dark .account-dropdown p,
+body.dark .notif-title,
+body.dark .account-title {
+  color: #e6e8f0 !important;
+}
+body.dark .notif-item {
+  border-bottom: 1px solid #2d3555;
+  color: #e6e8f0;
+}
+body.dark .account-dropdown li {
+  color: #e6e8f0;
+}
+body.dark .account-dropdown li:hover {
+  background: #2b2f53;
+}
+body.dark .notif-clear,
+body.dark .notif-more {
+  background: #2b2f53;
+  color: #e6e8f0;
+}
+
+/* Preview fichier */
+body.dark .file-preview-container {
+  background: rgba(22,27,51,0.95);
+  border: 1px solid #2d3555;
+}
+body.dark .preview-topbar {
+  background: #161b33;
+  border-bottom: 2px solid #2d3555;
+}
+body.dark .preview-title {
+  color: #e6e8f0;
+}
+body.dark .text-preview {
+  background: #0f1629;
+  color: #e6e8f0;
+}
+body.dark .table-wrapper {
+  background: #0f1629;
+}
+body.dark .csv-preview td {
+  border-color: #2d3555;
+  color: #e6e8f0;
+}
+
+/* Modal générique */
+body.dark .modal-overlay {
+  background: rgba(0,0,0,0.7);
+}
+body.dark .modal-content {
+  background: #161b33 !important;
+  color: #e6e8f0 !important;
+  border: 1px solid #2d3555;
+}
+body.dark .modal-content h3,
+body.dark .modal-content label,
+body.dark .modal-content p {
+  color: #e6e8f0 !important;
+}
+
+/* Archives Modal */
+body.dark .archive-modal-content {
+  background: #161b33 !important;
+  color: #e6e8f0 !important;
+}
+body.dark .archive-modal-header {
+  background: linear-gradient(135deg, #0f1a2e, #1a2a4a);
+}
+body.dark .archive-tabs {
+  border-bottom-color: #2d3555;
+}
+body.dark .archive-tab {
+  color: #aab4c8;
+}
+body.dark .archive-tab.active {
+  color: #7c6fff;
+  border-bottom-color: #7c6fff;
+}
+body.dark .archive-tab-content {
+  background: #161b33;
+}
+body.dark .archive-item {
+  background: #1e2540;
+  border: 1px solid #2d3555;
+}
+body.dark .archive-info h4,
+body.dark .archive-meta {
+  color: #e6e8f0 !important;
+}
+body.dark .archive-search,
+body.dark .format-select,
+body.dark .archive-create-section select {
+  background: #1a2040;
+  color: #e6e8f0;
+  border-color: #2d3555;
+}
+body.dark .btn-mode {
+  background: #1e2540;
+  color: #e6e8f0;
+  border-color: #2d3555;
+}
+body.dark .btn-mode.active {
+  background: #4c58ff;
+  color: white;
+}
+body.dark .bulk-folder-list {
+  border-color: #2d3555;
+  background: #1a2040;
+}
+body.dark .bulk-folder-item {
+  color: #e6e8f0;
+}
+body.dark .bulk-folder-item:hover {
+  background: #2b2f53;
+}
+body.dark .archive-confirm-box {
+  background: #161b33;
+  color: #e6e8f0;
+}
+body.dark .archive-confirm-box p {
+  color: #e6e8f0;
+}
+
+/* AllNotificationsModal */
+body.dark .notif-modal-content {
+  background: #161b33;
+  color: #e6e8f0;
+  border: 1px solid #2d3555;
+}
+body.dark .notif-modal-header {
+  background: linear-gradient(135deg, #0f1a2e, #1a2a4a);
+}
+body.dark .notif-modal-header h3 {
+  color: white !important;
+}
+body.dark .notif-item.unread {
+  background: rgba(108,99,255,0.1);
+}
+body.dark .notif-text {
+  color: #e6e8f0;
+}
+body.dark .notif-modal-footer {
+  border-top-color: #2d3555;
+}
+
+/* SharedFilesHistoryModal */
+body.dark .sfh-modal {
+  background: #161b33;
+  color: #e6e8f0;
+}
+body.dark .sfh-filters {
+  background: #1a2040;
+  border-bottom-color: #2d3555;
+}
+body.dark .sfh-input,
+body.dark .sfh-select {
+  background: #0f1629;
+  color: #e6e8f0;
+  border-color: #2d3555;
+}
+body.dark .sfh-total {
+  color: #aab4c8;
+  border-bottom-color: #2d3555;
+}
+body.dark .sfh-table-wrapper {
+  background: #161b33;
+}
+body.dark .sfh-table th {
+  background: #0f1a2e;
+  color: #e6e8f0;
+}
+body.dark .sfh-table td {
+  border-bottom-color: #2d3555;
+  color: #e6e8f0;
+}
+body.dark .sfh-table tr:hover td {
+  background: #2b2f53;
+}
+body.dark .sfh-pagination {
+  border-top-color: #2d3555;
+}
+body.dark .sfh-pagination button {
+  background: #1e2540;
+  border-color: #2d3555;
+  color: #e6e8f0;
+}
+body.dark .sfh-preview-header {
+  background: #1e2540;
+  border-top-color: #4c58ff;
+  border-bottom-color: #2d3555;
+  color: #e6e8f0;
+}
+body.dark .sfh-preview-body {
+  background: #161b33;
+  color: #e6e8f0;
+}
+body.dark .sfh-goto input {
+  background: #0f1629;
+  border-color: #2d3555;
+  color: #e6e8f0;
+}
+
+/* Password modal */
+body.dark .password-modal-form label {
+  color: #e6e8f0;
+}
+body.dark .password-modal-form small {
+  color: #aab4c8;
+}
+body.dark .input-with-eye input {
+  background: #1a2040;
+  color: #e6e8f0;
+  border-color: #2d3555;
+}
+body.dark .eye-btn {
+  color: #aab4c8;
+}
+
+/* Context menu */
+body.dark .context-menu.glass,
+body.dark .context-menu.glass-effect {
+  background: rgba(22,27,51,0.95);
+  border-color: #2d3555;
+}
+body.dark .context-menu.glass button {
+  color: #e6e8f0;
+}
+body.dark .context-menu.glass button:hover {
+  background: rgba(108,99,255,0.2);
+}
+
+/* Share modal */
+body.dark .share-modal {
+  background: #161b33 !important;
+  color: #e6e8f0 !important;
+}
+body.dark .share-modal h3,
+body.dark .share-modal p {
+  color: #e6e8f0 !important;
+}
+body.dark .user-item {
+  background: #1e2540;
+  border-color: #2d3555;
+  color: #e6e8f0;
+}
+body.dark .user-item.active {
+  background: #2b3060;
+  border-color: #4c58ff;
+}
+body.dark .permission-block {
+  background: #1a2040;
+  border-color: #2d3555;
+  color: #e6e8f0;
+}
+body.dark .permission-block h4 {
+  color: #e6e8f0;
+}
+body.dark .checkbox-modern {
+  color: #e6e8f0;
+}
+
+/* Share info modal */
+body.dark .share-info-list li {
+  border-bottom-color: #2d3555;
+  color: #e6e8f0;
+}
+body.dark .share-username {
+  color: #e6e8f0;
+}
+
+/* Empty state */
+body.dark .empty-state {
+  background: #161b33;
+  color: #e6e8f0;
+}
+body.dark .empty-state h3,
+body.dark .empty-state p {
+  color: #e6e8f0;
+}
+
+/* Main content */
+body.dark .main-content {
+  background: #0f1629;
+}
+body.dark .dashboard-container {
+  background: #0f1629;
+}
+
+/* Spinner */
+body.dark .spinner {
+  border-color: #2d3555;
+  border-top-color: #4c58ff;
+}
