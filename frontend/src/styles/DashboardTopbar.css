@@ -1,0 +1,207 @@
+/* ============================================================
+   DashboardTopbar.css
+   Styles de la barre supérieure — partagés Employé + Responsable
+   Variante teal via data-scheme="teal" sur .emp-topbar
+   ============================================================ */
+
+.emp-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #003366, #00509e);
+  color: white;
+  padding: 16px 28px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(0, 51, 102, 0.2);
+  flex-wrap: wrap;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.emp-topbar[data-scheme="teal"] {
+  background: linear-gradient(135deg, #0d5c5c, #0e9e87);
+  box-shadow: 0 4px 16px rgba(13, 92, 92, 0.25);
+}
+
+.emp-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.emp-topbar-welcome {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.emp-welcome-avatar {
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.emp-topbar-greeting {
+  display: block;
+  font-size: 0.75em;
+  opacity: 0.75;
+  letter-spacing: 0.05em;
+}
+
+.emp-topbar-username {
+  display: block;
+  font-size: 1.3em;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.topbar-role-badge {
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 0.78em;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  backdrop-filter: blur(4px);
+}
+
+.emp-topbar-search {
+  width: 200px;
+  max-width: 200px;
+  flex-shrink: 1;
+  min-width: 100px;
+  margin: 0 12px;
+}
+
+.emp-topbar-search-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.emp-topbar-search input {
+  width: 100%;
+  padding: 8px 16px 8px 36px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  outline: none;
+  font-size: 0.9rem;
+}
+
+.emp-topbar-search input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.emp-topbar-search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.7;
+}
+
+.emp-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+.emp-topbar-clock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.emp-topbar-date {
+  font-size: 0.82em;
+  opacity: 0.8;
+  text-transform: capitalize;
+}
+
+.emp-topbar-time {
+  font-size: 1.4em;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.emp-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.notif-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin-left: 15px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-bell {
+  width: 26px;
+  height: 26px;
+  color: white;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.notif-btn:hover .icon-bell {
+  transform: rotate(-10deg) scale(1.1);
+  color: #ffd700;
+}
+
+.account-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin-left: 20px;
+  margin-right: 70px;
+}
+
+.icon-account {
+  width: 26px;
+  height: 26px;
+  color: white;
+  transition: transform 0.2s ease;
+}
+
+.account-btn:hover .icon-account {
+  transform: scale(1.1);
+  color: #ffd700;
+}
+
+body.dark .emp-topbar {
+  background: linear-gradient(135deg, #0f1a2e, #1a2a4a);
+}
+
+body.dark .emp-topbar[data-scheme="teal"] {
+  background: linear-gradient(135deg, #062020, #0a4a42);
+}
+
+body.dark .emp-topbar-search input {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+body.dark .emp-topbar-search input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
