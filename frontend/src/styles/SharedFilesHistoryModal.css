@@ -217,7 +217,7 @@
 }
 
 .sfh-preview-close {
-  background: #ef4444;
+  background: #f0a500;
   color: white;
   border: none;
   padding: 5px 12px;
@@ -225,9 +225,9 @@
   cursor: pointer;
   font-size: 0.82rem;
   font-weight: 600;
-  box-shadow: 0 2px 6px rgba(239,68,68,0.3);
+  box-shadow: 0 2px 6px rgba(240,165,0,0.3);
 }
 
 .sfh-preview-close:hover {
-  background: #dc2626;
+  background: #d4920a;
 }
