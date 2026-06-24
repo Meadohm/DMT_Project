@@ -351,14 +351,38 @@ body.dark .notif-modal-header {
 body.dark .notif-modal-header h3 {
   color: white !important;
 }
+body.dark .notif-modal-list {
+  background: #161b33;
+}
+body.dark .notif-item {
+  background: #1e2540 !important;
+  border: 1px solid #2d3555;
+}
 body.dark .notif-item.unread {
-  background: rgba(108,99,255,0.1);
+  background: rgba(108, 99, 255, 0.15) !important;
+  border-color: rgba(108, 99, 255, 0.3);
 }
 body.dark .notif-text {
+  color: #e6e8f0 !important;
+}
+body.dark .notif-time-right {
+  color: #aab4c8 !important;
+}
+body.dark .notif-list li {
+  background: #1e2540 !important;
   color: #e6e8f0;
+  box-shadow: none;
+  border: 1px solid #2d3555;
+}
+body.dark .notif-list li:hover {
+  background: #2b2f53 !important;
+}
+body.dark .no-notif {
+  color: #aab4c8;
 }
 body.dark .notif-modal-footer {
   border-top-color: #2d3555;
+  background: #161b33;
 }
 
 /* SharedFilesHistoryModal */
