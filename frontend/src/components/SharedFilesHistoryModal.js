@@ -17,6 +17,11 @@ export default function SharedFilesHistoryModal({ onClose, onOpen }) {
   const [loading, setLoading] = useState(false);
   const [goToPage, setGoToPage] = useState("");
 
+  const searchRef = React.useRef(search);
+  const sharedByRef = React.useRef(sharedBy);
+  const dateFromRef = React.useRef(dateFrom);
+  const dateToRef = React.useRef(dateTo);
+
   const fetchData = async ({ p = 1, s = search, sb = sharedBy, df = dateFrom, dt = dateTo } = {}) => {
     setLoading(true);
     try {
@@ -46,11 +51,12 @@ export default function SharedFilesHistoryModal({ onClose, onOpen }) {
 
   const handleFilter = () => {
     setPage(1);
-    fetchData({ p: 1, s: search, sb: sharedBy, df: dateFrom, dt: dateTo });
+    fetchData({ p: 1, s: searchRef.current, sb: sharedByRef.current, df: dateFromRef.current, dt: dateToRef.current });
   };
 
   const handleReset = () => {
     setSearch(""); setSharedBy(""); setDateFrom(""); setDateTo("");
+    searchRef.current = ""; sharedByRef.current = ""; dateFromRef.current = ""; dateToRef.current = "";
     setPage(1);
     fetchData({ p: 1, s: "", sb: "", df: "", dt: "" });
   };
@@ -86,14 +92,14 @@ export default function SharedFilesHistoryModal({ onClose, onOpen }) {
         {/* Filtres */}
         <div className="sfh-filters">
           <input className="sfh-input" placeholder="🔍 Rechercher un fichier..."
-            value={search} onChange={e => setSearch(e.target.value)}
+            value={search} onChange={e => { setSearch(e.target.value); searchRef.current = e.target.value; }}
             onKeyDown={e => e.key === "Enter" && handleFilter()} />
-          <select className="sfh-select" value={sharedBy} onChange={e => setSharedBy(e.target.value)}>
+          <select className="sfh-select" value={sharedBy} onChange={e => { setSharedBy(e.target.value); sharedByRef.current = e.target.value; }}>
             <option value="">Tous les expéditeurs</option>
             {sharedByList.map(u => <option key={u} value={u}>{u}</option>)}
           </select>
-          <input className="sfh-input" type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} />
-          <input className="sfh-input" type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} />
+          <input className="sfh-input" type="date" value={dateFrom} onChange={e => { setDateFrom(e.target.value); dateFromRef.current = e.target.value; }} />
+          <input className="sfh-input" type="date" value={dateTo} onChange={e => { setDateTo(e.target.value); dateToRef.current = e.target.value; }} />
           <button className="sfh-btn sfh-btn-filter" onClick={handleFilter}>🔍 Filtrer</button>
           <button className="sfh-btn sfh-btn-reset" onClick={handleReset}>↺ Réinitialiser</button>
           <button className="sfh-btn sfh-btn-csv" onClick={handleExportCSV}>⬇️ CSV</button>
@@ -129,7 +135,17 @@ export default function SharedFilesHistoryModal({ onClose, onOpen }) {
                     <td>{f.shared_by}</td>
                     <td>{f.shared_at ? new Date(f.shared_at).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" }) : "—"}</td>
                     <td>
-                      <button className="sfh-btn-open" onClick={() => { onOpen(f); onClose(); }}>
+                      <button className="sfh-btn-open" onClick={async () => {
+                        try {
+                          const res = await fetch(`${API_BASE_URL}/files/${f.id}/preview/`, {
+                            headers: { Authorization: `Token ${localStorage.getItem("token")}` }
+                          });
+                          const data = await res.json();
+                          if (data.url) window.open(data.url, '_blank');
+                        } catch (err) {
+                          console.error("Erreur ouverture fichier", err);
+                        }
+                      }}>
                         📂 Ouvrir
                       </button>
                     </td>

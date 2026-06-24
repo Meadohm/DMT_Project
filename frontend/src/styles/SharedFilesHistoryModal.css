@@ -100,7 +100,7 @@
   background: #003366;
   color: white;
   padding: 10px 14px;
-  text-align: left;
+  text-align: center;
   position: sticky;
   top: 0;
   vertical-align: middle;
@@ -110,6 +110,12 @@
   padding: 10px 14px;
   border-bottom: 1px solid #f0f0f0;
   vertical-align: middle;
+  text-align: center;
+}
+
+.sfh-table td:nth-child(2),
+.sfh-table th:nth-child(2) {
+  text-align: left;
 }
 
 .sfh-table tr:hover td { background: rgba(108,99,255,0.04); }
