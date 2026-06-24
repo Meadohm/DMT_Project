@@ -210,11 +210,11 @@ export default function ArchivesModal({ onClose, onRefreshFolders, userInfo }) {
           <div className="archive-mode-toggle">
             <button
               className={`btn-mode ${!bulkMode ? "active" : ""}`}
-              onClick={() => { setBulkMode(false); setSelectedFolders([]); }}
+              onClick={() => { setBulkMode(false); setSelectedFolders([]); setSelectAll(false); setSelectedFolder(""); }}
             >📦 Dossier unique</button>
             <button
               className={`btn-mode ${bulkMode ? "active" : ""}`}
-              onClick={() => { setBulkMode(true); setSelectedFolder(""); }}
+              onClick={() => { setBulkMode(true); setSelectedFolder(""); setSelectedFolders([]); setSelectAll(false); }}
             >☑️ Sélection multiple</button>
           </div>
 
