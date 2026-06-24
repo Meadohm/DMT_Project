@@ -365,6 +365,9 @@ body.dark .notif-item.unread {
 body.dark .notif-text {
   color: #e6e8f0 !important;
 }
+body.dark .notif-message {
+  color: #e6e8f0 !important;
+}
 body.dark .notif-time-right {
   color: #aab4c8 !important;
 }
