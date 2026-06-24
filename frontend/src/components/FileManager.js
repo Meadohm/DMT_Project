@@ -143,12 +143,12 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
 
       const fetchSharedFiles = async () => {
         try {
-          const res = await fetch(`${API_BASE_URL}/shared-files/`, {
+          const res = await fetch(`${API_BASE_URL}/shared-files/?page=1&page_size=100`, {
             headers: { Authorization: `Token ${localStorage.getItem("token")}` },
           });
           if (res.ok) {
             const data = await res.json();
-            setSharedFiles(data);
+            setSharedFiles(Array.isArray(data) ? data : (data.results || []));
           }
         } catch (err) {
           console.error("❌ Erreur récupération fichiers partagés", err);
