@@ -1354,9 +1354,9 @@ def list_shared_files(request):
     if shared_by:
         data = [f for f in data if f["shared_by"] == shared_by]
     if date_from:
-        data = [f for f in data if f["shared_at"] and f["shared_at"][:10] >= date_from]
+        data = [f for f in data if f["shared_at"] and str(f["shared_at"])[:10] >= date_from]
     if date_to:
-        data = [f for f in data if f["shared_at"] and f["shared_at"][:10] <= date_to]
+        data = [f for f in data if f["shared_at"] and str(f["shared_at"])[:10] <= date_to]
     # Tri par date décroissante
     data.sort(key=lambda x: x["shared_at"] or "", reverse=True)
     total = len(data)
