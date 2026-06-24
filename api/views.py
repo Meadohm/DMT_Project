@@ -1344,7 +1344,36 @@ def list_shared_files(request):
             "shared_by": file.folder.proprietaire.username,
             "shared_at": share.created_at if share else None,
         })
-    return Response(data)
+    # Filtres
+    search = request.query_params.get("search", "").lower()
+    shared_by = request.query_params.get("shared_by", "")
+    date_from = request.query_params.get("date_from", "")
+    date_to = request.query_params.get("date_to", "")
+    if search:
+        data = [f for f in data if search in f["nom"].lower()]
+    if shared_by:
+        data = [f for f in data if f["shared_by"] == shared_by]
+    if date_from:
+        data = [f for f in data if f["shared_at"] and f["shared_at"][:10] >= date_from]
+    if date_to:
+        data = [f for f in data if f["shared_at"] and f["shared_at"][:10] <= date_to]
+    # Tri par date décroissante
+    data.sort(key=lambda x: x["shared_at"] or "", reverse=True)
+    total = len(data)
+    # Pagination
+    page = int(request.query_params.get("page", 1))
+    page_size = int(request.query_params.get("page_size", 20))
+    start = (page - 1) * page_size
+    end = start + page_size
+    # Expéditeurs uniques pour filtre
+    shared_by_list = list(set(f["shared_by"] for f in data if f["shared_by"]))
+    return Response({
+        "results": data[start:end],
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+        "shared_by_list": shared_by_list,
+    })
 
 
 PERMISSIONS_LABELS = {
@@ -1917,6 +1946,11 @@ def bulk_create_archive(request):
 
             folder.is_archived = True
             folder.save(update_fields=["is_archived"])
+            Notification.objects.create(
+                user=request.user,
+                type='archive',
+                message=f'📦 Le dossier « {folder.nom} » a été archivé ({archive_format.upper()}).'
+            )
             results.append(folder.nom)
 
         except Exception as e:
