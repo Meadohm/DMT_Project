@@ -620,3 +620,132 @@ body.dark .perm-tag {
 body.dark .no-share {
   color: #aab4c8;
 }
+
+/* ================================
+   DARK MODE — FIXES FINAUX
+   ================================ */
+
+/* Suppression animation saut */
+body.dark {
+  animation: none !important;
+}
+
+/* Zone contenu dossier — fond blanc persistant */
+body.dark .file-content-scroll,
+body.dark .file-manager,
+body.dark .main-content,
+body.dark .dashboard-container {
+  background: #0f1629 !important;
+  color: #e6e8f0 !important;
+}
+
+/* Contenu dossier titre + badge partagé */
+body.dark .folder-title,
+body.dark .folder-title * {
+  color: #e6e8f0 !important;
+  background: transparent !important;
+}
+body.dark .shared-info,
+body.dark .private-info {
+  background: rgba(76,88,255,0.15) !important;
+  color: #aab4c8 !important;
+  border-color: #2d3555 !important;
+}
+
+/* File list container */
+body.dark .file-list,
+body.dark .file-list li,
+body.dark .file-item {
+  background: #0f1629 !important;
+  color: #e6e8f0 !important;
+  border-color: #2d3555 !important;
+}
+body.dark .file-item:hover {
+  background: #1e2540 !important;
+}
+
+/* Menus contextuels dossiers sidebar (⋮) */
+body.dark .context-menu,
+body.dark .context-menu.modern-menu {
+  background: #1e2540 !important;
+  border-color: #2d3555 !important;
+  color: #e6e8f0 !important;
+}
+body.dark .context-menu button,
+body.dark .context-menu.modern-menu button {
+  color: #e6e8f0 !important;
+  background: transparent !important;
+}
+body.dark .context-menu button:hover,
+body.dark .context-menu.modern-menu button:hover {
+  background: #2b2f53 !important;
+  color: #7c6fff !important;
+}
+
+/* Dossiers dans sidebar */
+body.dark .folder-list li,
+body.dark .folder-node,
+body.dark .folder-item {
+  color: #e6e8f0 !important;
+}
+body.dark .folder-node:hover {
+  background: rgba(108,99,255,0.15) !important;
+}
+body.dark .folder-node.active {
+  background: rgba(108,99,255,0.2) !important;
+}
+body.dark .folder-name {
+  color: #e6e8f0 !important;
+}
+body.dark .folder-node.active .folder-name {
+  color: #7c6fff !important;
+}
+
+/* Sidebar sections titres */
+body.dark .sidebar-section {
+  color: #aab4c8 !important;
+  border-bottom-color: #2d3555 !important;
+  background: #002b5c !important;
+}
+
+/* Boutons star, context-btn dans sidebar */
+body.dark .star,
+body.dark .context-btn,
+body.dark .add-subfolder {
+  color: #aab4c8 !important;
+  background: transparent !important;
+}
+body.dark .star.active {
+  color: #ffd700 !important;
+}
+body.dark .context-btn:hover,
+body.dark .star:hover {
+  color: #7c6fff !important;
+}
+
+/* Dossiers partagés avec moi */
+body.dark .folder-list .folder-item,
+body.dark .shared-folders .folder-item {
+  color: #e6e8f0 !important;
+}
+
+/* No folder msg */
+body.dark .no-folder-msg1 {
+  color: #aab4c8 !important;
+}
+
+/* Section scroll */
+body.dark .section-scroll {
+  scrollbar-color: #2d3555 transparent;
+}
+
+/* FolderTree children */
+body.dark .folder-children {
+  border-left-color: #2d3555;
+}
+body.dark .arrow-icon {
+  stroke: #aab4c8;
+}
+body.dark .arrow.expanded .arrow-icon {
+  stroke: #7c6fff;
+}
