@@ -115,96 +115,8 @@ export default function SharedFilesHistoryModal({ onClose, onOpen }) {
           <span>{total} fichier{total > 1 ? "s" : ""} partagé{total > 1 ? "s" : ""}</span>
         </div>
 
-        {/* Table */}
-        <div className="sfh-table-wrapper">
-          {loading ? (
-            <div className="spinner" />
-          ) : data.length === 0 ? (
-            <p className="sfh-empty">Aucun fichier partagé trouvé.</p>
-          ) : (
-            <table className="sfh-table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Nom du fichier</th>
-                  <th>Partagé par</th>
-                  <th>Date de partage</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.map((f, idx) => (
-                  <tr key={f.id}>
-                    <td>{(page - 1) * pageSize + idx + 1}</td>
-                    <td className="sfh-filename">{f.nom}</td>
-                    <td>{f.shared_by}</td>
-                    <td>{f.shared_at ? new Date(f.shared_at).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" }) : "—"}</td>
-                    <td>
-                      <div style={{display:"flex", gap:"6px", justifyContent:"center"}}>
-                        <button className="sfh-btn-open" onClick={async () => {
-                          setPreviewLoading(true);
-                          try {
-                            const res = await fetch(`${API_BASE_URL}/files/${f.id}/preview/`, {
-                              headers: { Authorization: `Token ${localStorage.getItem("token")}` }
-                            });
-                            const data = await res.json();
-                            const fileName = f.nom.toLowerCase();
-                            if (fileName.endsWith(".docx")) {
-                              const response = await fetch(data.url);
-                              const arrayBuffer = await response.arrayBuffer();
-                              const result = await mammoth.extractRawText({ arrayBuffer });
-                              setInlinePreview({ type: "text", content: result.value });
-                            } else if (fileName.match(/\.(xlsx|xls)$/)) {
-                              const response = await fetch(data.url);
-                              const arrayBuffer = await response.arrayBuffer();
-                              const workbook = XLSX.read(arrayBuffer, { type: "array" });
-                              const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                              const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-                              setInlinePreview({ type: "table", rows });
-                            } else if (fileName.match(/\.(png|jpg|jpeg|gif|webp|svg)$/)) {
-                              setInlinePreview({ type: "image", url: data.url });
-                            } else {
-                              setInlinePreview(data);
-                            }
-                            setInlinePreviewFile(f);
-                          } catch (err) {
-                            console.error("Erreur preview", err);
-                          } finally {
-                            setPreviewLoading(false);
-                          }
-                        }}>
-                          {previewLoading ? "⏳" : "👁️ Aperçu"}
-                        </button>
-                        <button className="sfh-btn-download" onClick={async () => {
-                          try {
-                            const res = await fetch(`${API_BASE_URL}/files/${f.id}/preview/`, {
-                              headers: { Authorization: `Token ${localStorage.getItem("token")}` }
-                            });
-                            const data = await res.json();
-                            const response = await fetch(data.url);
-                            const blob = await response.blob();
-                            const url = URL.createObjectURL(blob);
-                            const link = document.createElement("a");
-                            link.href = url;
-                            link.download = f.nom;
-                            link.click();
-                            URL.revokeObjectURL(url);
-                          } catch (err) {
-                            console.error("Erreur téléchargement", err);
-                          }
-                        }}>
-                          📥
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-
-        {inlinePreview && inlinePreviewFile && (
+        {/* Table OU Preview — jamais les deux */}
+        {inlinePreview && inlinePreviewFile ? (
           <div className="sfh-preview-panel">
             <div className="sfh-preview-header">
               <span>👁️ {inlinePreviewFile.nom}</span>
@@ -234,6 +146,94 @@ export default function SharedFilesHistoryModal({ onClose, onOpen }) {
                 </div>
               )}
             </div>
+          </div>
+        ) : (
+          <div className="sfh-table-wrapper">
+            {loading ? (
+              <div className="spinner" />
+            ) : data.length === 0 ? (
+              <p className="sfh-empty">Aucun fichier partagé trouvé.</p>
+            ) : (
+              <table className="sfh-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Nom du fichier</th>
+                    <th>Partagé par</th>
+                    <th>Date de partage</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.map((f, idx) => (
+                    <tr key={f.id}>
+                      <td>{(page - 1) * pageSize + idx + 1}</td>
+                      <td className="sfh-filename">{f.nom}</td>
+                      <td>{f.shared_by}</td>
+                      <td>{f.shared_at ? new Date(f.shared_at).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" }) : "—"}</td>
+                      <td>
+                        <div style={{display:"flex", gap:"6px", justifyContent:"center"}}>
+                          <button className="sfh-btn-open" onClick={async () => {
+                            setPreviewLoading(true);
+                            try {
+                              const res = await fetch(`${API_BASE_URL}/files/${f.id}/preview/`, {
+                                headers: { Authorization: `Token ${localStorage.getItem("token")}` }
+                              });
+                              const data = await res.json();
+                              const fileName = f.nom.toLowerCase();
+                              if (fileName.endsWith(".docx")) {
+                                const response = await fetch(data.url);
+                                const arrayBuffer = await response.arrayBuffer();
+                                const result = await mammoth.extractRawText({ arrayBuffer });
+                                setInlinePreview({ type: "text", content: result.value });
+                              } else if (fileName.match(/\.(xlsx|xls)$/)) {
+                                const response = await fetch(data.url);
+                                const arrayBuffer = await response.arrayBuffer();
+                                const workbook = XLSX.read(arrayBuffer, { type: "array" });
+                                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                                const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                                setInlinePreview({ type: "table", rows });
+                              } else if (fileName.match(/\.(png|jpg|jpeg|gif|webp|svg)$/)) {
+                                setInlinePreview({ type: "image", url: data.url });
+                              } else {
+                                setInlinePreview(data);
+                              }
+                              setInlinePreviewFile(f);
+                            } catch (err) {
+                              console.error("Erreur preview", err);
+                            } finally {
+                              setPreviewLoading(false);
+                            }
+                          }}>
+                            {previewLoading ? "⏳" : "👁️ Aperçu"}
+                          </button>
+                          <button className="sfh-btn-download" onClick={async () => {
+                            try {
+                              const res = await fetch(`${API_BASE_URL}/files/${f.id}/preview/`, {
+                                headers: { Authorization: `Token ${localStorage.getItem("token")}` }
+                              });
+                              const data = await res.json();
+                              const response = await fetch(data.url);
+                              const blob = await response.blob();
+                              const url = URL.createObjectURL(blob);
+                              const link = document.createElement("a");
+                              link.href = url;
+                              link.download = f.nom;
+                              link.click();
+                              URL.revokeObjectURL(url);
+                            } catch (err) {
+                              console.error("Erreur téléchargement", err);
+                            }
+                          }}>
+                            📥
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         )}
 
