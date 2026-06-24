@@ -509,3 +509,114 @@ body.dark .spinner {
   border-color: #2d3555;
   border-top-color: #4c58ff;
 }
+
+/* ================================
+   DARK MODE — FILEMANAGER + TABLEAUX
+   ================================ */
+
+/* Zone principale FileManager */
+body.dark .file-manager {
+  background: #0f1629;
+  color: #e6e8f0;
+}
+body.dark .file-content-scroll {
+  background: #0f1629;
+  color: #e6e8f0;
+}
+body.dark .file-manager {
+  border-color: #2d3555;
+}
+body.dark .upload-zone {
+  border-color: #2d3555 !important;
+  background: #141a33 !important;
+}
+
+/* Titre dossier + infos partage */
+body.dark .folder-title {
+  color: #e6e8f0 !important;
+}
+body.dark .shared-info {
+  background: rgba(76,88,255,0.15);
+  color: #aab4c8 !important;
+  border-color: #2d3555;
+}
+body.dark .private-info {
+  background: rgba(45,53,85,0.5);
+  color: #aab4c8 !important;
+}
+body.dark .folder-name-clickable {
+  color: #7c6fff !important;
+}
+
+/* Fichiers liste */
+body.dark .file-item {
+  background: #161b33;
+  border-bottom-color: #2d3555;
+  color: #e6e8f0 !important;
+}
+body.dark .file-item:hover {
+  background: #2b2f53 !important;
+}
+body.dark .file-name {
+  color: #e6e8f0 !important;
+}
+body.dark p {
+  color: #e6e8f0;
+}
+
+/* Footer */
+body.dark .footer {
+  background: #0c1024 !important;
+  color: #aab4c8 !important;
+  border-top-color: #2d3555;
+}
+body.dark .footer strong,
+body.dark .footer a {
+  color: #7c6fff !important;
+}
+
+/* Tableaux zebra stripes — DARK */
+body.dark .csv-preview tr:nth-child(odd) td,
+body.dark .sfh-table tr:nth-child(odd) td,
+body.dark table tr:nth-child(odd) td {
+  background: #1a2040;
+}
+body.dark .csv-preview tr:nth-child(even) td,
+body.dark .sfh-table tr:nth-child(even) td,
+body.dark table tr:nth-child(even) td {
+  background: #161b33;
+}
+body.dark .csv-preview tr:hover td,
+body.dark .sfh-table tr:hover td {
+  background: #2b2f53 !important;
+}
+body.dark .csv-preview td,
+body.dark .sfh-table td {
+  border-color: #2d3555;
+  color: #e6e8f0;
+}
+
+/* Preview text docx */
+body.dark .text-preview {
+  background: #1a2040 !important;
+  color: #e6e8f0 !important;
+  border: 1px solid #2d3555;
+  border-radius: 8px;
+}
+
+/* Share info modal */
+body.dark .share-info-modal .modal-content {
+  background: #161b33 !important;
+  color: #e6e8f0 !important;
+}
+body.dark .share-info-list li {
+  background: #1e2540;
+  border-color: #2d3555;
+}
+body.dark .perm-tag {
+  background: #2b2f53;
+  color: #e6e8f0;
+}
+body.dark .no-share {
+  color: #aab4c8;
+}
