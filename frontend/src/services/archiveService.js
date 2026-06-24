@@ -116,6 +116,20 @@ export const shareArchive = async (archiveId, userList) => {
   }
 };
 
+// --- Supprimer toutes les archives ---
+export const deleteAllArchives = async () => {
+  const token = getToken();
+  try {
+    const res = await axios.delete(`${API_BASE_URL}/archives/delete-all/`, {
+      headers: { Authorization: `Token ${token}` },
+    });
+    return res.data;
+  } catch (error) {
+    console.error("❌ Erreur suppression toutes archives :", error);
+    throw error;
+  }
+};
+
 // --- ♻️ Désarchiver un dossier ---
 export const unarchive = async (archiveId) => {
   const token = getToken();

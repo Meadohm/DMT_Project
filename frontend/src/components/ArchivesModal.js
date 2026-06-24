@@ -8,6 +8,7 @@ import {
   deleteArchive,
   createArchive,
   unarchive,
+  deleteAllArchives,
 } from "../services/archiveService";
 import { listFolders } from "../services/folderService";
 
@@ -22,6 +23,7 @@ export default function ArchivesModal({ onClose, onRefreshFolders, userInfo }) {
   const [downloadingId, setDownloadingId] = useState(null);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [confirmDeleteAll, setConfirmDeleteAll] = useState(false);
 
   // === Charger les archives et dossiers ===
   const fetchData = async () => {
@@ -82,6 +84,19 @@ export default function ArchivesModal({ onClose, onRefreshFolders, userInfo }) {
     } finally {
       setCreating(false);
       setSelectedFolder("");
+    }
+  };
+
+  // === Suppression de toutes les archives ===
+  const handleDeleteAll = async () => {
+    try {
+      const res = await deleteAllArchives();
+      await fetchData();
+      setToast({ type: "success", message: `🗑️ ${res.message}` });
+    } catch (err) {
+      setToast({ type: "error", message: "❌ Erreur suppression toutes les archives." });
+    } finally {
+      setConfirmDeleteAll(false);
     }
   };
 
@@ -218,6 +233,12 @@ export default function ArchivesModal({ onClose, onRefreshFolders, userInfo }) {
           >
             {creating ? "⏳ Création..." : "📦 Créer"}
           </button>
+
+          {archives.length > 0 && (
+            <button className="btn-delete-all" onClick={() => setConfirmDeleteAll(true)}>
+              🗑️ Tout effacer
+            </button>
+          )}
         </div>
 
         {/* === Recherche et liste === */}
@@ -312,6 +333,18 @@ export default function ArchivesModal({ onClose, onRefreshFolders, userInfo }) {
       )}
 
       {/* Toast */}
+      {confirmDeleteAll && (
+        <div className="archive-confirm-overlay">
+          <div className="archive-confirm-box">
+            <p>🗑️ Supprimer toutes vos archives définitivement ?</p>
+            <div className="archive-confirm-actions">
+              <button className="btn-cancel-confirm" onClick={() => setConfirmDeleteAll(false)}>Annuler</button>
+              <button className="btn-delete-confirm" onClick={handleDeleteAll}>Tout supprimer</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {toast && (
         <Toast
           type={toast.type}
