@@ -1457,10 +1457,7 @@ def create_archive(request, folder_id):
     folder_path = os.path.join(settings.MEDIA_ROOT, "uploads", folder_name)
 
     if not os.path.exists(folder_path):
-        return Response(
-            {'error': "📂 Le dossier source est introuvable sur le serveur."},
-            status=status.HTTP_404_NOT_FOUND
-        )
+        os.makedirs(folder_path, exist_ok=True)
 
     # Variables de travail
     archive = None
