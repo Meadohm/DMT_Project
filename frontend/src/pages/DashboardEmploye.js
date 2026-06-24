@@ -21,6 +21,7 @@ import ArchivesModal from "../components/ArchivesModal";
 import FolderTree from "../components/FolderTree";
 import ContextMenu from "../components/ContextMenu";
 import AllNotificationsModal from "../components/AllNotificationsModal";
+import SharedFilesHistoryModal from "../components/SharedFilesHistoryModal";
 import useNotifications from "../hooks/useNotifications";
 import { markAllRead, clearAll } from "../services/notificationService";
 import useClock from "../hooks/useClock";
@@ -161,6 +162,7 @@ function DashboardEmploye() {
   const [notifOpen, setNotifOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [allNotifOpen, setAllNotifOpen] = useState(false);
+  const [historiqueSharedOpen, setHistoriqueSharedOpen] = useState(false);
 
   const notifRef = useRef(null);
   const accountRef = useRef(null);
@@ -775,7 +777,12 @@ const handleClearNotifications = async () => {
                         }}>
                           📦 Archives
                         </li>
-                        <li style={{ opacity: 0.45, cursor: "not-allowed" }} title="Bientôt disponible">⚙️ Paramètres</li>
+                        <li onClick={() => {
+                          setAccountOpen(false);
+                          setHistoriqueSharedOpen(true);
+                        }}>
+                          📜 Historique partagés
+                        </li>
                         <li style={{ opacity: 0.45, cursor: "not-allowed" }} title="Bientôt disponible">❓ Aide</li>
                       </ul>
                     </div>
@@ -974,6 +981,15 @@ const handleClearNotifications = async () => {
                     notifications={notifications}
                     onClose={() => setAllNotifOpen(false)}
                     onRefresh={refresh}
+                  />
+                )}
+
+                {historiqueSharedOpen && (
+                  <SharedFilesHistoryModal
+                    onClose={() => setHistoriqueSharedOpen(false)}
+                    onOpen={(file) => {
+                      setHistoriqueSharedOpen(false);
+                    }}
                   />
                 )}
 

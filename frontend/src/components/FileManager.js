@@ -12,8 +12,6 @@ import * as XLSX from "xlsx";
 import mammoth from "mammoth";
 import Modal from "./Modal";
 import Toast from "./Toast";
-import SharedFiles from "./SharedFiles";
-import SharedFilesHistoryModal from "./SharedFilesHistoryModal";
 import "../styles/FileManager.css";
 
 /*import ReactPlayer from "react-player";
@@ -24,7 +22,6 @@ import API_BASE_URL from "../config";
 
 function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed = false }) {
   const [files, setFiles] = useState([]);
-  const [sharedFiles, setSharedFiles] = useState([]);
   const [dragOver, setDragOver] = useState(false);
   const [previewFileData, setPreviewFileData] = useState(null);
   const [previewMeta, setPreviewMeta] = useState(null);
@@ -45,19 +42,12 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
   const [permissionModalOpen, setPermissionModalOpen] = useState(false);
   const [permissionMessage, setPermissionMessage] = useState("");
 
-  // Modale Historique
-  const [historiqueOpen, setHistoriqueOpen] = useState(false);
-  const [searchHistorique, setSearchHistorique] = useState("");
-  const [pageHistorique, setPageHistorique] = useState(1);
-  const itemsPerPage = 8;
-
   const [shareInfoOpen, setShareInfoOpen] = useState(false);
 
   
 
   useEffect(() => {
     if (activeFolder) fetchFiles();
-    fetchSharedFiles();
   }, [activeFolder]);
 
   
@@ -138,20 +128,6 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
           setFiles(data);
         } catch (err) {
           console.error("❌ Erreur récupération fichiers", err);
-        }
-      };
-
-      const fetchSharedFiles = async () => {
-        try {
-          const res = await fetch(`${API_BASE_URL}/shared-files/?page=1&page_size=100`, {
-            headers: { Authorization: `Token ${localStorage.getItem("token")}` },
-          });
-          if (res.ok) {
-            const data = await res.json();
-            setSharedFiles(Array.isArray(data) ? data : (data.results || []));
-          }
-        } catch (err) {
-          console.error("❌ Erreur récupération fichiers partagés", err);
         }
       };
 
@@ -298,8 +274,6 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
           }
           setPreviewMeta(file);
           setIsPreviewOpen(true);
-          setHistoriqueOpen(false);
-          setIsPreviewOpen(true);
           setIsFullPreview(true);
 
         } catch (err) {
@@ -308,30 +282,6 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
           setPermissionModalOpen(true);
         }
       };
-
-      // === Fichiers partagés récents (moins de 24h) ===
-      const now = new Date();
-      const recentShared = sharedFiles.filter((f) => {
-        const sharedAt = new Date(f.shared_at);
-        return now - sharedAt < 24 * 60 * 60 * 1000; // 24h
-      });
-
-        // Historique complet avec pagination
-      const sortedSharedFiles = [...sharedFiles].sort(
-        (a, b) => new Date(b.shared_at) - new Date(a.shared_at)
-      );
-
-      const filesToDisplay = recentShared.slice(0, 4);
-
-      const filteredHistorique = sortedSharedFiles.filter((f) =>
-        f.nom.toLowerCase().includes(searchHistorique.toLowerCase())
-      );
-      const totalPages = Math.ceil(filteredHistorique.length / itemsPerPage);
-      const paginatedHistorique = filteredHistorique.slice(
-        (pageHistorique - 1) * itemsPerPage,
-        pageHistorique * itemsPerPage
-      );
-
 
         // 🔄 Auto-refresh toutes les 10s
         useEffect(() => {
@@ -545,12 +495,6 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                   <p>Aucun fichier dans ce dossier.</p>
                 )}
 
-                <SharedFiles
-                  files={filesToDisplay}
-                  onOpen={handlePreview}
-                  showHistory={() => setHistoriqueOpen(true)}
-                />
-
               </div>
             )}
 
@@ -701,13 +645,6 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                   placeholder="Nouveau nom du fichier"
                 />
               </Modal>
-            )}
-
-            {historiqueOpen && (
-              <SharedFilesHistoryModal
-                onClose={() => setHistoriqueOpen(false)}
-                onOpen={handlePreview}
-              />
             )}
 
             {permissionModalOpen && (

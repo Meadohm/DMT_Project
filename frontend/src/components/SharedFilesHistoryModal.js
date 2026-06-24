@@ -1,5 +1,5 @@
 // src/components/SharedFilesHistoryModal.js
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import API_BASE_URL from "../config";
 import "../styles/SharedFilesHistoryModal.css";
 
@@ -17,15 +17,15 @@ export default function SharedFilesHistoryModal({ onClose, onOpen }) {
   const [loading, setLoading] = useState(false);
   const [goToPage, setGoToPage] = useState("");
 
-  const fetchData = useCallback(async (p = page) => {
+  const fetchData = async ({ p = 1, s = search, sb = sharedBy, df = dateFrom, dt = dateTo } = {}) => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
         page: p, page_size: pageSize,
-        ...(search && { search }),
-        ...(sharedBy && { shared_by: sharedBy }),
-        ...(dateFrom && { date_from: dateFrom }),
-        ...(dateTo && { date_to: dateTo }),
+        ...(s && { search: s }),
+        ...(sb && { shared_by: sb }),
+        ...(df && { date_from: df }),
+        ...(dt && { date_to: dt }),
       });
       const res = await fetch(`${API_BASE_URL}/shared-files/?${params}`, {
         headers: { Authorization: `Token ${localStorage.getItem("token")}` },
@@ -36,19 +36,23 @@ export default function SharedFilesHistoryModal({ onClose, onOpen }) {
       setTotalPages(Math.ceil((json.total || 0) / pageSize));
       setSharedByList(json.shared_by_list || []);
     } catch (err) {
-      console.error("Erreur historique fichiers partagés", err);
+      console.error("Erreur historique", err);
     } finally {
       setLoading(false);
     }
-  }, [page, pageSize, search, sharedBy, dateFrom, dateTo]);
+  };
 
-  useEffect(() => { fetchData(page); }, [page]);
+  useEffect(() => { fetchData({ p: page }); }, []);
 
-  const handleFilter = () => { setPage(1); fetchData(1); };
+  const handleFilter = () => {
+    setPage(1);
+    fetchData({ p: 1, s: search, sb: sharedBy, df: dateFrom, dt: dateTo });
+  };
 
   const handleReset = () => {
     setSearch(""); setSharedBy(""); setDateFrom(""); setDateTo("");
-    setPage(1); fetchData(1);
+    setPage(1);
+    fetchData({ p: 1, s: "", sb: "", df: "", dt: "" });
   };
 
   const handleExportCSV = () => {
@@ -62,13 +66,13 @@ export default function SharedFilesHistoryModal({ onClose, onOpen }) {
     link.click(); URL.revokeObjectURL(url);
   };
 
-  const goFirst = () => { setPage(1); fetchData(1); };
-  const goPrev = () => { const p = Math.max(1, page - 1); setPage(p); fetchData(p); };
-  const goNext = () => { const p = Math.min(totalPages, page + 1); setPage(p); fetchData(p); };
-  const goLast = () => { setPage(totalPages); fetchData(totalPages); };
+  const goFirst = () => { setPage(1); fetchData({ p: 1 }); };
+  const goPrev = () => { const p = Math.max(1, page - 1); setPage(p); fetchData({ p }); };
+  const goNext = () => { const p = Math.min(totalPages, page + 1); setPage(p); fetchData({ p }); };
+  const goLast = () => { setPage(totalPages); fetchData({ p: totalPages }); };
   const handleGoTo = () => {
     const p = parseInt(goToPage);
-    if (p >= 1 && p <= totalPages) { setPage(p); fetchData(p); setGoToPage(""); }
+    if (p >= 1 && p <= totalPages) { setPage(p); fetchData({ p }); setGoToPage(""); }
   };
 
   return (
