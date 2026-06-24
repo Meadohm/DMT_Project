@@ -231,7 +231,7 @@ export default function ArchivesModal({ onClose, onRefreshFolders, userInfo }) {
                 <option value="rar">.rar</option>
               </select>
               <button className="btn-create" onClick={handleCreateArchive} disabled={!selectedFolder || creating}>
-                {creating ? "⏳..." : "📦 Créer"}
+                {creating ? "⏳..." : "Créer"}
               </button>
             </div>
           ) : (
