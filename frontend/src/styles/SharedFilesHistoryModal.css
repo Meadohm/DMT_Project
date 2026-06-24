@@ -217,8 +217,8 @@
 }
 
 .sfh-preview-close {
-  background: #f0a500;
-  color: white;
+  background: #f0a500 !important;
+  color: white !important;
   border: none;
   padding: 5px 12px;
   border-radius: 6px;
