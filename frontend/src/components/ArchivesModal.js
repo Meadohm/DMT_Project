@@ -28,6 +28,7 @@ export default function ArchivesModal({ onClose, onRefreshFolders, userInfo, onR
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [confirmDeleteAll, setConfirmDeleteAll] = useState(false);
+  const [activeTab, setActiveTab] = useState("create");
 
   // === Charger les archives et dossiers ===
   const fetchData = async () => {
@@ -200,210 +201,188 @@ export default function ArchivesModal({ onClose, onRefreshFolders, userInfo, onR
     <div className="archive-modal-overlay">
       <div className="archive-modal-content">
         <div className="archive-modal-header">
-          <h3>📦 Toutes mes archives</h3>
-          <button className="archive-close-btn" onClick={onClose}>
-            ✖
+          <h3>📦 Archives</h3>
+          <button className="archive-close-btn" onClick={onClose}>✖</button>
+        </div>
+
+        {/* Onglets */}
+        <div className="archive-tabs">
+          <button className={`archive-tab${activeTab === "create" ? " active" : ""}`}
+            onClick={() => setActiveTab("create")}>
+            📦 Créer
+          </button>
+          <button className={`archive-tab${activeTab === "list" ? " active" : ""}`}
+            onClick={() => setActiveTab("list")}>
+            📋 Mes archives {archives.length > 0 && <span className="tab-badge">{archives.length}</span>}
           </button>
         </div>
 
-        {/* === Création section === */}
-        <div className="archive-create-section">
-          <div className="archive-mode-toggle">
-            <button
-              className={`btn-mode ${!bulkMode ? "active" : ""}`}
-              onClick={() => { setBulkMode(false); setSelectedFolders([]); setSelectAll(false); setSelectedFolder(""); }}
-            >📦 Dossier unique</button>
-            <button
-              className={`btn-mode ${bulkMode ? "active" : ""}`}
-              onClick={() => { setBulkMode(true); setSelectedFolder(""); setSelectedFolders([]); setSelectAll(false); }}
-            >☑️ Sélection multiple</button>
-          </div>
-
-          {!bulkMode ? (
-            <div className="archive-single">
-              <select value={selectedFolder} onChange={(e) => setSelectedFolder(e.target.value)}>
-                <option value="">-- Sélectionner un dossier --</option>
-                {folders.filter((f) => f.proprietaire?.id === userInfo?.id).map((f) => (
-                  <option key={f.id} value={f.id}>{f.nom}</option>
-                ))}
-              </select>
-              <select className="format-select" value={archiveFormat} onChange={(e) => setArchiveFormat(e.target.value)}>
-                <option value="zip">.zip</option>
-                <option value="rar">.rar</option>
-              </select>
-              <button className="btn-create" onClick={handleCreateArchive} disabled={!selectedFolder || creating}>
-                {creating ? "⏳..." : "Créer"}
+        {/* Onglet Créer */}
+        {activeTab === "create" && (
+          <div className="archive-tab-content">
+            <div className="archive-mode-toggle">
+              <button className={`btn-mode${!bulkMode ? " active" : ""}`}
+                onClick={() => { setBulkMode(false); setSelectedFolders([]); setSelectAll(false); setSelectedFolder(""); }}>
+                📦 Dossier unique
+              </button>
+              <button className={`btn-mode${bulkMode ? " active" : ""}`}
+                onClick={() => { setBulkMode(true); setSelectedFolder(""); setSelectedFolders([]); setSelectAll(false); }}>
+                ☑️ Sélection multiple
               </button>
             </div>
-          ) : (
-            <div className="archive-bulk">
-              <div className="bulk-header">
-                <label className="bulk-select-all">
-                  <input type="checkbox" checked={selectAll} onChange={(e) => {
-                    setSelectAll(e.target.checked);
-                    setSelectedFolders(e.target.checked ? folders.filter(f => f.proprietaire?.id === userInfo?.id).map(f => f.id) : []);
-                  }} />
-                  Tout sélectionner
-                </label>
+
+            {!bulkMode ? (
+              <div className="archive-single">
+                <select value={selectedFolder} onChange={(e) => setSelectedFolder(e.target.value)}>
+                  <option value="">-- Sélectionner un dossier --</option>
+                  {folders.filter((f) => f.proprietaire?.id === userInfo?.id).map((f) => (
+                    <option key={f.id} value={f.id}>{f.nom}</option>
+                  ))}
+                </select>
                 <select className="format-select" value={archiveFormat} onChange={(e) => setArchiveFormat(e.target.value)}>
                   <option value="zip">.zip</option>
                   <option value="rar">.rar</option>
                 </select>
+                <button className="btn-create" onClick={handleCreateArchive} disabled={!selectedFolder || creating}>
+                  {creating ? "⏳..." : "📦 Créer"}
+                </button>
               </div>
-              <div className="bulk-folder-list">
-                {folders.filter(f => f.proprietaire?.id === userInfo?.id).map(f => (
-                  <label key={f.id} className="bulk-folder-item">
-                    <input type="checkbox" checked={selectedFolders.includes(f.id)}
-                      onChange={(e) => {
-                        setSelectedFolders(prev =>
-                          e.target.checked ? [...prev, f.id] : prev.filter(id => id !== f.id)
-                        );
-                      }}
-                    />
-                    📁 {f.nom}
+            ) : (
+              <div className="archive-bulk">
+                <div className="bulk-header">
+                  <label className="bulk-select-all">
+                    <input type="checkbox" checked={selectAll} onChange={(e) => {
+                      setSelectAll(e.target.checked);
+                      setSelectedFolders(e.target.checked ? folders.filter(f => f.proprietaire?.id === userInfo?.id).map(f => f.id) : []);
+                    }} />
+                    Tout sélectionner ({folders.filter(f => f.proprietaire?.id === userInfo?.id).length})
                   </label>
-                ))}
+                  <select className="format-select" value={archiveFormat} onChange={(e) => setArchiveFormat(e.target.value)}>
+                    <option value="zip">.zip</option>
+                    <option value="rar">.rar</option>
+                  </select>
+                </div>
+                <div className="bulk-folder-list">
+                  {folders.filter(f => f.proprietaire?.id === userInfo?.id).map(f => (
+                    <label key={f.id} className="bulk-folder-item">
+                      <input type="checkbox" checked={selectedFolders.includes(f.id)}
+                        onChange={(e) => {
+                          setSelectedFolders(prev =>
+                            e.target.checked ? [...prev, f.id] : prev.filter(id => id !== f.id)
+                          );
+                          if (!e.target.checked) setSelectAll(false);
+                        }}
+                      />
+                      📁 {f.nom}
+                    </label>
+                  ))}
+                </div>
+                <button className="btn-create" disabled={selectedFolders.length === 0 || creating}
+                  onClick={async () => {
+                    setCreating(true);
+                    try {
+                      const res = await bulkCreateArchive(selectedFolders, archiveFormat);
+                      await fetchData();
+                      if (onRefreshNotifications) onRefreshNotifications();
+                      setSelectedFolders([]);
+                      setSelectAll(false);
+                      setActiveTab("list");
+                      setToast({ type: "success", message: `✅ ${res.created} archive(s) créée(s).` });
+                    } catch (err) {
+                      setToast({ type: "error", message: "❌ Erreur archivage multiple." });
+                    } finally {
+                      setCreating(false);
+                    }
+                  }}
+                >
+                  {creating ? "⏳ Création..." : `📦 Archiver (${selectedFolders.length})`}
+                </button>
               </div>
-              <button className="btn-create" disabled={selectedFolders.length === 0 || creating}
-                onClick={async () => {
-                  setCreating(true);
-                  try {
-                    const res = await bulkCreateArchive(selectedFolders, archiveFormat);
-                    await fetchData();
-                    if (onRefreshNotifications) onRefreshNotifications();
-                    setSelectedFolders([]);
-                    setSelectAll(false);
-                    setToast({ type: "success", message: `✅ ${res.created} archive(s) créée(s).` });
-                  } catch (err) {
-                    setToast({ type: "error", message: "❌ Erreur archivage multiple." });
-                  } finally {
-                    setCreating(false);
-                  }
-                }}
-              >
-                {creating ? "⏳..." : `📦 Archiver (${selectedFolders.length})`}
-              </button>
+            )}
+          </div>
+        )}
+
+        {/* Onglet Mes archives */}
+        {activeTab === "list" && (
+          <div className="archive-tab-content">
+            <div className="archive-list-header">
+              <input type="text" className="archive-search"
+                placeholder="🔍 Rechercher une archive..."
+                onChange={(e) => setSearchTerm(e.target.value.toLowerCase())}
+              />
+              {archives.length > 0 && (
+                <button className="btn-delete-all" onClick={() => setConfirmDeleteAll(true)}>
+                  🗑️ Tout effacer
+                </button>
+              )}
             </div>
-          )}
 
-          {archives.length > 0 && (
-            <button className="btn-delete-all" onClick={() => setConfirmDeleteAll(true)}>
-              🗑️ Tout effacer
-            </button>
-          )}
-        </div>
+            <div className="archive-list large-scroll">
+              {loading ? (
+                <div className="spinner" />
+              ) : filteredArchives.length === 0 ? (
+                <p className="no-archive">Aucune archive trouvée.</p>
+              ) : (
+                filteredArchives.map((a) => (
+                  <div key={a.id} className={`archive-item fade-in${new Date(a.expires_at) < new Date() ? " expired" : ""}`}>
+                    <div className="archive-info">
+                      <h4>
+                        {a.type_archive === "zip" && "📦 "}
+                        {a.type_archive === "rar" && "📚 "}
+                        {a.folder_name}
+                      </h4>
+                      <p className="archive-meta">
+                        🕒 Créée le {new Date(a.created_at).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })} | 💾 {formatSize(a.size)} • ⏳ {formatExpiration(a.expires_at)}
+                      </p>
+                    </div>
+                    <div className="archive-actions">
+                      <button title="Télécharger" className={`btn-download${downloadingId === a.id ? " downloading" : ""}`}
+                        onClick={() => handleDownload(a.id, a.folder_name)} disabled={downloadingId === a.id}>
+                        {downloadingId === a.id ? `⬇️ ${downloadProgress}%` : "📥"}
+                      </button>
+                      <button title="Désarchiver" className="btn-unarchive"
+                        onClick={() => handleUnarchive(a.id)} disabled={downloadingId === a.id}>
+                        ♻️
+                      </button>
+                      <button title="Supprimer" className="btn-delete"
+                        onClick={() => setConfirmDeleteId(a.id)} disabled={downloadingId === a.id}>
+                        🗑️
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
 
-        {/* === Recherche et liste === */}
-        <div className="archive-search-section">
-          <input
-            type="text"
-            className="archive-search"
-            placeholder="🔍 Rechercher une archive..."
-            onChange={(e) => setSearchTerm(e.target.value.toLowerCase())}
-          />
-        </div>
-
-        <div className="archive-list large-scroll">
-          {loading ? (
-            <div className="spinner" />
-          ) : filteredArchives.length === 0 ? (
-            <p className="no-archive">Aucune archive trouvée.</p>
-          ) : (
-            filteredArchives.map((a) => (
-              <div key={a.id} className={`archive-item fade-in${new Date(a.expires_at) < new Date() ? " expired" : ""}`}>
-                <div className="archive-info">
-                  <h4>
-                    {a.type_archive === "zip" && "📦 "}
-                    {a.type_archive === "rar" && "📚 "}
-                    {a.folder_name}
-                  </h4>
-                  <p className="archive-meta">
-                    🕒 Créée le{" "}
-                    {new Date(a.created_at).toLocaleString("fr-FR", {
-                      dateStyle: "short",
-                      timeStyle: "short",
-                    })}{" "}
-                    | 💾 Taille : {formatSize(a.size)} • ⏳{" "}
-                    {formatExpiration(a.expires_at)}
-                  </p>
-                </div>
-
-                <div className="archive-actions">
-                  <button
-                    title="Télécharger"
-                    className={`btn-download ${
-                      downloadingId === a.id ? "downloading" : ""
-                    }`}
-                    onClick={() => handleDownload(a.id, a.folder_name)}
-                    disabled={downloadingId === a.id}
-                  >
-                    {downloadingId === a.id
-                      ? `⬇️ Téléchargement... ${downloadProgress}%`
-                      : "📥"}
-                  </button>
-
-                  <button
-                    title="Désarchiver"
-                    className={`btn-unarchive ${downloadingId === a.id ? "disabled-btn" : ""}`}
-                    onClick={() => {
-                      if (downloadingId !== a.id) handleUnarchive(a.id);
-                    }}
-                    disabled={downloadingId === a.id}
-                  >
-                    ♻️
-                  </button>
-
-                  <button
-                    title="Supprimer"
-                    className={`btn-delete ${downloadingId === a.id ? "disabled-btn" : ""}`}
-                    onClick={() => {
-                      if (downloadingId !== a.id) setConfirmDeleteId(a.id);
-                    }}
-                    disabled={downloadingId === a.id}
-                  >
-                    🗑️
-                  </button>
-
-                </div>
-                
+        {/* Modales confirmation */}
+        {confirmDeleteId && (
+          <div className="archive-confirm-overlay">
+            <div className="archive-confirm-box">
+              <p>🗑️ Supprimer cette archive définitivement ?</p>
+              <div className="archive-confirm-actions">
+                <button className="btn-cancel-confirm" onClick={() => setConfirmDeleteId(null)}>Annuler</button>
+                <button className="btn-delete-confirm" onClick={() => handleDelete(confirmDeleteId)}>Supprimer</button>
               </div>
-            ))
-          )}
-        </div>
+            </div>
+          </div>
+        )}
+
+        {confirmDeleteAll && (
+          <div className="archive-confirm-overlay">
+            <div className="archive-confirm-box">
+              <p>🗑️ Supprimer toutes vos archives définitivement ?</p>
+              <div className="archive-confirm-actions">
+                <button className="btn-cancel-confirm" onClick={() => setConfirmDeleteAll(false)}>Annuler</button>
+                <button className="btn-delete-confirm" onClick={handleDeleteAll}>Tout supprimer</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {toast && <Toast type={toast.type} message={toast.message} onClose={() => setToast(null)} />}
       </div>
-
-      {confirmDeleteId && (
-        <div className="archive-confirm-overlay">
-          <div className="archive-confirm-box">
-            <p>🗑️ Supprimer cette archive définitivement ?</p>
-            <div className="archive-confirm-actions">
-              <button className="btn-cancel-confirm" onClick={() => setConfirmDeleteId(null)}>Annuler</button>
-              <button className="btn-delete-confirm" onClick={() => handleDelete(confirmDeleteId)}>Supprimer</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Toast */}
-      {confirmDeleteAll && (
-        <div className="archive-confirm-overlay">
-          <div className="archive-confirm-box">
-            <p>🗑️ Supprimer toutes vos archives définitivement ?</p>
-            <div className="archive-confirm-actions">
-              <button className="btn-cancel-confirm" onClick={() => setConfirmDeleteAll(false)}>Annuler</button>
-              <button className="btn-delete-confirm" onClick={handleDeleteAll}>Tout supprimer</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {toast && (
-        <Toast
-          type={toast.type}
-          message={toast.message}
-          onClose={() => setToast(null)}
-        />
-      )}
     </div>
   );
 }

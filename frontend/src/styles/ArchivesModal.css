@@ -690,3 +690,56 @@
   font-weight: 600;
   cursor: pointer;
 }
+
+/* === Onglets === */
+.archive-tabs {
+  display: flex;
+  border-bottom: 2px solid #eee;
+  margin-bottom: 16px;
+}
+
+.archive-tab {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #666;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.archive-tab.active {
+  color: #6c63ff;
+  border-bottom-color: #6c63ff;
+}
+
+.tab-badge {
+  background: #6c63ff;
+  color: white;
+  border-radius: 10px;
+  padding: 1px 7px;
+  font-size: 0.75rem;
+}
+
+.archive-tab-content {
+  padding: 4px 0;
+}
+
+.archive-list-header {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.archive-list-header .archive-search {
+  flex: 1;
+}
