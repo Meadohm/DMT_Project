@@ -1,14 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import "../styles/AllNotificationsModal.css";
 import { clearAll, deleteNotification } from "../services/notificationService";
 import { formatRelativeTime } from "../utils/timeUtils";
 
 export default function AllNotificationsModal({ notifications, onClose, onRefresh }) {
+  const [confirmClear, setConfirmClear] = useState(false);
+
   const handleClearAll = async () => {
-    if (window.confirm("Voulez-vous vraiment tout effacer ?")) {
+    try {
       await clearAll();
       onRefresh();
       onClose();
+    } catch (err) {
+      console.error("❌ Erreur suppression", err);
+    } finally {
+      setConfirmClear(false);
     }
   };
 
@@ -37,7 +43,7 @@ export default function AllNotificationsModal({ notifications, onClose, onRefres
               .slice()
               .reverse()
               .map((n) => (
-                <div className="notif-item" key={n.id}>
+                <div className={`notif-item${!n.is_read ? " unread" : ""}`} key={n.id}>
                   <div className="notif-body">
                     <div className="notif-text">{n.message}</div>
                     <div
@@ -70,12 +76,23 @@ export default function AllNotificationsModal({ notifications, onClose, onRefres
 
         {notifications.length > 0 && (
           <div className="notif-modal-footer">
-            <button className="notif-clear-all" onClick={handleClearAll}>
+            <button className="notif-clear-all" onClick={() => setConfirmClear(true)}>
               🗑️ Effacer tout
             </button>
           </div>
         )}
       </div>
+      {confirmClear && (
+        <div className="archive-confirm-overlay">
+          <div className="archive-confirm-box">
+            <p>🗑️ Effacer toutes les notifications ?</p>
+            <div className="archive-confirm-actions">
+              <button className="btn-cancel-confirm" onClick={() => setConfirmClear(false)}>Annuler</button>
+              <button className="btn-delete-confirm" onClick={handleClearAll}>Effacer tout</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

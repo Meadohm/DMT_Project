@@ -181,6 +181,61 @@
   transform: translateY(-2px);
 }
 
+/* === UNREAD === */
+.notif-item.unread {
+  border-left: 3px solid #6c63ff;
+  background: rgba(108, 99, 255, 0.05);
+}
+
+/* === CONFIRM OVERLAY === */
+.archive-confirm-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  z-index: 10;
+}
+.archive-confirm-box {
+  background: white;
+  border-radius: 12px;
+  padding: 24px 28px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  max-width: 320px;
+}
+.archive-confirm-box p {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #1e293b;
+}
+.archive-confirm-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+.btn-cancel-confirm {
+  padding: 8px 20px;
+  border-radius: 8px;
+  border: 1px solid #94a3b8;
+  background: #f1f5f9;
+  color: #334155;
+  cursor: pointer;
+  font-weight: 500;
+}
+.btn-delete-confirm {
+  padding: 8px 20px;
+  border-radius: 8px;
+  border: none;
+  background: #ef4444;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
 /* === ÉTAT VIDE === */
 .no-notif {
   text-align: center;
