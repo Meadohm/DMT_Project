@@ -16,6 +16,9 @@ export default function SharedFilesHistoryModal({ onClose, onOpen }) {
   const [sharedByList, setSharedByList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [goToPage, setGoToPage] = useState("");
+  const [inlinePreview, setInlinePreview] = useState(null);
+  const [inlinePreviewFile, setInlinePreviewFile] = useState(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
 
   const searchRef = React.useRef(search);
   const sharedByRef = React.useRef(sharedBy);
@@ -135,19 +138,41 @@ export default function SharedFilesHistoryModal({ onClose, onOpen }) {
                     <td>{f.shared_by}</td>
                     <td>{f.shared_at ? new Date(f.shared_at).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" }) : "—"}</td>
                     <td>
-                      <button className="sfh-btn-open" onClick={async () => {
-                        try {
-                          const res = await fetch(`${API_BASE_URL}/files/${f.id}/preview/`, {
-                            headers: { Authorization: `Token ${localStorage.getItem("token")}` }
-                          });
-                          const data = await res.json();
-                          if (data.url) window.open(data.url, '_blank');
-                        } catch (err) {
-                          console.error("Erreur ouverture fichier", err);
-                        }
-                      }}>
-                        📂 Ouvrir
-                      </button>
+                      <div style={{display:"flex", gap:"6px", justifyContent:"center"}}>
+                        <button className="sfh-btn-open" onClick={async () => {
+                          setPreviewLoading(true);
+                          try {
+                            const res = await fetch(`${API_BASE_URL}/files/${f.id}/preview/`, {
+                              headers: { Authorization: `Token ${localStorage.getItem("token")}` }
+                            });
+                            const data = await res.json();
+                            setInlinePreviewFile(f);
+                            setInlinePreview(data);
+                          } catch (err) {
+                            console.error("Erreur preview", err);
+                          } finally {
+                            setPreviewLoading(false);
+                          }
+                        }}>
+                          {previewLoading ? "⏳" : "👁️ Aperçu"}
+                        </button>
+                        <button className="sfh-btn-download" onClick={async () => {
+                          try {
+                            const res = await fetch(`${API_BASE_URL}/files/${f.id}/preview/`, {
+                              headers: { Authorization: `Token ${localStorage.getItem("token")}` }
+                            });
+                            const data = await res.json();
+                            const link = document.createElement("a");
+                            link.href = data.url;
+                            link.download = f.nom;
+                            link.click();
+                          } catch (err) {
+                            console.error("Erreur téléchargement", err);
+                          }
+                        }}>
+                          📥
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -155,6 +180,34 @@ export default function SharedFilesHistoryModal({ onClose, onOpen }) {
             </table>
           )}
         </div>
+
+        {inlinePreview && inlinePreviewFile && (
+          <div className="sfh-preview-panel">
+            <div className="sfh-preview-header">
+              <span>👁️ {inlinePreviewFile.nom}</span>
+              <button onClick={() => { setInlinePreview(null); setInlinePreviewFile(null); }}>✖</button>
+            </div>
+            <div className="sfh-preview-body">
+              {inlinePreview.type === "url" && (
+                <iframe src={inlinePreview.url} title="preview" style={{width:"100%", height:"400px", border:"none"}} />
+              )}
+              {inlinePreview.type === "text" && (
+                <pre style={{padding:"12px", fontSize:"0.85rem", overflow:"auto", maxHeight:"400px"}}>{inlinePreview.content}</pre>
+              )}
+              {inlinePreview.type === "table" && (
+                <div style={{overflow:"auto", maxHeight:"400px"}}>
+                  <table style={{width:"100%", borderCollapse:"collapse", fontSize:"0.82rem"}}>
+                    <tbody>
+                      {inlinePreview.rows?.map((row, i) => (
+                        <tr key={i}>{row.map((cell, j) => <td key={j} style={{padding:"4px 8px", border:"1px solid #eee"}}>{cell}</td>)}</tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Pagination */}
         {totalPages > 1 && (
