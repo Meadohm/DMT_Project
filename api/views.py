@@ -1844,3 +1844,86 @@ def delete_all_archives(request):
         details='Suppression manuelle via bouton Tout effacer archives',
     )
     return Response({'message': f'{count} archive(s) supprimée(s).'}, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def bulk_create_archive(request):
+    folder_ids = request.data.get("folder_ids", [])
+    archive_format = request.data.get("format", "zip").lower()
+
+    if not folder_ids:
+        return Response({"error": "Aucun dossier selectionne."}, status=status.HTTP_400_BAD_REQUEST)
+
+    if archive_format not in ["zip", "rar"]:
+        return Response({"error": "Format invalide."}, status=status.HTTP_400_BAD_REQUEST)
+
+    results = []
+    errors = []
+
+    for folder_id in folder_ids:
+        try:
+            folder = Folder.objects.get(id=folder_id)
+
+            if not (folder.proprietaire == request.user or
+                has_folder_permission(request.user, folder, "write")):
+                errors.append(f"{folder.nom}: permission refusee")
+                continue
+
+            folder_name = f"{folder.id}_{safe_folder_name(folder.nom)}"
+            folder_path = os.path.join(settings.MEDIA_ROOT, "uploads", folder_name)
+
+            if not os.path.exists(folder_path):
+                os.makedirs(folder_path, exist_ok=True)
+
+            archive_dir = os.path.join(settings.MEDIA_ROOT, "archives")
+            os.makedirs(archive_dir, exist_ok=True)
+
+            timestamp = timezone.now().strftime("%Y%m%d_%H%M%S")
+            archive_filename = f"{safe_folder_name(folder.nom)}_{timestamp}.{archive_format}"
+            archive_path = os.path.join(archive_dir, archive_filename)
+
+            if archive_format == "zip":
+                with zipfile.ZipFile(archive_path, "w", zipfile.ZIP_DEFLATED) as zipf:
+                    for f in FileModel.objects.filter(folder=folder):
+                        if f.fichier and os.path.exists(f.fichier.path):
+                            zipf.write(f.fichier.path, f.nom)
+
+            elif archive_format == "rar":
+                rar_binary = "/usr/bin/rar"
+                if not os.path.isfile(rar_binary):
+                    errors.append(f"{folder.nom}: binaire RAR introuvable")
+                    continue
+
+                import subprocess
+                cmd = [rar_binary, "a", "-r", "-ep1", archive_path, folder_path]
+                subprocess.run(cmd, check=True)
+
+            archive = Archive.objects.create(
+                owner=request.user,
+                folder_name=folder.nom,
+                expires_at=timezone.now() + timezone.timedelta(days=7),
+                is_active=True,
+                type_archive=archive_format,
+            )
+
+            with open(archive_path, "rb") as f:
+                archive.file.save(os.path.basename(archive_path), DjangoFile(f), save=False)
+                archive.size = os.path.getsize(archive_path)
+                archive.save()
+
+            if os.path.exists(archive_path):
+                os.remove(archive_path)
+
+            folder.is_archived = True
+            folder.save(update_fields=["is_archived"])
+            results.append(folder.nom)
+
+        except Exception as e:
+            errors.append(f"{folder_id}: {str(e)}")
+
+    return Response({
+        "created": len(results),
+        "folders": results,
+        "errors": errors
+    }, status=status.HTTP_201_CREATED)
