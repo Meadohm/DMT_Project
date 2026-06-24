@@ -13,6 +13,7 @@ import mammoth from "mammoth";
 import Modal from "./Modal";
 import Toast from "./Toast";
 import SharedFiles from "./SharedFiles";
+import SharedFilesHistoryModal from "./SharedFilesHistoryModal";
 import "../styles/FileManager.css";
 
 /*import ReactPlayer from "react-player";
@@ -703,45 +704,10 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
             )}
 
             {historiqueOpen && (
-              <Modal
-                title="📜 Historique des fichiers partagés"
+              <SharedFilesHistoryModal
                 onClose={() => setHistoriqueOpen(false)}
-                confirmText="Fermer"
-                onConfirm={() => setHistoriqueOpen(false)}
-                className="historique-modal"
-                showCancel={false}
-              >
-                <input
-                  type="text"
-                  placeholder="Rechercher un fichier..."
-                  className="historique-search"
-                  value={searchHistorique}
-                  onChange={(e) => setSearchHistorique(e.target.value)}
-                />
-                <ul className="historique-list">
-                  {paginatedHistorique.map((file) => (
-                    <li key={file.id} className="file-item" onClick={() => handlePreview(file)}>
-                      <span className="file-name">{file.nom}</span>
-                      <span className="file-meta">
-                        par <strong>{file.shared_by}</strong> le{" "}
-                        {new Date(file.shared_at).toLocaleString()}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-                <div className="pagination">
-                  <button disabled={pageHistorique === 1} onClick={() => setPageHistorique((p) => p - 1)}>
-                    ⬅️
-                  </button>
-                  <span>Page {pageHistorique} / {totalPages || 1}</span>
-                  <button
-                    disabled={pageHistorique === totalPages}
-                    onClick={() => setPageHistorique((p) => p + 1)}
-                  >
-                    ➡️
-                  </button>
-                </div>
-              </Modal>
+                onOpen={handlePreview}
+              />
             )}
 
             {permissionModalOpen && (
