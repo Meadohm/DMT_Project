@@ -1826,3 +1826,24 @@ def mark_notifications_read(request):
     """
     Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
     return Response({'success': 'Toutes les notifications ont été marquées comme lues.'})
+
+@api_view([DELETE])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_all_archives(request):
+    archives = Archive.objects.filter(owner=request.user, is_active=True)
+    count = archives.count()
+    for archive in archives:
+        try:
+            if archive.file and os.path.exists(archive.file.path):
+                os.remove(archive.file.path)
+        except Exception as e:
+            logger.error(f'Erreur suppression fichier archive {archive.id}: {e}')
+    archives.delete()
+    AuditLog.objects.create(
+        utilisateur=Utilisateur.objects.get(username=request.user.username),
+        action='DELETE',
+        objet=f'{count} archive(s) supprimée(s) manuellement',
+        details='Suppression manuelle via bouton Tout effacer archives',
+    )
+    return Response({'message': f'{count} archive(s) supprimée(s).'}, status=status.HTTP_200_OK)
