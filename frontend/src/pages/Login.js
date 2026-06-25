@@ -31,6 +31,8 @@ function Login() {
 
       if (user.role === "admin") {
         navigate("/admin");
+      } else if (user.role === "responsable") {
+        navigate("/dashboard-responsable");
       } else {
         navigate("/dashboard");
       }
