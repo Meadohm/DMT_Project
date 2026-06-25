@@ -27,6 +27,7 @@ import DashboardTopbar from "../components/DashboardTopbar";
 import DashboardSidebar from "../components/DashboardSidebar";
 import "../styles/FileManager.css";
 import "../styles/SidebarGemini.css";
+import "../styles/DashboardResponsable.css";
 
 function DashboardResponsable() {
   const [folders, setFolders] = useState([]);
