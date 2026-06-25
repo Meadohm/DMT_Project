@@ -11,7 +11,7 @@ import "../styles/SidebarGemini.css";
  * - "shared" : utilisé pour dossiers partagés (hérité du code existant)
  */
 
-const ContextMenu = ({ onRename, onShare, onDelete, anchorRef, onClose, mode = "owner" }) => {
+const ContextMenu = ({ onRename, onShare, onDelete, onLeave, anchorRef, onClose, mode = "owner" }) => {
   const menuEl = useRef(null);
   const [pos, setPos] = useState({ top: 0, left: 0, visible: false });
 
@@ -26,11 +26,11 @@ const ContextMenu = ({ onRename, onShare, onDelete, anchorRef, onClose, mode = "
     const rect = anchorEl.getBoundingClientRect();
     const width = 190;
     const height =
-      mode === "owner" ? 140 : mode === "child" ? 100 : 90;
+      mode === "owner" ? 140 : mode === "child" ? 100 : 130;
     let top = rect.bottom + 6;
     let left = rect.left + rect.width + 6;
 
-    // 🔧 Ajustement pour éviter débordement écran
+    //Ajustement pour éviter débordement écran
     if (left + width > window.innerWidth) left = rect.left - width - 8;
     if (top + height > window.innerHeight) top = window.innerHeight - height - 8;
 
@@ -139,6 +139,10 @@ const ContextMenu = ({ onRename, onShare, onDelete, anchorRef, onClose, mode = "
               <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m3-3h8a1 1 0 011 1v2H7V4a1 1 0 011-1z" />
             </svg>
             Supprimer
+          </button>
+
+          <button onPointerDown={(e) => handleAction(onLeave, e)}>
+            🚪 Quitter ce dossier
           </button>
         </>
       )}

@@ -43,9 +43,13 @@ function DashboardSidebar({
   onDeleteFolder,
   onShareFolder,
   onDeleteShared,
+  onLeaveFolder,
   role = "employe",
 }) {
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [showAllShared, setShowAllShared] = useState(false);
+  const [confirmLeaveFolder, setConfirmLeaveFolder] = useState(null);
+  const SHARED_LIMIT = 10;
   const menuRefs = useRef({});
 
   return (
@@ -133,7 +137,7 @@ function DashboardSidebar({
             <p className="no-folder-msg1">Aucun dossier partagé</p>
           ) : (
             <ul className="folder-list">
-              {sharedFolders.map((folder) => {
+              {(showAllShared ? sharedFolders : sharedFolders.slice(0, SHARED_LIMIT)).map((folder) => {
                 const canDeleteFolder =
                   folder.share_permissions?.can_delete_folder ??
                   folder.permissions?.can_delete_folder ??
@@ -172,53 +176,52 @@ function DashboardSidebar({
                           {favorites.includes(folder.id) ? "⭐" : "☆"}
                         </button>
 
-                        {canDeleteFolder ? (
-                          <div
-                            className="folder-menu-wrapper"
-                            onClick={(e) => e.stopPropagation()}
-                            ref={(el) => (menuRefs.current[folder.id] = el)}
-                          >
-                            <button
-                              className="context-btn"
-                              title="Options"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setTimeout(() => {
-                                  setOpenMenuId((prev) =>
-                                    prev === folder.id ? null : folder.id
-                                  );
-                                }, 0);
-                              }}
-                            >
-                              ⋮
-                            </button>
-
-                            {openMenuId === folder.id && (
-                              <ContextMenu
-                                anchorRef={menuRefs.current[folder.id]}
-                                onDelete={async () => {
-                                  await onDeleteShared(folder);
-                                  setOpenMenuId(null);
-                                }}
-                                onClose={() => setOpenMenuId(null)}
-                                mode="shared"
-                              />
-                            )}
-                          </div>
-                        ) : (
-                          <span
-                            className="context-btn disabled"
-                            title="Suppression non autorisée"
+                        <div
+                          className="folder-menu-wrapper"
+                          onClick={(e) => e.stopPropagation()}
+                          ref={(el) => (menuRefs.current[folder.id] = el)}
+                        >
+                          <button
+                            className="context-btn"
+                            title="Options"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setTimeout(() => {
+                                setOpenMenuId((prev) =>
+                                  prev === folder.id ? null : folder.id
+                                );
+                              }, 0);
+                            }}
                           >
                             ⋮
-                          </span>
-                        )}
+                          </button>
+
+                          {openMenuId === folder.id && (
+                            <ContextMenu
+                              anchorRef={menuRefs.current[folder.id]}
+                              onDelete={canDeleteFolder ? async () => { await onDeleteShared(folder); setOpenMenuId(null); } : null}
+                              onLeave={() => { setConfirmLeaveFolder(folder); setOpenMenuId(null); }}
+                              onClose={() => setOpenMenuId(null)}
+                              mode="shared"
+                            />
+                          )}
+                        </div>
                       </div>
                     </div>
                   </li>
                 );
               })}
             </ul>
+          )}
+          {sharedFolders.length > SHARED_LIMIT && (
+            <button
+              className="btn-voir-plus"
+              onClick={() => setShowAllShared(prev => !prev)}
+            >
+              {showAllShared
+                ? "▲ Réduire"
+                : `▼ Voir plus (${sharedFolders.length - SHARED_LIMIT})`}
+            </button>
           )}
         </div>
 
@@ -227,6 +230,28 @@ function DashboardSidebar({
       <div className="sidebar-logo-bottom">
         <img src={logo} alt="DMT Logo" className="app-logoEmp" />
       </div>
+
+      {confirmLeaveFolder && (
+        <div className="archive-confirm-overlay">
+          <div className="archive-confirm-box">
+            <p>🚪 Quitter le dossier <strong>{confirmLeaveFolder.nom}</strong> ?</p>
+            <small style={{ color: "#888", display: "block", marginBottom: "16px" }}>
+              Vous perdrez l'accès à ce dossier partagé.
+            </small>
+            <div className="archive-confirm-actions">
+              <button className="btn-cancel-confirm" onClick={() => setConfirmLeaveFolder(null)}>
+                Annuler
+              </button>
+              <button className="btn-delete-confirm" onClick={async () => {
+                await onLeaveFolder(confirmLeaveFolder);
+                setConfirmLeaveFolder(null);
+              }}>
+                Quitter
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </aside>
   );
 }

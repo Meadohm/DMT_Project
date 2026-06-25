@@ -568,3 +568,20 @@
   display: flex;
   justify-content: center;
 }
+
+.btn-voir-plus {
+  width: 100%;
+  padding: 6px 10px;
+  background: rgba(108,99,255,0.1);
+  border: 1px dashed rgba(108,99,255,0.3);
+  color: #aab4c8;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  margin-top: 8px;
+  transition: all 0.2s;
+}
+.btn-voir-plus:hover {
+  background: rgba(108,99,255,0.2);
+  color: #6c63ff;
+}

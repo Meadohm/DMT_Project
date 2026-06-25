@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { getUserInfo } from "../services/fileService";
+import { leaveFolder } from "../services/folderService";
 import { checkTokenValidity } from "../services/authService";
 import {
   listFolders,
@@ -189,6 +190,24 @@ function DashboardEmploye() {
     setModalOpen(true);
   };
 
+  const handleLeaveFolder = async (folder) => {
+  try {
+    await leaveFolder(folder.id);
+    setFolders(prev => prev.filter(f => f.id !== folder.id));
+    setNotif({
+      type: "success",
+      title: "Succès",
+      message: `Vous avez quitté le dossier "${folder.nom}".`,
+    });
+    if (activeFolder?.id === folder.id) setActiveFolder(null);
+  } catch (err) {
+    setNotif({
+      type: "error",
+      title: "Erreur",
+      message: "⛔ Impossible de quitter ce dossier.",
+    });
+  }
+};
 
   const { notifications, refresh, setNotifications } = useNotifications();
 
@@ -395,6 +414,7 @@ const handleClearNotifications = async () => {
         onDeleteFolder={handleDeleteFolder}
         onShareFolder={handleShareFolder}
         onDeleteShared={handleDeleteSharedFolder}
+        onLeaveFolder={handleLeaveFolder}
         role="employe"
       />
 
