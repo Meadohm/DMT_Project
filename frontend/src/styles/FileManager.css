@@ -1999,3 +1999,13 @@ body.dark .folder-title {
   margin-top: 8px;
   display: block;
 }
+
+.badge-already-shared {
+  font-size: 0.7rem;
+  background: #22c55e;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-top: 2px;
+  display: block;
+}

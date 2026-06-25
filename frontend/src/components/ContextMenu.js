@@ -133,13 +133,15 @@ const ContextMenu = ({ onRename, onShare, onDelete, onLeave, anchorRef, onClose,
       {/* === Mode partagé (hérité de l'ancien code) === */}
       {mode === "shared" && (
         <>
-          <button onPointerDown={(e) => handleAction(onDelete, e)}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="3 6 5 6 21 6" />
-              <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m3-3h8a1 1 0 011 1v2H7V4a1 1 0 011-1z" />
-            </svg>
-            Supprimer
-          </button>
+          {onDelete && (
+            <button onPointerDown={(e) => handleAction(onDelete, e)}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m3-3h8a1 1 0 011 1v2H7V4a1 1 0 011-1z" />
+              </svg>
+              Supprimer
+            </button>
+          )}
 
           <button onPointerDown={(e) => handleAction(onLeave, e)}>
             🚪 Quitter ce dossier

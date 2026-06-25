@@ -26,6 +26,26 @@ function ShareModal({ folder, onClose, onConfirm }) {
     fetchUsers();
   }, []);
 
+  // Charger partages existants
+  useEffect(() => {
+    if (folder?.shares?.length > 0) {
+      const existingUsers = [];
+      const existingPerms = {};
+      folder.shares.forEach(share => {
+        existingUsers.push(share.user);
+        existingPerms[share.user.id] = {
+          read: share.can_read,
+          write: share.can_write,
+          update: share.can_update,
+          delete: share.can_delete,
+          delete_folder: share.can_delete_folder,
+        };
+      });
+      setSelectedUsers(existingUsers);
+      setPermissionsMap(existingPerms);
+    }
+  }, [folder]);
+
   // Sélection / désélection utilisateur
   const toggleUser = (user) => {
     if (selectedUsers.find((u) => u.id === user.id)) {
@@ -114,6 +134,9 @@ function ShareModal({ folder, onClose, onConfirm }) {
                   </div>
                 )}
                 <span>{user.username}</span>
+                {folder?.shares?.some(s => s.user?.id === user.id) && (
+                  <span className="badge-already-shared">✓ Accès actif</span>
+                )}
               </div>
             );
           })}
