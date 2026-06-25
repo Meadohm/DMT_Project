@@ -9,6 +9,7 @@ import {
   renameFolder,
   deleteFolder,
   shareFolder,
+  leaveFolder,
 } from "../services/folderService";
 import { updatePassword } from "../services/passwordService";
 import useTheme from "../hooks/useTheme";
@@ -301,6 +302,25 @@ function DashboardResponsable() {
     }
   };
 
+  const handleLeaveFolder = async (folder) => {
+    try {
+      await leaveFolder(folder.id);
+      setFolders(prev => prev.filter(f => f.id !== folder.id));
+      setNotif({
+        type: "success",
+        title: "Succès",
+        message: `Vous avez quitté le dossier "${folder.nom}".`,
+      });
+      if (activeFolder?.id === folder.id) setActiveFolder(null);
+    } catch (err) {
+      setNotif({
+        type: "error",
+        title: "Erreur",
+        message: "⛔ Impossible de quitter ce dossier.",
+      });
+    }
+  };
+
   const handleDeleteSharedFolder = async (folder) => {
     try {
       await deleteFolder(folder.id);
@@ -374,6 +394,7 @@ function DashboardResponsable() {
         onDeleteFolder={handleDeleteFolder}
         onShareFolder={handleShareFolder}
         onDeleteShared={handleDeleteSharedFolder}
+        onLeaveFolder={handleLeaveFolder}
         role="responsable"
       />
 
