@@ -1964,3 +1964,31 @@ def bulk_create_archive(request):
         "folders": results,
         "errors": errors
     }, status=status.HTTP_201_CREATED)
+
+@api_view(["POST"])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def leave_folder(request, folder_id):
+    try:
+        share = FolderShare.objects.get(folder_id=folder_id, user=request.user)
+    except FolderShare.DoesNotExist:
+        return Response({"error": "Partage introuvable."}, status=status.HTTP_404_NOT_FOUND)
+    folder_name = share.folder.nom
+    owner_username = share.folder.proprietaire.username
+    share.delete()
+    try:
+        utilisateur = Utilisateur.objects.get(username=request.user.username)
+        AuditLog.objects.create(
+            utilisateur=utilisateur,
+            action="DELETE",
+            objet=f"Quitter dossier partage : {folder_name}",
+            details=f"Dossier appartenant a {owner_username}",
+        )
+    except Exception:
+        pass
+    Notification.objects.create(
+        user=share.folder.proprietaire,
+        type="info",
+        message=f"{request.user.username} a quitté le dossier partagé {folder_name}.",
+    )
+    return Response({"message": f"Vous avez quitté le dossier {folder_name}."}, status=status.HTTP_200_OK)
