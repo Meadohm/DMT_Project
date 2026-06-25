@@ -49,7 +49,7 @@ function DashboardSidebar({
   const menuRefs = useRef({});
 
   return (
-    <aside className={`sidebar${collapsed ? " collapsed" : ""}`}>
+    <aside className={`sidebar${collapsed ? " collapsed" : ""}${role === "responsable" ? " sidebar-teal" : ""}`}>
       <div className="sidebar-top-fixed">
         <button
           className="sidebar-toggle"
