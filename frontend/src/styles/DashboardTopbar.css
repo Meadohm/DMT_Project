@@ -81,9 +81,23 @@
 .emp-topbar-search {
   width: 200px;
   max-width: 200px;
-  flex-shrink: 1;
-  min-width: 100px;
-  margin: 0 12px;
+  flex-shrink: 2;
+  min-width: 80px;
+  margin: 0 8px;
+}
+
+@media (max-width: 1440px) {
+  .emp-topbar-search {
+    width: 140px;
+    max-width: 140px;
+  }
+}
+
+@media (max-width: 1280px) {
+  .emp-topbar-search {
+    width: 110px;
+    max-width: 110px;
+  }
 }
 
 .emp-topbar-search-wrapper {
