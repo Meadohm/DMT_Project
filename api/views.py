@@ -1023,8 +1023,11 @@ def share_folder(request, folder_id):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # Supprimer les partages existants avant de recréer
-    FolderShare.objects.filter(folder=folder).delete()
+    # Garder trace des partages existants avant suppression
+    existing_user_ids = set(FolderShare.objects.filter(folder=folder).values_list('user_id', flat=True))
+    payload_user_ids = set(entry.get('user_id') for entry in payload)
+    # Supprimer les partages révoqués uniquement
+    FolderShare.objects.filter(folder=folder).exclude(user_id__in=payload_user_ids).delete()
 
     for entry in payload:
         user_id = entry.get("user_id")
@@ -1048,19 +1051,18 @@ def share_folder(request, folder_id):
             }
         )
 
-        # Créer une notification adaptée
-        if created:
+        # Notifier uniquement si nouveau partage
+        if user.id not in existing_user_ids:
             Notification.objects.create(
                 user=user,
                 type="share",
-                message=f"📂 Nouveau dossier partagé par {request.user.username} : {folder.nom}"
+                message=f"📂 Nouveau dossier partage par {request.user.username} : {folder.nom}"
             )
-
         else:
             Notification.objects.create(
                 user=user,
                 type="permission",
-                message=f"Permissions mises à jour pour le dossier : {folder.nom}"
+                message=f"✏️ Permissions mises a jour pour le dossier : {folder.nom}"
             )
 
     folder.is_shared = True
