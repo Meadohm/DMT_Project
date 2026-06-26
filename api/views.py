@@ -649,6 +649,9 @@ Consultez l\'onglet "Suppressions" dans le Journal d\'activité.'''
     except Exception as e:
         print(f'Erreur envoi email admins: {e}')
 
+@api_view(["DELETE"])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser])
 def delete_historique(request, log_id):
     try:
         log = AuditLog.objects.get(id=log_id)
