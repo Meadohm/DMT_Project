@@ -11,6 +11,7 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
   const [permissionsMap, setPermissionsMap] = useState({});
   const [existingShares, setExistingShares] = useState([]);
   const [revoking, setRevoking] = useState(null);
+  const [confirmRevokeShare, setConfirmRevokeShare] = useState(null);
 
   // Charger utilisateurs (sans admins)
   useEffect(() => {
@@ -112,6 +113,7 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
       console.error("❌ Erreur révocation", err);
     } finally {
       setRevoking(null);
+      setConfirmRevokeShare(null);
     }
   };
 
@@ -186,10 +188,10 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
                     </button>
                     <button
                       className="btn-revoke"
-                      onClick={() => handleRevokeShare(share)}
-                      disabled={revoking === share.user_id}
+                      onClick={() => setConfirmRevokeShare(share)}
+                      title="Révoquer l'accès de cet utilisateur"
                     >
-                      {revoking === share.user_id ? "⏳" : "🚫 Révoquer"}
+                      🚫 Révoquer
                     </button>
                   </div>
                 </div>
@@ -278,6 +280,29 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
           </button>
         </div>
       </div>
+
+      {confirmRevokeShare && (
+        <div className="archive-confirm-overlay">
+          <div className="archive-confirm-box">
+            <p>🚫 Révoquer l'accès de <strong>{confirmRevokeShare.username}</strong> ?</p>
+            <small style={{ color: "#888", display: "block", marginBottom: "16px" }}>
+              Cet utilisateur perdra immédiatement l'accès au dossier.
+            </small>
+            <div className="archive-confirm-actions">
+              <button className="btn-cancel-confirm" onClick={() => setConfirmRevokeShare(null)}>
+                Annuler
+              </button>
+              <button
+                className="btn-delete-confirm"
+                onClick={() => handleRevokeShare(confirmRevokeShare)}
+                disabled={revoking === confirmRevokeShare.user_id}
+              >
+                {revoking === confirmRevokeShare.user_id ? "⏳..." : "🚫 Confirmer révocation"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
