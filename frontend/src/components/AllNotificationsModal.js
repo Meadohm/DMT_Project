@@ -41,7 +41,7 @@ export default function AllNotificationsModal({ notifications, onClose, onRefres
           ) : (
             notifications
               .slice()
-              .reverse()
+              .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
               .map((n) => (
                 <div className={`notif-item${!n.is_read ? " unread" : ""}`} key={n.id}>
                   <div className="notif-body">
