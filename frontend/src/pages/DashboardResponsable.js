@@ -263,24 +263,19 @@ function DashboardResponsable() {
     setShareModalOpen(true);
   };
 
-  const confirmShare = async (shares) => {
+  const handleShareConfirm = async (payload, type = "new") => {
     try {
-      await shareFolder(currentFolder.id, shares);
+      await shareFolder(currentFolder.id, payload);
       await fetchFolders();
-      setNotif({
-        type: "success",
-        title: "Succès 🎉",
-        message: "Le dossier a été partagé avec succès."
-      });
-    } catch (err) {
-      console.error("❌ Erreur partage dossier", err);
-      setNotif({
-        type: "error",
-        title: "Erreur",
-        message: "⛔ Vous n'avez pas la permission de partager ce dossier."
-      });
-    } finally {
       setShareModalOpen(false);
+      if (type === "new") {
+        setNotif({ type: "success", title: "Succès", message: "📤 Dossier partagé avec succès." });
+      } else {
+        setNotif({ type: "success", title: "Succès", message: "💾 Permissions mises à jour." });
+      }
+    } catch (err) {
+      setNotif({ type: "error", title: "Erreur", message: "⛔ Erreur lors du partage." });
+    } finally {
       setCurrentFolder(null);
     }
   };
@@ -503,7 +498,7 @@ function DashboardResponsable() {
         <ShareModal
           folder={currentFolder}
           onClose={() => setShareModalOpen(false)}
-          onConfirm={confirmShare}
+          onConfirm={handleShareConfirm}
           onRevoke={async () => { await fetchFolders(); }}
         />
       )}
