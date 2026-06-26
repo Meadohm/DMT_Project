@@ -30,6 +30,8 @@
   display: flex;
   align-items: center;
   gap: 16px;
+  flex-shrink: 1;
+  min-width: 0;
 }
 
 .emp-topbar-welcome {
@@ -95,15 +97,36 @@
   .topbar-role-badge {
     max-width: none;
   }
+  .emp-topbar {
+    gap: 8px;
+  }
+}
+
+@media (max-width: 1366px) {
+  .emp-topbar-search {
+    width: 120px;
+    max-width: 120px;
+  }
+  .emp-topbar {
+    gap: 6px;
+  }
+  .topbar-role-badge {
+    font-size: 0.72em;
+    padding: 4px 10px;
+  }
+  .emp-topbar-left {
+    gap: 10px;
+  }
 }
 
 @media (max-width: 1280px) {
   .emp-topbar-search {
-    width: 110px;
-    max-width: 110px;
+    width: 100px;
+    max-width: 100px;
   }
   .topbar-role-badge {
     max-width: none;
+    font-size: 0.70em;
   }
 }
 
