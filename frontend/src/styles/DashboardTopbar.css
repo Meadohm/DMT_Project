@@ -82,17 +82,35 @@
 }
 
 .emp-topbar-search {
-  width: 200px;
-  max-width: 200px;
-  flex-shrink: 2;
-  min-width: 80px;
+  width: 32px;
+  max-width: 32px;
+  flex-shrink: 0;
   margin: 0 8px;
+  transition: width 0.25s ease, max-width 0.25s ease;
+}
+
+.emp-topbar-search.expanded {
+  width: 160px;
+  max-width: 160px;
+  flex-shrink: 2;
+}
+
+@media (max-width: 1366px) {
+  .emp-topbar-search.expanded {
+    width: 130px;
+    max-width: 130px;
+  }
+}
+
+@media (max-width: 1280px) {
+  .emp-topbar-search.expanded {
+    width: 110px;
+    max-width: 110px;
+  }
 }
 
 @media (max-width: 1440px) {
   .emp-topbar-search {
-    width: 140px;
-    max-width: 140px;
   }
   .topbar-role-badge {
     max-width: none;
@@ -104,8 +122,6 @@
 
 @media (max-width: 1366px) {
   .emp-topbar-search {
-    width: 120px;
-    max-width: 120px;
   }
   .emp-topbar {
     gap: 6px;
@@ -121,8 +137,6 @@
 
 @media (max-width: 1280px) {
   .emp-topbar-search {
-    width: 100px;
-    max-width: 100px;
   }
   .topbar-role-badge {
     max-width: none;
