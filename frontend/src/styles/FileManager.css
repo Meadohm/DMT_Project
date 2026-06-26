@@ -1850,6 +1850,20 @@ body.dark .folder-title {
   letter-spacing: 0.02em;
 }
 
+.topbar-role-badge {
+  display: block;
+  font-size: 0.7em;
+  opacity: 0.85;
+  background: rgba(255,255,255,0.15);
+  border-radius: 10px;
+  padding: 2px 8px;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
 .emp-topbar-right {
   display: flex;
   align-items: center;
@@ -2179,3 +2193,28 @@ body.dark .btn-save-perms { background: #1e3a5f; }
 }
 body.dark .share-modal-close { color: #aab4c8; }
 body.dark .share-modal-close:hover { background: #2b2f53; color: #ef4444; }
+
+.folder-title {
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  line-height: 1.4;
+}
+.folder-name-clickable {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: middle;
+}
+.shared-folder-info {
+  font-size: 0.78rem;
+  opacity: 0.8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}

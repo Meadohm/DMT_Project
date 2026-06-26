@@ -93,14 +93,13 @@ function DashboardTopbar({
           <div>
             <span className="emp-topbar-greeting">BIENVENUE,</span>
             <span className="emp-topbar-username">{userInfo.username}</span>
+            {role === "responsable" && (
+              <span className="topbar-role-badge">
+                🏢 {userInfo.service ? `Responsable · ${userInfo.service}` : "Responsable"}
+              </span>
+            )}
           </div>
         </div>
-
-        {role === "responsable" && (
-          <span className="topbar-role-badge">
-            🏢 {userInfo.service ? `Responsable · ${userInfo.service}` : "Responsable"}
-          </span>
-        )}
       </div>
 
       {/* ——— CENTRE : recherche ——— */}
