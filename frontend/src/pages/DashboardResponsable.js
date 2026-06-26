@@ -259,6 +259,7 @@ function DashboardResponsable() {
   const confirmShare = async (shares) => {
     try {
       await shareFolder(currentFolder.id, shares);
+      await fetchFolders();
       setNotif({
         type: "success",
         title: "Succès 🎉",
@@ -494,6 +495,7 @@ function DashboardResponsable() {
           folder={currentFolder}
           onClose={() => setShareModalOpen(false)}
           onConfirm={confirmShare}
+          onRevoke={async () => { await fetchFolders(); }}
         />
       )}
 

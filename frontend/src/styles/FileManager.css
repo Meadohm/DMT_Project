@@ -2100,3 +2100,25 @@ body.dark .btn-toggle-all {
 .btn-save-perms:hover { background: #00509e; }
 body.dark .share-zone-footer { border-top-color: #2d3555; }
 body.dark .btn-save-perms { background: #1e3a5f; }
+
+.share-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.share-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: #666;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+.share-modal-close:hover {
+  background: #f1f5f9;
+  color: #ef4444;
+}
+body.dark .share-modal-close { color: #aab4c8; }
+body.dark .share-modal-close:hover { background: #2b2f53; color: #ef4444; }

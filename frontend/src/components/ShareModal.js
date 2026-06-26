@@ -4,7 +4,7 @@ import "../styles/FileManager.css";
 //import "../styles/ShareModal.css";
 import API_BASE_URL from "../config";
 
-function ShareModal({ folder, onClose, onConfirm }) {
+function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -106,6 +106,7 @@ function ShareModal({ folder, onClose, onConfirm }) {
       });
       if (res.ok) {
         setExistingShares(prev => prev.filter(s => s.user_id !== share.user_id));
+        if (onRevoke) await onRevoke();
       }
     } catch (err) {
       console.error("❌ Erreur révocation", err);
@@ -151,7 +152,10 @@ function ShareModal({ folder, onClose, onConfirm }) {
   return (
     <div className="modal-overlay">
       <div className="modal-content share-modal">
-        <h3>📤 Partager : <span className="highlight">{folder.nom}</span></h3>
+        <div className="share-modal-header">
+          <h3>📤 Partager : <span className="highlight">{folder.nom}</span></h3>
+          <button className="share-modal-close" onClick={onClose} title="Fermer">✖</button>
+        </div>
 
         {/* Zone 1 — Accès actifs */}
         {existingShares.length > 0 && (

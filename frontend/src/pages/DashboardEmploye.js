@@ -297,6 +297,7 @@ const handleClearNotifications = async () => {
   const confirmShare = async (payload, type = "new") => {
     try {
       await shareFolder(currentFolder.id, payload);
+      await fetchFolders();
       setFolders(prev => prev.map(f => f.id === currentFolder.id ? { ...f, is_shared: true } : f));
       if (type === "new") {
         setNotif({ type: "success", title: "Succès", message: "📤 Dossier partagé avec succès." });
@@ -513,6 +514,7 @@ const handleClearNotifications = async () => {
           folder={currentFolder}
           onClose={() => setShareModalOpen(false)}
           onConfirm={confirmShare}
+          onRevoke={async () => { await fetchFolders(); }}
         />
       )}
 
