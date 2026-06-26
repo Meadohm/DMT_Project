@@ -95,6 +95,9 @@ function AdminPanel() {
   const [confirmClearAll, setConfirmClearAll] = useState(false);
   const [dateDebut, setDateDebut] = useState('');
   const [dateFin, setDateFin] = useState('');
+  const [auditDeletions, setAuditDeletions] = useState([]);
+  const [deletionsLoading, setDeletionsLoading] = useState(false);
+  const [journalTab, setJournalTab] = useState("journal");
   const [tooltip, setTooltip] = useState(null);
   const [showCreateServiceModal, setShowCreateServiceModal] = useState(false);
   const [confirmDeleteServiceId, setConfirmDeleteServiceId] = useState(null);
@@ -221,6 +224,21 @@ function AdminPanel() {
       localStorage.setItem('historiquePage', page);
     } catch (e) {
       console.error('Erreur historique', e);
+    }
+  };
+
+  const fetchAuditDeletions = async () => {
+    setDeletionsLoading(true);
+    try {
+      const token = getToken();
+      const res = await axios.get(`${API_BASE_URL}/historique/deletions/`, {
+        headers: { Authorization: `Token ${token}` },
+      });
+      setAuditDeletions(res.data);
+    } catch (e) {
+      console.error('Erreur suppressions journal', e);
+    } finally {
+      setDeletionsLoading(false);
     }
   };
 
@@ -702,6 +720,25 @@ function AdminPanel() {
               <h2>Journal d'activité</h2>
               <span className="user-count-badge">{historiqueTotal} entrée{historiqueTotal !== 1 ? 's' : ''}</span>
             </div>
+
+            {/* Onglets journal */}
+            <div className="journal-tabs">
+              <button
+                className={`journal-tab${journalTab === "journal" ? " active" : ""}`}
+                onClick={() => setJournalTab("journal")}
+              >
+                📋 Journal ({historiqueTotal})
+              </button>
+              <button
+                className={`journal-tab${journalTab === "suppressions" ? " active" : ""}`}
+                onClick={() => { setJournalTab("suppressions"); fetchAuditDeletions(); }}
+              >
+                🔍 Suppressions {auditDeletions.length > 0 && <span className="tab-badge-red">{auditDeletions.length}</span>}
+              </button>
+            </div>
+
+            {journalTab === "journal" && (
+              <>
             <div className="historique-filters">
               <input
                 className="historique-search"
@@ -854,6 +891,49 @@ function AdminPanel() {
                     <button className="btn-cancel" onClick={() => setConfirmClearAll(false)}>Annuler</button>
                   </div>
                 </div>
+              </div>
+            )}
+              </>
+            )}
+
+            {journalTab === "suppressions" && (
+              <div className="audit-deletions-section">
+                {deletionsLoading ? (
+                  <p>Chargement...</p>
+                ) : auditDeletions.length === 0 ? (
+                  <p className="no-data">✅ Aucune suppression enregistrée.</p>
+                ) : (
+                  <div className="users-table-wrapper">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Admin</th>
+                          <th>Log supprimé</th>
+                          <th>Utilisateur concerné</th>
+                          <th>Action supprimée</th>
+                          <th>Objet</th>
+                          <th>Date suppression</th>
+                          <th>IP</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {auditDeletions.map((d, idx) => (
+                          <tr key={d.id}>
+                            <td>{idx + 1}</td>
+                            <td><span className="badge-admin">👑 {d.admin}</span></td>
+                            <td><span className="badge-log-id">#{d.deleted_log_id}</span></td>
+                            <td>{d.deleted_utilisateur || "—"}</td>
+                            <td><span className={`action-badge action-${d.deleted_action?.toLowerCase()}`}>{d.deleted_action}</span></td>
+                            <td>{d.deleted_objet}</td>
+                            <td>{new Date(d.deleted_at).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })}</td>
+                            <td><code>{d.adresse_ip || "—"}</code></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
             )}
           </>

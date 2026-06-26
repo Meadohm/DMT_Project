@@ -1,6 +1,5 @@
 /* src/styles/AdminPanel.css */
-
-/* ── Layout ────────────────────────────────────────────── */
+/* Layout  */
 .admin-panel-container {
   display: flex;
   min-height: 100vh;
@@ -8,7 +7,7 @@
   color: #333;
 }
 
-/* ── Sidebar ────────────────────────────────────────────── */
+/* Sidebar */
 .admin-sidebar {
   width: 220px;
   background: linear-gradient(180deg, #003366, #00509e);
@@ -69,7 +68,7 @@
   background-color: #c82333 !important;
 }
 
-/* ── Content area ───────────────────────────────────────── */
+/* Content area */
 .admin-content {
   flex: 1;
   padding: 20px 16px;
@@ -94,7 +93,7 @@
   padding-bottom: 5px;
 }
 
-/* ── Global table styles ────────────────────────────────── */
+/* Global table styles */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -129,7 +128,7 @@ tbody tr:hover {
   cursor: pointer;
 }
 
-/* ── Global button styles ───────────────────────────────── */
+/* Global button styles */
 button {
   transition: all 0.3s;
 }
@@ -142,7 +141,7 @@ button:active {
   transform: scale(1);
 }
 
-/* ── Search bar ─────────────────────────────────────────── */
+/* Search bar */
 .admin-search-bar {
   margin: 20px 0;
   text-align: center;
@@ -163,7 +162,7 @@ button:active {
   outline: none;
 }
 
-/* ── User table action buttons ──────────────────────────── */
+/* User table action buttons */
 .reset-password-button,
 .delete-user-button,
 .edit-user-button {
@@ -199,7 +198,7 @@ button:active {
   background-color: #c82333;
 }
 
-/* ── Register form ──────────────────────────────────────── */
+/* Register form */
 .admin-register-container {
   background-color: #f9f9f9;
   padding: 20px;
@@ -218,7 +217,7 @@ button:active {
   margin-bottom: 12px;
 }
 
-/* ── Account section ────────────────────────────────────── */
+/* Account section */
 .account-info {
   background-color: #f9f9f9;
   padding: 20px;
@@ -256,7 +255,7 @@ button:active {
   border-radius: 4px;
 }
 
-/* ── Reset password modal ───────────────────────────────── */
+/* Reset password modal */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -323,7 +322,7 @@ button:active {
   background-color: #0056b3;
 }
 
-/* ── Error box ──────────────────────────────────────────── */
+/* Error box */
 .error-box {
   background-color: #f8d7da;
   color: #721c24;
@@ -360,7 +359,7 @@ button:active {
   }
 }
 
-/* ── Section header ────────────────────────────────────── */
+/* Section header */
 .section-header {
   display: flex;
   align-items: center;
@@ -380,7 +379,7 @@ button:active {
   font-weight: 600;
 }
 
-/* ── Status badges ─────────────────────────────────────── */
+/* Status badges */
 .status-badge {
   display: inline-block;
   padding: 3px 10px;
@@ -396,7 +395,7 @@ button:active {
 .status-badge.old       { background: #f0f0f0; color: #555; }
 .status-badge.inactive  { background: #f8d7da; color: #721c24; }
 
-/* ── Table wrapper ─────────────────────────────────────── */
+/* Table wrapper */
 .users-table-wrapper {
   overflow-x: auto;
   border-radius: 8px;
@@ -409,7 +408,7 @@ button:active {
   border: 1px solid #007bff; border-radius: 4px;
 }
 
-/* ── Inline action buttons ─────────────────────────────── */
+/* Inline action buttons */
 .btn-save {
   background: #28a745; color: white; border: none;
   padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-right: 5px;
@@ -428,13 +427,13 @@ button:active {
 }
 .btn-danger:hover { background: #c82333; }
 
-/* ── Modal actions row ─────────────────────────────────── */
+/* Modal actions row */
 .modal-actions {
   display: flex; gap: 12px;
   justify-content: center; margin-top: 20px;
 }
 
-/* ── Responsive ────────────────────────────────────────── */
+/* Responsive */
 @media (max-width: 1024px) {
   .admin-sidebar { width: 200px; }
   .admin-content { padding: 20px; }
@@ -496,7 +495,7 @@ button:active {
   }
 }
 
-/* ── Actions column — boutons compacts ─────────────────── */
+/* Actions column — boutons compacts */
 td:last-child {
   white-space: nowrap;
   min-width: 180px;
@@ -513,7 +512,7 @@ td:last-child {
   white-space: nowrap;
 }
 
-/* ── Tableau scrollable sans bouger la page ────────────── */
+/* Tableau scrollable sans bouger la page */
 .users-table-wrapper {
   max-height: 65vh;
   overflow-y: auto;
@@ -533,7 +532,7 @@ td:last-child {
   cursor: not-allowed;
 }
 
-/* ── Register form ──────────────────────────────────────── */
+/* Register form */
 .register-section {
   width: 100%;
   display: flex;
@@ -623,7 +622,7 @@ td:last-child {
   font-size: 0.95em;
 }
 
-/* ── Register form actions ──────────────────────────────── */
+/* Register form actions */
 .register-form-actions {
   display: flex;
   gap: 12px;
@@ -631,7 +630,7 @@ td:last-child {
   justify-content: center;
 }
 
-/* ── Welcome banner ─────────────────────────────────────── */
+/* Welcome banner */
 .welcome-banner {
   display: flex;
   align-items: center;
@@ -683,7 +682,7 @@ td:last-child {
   max-width: 200px;
 }
 
-/* ── Sidebar bottom (logo + logout) ────────────────────── */
+/* Sidebar bottom (logo + logout) */
 .sidebar-bottom {
   margin-top: auto;
   display: flex;
@@ -700,7 +699,7 @@ td:last-child {
   filter: brightness(1.1);
 }
 
-/* ── Top bar ────────────────────────────────────────────── */
+/* Top bar */
 .admin-topbar {
   display: flex;
   align-items: center;
@@ -785,7 +784,7 @@ td:last-child {
   border-color: transparent;
 }
 
-/* ── Sticky columns # + Nom ─────────────────────────────── */
+/* Sticky columns # + Nom */
 .users-table-wrapper th:nth-child(1) {
   position: sticky;
   left: 0;
@@ -868,7 +867,7 @@ td:last-child {
   margin-bottom: 20px;
 }
 
-/* ── Toast notification ──────────────────────────────────── */
+/* Toast notification */
 .toast-notification {
   position: fixed;
   bottom: 28px;
@@ -916,7 +915,7 @@ td:last-child {
   text-align: center;
 }
 
-/* ── Sidebar toggle ──────────────────────────────────────── */
+/* Sidebar toggle */
 .sidebar-toggle {
   border: none;
   color: white;
@@ -982,7 +981,7 @@ td:last-child {
   transition: width 0.25s ease, padding 0.25s ease;
 }
 
-/* ── Center table cells content ─────────────────────────── */
+/* Center table cells content */
 .users-table-wrapper td {
   text-align: center;
   vertical-align: middle;
@@ -997,7 +996,7 @@ td:last-child {
   text-align: left;
 }
 
-/* ── Historique filters ──────────────────────────────────── */
+/* Historique filters */
 .historique-filters {
   display: flex;
   gap: 12px;
@@ -1031,7 +1030,7 @@ td:last-child {
   box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
 }
 
-/* ── Action badges ───────────────────────────────────────── */
+/* Action badges */
 .action-badge {
   display: inline-block;
   padding: 3px 10px;
@@ -1047,7 +1046,7 @@ td:last-child {
 .action-upload  { background: #e2d9f3; color: #4a235a; }
 .action-share   { background: #fde8c8; color: #7a4800; }
 
-/* ── Objet cell ──────────────────────────────────────────── */
+/* Objet cell */
 .objet-cell {
   max-width: 250px;
   text-align: left;
@@ -1063,7 +1062,7 @@ td:last-child {
   cursor: default;
 }
 
-/* ── Pagination ──────────────────────────────────────────── */
+/* Pagination */
 .pagination {
   display: flex;
   align-items: center;
@@ -1136,7 +1135,7 @@ td:last-child {
   white-space: nowrap;
 }
 
-/* ── Account section ────────────────────────────────────── */
+/* Account section */
 .account-section { max-width: 800px; }
 
 .account-layout {
@@ -1217,7 +1216,7 @@ td:last-child {
   gap: 12px;
 }
 
-/* ── Dashboard grid ──────────────────────────────────────── */
+/* Dashboard grid */
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -1371,4 +1370,59 @@ tr.user-inactive {
 
 tr.user-inactive td {
   color: #999 !important;
+}
+
+.journal-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 0;
+}
+.journal-tab {
+  padding: 8px 18px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #666;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.journal-tab.active {
+  color: #003366;
+  border-bottom-color: #003366;
+  font-weight: 700;
+}
+.tab-badge-red {
+  background: #ef4444;
+  color: white;
+  border-radius: 10px;
+  padding: 1px 7px;
+  font-size: 0.75rem;
+}
+.badge-admin {
+  background: #fef3c7;
+  color: #92400e;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+}
+.badge-log-id {
+  background: #e0e7ff;
+  color: #3730a3;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-family: monospace;
+}
+.no-data {
+  text-align: center;
+  padding: 40px;
+  color: #666;
 }
