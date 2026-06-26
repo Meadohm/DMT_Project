@@ -43,9 +43,11 @@ function DashboardTopbar({
 }) {
   const [notifOpen, setNotifOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
+  const [searchExpanded, setSearchExpanded] = useState(false);
 
   const notifRef = useRef(null);
   const accountRef = useRef(null);
+  const searchRef = useRef(null);
 
   const unreadCount = notifications.filter((n) => !n.is_read).length;
 
@@ -57,6 +59,9 @@ function DashboardTopbar({
       }
       if (accountRef.current && !accountRef.current.contains(e.target)) {
         setAccountOpen(false);
+      }
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setSearchExpanded(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -99,29 +104,31 @@ function DashboardTopbar({
       </div>
 
       {/* ——— CENTRE : recherche ——— */}
-      <div className="emp-topbar-search">
+      <div
+        ref={searchRef}
+        className={`emp-topbar-search${searchExpanded ? " expanded" : ""}`}
+      >
         <div className="emp-topbar-search-wrapper">
-          <svg
+          <span
             className="emp-topbar-search-icon"
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="white"
-            strokeWidth="2"
+            onClick={() => {
+              setSearchExpanded(true);
+              setTimeout(() => searchRef.current?.querySelector("input")?.focus(), 50);
+            }}
+            style={{ cursor: "pointer" }}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
-            />
-          </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"
+              stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </span>
           <input
             type="text"
             placeholder="Rechercher un dossier..."
             value={searchTerm}
             onChange={(e) => onSearch(e.target.value)}
+            onKeyDown={(e) => e.key === "Escape" && setSearchExpanded(false)}
+            style={{ display: searchExpanded ? "block" : "none" }}
           />
         </div>
       </div>
