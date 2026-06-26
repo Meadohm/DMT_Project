@@ -1,14 +1,17 @@
-// src/components/ShareModal.js 
+// src/components/ShareModal.js
 import React, { useEffect, useState } from "react";
-import "../styles/FileManager.css";
-import API_BASE_URL from "../config"; //centralisation URL API
+import "../styles/ShareModal.css";
+import API_BASE_URL from "../config";
 
 function ShareModal({ folder, onClose, onConfirm }) {
   const [users, setUsers] = useState([]);
+  const [search, setSearch] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [permissionsMap, setPermissionsMap] = useState({});
+  const [existingShares, setExistingShares] = useState([]);
+  const [revoking, setRevoking] = useState(null);
 
-  // Charger utilisateurs
+  // Charger utilisateurs (sans admins)
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -29,186 +32,193 @@ function ShareModal({ folder, onClose, onConfirm }) {
   // Charger partages existants
   useEffect(() => {
     if (folder?.shares?.length > 0) {
-      const existingUsers = [];
-      const existingPerms = {};
-      folder.shares.forEach(share => {
-        if (!share?.user_id) return;
-        existingUsers.push({ id: share.user_id, username: share.username });
-        existingPerms[share.user_id] = {
-          read: share.can_read ?? true,
-          write: share.can_write ?? false,
-          update: share.can_update ?? false,
-          delete: share.can_delete ?? false,
-          delete_folder: share.can_delete_folder ?? false,
-        };
-      });
-      setSelectedUsers(existingUsers);
-      setPermissionsMap(existingPerms);
+      setExistingShares(folder.shares);
     }
   }, [folder]);
 
-  // Sélection / désélection utilisateur
+  const existingUserIds = existingShares.map(s => s.user_id);
+
+  // Filtrer utilisateurs sans accès + recherche
+  const availableUsers = users.filter(u =>
+    !existingUserIds.includes(u.id) &&
+    u.username.toLowerCase().includes(search.toLowerCase())
+  );
+
   const toggleUser = (user) => {
-    if (selectedUsers.find((u) => u.id === user.id)) {
-      setSelectedUsers(selectedUsers.filter((u) => u.id !== user.id));
-      const updated = { ...permissionsMap };
-      delete updated[user.id];
-      setPermissionsMap(updated);
+    if (selectedUsers.find(u => u.id === user.id)) {
+      setSelectedUsers(prev => prev.filter(u => u.id !== user.id));
+      setPermissionsMap(prev => { const p = { ...prev }; delete p[user.id]; return p; });
     } else {
-      setSelectedUsers([...selectedUsers, user]);
-      setPermissionsMap({
-        ...permissionsMap,
-        [user.id]: {
-          read: true,
-          write: false,
-          update: false,
-          delete: false,
-          delete_folder: false,
-        },
-      });
+      setSelectedUsers(prev => [...prev, user]);
+      setPermissionsMap(prev => ({
+        ...prev,
+        [user.id]: { write: false, update: false, delete: false, delete_folder: false },
+      }));
     }
   };
 
-  // Modifier permissions utilisateur
   const togglePermission = (userId, perm) => {
-    setPermissionsMap((prev) => ({
+    setPermissionsMap(prev => ({
       ...prev,
       [userId]: { ...prev[userId], [perm]: !prev[userId][perm] },
     }));
   };
 
-  const handleConfirm = () => {
-    if (selectedUsers.length === 0) {
-      alert("⚠️ Veuillez sélectionner au moins un utilisateur.");
-      return;
+  // Modifier permissions utilisateur existant
+  const updateExistingPerm = (share, perm) => {
+    setExistingShares(prev => prev.map(s =>
+      s.user_id === share.user_id ? { ...s, [perm]: !s[perm] } : s
+    ));
+  };
+
+  const handleRevokeShare = async (share) => {
+    setRevoking(share.user_id);
+    try {
+      const res = await fetch(`${API_BASE_URL}/shares/${share.id}/revoke/`, {
+        method: "DELETE",
+        headers: { Authorization: `Token ${localStorage.getItem("token")}` },
+      });
+      if (res.ok) {
+        setExistingShares(prev => prev.filter(s => s.user_id !== share.user_id));
+      }
+    } catch (err) {
+      console.error("❌ Erreur révocation", err);
+    } finally {
+      setRevoking(null);
     }
-    const payload = selectedUsers.map((user) => ({
+  };
+
+  const handleConfirm = () => {
+    // Nouveaux partages
+    const newPayload = selectedUsers.map(user => ({
       user_id: user.id,
-      permissions: permissionsMap[user.id],
+      permissions: { read: true, ...permissionsMap[user.id] },
     }));
-    onConfirm(payload);
+    // Modifications des existants
+    const existingPayload = existingShares.map(share => ({
+      user_id: share.user_id,
+      permissions: {
+        read: true,
+        write: share.can_write,
+        update: share.can_update,
+        delete: share.can_delete,
+        delete_folder: share.can_delete_folder,
+      },
+    }));
+    onConfirm([...existingPayload, ...newPayload]);
+  };
+
+  const PERM_LABELS = {
+    can_write: "✏️ Ajouter fichiers",
+    can_update: "🔄 Renommer fichiers",
+    can_delete: "🗑️ Supprimer fichiers",
+    can_delete_folder: "📁 Supprimer dossier",
   };
 
   return (
     <div className="modal-overlay">
       <div className="modal-content share-modal">
-        <h3>
-          📤 Partager le dossier :{" "}
-          <span className="highlight">{folder.nom}</span>
-        </h3>
-        <p>
-          Sélectionnez un ou plusieurs utilisateurs et attribuez leurs
-          autorisations :
-        </p>
+        <h3>📤 Partager : <span className="highlight">{folder.nom}</span></h3>
 
-        {/* Liste utilisateurs */}
-        <div className="user-list">
-          {users.map((user) => {
-            const isActive = selectedUsers.find((u) => u.id === user.id);
-            return (
-              <div
-                key={user.id}
-                className={`user-item ${isActive ? "active" : ""}`}
-                onClick={() => toggleUser(user)}
-              >
-                {user.avatar ? (
-                  <img
-                    src={user.avatar}
-                    alt={user.username}
-                    className="user-avatar small"
-                  />
-                ) : (
-                  <div className="user-avatar small svg-avatar">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 1115 0v.75H4.5v-.75z"
+        {/* Zone 1 — Accès actifs */}
+        {existingShares.length > 0 && (
+          <div className="share-zone">
+            <h4 className="share-zone-title">👥 Accès actifs ({existingShares.length})</h4>
+            {existingShares.map(share => (
+              <div key={share.user_id} className="existing-share-item">
+                <div className="existing-share-header">
+                  <span className="existing-share-username">👤 {share.username}</span>
+                  <button
+                    className="btn-revoke"
+                    onClick={() => handleRevokeShare(share)}
+                    disabled={revoking === share.user_id}
+                    title="Révoquer l'accès"
+                  >
+                    {revoking === share.user_id ? "⏳" : "🚫 Révoquer"}
+                  </button>
+                </div>
+                <div className="existing-share-perms">
+                  {Object.keys(PERM_LABELS).map(perm => (
+                    <label key={perm} className="checkbox-modern small">
+                      <input
+                        type="checkbox"
+                        checked={share[perm] || false}
+                        onChange={() => updateExistingPerm(share, perm)}
                       />
-                    </svg>
-                  </div>
-                )}
-                <span>{user.username}</span>
-                {folder?.shares?.some(s => s.user_id === user.id) && (
-                  <span className="badge-already-shared">✓ Accès actif</span>
-                )}
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Permissions par utilisateur sélectionné */}
-        {selectedUsers.length > 0 && (
-          <div className="permissions-grid">
-            {selectedUsers.map((user) => (
-              <div key={user.id} className="permission-block">
-                <h4>{user.username}</h4>
-                {Object.keys(permissionsMap[user.id] || {}).map((perm) => (
-                  <label key={perm} className="checkbox-modern">
-                    <input
-                      type="checkbox"
-                      checked={permissionsMap[user.id][perm]}
-                      onChange={() => togglePermission(user.id, perm)}
-                    />
-                    <span className="checkmark"></span>
-                    {perm === "read" && "Lecture"}
-                    {perm === "write" && "Ajouter des fichiers"}
-                    {perm === "update" && "Renommer le fichier"}
-                    {perm === "delete" && "Supprimer fichiers"}
-                    {perm === "delete_folder" && "Supprimer dossier"}
-                  </label>
-                ))}
+                      <span>{PERM_LABELS[perm]}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
         )}
 
-        {/* Boutons centrés avec hover distinct */}
-        <div className="modal-actions centered">
-          <button className="cancel-btn" onClick={onClose}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="icon-inline"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              width="18"
-              height="18"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-            Annuler
-          </button>
+        {/* Zone 2 — Ajouter accès */}
+        <div className="share-zone">
+          <h4 className="share-zone-title">➕ Ajouter un accès</h4>
+          <input
+            className="share-search"
+            placeholder="🔍 Rechercher un utilisateur..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+          <div className="user-list">
+            {availableUsers.length === 0 ? (
+              <p className="no-users-msg">Aucun utilisateur disponible.</p>
+            ) : availableUsers.map(user => {
+              const isSelected = selectedUsers.find(u => u.id === user.id);
+              return (
+                <div
+                  key={user.id}
+                  className={`user-item ${isSelected ? "active" : ""}`}
+                  onClick={() => toggleUser(user)}
+                >
+                  <div className="user-avatar small svg-avatar">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 1115 0v.75H4.5v-.75z" />
+                    </svg>
+                  </div>
+                  <span>{user.username}</span>
+                  {isSelected && <span className="badge-selected">✓</span>}
+                </div>
+              );
+            })}
+          </div>
 
-          <button className="confirm-btn" onClick={handleConfirm}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="icon-inline"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              width="18"
-              height="18"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-            Partager
+          {/* Permissions nouveaux utilisateurs */}
+          {selectedUsers.length > 0 && (
+            <div className="permissions-grid">
+              {selectedUsers.map(user => (
+                <div key={user.id} className="permission-block">
+                  <h4>👤 {user.username}</h4>
+                  {Object.keys(PERM_LABELS).map(perm => {
+                    const permKey = perm.replace('can_', '');
+                    return (
+                      <label key={perm} className="checkbox-modern">
+                        <input
+                          type="checkbox"
+                          checked={permissionsMap[user.id]?.[permKey] || false}
+                          onChange={() => togglePermission(user.id, permKey)}
+                        />
+                        <span>{PERM_LABELS[perm]}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="modal-actions centered">
+          <button className="cancel-btn" onClick={onClose}>✖ Annuler</button>
+          <button
+            className="confirm-btn"
+            onClick={handleConfirm}
+            disabled={selectedUsers.length === 0 && existingShares.length === 0}
+          >
+            ✓ Confirmer
           </button>
         </div>
       </div>
