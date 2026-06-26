@@ -2063,3 +2063,19 @@ body.dark .share-search {
   color: #e6e8f0;
   border-color: #2d3555;
 }
+
+.btn-toggle-all {
+  background: #e0e7ff;
+  color: #3730a3;
+  border: none;
+  padding: 3px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.btn-toggle-all:hover { background: #c7d2fe; }
+body.dark .btn-toggle-all {
+  background: #2b2f53;
+  color: #a5b4fc;
+}

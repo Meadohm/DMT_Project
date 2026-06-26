@@ -74,6 +74,22 @@ function ShareModal({ folder, onClose, onConfirm }) {
     }));
   };
 
+  const toggleAllPerms = (userId) => {
+    const current = permissionsMap[userId] || {};
+    const allChecked = Object.keys(PERM_LABELS).every(p => current[p]);
+    const newPerms = Object.keys(PERM_LABELS).reduce((acc, p) => ({ ...acc, [p]: !allChecked }), {});
+    setPermissionsMap(prev => ({ ...prev, [userId]: newPerms }));
+  };
+
+  const toggleAllExistingPerms = (share) => {
+    const allChecked = Object.keys(PERM_LABELS).every(p => share[p]);
+    setExistingShares(prev => prev.map(s =>
+      s.user_id === share.user_id
+        ? { ...s, ...Object.keys(PERM_LABELS).reduce((acc, p) => ({ ...acc, [p]: !allChecked }), {}) }
+        : s
+    ));
+  };
+
   // Modifier permissions utilisateur existant
   const updateExistingPerm = (share, perm) => {
     setExistingShares(prev => prev.map(s =>
@@ -138,14 +154,22 @@ function ShareModal({ folder, onClose, onConfirm }) {
               <div key={share.user_id} className="existing-share-item">
                 <div className="existing-share-header">
                   <span className="existing-share-username">👤 {share.username}</span>
-                  <button
-                    className="btn-revoke"
-                    onClick={() => handleRevokeShare(share)}
-                    disabled={revoking === share.user_id}
-                    title="Révoquer l'accès"
-                  >
-                    {revoking === share.user_id ? "⏳" : "🚫 Révoquer"}
-                  </button>
+                  <div style={{ display: "flex", gap: "6px" }}>
+                    <button
+                      className="btn-toggle-all"
+                      onClick={() => toggleAllExistingPerms(share)}
+                      title="Tout cocher / décocher"
+                    >
+                      {Object.keys(PERM_LABELS).every(p => share[p]) ? "☐ Tout décocher" : "☑ Tout cocher"}
+                    </button>
+                    <button
+                      className="btn-revoke"
+                      onClick={() => handleRevokeShare(share)}
+                      disabled={revoking === share.user_id}
+                    >
+                      {revoking === share.user_id ? "⏳" : "🚫 Révoquer"}
+                    </button>
+                  </div>
                 </div>
                 <div className="existing-share-perms">
                   {Object.keys(PERM_LABELS).map(perm => (
@@ -198,7 +222,12 @@ function ShareModal({ folder, onClose, onConfirm }) {
             <div className="permissions-grid">
               {selectedUsers.map(user => (
                 <div key={user.id} className="permission-block">
-                  <h4>👤 {user.username}</h4>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                    <h4>👤 {user.username}</h4>
+                    <button className="btn-toggle-all" onClick={() => toggleAllPerms(user.id)}>
+                      {Object.keys(PERM_LABELS).every(p => permissionsMap[user.id]?.[p]) ? "☐ Tout décocher" : "☑ Tout cocher"}
+                    </button>
+                  </div>
                   {Object.keys(PERM_LABELS).map(perm => (
                     <label key={perm} className="checkbox-modern">
                       <input type="checkbox" checked={permissionsMap[user.id]?.[perm] || false} onChange={() => togglePermission(user.id, perm)} />
