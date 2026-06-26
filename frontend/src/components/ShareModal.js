@@ -130,6 +130,7 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
         },
       }));
       await onConfirm(existingPayload, "update");
+      onClose();
     } catch (err) {
       console.error("❌ Erreur sauvegarde permissions", err);
     }
