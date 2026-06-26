@@ -33,7 +33,16 @@ function ShareModal({ folder, onClose, onConfirm }) {
   // Charger partages existants
   useEffect(() => {
     if (folder?.shares?.length > 0) {
-      setExistingShares(folder.shares);
+      const mapped = folder.shares.map(s => ({
+        id: s.id,
+        user_id: s.user_id,
+        username: s.username,
+        write: s.can_write,
+        update: s.can_update,
+        delete: s.can_delete,
+        delete_folder: s.can_delete_folder,
+      }));
+      setExistingShares(mapped);
     }
   }, [folder]);
 
@@ -100,20 +109,20 @@ function ShareModal({ folder, onClose, onConfirm }) {
       user_id: share.user_id,
       permissions: {
         read: true,
-        write: share.can_write,
-        update: share.can_update,
-        delete: share.can_delete,
-        delete_folder: share.can_delete_folder,
+        write: share.write,
+        update: share.update,
+        delete: share.delete,
+        delete_folder: share.delete_folder,
       },
     }));
     onConfirm([...existingPayload, ...newPayload]);
   };
 
   const PERM_LABELS = {
-    can_write: "✏️ Ajouter fichiers",
-    can_update: "🔄 Renommer fichiers",
-    can_delete: "🗑️ Supprimer fichiers",
-    can_delete_folder: "📁 Supprimer dossier",
+    write: "✏️ Ajouter fichiers",
+    update: "🔄 Renommer fichiers",
+    delete: "🗑️ Supprimer fichiers",
+    delete_folder: "📁 Supprimer dossier",
   };
 
   return (
@@ -193,19 +202,16 @@ function ShareModal({ folder, onClose, onConfirm }) {
               {selectedUsers.map(user => (
                 <div key={user.id} className="permission-block">
                   <h4>👤 {user.username}</h4>
-                  {Object.keys(PERM_LABELS).map(perm => {
-                    const permKey = perm.replace('can_', '');
-                    return (
-                      <label key={perm} className="checkbox-modern">
-                        <input
-                          type="checkbox"
-                          checked={permissionsMap[user.id]?.[permKey] || false}
-                          onChange={() => togglePermission(user.id, permKey)}
-                        />
-                        <span>{PERM_LABELS[perm]}</span>
-                      </label>
-                    );
-                  })}
+                  {Object.keys(PERM_LABELS).map(perm => (
+                    <label key={perm} className="checkbox-modern">
+                      <input
+                        type="checkbox"
+                        checked={permissionsMap[user.id]?.[perm] || false}
+                        onChange={() => togglePermission(user.id, perm)}
+                      />
+                      <span>{PERM_LABELS[perm]}</span>
+                    </label>
+                  ))}
                 </div>
               ))}
             </div>
