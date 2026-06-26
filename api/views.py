@@ -614,6 +614,41 @@ def export_historique_csv(request):
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAdminUser | IsCustomAdminUser])
+
+def notify_admins_deletion(admin_username, log_info, ip, is_bulk=False):
+    """Notifie tous les autres admins par email lors d'une suppression de journal"""
+    try:
+        other_admins = Utilisateur.objects.filter(role='admin').exclude(username=admin_username)
+        emails = [a.email for a in other_admins if a.email]
+        if not emails:
+            return
+        if is_bulk:
+            subject = f'[DMT] ⚠️ Suppression massive du journal par {admin_username}'
+            body = f'''Alerte DMT — Suppression journal
+
+L\'administrateur {admin_username} a effacé TOUT le journal d\'activité.
+
+Date : {log_info.get("date", "—")}
+IP : {ip}
+
+Consultez l\'onglet "Suppressions" dans le Journal d\'activité.'''
+        else:
+            subject = f'[DMT] ⚠️ Suppression entrée journal par {admin_username}'
+            body = f'''Alerte DMT — Suppression journal
+
+L\'administrateur {admin_username} a supprimé une entrée du journal.
+
+Entrée supprimée :
+- Utilisateur concerné : {log_info.get("utilisateur", "—")}
+- Action : {log_info.get("action", "—")}
+- Objet : {log_info.get("objet", "—")}
+- IP admin : {ip}
+
+Consultez l\'onglet "Suppressions" dans le Journal d\'activité.'''
+        send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, emails, fail_silently=True)
+    except Exception as e:
+        print(f'Erreur envoi email admins: {e}')
+
 def delete_historique(request, log_id):
     try:
         log = AuditLog.objects.get(id=log_id)
@@ -631,6 +666,12 @@ def delete_historique(request, log_id):
         )
     except Exception as e:
         print(f'Erreur AuditLogDeletion: {e}')
+    notify_admins_deletion(
+        request.user.username,
+        {'utilisateur': log.utilisateur.username if log.utilisateur else '', 'action': log.action, 'objet': log.objet, 'date': str(log.timestamp)},
+        request.META.get('REMOTE_ADDR', ''),
+        is_bulk=False
+    )
     log.delete()
     return Response({'success': 'Entree supprimee.'})
 
@@ -653,8 +694,14 @@ def delete_all_historique(request):
             )
     except Exception:
         pass
+    notify_admins_deletion(
+        request.user.username,
+        {'date': str(__import__('django.utils.timezone', fromlist=['timezone']).timezone.now())},
+        request.META.get('REMOTE_ADDR', ''),
+        is_bulk=True
+    )
     AuditLog.objects.all().delete()
-    return Response({'success': 'Journal effacé.'})
+    return Response({'success': 'Journal efface.'})
 
 
 @api_view(['GET'])
