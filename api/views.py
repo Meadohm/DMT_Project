@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from .permissions import IsCustomAdminUser
-from .models import File as FileModel, Folder, Service, FolderShare, Utilisateur, Notification, Archive, AuditLog
+from .models import File as FileModel, Folder, Service, FolderShare, Utilisateur, Notification, Archive, AuditLog, AuditLogDeletion
 from .serializers import FileSerializer, FolderSerializer, ServiceSerializer, NotificationSerializer, ArchiveSerializer
 
 logger = logging.getLogger(__name__)
@@ -628,6 +628,20 @@ def delete_historique(request, log_id):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAdminUser | IsCustomAdminUser])
 def delete_all_historique(request):
+    logs = AuditLog.objects.all()
+    try:
+        admin = Utilisateur.objects.get(username=request.user.username)
+        for log in logs:
+            AuditLogDeletion.objects.create(
+                admin=admin,
+                deleted_log_id=log.id,
+                deleted_utilisateur=log.utilisateur.username if log.utilisateur else '',
+                deleted_action=log.action,
+                deleted_objet=log.objet,
+                adresse_ip=request.META.get('REMOTE_ADDR'),
+            )
+    except Exception:
+        pass
     AuditLog.objects.all().delete()
     return Response({'success': 'Journal effacé.'})
 
@@ -2024,3 +2038,21 @@ def revoke_share(request, share_id):
         pass
     share.delete()
     return Response({"message": f"Acces de {username} revoque."}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser])
+def list_audit_deletions(request):
+    """Liste toutes les suppressions du journal — visible uniquement aux admins"""
+    deletions = AuditLogDeletion.objects.select_related("admin").all()
+    data = [{
+        "id": d.id,
+        "admin": d.admin.username if d.admin else "inconnu",
+        "deleted_log_id": d.deleted_log_id,
+        "deleted_utilisateur": d.deleted_utilisateur,
+        "deleted_action": d.deleted_action,
+        "deleted_objet": d.deleted_objet,
+        "deleted_at": d.deleted_at,
+        "adresse_ip": d.adresse_ip,
+    } for d in deletions]
+    return Response(data)

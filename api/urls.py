@@ -25,6 +25,7 @@ urlpatterns = [
     path('historique/export-csv/', views.export_historique_csv, name='export_historique_csv'),
     path('historique/<int:log_id>/', views.delete_historique, name='delete_historique'),
     path('historique/clear/', views.delete_all_historique, name='delete_all_historique'),
+    path('historique/deletions/', views.list_audit_deletions, name='list_audit_deletions'),
 
     # FICHIERS CENTRALISÉS (admin)
     path('synchroniser_fichiers/', views.synchroniser_fichiers, name='synchroniser_fichiers'),

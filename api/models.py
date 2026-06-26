@@ -212,3 +212,25 @@ class AuditLog(models.Model):
 
     def __str__(self):
         return f"{self.timestamp} | {self.utilisateur} | {self.action} | {self.objet}"
+########### Traçabilité suppressions Journal ###########
+class AuditLogDeletion(models.Model):
+    """Trace chaque suppression d'une entrée AuditLog — immuable"""
+    admin = models.ForeignKey(
+        'Utilisateur',
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='audit_deletions'
+    )
+    deleted_log_id = models.IntegerField()
+    deleted_utilisateur = models.CharField(max_length=150, blank=True)
+    deleted_action = models.CharField(max_length=20, blank=True)
+    deleted_objet = models.CharField(max_length=255, blank=True)
+    deleted_at = models.DateTimeField(auto_now_add=True)
+    adresse_ip = models.GenericIPAddressField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-deleted_at']
+        verbose_name = "Suppression Journal"
+
+    def __str__(self):
+        return f"{self.deleted_at} | {self.admin} | supprimé log #{self.deleted_log_id}"
