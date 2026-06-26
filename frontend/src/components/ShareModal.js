@@ -139,7 +139,18 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
       user_id: user.id,
       permissions: { read: true, ...permissionsMap[user.id] },
     }));
-    onConfirm(newPayload, "new");
+    // Inclure les existants pour ne pas les effacer
+    const existingPayload = existingShares.map(share => ({
+      user_id: share.user_id,
+      permissions: {
+        read: true,
+        write: share.write,
+        update: share.update,
+        delete: share.delete,
+        delete_folder: share.delete_folder,
+      },
+    }));
+    onConfirm([...existingPayload, ...newPayload], "new");
   };
 
   const PERM_LABELS = {

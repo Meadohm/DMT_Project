@@ -368,7 +368,9 @@ function DashboardResponsable() {
     );
     return {
       myFolders: filtered.filter((f) => f.proprietaire?.id === userInfo?.id),
-      sharedFolders: filtered.filter((f) => f.proprietaire?.id !== userInfo?.id),
+      sharedFolders: filtered
+        .filter((f) => f.proprietaire?.id !== userInfo?.id)
+        .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at)),
       favoriteFolders: filtered.filter((f) => favorites.includes(f.id)),
     };
   }, [folders, searchTerm, userInfo, favorites]);
