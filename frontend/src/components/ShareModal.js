@@ -32,13 +32,14 @@ function ShareModal({ folder, onClose, onConfirm }) {
       const existingUsers = [];
       const existingPerms = {};
       folder.shares.forEach(share => {
-        existingUsers.push(share.user);
-        existingPerms[share.user.id] = {
-          read: share.can_read,
-          write: share.can_write,
-          update: share.can_update,
-          delete: share.can_delete,
-          delete_folder: share.can_delete_folder,
+        if (!share?.user_id) return;
+        existingUsers.push({ id: share.user_id, username: share.username });
+        existingPerms[share.user_id] = {
+          read: share.can_read ?? true,
+          write: share.can_write ?? false,
+          update: share.can_update ?? false,
+          delete: share.can_delete ?? false,
+          delete_folder: share.can_delete_folder ?? false,
         };
       });
       setSelectedUsers(existingUsers);
@@ -134,7 +135,7 @@ function ShareModal({ folder, onClose, onConfirm }) {
                   </div>
                 )}
                 <span>{user.username}</span>
-                {folder?.shares?.some(s => s.user?.id === user.id) && (
+                {folder?.shares?.some(s => s.user_id === user.id) && (
                   <span className="badge-already-shared">✓ Accès actif</span>
                 )}
               </div>
