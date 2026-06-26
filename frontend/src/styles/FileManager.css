@@ -1911,18 +1911,15 @@ body.dark .folder-title {
   min-width: 36px;
 }
 .emp-topbar-search-icon {
-  position: relative;
-  left: auto;
-  top: auto;
-  transform: none;
-  opacity: 0.9;
-  z-index: 1;
   display: flex;
   align-items: center;
+  justify-content: center;
   cursor: pointer;
-  padding: 6px;
+  padding: 4px;
   border-radius: 50%;
+  opacity: 0.9;
   transition: background 0.2s;
+  flex-shrink: 0;
 }
 .emp-topbar-search-icon:hover {
   background: rgba(255,255,255,0.15);
