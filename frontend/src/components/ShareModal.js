@@ -1,6 +1,7 @@
 // src/components/ShareModal.js
 import React, { useEffect, useState } from "react";
-import "../styles/ShareModal.css";
+import "../styles/FileManager.css";
+//import "../styles/ShareModal.css";
 import API_BASE_URL from "../config";
 
 function ShareModal({ folder, onClose, onConfirm }) {

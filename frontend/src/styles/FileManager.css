@@ -1,6 +1,5 @@
 /* FileManager.css */
-
-/* ====== LAYOUT ====== Main container styling */
+/* Main container styling */
 .dashboard-container {
   padding: 20px;
   padding-left: 240px;
@@ -11,9 +10,7 @@
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* .header { supprimé — remplacé par .emp-topbar dans main-content } */
-
-/* ====== WELCOME MESSAGE ====== */
+/* WELCOME MESSAGE */
 .welcome-message {
   display: flex;
   flex-direction: column;
@@ -60,7 +57,7 @@
   font-style: italic;
 }
 
-/* 👋 animation */
+/* Animation */
 @keyframes waveAnim {
   0% { transform: rotate(0deg); }
   10% { transform: rotate(14deg); }
@@ -72,7 +69,7 @@
   100% { transform: rotate(0deg); }
 }
 
-/* ====== NOTIFICATION BELL ====== */
+/* NOTIFICATION BELL */
 .notif-btn {
   background: transparent;
   border: none;
@@ -91,8 +88,7 @@
   transition: transform 0.2s ease, color 0.2s ease;
 }
 
-
-/* ====== MODALE FULL NOTIFS ====== */
+/* MODALE FULL NOTIFS */
 .all-notifs-modal {
   background: #fff;
   padding: 20px;
@@ -152,7 +148,7 @@
 }
 
 
-/* ====== COMPTE ====== */
+/* COMPTE */
 .account-btn {
   background: transparent;
   border: none;
@@ -173,14 +169,13 @@
   color: #ffd700;
 }
 
-
 .logo-container {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-/* ====== SEARCH BAR ====== */
+/* SEARCH BAR */
 .search-bar {
   display: flex;
   align-items: center;
@@ -229,7 +224,6 @@
   gap: 10px;
 }
 
-
 .logout-btn,
 .login-btn {
   background: #ff4b5c;
@@ -247,7 +241,6 @@
 .login-btn:hover {
   background: #e63946;
 }
-
 
 .new-folder-btn {
   display: block;
@@ -298,7 +291,7 @@
   font-weight: bold;
 }
 
-/* ====== EMPTY STATE ====== */
+/* EMPTY STATE */
 .empty-state {
   text-align: center;
   margin-top: 80px;
@@ -352,7 +345,6 @@
   transform: translateY(-2px);
 }
 
-
 /* Couleurs par icône */
 button[aria-label="renommer"] .icon-action {
   color: #4dabf7;
@@ -375,15 +367,6 @@ button[aria-label="partager"]:hover .icon-action {
   color: #f9f9f9;
 }
 
-/* ====== MAIN CONTENT ====== 
-.main-content {
-  margin-left: 80px;
-  margin-top: 80px;
-  padding: 20px;
-  flex: 1;
-  min-height: calc(100vh - 100px);
-}*/
-
 /* Pour éviter que le contenu soit caché derrière le footer */
 .main-content {
   margin-left: 80px;
@@ -393,7 +376,7 @@ button[aria-label="partager"]:hover .icon-action {
   overflow: auto;
 }
 
-/* ====== FILE MANAGER ====== */
+/* FILE MANAGER */
 
 .file-manager {
   border: 2px dashed #6c63ff;
@@ -444,10 +427,6 @@ button[aria-label="partager"]:hover .icon-action {
   color: var(--text-color);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
-
-/*.folder-title, .shared-files h3, .no-folder-msg {
-  color: var(--text-color);
-}*/
 
 .folder-title, .shared-files h3, .no-folder-msg {
   color: var(--text-color);
@@ -541,7 +520,7 @@ button[aria-label="partager"]:hover .icon-action {
   transform: scale(1.1);
 }
 
-/* ====== MODALE PARTAGE ====== */
+/* MODALE PARTAGE */
 .modal-overlay {
   position: fixed;
   top: 0; left: 0;
@@ -604,7 +583,6 @@ button[aria-label="partager"]:hover .icon-action {
   box-shadow: 0 0 15px rgba(139, 92, 246, 0.8); /* glow violet plus intense */
   transform: scale(1.05);
 }
-
 
 /* Avatar utilisateur dans modale */
 .user-avatar.small {
@@ -708,19 +686,16 @@ button[aria-label="partager"]:hover .icon-action {
   margin-top: 15px;
 }
 
-
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.9);}
   to { opacity: 1; transform: scale(1);}
 }
-
 
 .shared-files {
   max-height: 250px;       /* limite la hauteur de la liste */
   overflow-y: auto;        /* scroll si trop d’éléments */
   padding-right: 6px;      /* espace pour éviter la barre collée */
 }
-
 
 .shared-file-card {
   padding: 10px 14px;
@@ -929,7 +904,7 @@ button[aria-label="partager"]:hover .icon-action {
   text-align: center;
 }
 
-/* === Tags colorés (non-propriétaire) === */
+/* Tags colorés (non-propriétaire) */
 .share-perms-tags {
   display: flex;
   flex-wrap: wrap;
@@ -971,7 +946,7 @@ button[aria-label="partager"]:hover .icon-action {
 }
 
 
-/* ====== Bouton suppression dossier (sidebar) ====== */
+/* Bouton suppression dossier (sidebar) */
 .folder-actions button.delete-folder-btn {
   border: none;
   background: transparent;
@@ -1004,7 +979,7 @@ button[aria-label="partager"]:hover .icon-action {
   cursor: not-allowed;
 }
 
-/* === Mode plein écran pour la prévisualisation === */
+/* Mode plein écran pour la prévisualisation */
 .file-preview {
   position: relative;
   width: 100%;
@@ -1072,7 +1047,7 @@ button[aria-label="partager"]:hover .icon-action {
   overflow: hidden;
 }
 
-/* === Mode plein écran pour la prévisualisation === */
+/* Mode plein écran pour la prévisualisation */
 .file-manager.full-preview-mode {
   position: relative;
   background: #fdfdfd;
@@ -1082,8 +1057,7 @@ button[aria-label="partager"]:hover .icon-action {
   animation: fadeInPreview 0.3s ease;
 }
 
-/* === Mode plein écran ajusté === */
-/* === Version corrigée — prévisualisation centrée sans chevauchement === */
+/* Version corrigée — prévisualisation centrée sans chevauchemennt */
 .file-manager.full-preview-mode .file-preview {
   position: fixed;
   top: 80px; /* en dessous du header */
@@ -1100,7 +1074,6 @@ button[aria-label="partager"]:hover .icon-action {
   transition: all 0.3s ease;
   z-index: 110;
 }
-
 
 /* Bouton de fermeture bien visible */
 .file-manager.full-preview-mode .close-preview {
@@ -1149,10 +1122,7 @@ button[aria-label="partager"]:hover .icon-action {
   display: block;
 }
 
-/* ===============================
-   Nouveau design de prévisualisation moderne
-   =============================== */
-
+/* Nouveau design de prévisualisation moderne */
 .file-preview-container {
   position: fixed;
   top: 0;
@@ -1169,7 +1139,7 @@ button[aria-label="partager"]:hover .icon-action {
   animation: fadeInPreview 0.3s ease-in-out;
 }
 
-/* === Effet "frosted glass" moderne sur la prévisualisation === */
+/* Effet "frosted glass" moderne sur la prévisualisation */
 .file-preview-container {
   backdrop-filter: blur(12px) saturate(180%);
   -webkit-backdrop-filter: blur(12px) saturate(180%);
@@ -1269,7 +1239,7 @@ button[aria-label="partager"]:hover .icon-action {
 }
 
 
-/* ====== TABLE PREVIEW (Excel, CSV) ====== */
+/* TABLE PREVIEW (Excel, CSV) */
 .file-preview table {
   border-collapse: collapse;
   width: 100%;
@@ -1292,7 +1262,7 @@ button[aria-label="partager"]:hover .icon-action {
   overflow-x: auto;         /* scroll horizontal */
 }
 
-/* ====== CSV PREVIEW ====== */
+/* CSV PREVIEW */
 .csv-preview {
   width: 100%;
   border-collapse: collapse;
@@ -1315,7 +1285,7 @@ button[aria-label="partager"]:hover .icon-action {
   background: #f1f1f1;
 }
 
-/* 🎵 Audio player modernisé */
+/* Audio player modernisé */
 .custom-audio {
   width: 100%;
   border-radius: 8px;
@@ -1324,7 +1294,7 @@ button[aria-label="partager"]:hover .icon-action {
   padding: 6px;
 }
 
-/* 🎥 Video player modernisé */
+/* Video player modernisé */
 .custom-video {
   border-radius: 12px;
   background: #000;
@@ -1371,7 +1341,7 @@ button[aria-label="partager"]:hover .icon-action {
   accent-color: #6c63ff;
 }
 
-/* === Modern Preview Audio/Video === */
+/* Modern Preview Audio/Video */
 .audio-preview {
   margin-top: 15px;
   border-radius: 10px;
@@ -1402,7 +1372,7 @@ button[aria-label="partager"]:hover .icon-action {
 }
 
 
-/* ====== TEXT PREVIEW ====== */
+/* TEXT PREVIEW */
 .text-preview {
   text-align: left;
   background: #f5f5f5;
@@ -1416,7 +1386,7 @@ button[aria-label="partager"]:hover .icon-action {
   line-height: 1.5;
 }
 
-/* ====== FAVORIS ====== */
+/* FAVORIS */
 .sidebar-section {
   margin-top: 15px;
   margin-bottom: 8px;
@@ -1460,7 +1430,7 @@ button[aria-label="partager"]:hover .icon-action {
 }
 
 
-/* === Styles pour la boîte de partage moderne === */
+/* Styles pour la boîte de partage moderne */
 .share-info-modal {
   background: #fff;
   border-radius: 12px;
@@ -1490,7 +1460,7 @@ button[aria-label="partager"]:hover .icon-action {
   color: #4a4a6a;
 }
 
-/* === Perms stylisées par couleur === */
+/* Perms stylisées par couleur */
 .share-perms-checkboxes {
   display: flex;
   flex-wrap: wrap;
@@ -1571,8 +1541,7 @@ button[aria-label="partager"]:hover .icon-action {
   font-size: 12px;
 }
 
-
-/* === ZONE FIXE ET SCROLLABLE DU CONTENU DE DOSSIER === */
+/* ZONE FIXE ET SCROLLABLE DU CONTENU DE DOSSIER*/
 .file-manager {
   display: flex;
   flex-direction: column;
@@ -1583,8 +1552,6 @@ button[aria-label="partager"]:hover .icon-action {
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
-
-
 
 /* Contenu du dossier scrollable */
 .file-content-scroll {
@@ -1622,8 +1589,6 @@ button[aria-label="partager"]:hover .icon-action {
   border-bottom: 1px solid #eee;
 }
 
-
-
 /* Centrage propre du contenu preview */
 .file-manager.full-preview-mode iframe,
 .file-manager.full-preview-mode img,
@@ -1637,14 +1602,13 @@ button[aria-label="partager"]:hover .icon-action {
 }
 
 
-
 .file-preview-container {
   background: rgba(255, 255, 255, 0.78) !important;
   backdrop-filter: blur(12px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
 }
 
-/* === ✅ Correction : icônes alignées + nom de fichier tronqué === */
+/* Correction : icônes alignées + nom de fichier tronqué */
 .file-item {
   display: flex;
   justify-content: space-between;
@@ -1661,7 +1625,7 @@ button[aria-label="partager"]:hover .icon-action {
   display: flex;
   align-items: center;
   gap: 8px;
-  max-width: 72%; /* ✅ le texte prend max 70% de la ligne */
+  max-width: 72%;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -1767,8 +1731,6 @@ body.dark .folder-title {
   z-index: 50;
 }
 
-
-
 .footer p {
   margin: 3px 0;
   line-height: 1.2;
@@ -1787,14 +1749,7 @@ body.dark .folder-title {
   color: #6c63ff;
 }
 
-
-
-
-/* ===============================
-   ====== RESPONSIVE ======
-   =============================== */
-
-
+/* RESPONSIVE */
 @media (max-width: 768px) {
   .file-preview iframe {
     min-height: 350px;
@@ -2008,4 +1963,103 @@ body.dark .folder-title {
   border-radius: 10px;
   margin-top: 2px;
   display: block;
+}
+
+ /*  SHARE MODAL — REFONTE PHASE 2 */
+.share-zone {
+  margin-bottom: 16px;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+.share-zone-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #003366;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 6px;
+}
+.existing-share-item {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  border: 1px solid #e2e8f0;
+}
+.existing-share-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.existing-share-username {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #1e293b;
+}
+.btn-revoke {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.btn-revoke:hover { background: #dc2626; }
+.btn-revoke:disabled { opacity: 0.6; cursor: not-allowed; }
+.existing-share-perms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.checkbox-modern.small {
+  font-size: 0.8rem;
+}
+.share-search {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-size: 0.88rem;
+  outline: none;
+  box-sizing: border-box;
+}
+.badge-selected {
+  background: #22c55e;
+  color: white;
+  border-radius: 10px;
+  padding: 1px 7px;
+  font-size: 0.75rem;
+  margin-left: auto;
+}
+.no-users-msg {
+  color: #999;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 12px;
+}
+/* Dark mode share modal */
+body.dark .share-zone {
+  border-color: #2d3555;
+  background: #161b33;
+}
+body.dark .share-zone-title {
+  color: #7c6fff;
+  border-bottom-color: #2d3555;
+}
+body.dark .existing-share-item {
+  background: #1e2540;
+  border-color: #2d3555;
+}
+body.dark .existing-share-username {
+  color: #e6e8f0;
+}
+body.dark .share-search {
+  background: #1a2040;
+  color: #e6e8f0;
+  border-color: #2d3555;
 }
