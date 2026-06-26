@@ -75,6 +75,7 @@ class FolderSerializer(serializers.ModelSerializer):
         shares = FolderShare.objects.filter(folder=obj)
         return [
             {
+                "id": s.id,
                 "user_id": s.user.id,
                 "username": s.user.username,
                 "can_read": s.can_read,
