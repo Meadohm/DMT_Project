@@ -165,7 +165,7 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
             type: "error",
             title: "Upload refusé",
             message: msg === "Type de fichier non autorisé"
-              ? "❌ Format non supporté. Formats acceptés : PDF, Word, Excel, CSV, PNG, JPG, MP4, MP3."
+              ? "Format non supporté. Formats acceptés : PDF, Word, Excel, CSV, PNG, JPG, MP4, MP3."
               : msg,
           });
         }
