@@ -306,27 +306,15 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                 onDrop={handleDrop}
               >
                 {activeFolder.permissions?.can_write ? (
-                  <>
-                    <div className="upload-icon">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        width="64"
-                        height="64"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5-5m0 0l5 5m-5-5v12"
-                        />
-                      </svg>
-                    </div>
-                    <p>Clique pour uploader ou dépose ton fichier ici</p>
-                    <label htmlFor="file-upload" className="custom-upload-btn">
-                      Uploader un fichier
+                  <div className="upload-compact-bar">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                      stroke="currentColor" width="18" height="18">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5-5m0 0l5 5m-5-5v12" />
+                    </svg>
+                    <span>Déposer un fichier ici ou</span>
+                    <label htmlFor="file-upload" className="upload-compact-btn">
+                      Parcourir
                     </label>
                     <input
                       id="file-upload"
@@ -335,11 +323,11 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                       onChange={(e) => handleUpload(e.target.files)}
                       style={{ display: "none" }}
                     />
-                  </>
+                  </div>
                 ) : (
-                  <p style={{ opacity: 0.6, fontStyle: "italic" }}>
-                    ⛔ Vous n’avez pas la permission d’ajouter des fichiers dans ce dossier.
-                  </p>
+                  <div className="upload-compact-bar upload-compact-denied">
+                    ⛔ Permission insuffisante pour uploader dans ce dossier.
+                  </div>
                 )}
               </div>
             )}
