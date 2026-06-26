@@ -63,6 +63,13 @@ function DashboardResponsable() {
   }, [navigate]);
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      fetchFolders();
+    }, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
     (async () => {
       const valid = await checkTokenValidity();
       if (!valid) {
