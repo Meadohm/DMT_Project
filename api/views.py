@@ -618,10 +618,21 @@ def delete_historique(request, log_id):
     try:
         log = AuditLog.objects.get(id=log_id)
     except AuditLog.DoesNotExist:
-        return Response({'error': 'Entrée non trouvée.'}, status=status.HTTP_404_NOT_FOUND)
-
+        return Response({'error': 'Entree non trouvee.'}, status=status.HTTP_404_NOT_FOUND)
+    try:
+        admin = Utilisateur.objects.get(username=request.user.username)
+        AuditLogDeletion.objects.create(
+            admin=admin,
+            deleted_log_id=log.id,
+            deleted_utilisateur=log.utilisateur.username if log.utilisateur else '',
+            deleted_action=log.action,
+            deleted_objet=log.objet,
+            adresse_ip=request.META.get('REMOTE_ADDR'),
+        )
+    except Exception as e:
+        print(f'Erreur AuditLogDeletion: {e}')
     log.delete()
-    return Response({'success': 'Entrée supprimée.'})
+    return Response({'success': 'Entree supprimee.'})
 
 
 @api_view(['DELETE'])
