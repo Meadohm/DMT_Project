@@ -64,6 +64,13 @@ function DashboardEmploye() {
     fetchFolders();
   }, [navigate]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchFolders();
+    }, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
 
   useEffect(() => {
   (async () => {
