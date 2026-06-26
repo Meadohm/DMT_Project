@@ -294,26 +294,24 @@ const handleClearNotifications = async () => {
     setShareModalOpen(true);
   };
 
-  const confirmShare = async (shares) => {
-  try {
-    await shareFolder(currentFolder.id, shares);
-    setNotif({
-      type: "success",
-      title: "Succès 🎉",
-      message: "Le dossier a été partagé avec succès."
-    });
-  } catch (err) {
-    console.error("❌ Erreur partage dossier", err);
-    setNotif({
-      type: "error",
-      title: "Erreur",
-      message: "⛔ Vous n'avez pas la permission de partager ce dossier."
-    });
-  } finally {
-    setShareModalOpen(false);
-    setCurrentFolder(null);
-  }
-};
+  const confirmShare = async (payload, type = "new") => {
+    try {
+      await shareFolder(currentFolder.id, payload);
+      setFolders(prev => prev.map(f => f.id === currentFolder.id ? { ...f, is_shared: true } : f));
+      if (type === "new") {
+        setNotif({ type: "success", title: "Succès", message: "📤 Dossier partagé avec succès." });
+      } else {
+        setNotif({ type: "success", title: "Succès", message: "💾 Permissions mises à jour." });
+      }
+    } catch (err) {
+      setNotif({ type: "error", title: "Erreur", message: "⛔ Erreur lors du partage." });
+    } finally {
+      if (type === "new") {
+        setShareModalOpen(false);
+        setCurrentFolder(null);
+      }
+    }
+  };
 
 
   const handleCreateSubfolder = async (parentId, name) => {

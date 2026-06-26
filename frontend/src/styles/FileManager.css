@@ -2079,3 +2079,24 @@ body.dark .btn-toggle-all {
   background: #2b2f53;
   color: #a5b4fc;
 }
+
+.share-zone-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+.btn-save-perms {
+  background: #003366;
+  color: white;
+  border: none;
+  padding: 7px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.btn-save-perms:hover { background: #00509e; }
+body.dark .share-zone-footer { border-top-color: #2d3555; }
+body.dark .btn-save-perms { background: #1e3a5f; }

@@ -114,24 +114,31 @@ function ShareModal({ folder, onClose, onConfirm }) {
     }
   };
 
+  const handleSavePermissions = async () => {
+    try {
+      const existingPayload = existingShares.map(share => ({
+        user_id: share.user_id,
+        permissions: {
+          read: true,
+          write: share.write,
+          update: share.update,
+          delete: share.delete,
+          delete_folder: share.delete_folder,
+        },
+      }));
+      await onConfirm(existingPayload, "update");
+    } catch (err) {
+      console.error("❌ Erreur sauvegarde permissions", err);
+    }
+  };
+
   const handleConfirm = () => {
-    // Nouveaux partages
+    if (selectedUsers.length === 0) return;
     const newPayload = selectedUsers.map(user => ({
       user_id: user.id,
       permissions: { read: true, ...permissionsMap[user.id] },
     }));
-    // Modifications des existants
-    const existingPayload = existingShares.map(share => ({
-      user_id: share.user_id,
-      permissions: {
-        read: true,
-        write: share.write,
-        update: share.update,
-        delete: share.delete,
-        delete_folder: share.delete_folder,
-      },
-    }));
-    onConfirm([...existingPayload, ...newPayload]);
+    onConfirm(newPayload, "new");
   };
 
   const PERM_LABELS = {
@@ -241,14 +248,18 @@ function ShareModal({ folder, onClose, onConfirm }) {
           )}
         </div>
 
+        {existingShares.length > 0 && (
+          <div className="share-zone-footer">
+            <button className="btn-save-perms" onClick={handleSavePermissions}>
+              💾 Sauvegarder les droits
+            </button>
+          </div>
+        )}
+
         <div className="modal-actions centered">
           <button className="cancel-btn" onClick={onClose}>✖ Annuler</button>
-          <button
-            className="confirm-btn"
-            onClick={handleConfirm}
-            disabled={selectedUsers.length === 0 && existingShares.length === 0}
-          >
-            ✓ Confirmer
+          <button className="confirm-btn" onClick={handleConfirm} disabled={selectedUsers.length === 0}>
+            📤 Partager
           </button>
         </div>
       </div>
