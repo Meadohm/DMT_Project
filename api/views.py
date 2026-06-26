@@ -611,10 +611,6 @@ def export_historique_csv(request):
     return response
 
 
-@api_view(['DELETE'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAdminUser | IsCustomAdminUser])
-
 def notify_admins_deletion(admin_username, log_info, ip, is_bulk=False):
     """Notifie tous les autres admins par email lors d'une suppression de journal"""
     try:
