@@ -150,11 +150,8 @@ function ShareModal({ folder, onClose, onConfirm }) {
                 <div className="existing-share-perms">
                   {Object.keys(PERM_LABELS).map(perm => (
                     <label key={perm} className="checkbox-modern small">
-                      <input
-                        type="checkbox"
-                        checked={share[perm] || false}
-                        onChange={() => updateExistingPerm(share, perm)}
-                      />
+                      <input type="checkbox" checked={share[perm] || false} onChange={() => updateExistingPerm(share, perm)} />
+                      <span className="checkmark"></span>
                       <span>{PERM_LABELS[perm]}</span>
                     </label>
                   ))}
@@ -204,11 +201,8 @@ function ShareModal({ folder, onClose, onConfirm }) {
                   <h4>👤 {user.username}</h4>
                   {Object.keys(PERM_LABELS).map(perm => (
                     <label key={perm} className="checkbox-modern">
-                      <input
-                        type="checkbox"
-                        checked={permissionsMap[user.id]?.[perm] || false}
-                        onChange={() => togglePermission(user.id, perm)}
-                      />
+                      <input type="checkbox" checked={permissionsMap[user.id]?.[perm] || false} onChange={() => togglePermission(user.id, perm)} />
+                      <span className="checkmark"></span>
                       <span>{PERM_LABELS[perm]}</span>
                     </label>
                   ))}
