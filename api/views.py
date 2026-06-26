@@ -141,7 +141,7 @@ def list_users_for_sharing(request):
             'service': u.service,
             'avatar': u.avatar.url if u.avatar else None,
         }
-        for u in utilisateurs if u.id != request.user.id
+        for u in utilisateurs if u.id != request.user.id and u.role != 'admin'
     ]
     return Response(data)
 
@@ -1992,3 +1992,33 @@ def leave_folder(request, folder_id):
         message=f"{request.user.username} a quitté le dossier partagé {folder_name}.",
     )
     return Response({"message": f"Vous avez quitté le dossier {folder_name}."}, status=status.HTTP_200_OK)
+
+@api_view(["DELETE"])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def revoke_share(request, share_id):
+    try:
+        share = FolderShare.objects.select_related("folder", "user").get(id=share_id)
+    except FolderShare.DoesNotExist:
+        return Response({"error": "Partage introuvable."}, status=status.HTTP_404_NOT_FOUND)
+    if share.folder.proprietaire != request.user:
+        return Response({"error": "Non autorise."}, status=status.HTTP_403_FORBIDDEN)
+    username = share.user.username
+    folder_name = share.folder.nom
+    Notification.objects.create(
+        user=share.user,
+        type="info",
+        message=f"Votre acces au dossier {folder_name} a ete revoque par {request.user.username}."
+    )
+    try:
+        utilisateur = Utilisateur.objects.get(username=request.user.username)
+        AuditLog.objects.create(
+            utilisateur=utilisateur,
+            action="DELETE",
+            objet=f"Revocation partage : {folder_name} pour {username}",
+            details=f"Revocation manuelle par le proprietaire",
+        )
+    except Exception:
+        pass
+    share.delete()
+    return Response({"message": f"Acces de {username} revoque."}, status=status.HTTP_200_OK)

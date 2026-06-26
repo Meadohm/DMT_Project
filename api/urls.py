@@ -78,6 +78,7 @@ urlpatterns = [
     path("archives/delete-all/", views.delete_all_archives, name="delete_all_archives"),
     path("archives/bulk-create/", views.bulk_create_archive, name="bulk_create_archive"),
     path("folders/<int:folder_id>/leave/", views.leave_folder, name="leave_folder"),
+    path("shares/<int:share_id>/revoke/", views.revoke_share, name="revoke_share"),
 
     
     # Notifications
