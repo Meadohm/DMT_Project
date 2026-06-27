@@ -384,9 +384,10 @@ function AdminPanel() {
       await updateUserAccount(userId, editUserData);
       setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, ...editUserData } : u)));
       setEditingUser(null);
-      showToast(`Utilisateur mis à jour.`);
+      showToast('Utilisateur mis à jour.');
     } catch (e) {
-      setError("Erreur mise à jour utilisateur");
+      const msg = e.response?.data?.error || 'Erreur mise à jour utilisateur';
+      showToast(msg, 'error');
     }
   };
 
@@ -448,21 +449,22 @@ function AdminPanel() {
     setFormSuccess('');
     if (formData.password !== formData.confirmPassword) {
       setFormError('Les mots de passe ne correspondent pas.');
-      return;
+      return false;
     }
     if (formData.password.length < 6) {
       setFormError('Le mot de passe doit contenir au moins 6 caractères.');
-      return;
+      return false;
     }
     try {
       await createUser(formData);
       setFormSuccess(`✅ Utilisateur "${formData.username}" créé avec succès.`);
       showToast(`Utilisateur "${formData.username}" créé avec succès.`);
-      setShowCreateModal(false);
       setFormData({ username: '', email: '', password: '', confirmPassword: '', role: 'employe', service: '' });
       fetchData();
+      return true;
     } catch (err) {
       setFormError(err.response?.data?.error || 'Erreur lors de la création.');
+      return false;
     }
   };
 
@@ -1286,7 +1288,7 @@ function AdminPanel() {
             <h3>➕ Créer un utilisateur</h3>
             {formError && <div className="error-box"><p>{formError}</p></div>}
             {formSuccess && <div className="success-box"><p>{formSuccess}</p></div>}
-            <form onSubmit={async (e) => { await handleFormSubmit(e); if (!formError) setShowCreateModal(false); }}>
+            <form onSubmit={async (e) => { const success = await handleFormSubmit(e); if (success) setShowCreateModal(false); }}>
               <div className="form-group">
                 <label>Nom d'utilisateur *</label>
                 <input name="username" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} placeholder="ex: namisata.diomande" />
