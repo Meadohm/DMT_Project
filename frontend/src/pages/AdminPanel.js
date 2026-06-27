@@ -262,7 +262,8 @@ function AdminPanel() {
       showToast('Entrée supprimée du journal.');
       fetchHistorique(historiquePage, historiqueAction, historiqueSearch);
     } catch (e) {
-      alert('Erreur lors de la suppression.');
+      const msg = e.response?.data?.error || 'Erreur lors de la suppression.';
+      showToast(msg, 'error');
     }
   };
 
@@ -311,7 +312,7 @@ function AdminPanel() {
       setHistoriqueAction('');
       setConfirmClearAll(false);
     } catch (e) {
-      alert('Erreur lors de la suppression.');
+      showToast('Erreur lors de la suppression.', 'error');
       setConfirmClearAll(false);
     }
   };
@@ -363,7 +364,7 @@ function AdminPanel() {
       setConfirmDeleteId(null);
       showToast('Utilisateur supprimé.');
     } catch {
-      alert("Erreur lors de la suppression.");
+      showToast('Erreur lors de la suppression.', 'error');
       setConfirmDeleteId(null);
     }
   };
@@ -379,7 +380,7 @@ function AdminPanel() {
       });
       showToast(`Mot de passe de "${username}" réinitialisé.`);
     } catch {
-      alert("Erreur lors de la réinitialisation.");
+      showToast("Erreur lors de la réinitialisation.", 'error');
     } finally {
       setResettingId(null);
     }

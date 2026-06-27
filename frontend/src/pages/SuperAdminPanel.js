@@ -267,7 +267,8 @@ function SuperAdminPanel() {
       showToast('Entrée supprimée du journal.');
       fetchHistorique(historiquePage, historiqueAction, historiqueSearch);
     } catch (e) {
-      alert('Erreur lors de la suppression.');
+      const msg = e.response?.data?.error || 'Erreur lors de la suppression.';
+      showToast(msg, 'error');
     }
   };
 
@@ -331,7 +332,7 @@ function SuperAdminPanel() {
       setHistoriqueAction('');
       setConfirmClearAll(false);
     } catch (e) {
-      alert('Erreur lors de la suppression.');
+      showToast('Erreur lors de la suppression.', 'error');
       setConfirmClearAll(false);
     }
   };
@@ -383,7 +384,7 @@ function SuperAdminPanel() {
       setConfirmDeleteId(null);
       showToast('Utilisateur supprimé.');
     } catch {
-      alert("Erreur lors de la suppression.");
+      showToast('Erreur lors de la suppression.', 'error');
       setConfirmDeleteId(null);
     }
   };
@@ -399,7 +400,7 @@ function SuperAdminPanel() {
       });
       showToast(`Mot de passe de "${username}" réinitialisé.`);
     } catch {
-      alert("Erreur lors de la réinitialisation.");
+      showToast("Erreur lors de la réinitialisation.", 'error');
     } finally {
       setResettingId(null);
     }
@@ -779,7 +780,16 @@ function SuperAdminPanel() {
                                 >
                                   {u.is_active ? '⏸ Désactiver' : '▶ Réactiver'}
                                 </button>
-                                <button className="delete-user-button" onClick={() => setConfirmDeleteId(u.id)}>Supprimer</button>
+                                {userInfo?.role === 'super_admin' && u.role !== 'super_admin' && (
+                                  <button
+                                    className="delete-user-button"
+                                    onClick={() => setConfirmDeleteId(u.id)}
+                                    title="Supprimer cet utilisateur"
+                                    disabled={!u.is_active === false}
+                                  >
+                                    🗑️
+                                  </button>
+                                )}
                               </>
                             )}
                           </td>
