@@ -283,8 +283,25 @@ def create_user_account(request):
     if email:
         try:
             send_mail(
-                subject="[DMT] Vos coordonnees de connexion",
-                message=f"Bonjour {username},\n\nVotre compte DMT a ete cree avec succes.\n\nIdentifiant : {username}\nMot de passe : {password}\nRole : {role}\nService : {service or chr(78)+chr(111)+chr(110)}\n\nCordialement,\nEquipe DMT",
+                subject="[DMT] Vos coordonnées de connexion — Bienvenue",
+                message=f"""Bonjour {username},
+
+Votre compte sur la plateforme DMT (Doumbia Moussa Transport) a été créé avec succès.
+
+Voici vos coordonnées de connexion :
+
+  • Identifiant   : {username}
+  • Mot de passe  : {password}
+  • Rôle          : {role.replace('employe', 'Employé').replace('responsable', 'Responsable').replace('admin', 'Administrateur')}
+  • Service       : {service or 'Non défini'}
+
+Pour vous connecter, rendez-vous sur : http://192.168.1.116/
+
+Pour des raisons de sécurité, nous vous recommandons de modifier votre mot de passe dès votre première connexion.
+
+Cordialement,
+L'équipe DMT — Doumbia Moussa Transport
+""",
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[email],
                 fail_silently=True,
