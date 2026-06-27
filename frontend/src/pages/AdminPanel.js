@@ -479,6 +479,7 @@ function AdminPanel() {
   const handleTooltipHide = () => setTooltip(null);
 
   const filteredUsers = users
+    .filter(u => u.role !== 'super_admin')
     .filter(u => u.username.toLowerCase().includes(searchTerm.toLowerCase()))
     .filter(u => filterRole ? u.role === filterRole : true)
     .filter(u => filterService ? u.service === filterService : true)
