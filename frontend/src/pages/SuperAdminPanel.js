@@ -960,7 +960,7 @@ function SuperAdminPanel() {
                 {deletionsLoading ? (
                   <p>Chargement...</p>
                 ) : auditDeletions.length === 0 ? (
-                  <p className="no-data">✅ Aucune suppression enregistrée.</p>
+                  <p className="no-data">Aucune suppression enregistrée.</p>
                 ) : (
                   <div className="users-table-wrapper">
                     <table>
@@ -1234,8 +1234,8 @@ function SuperAdminPanel() {
                   <h3 className="account-username">{userInfo?.username}</h3>
                   <p className="account-email">{userInfo?.email || 'Aucun email renseigné'}</p>
                   <div className="account-badges">
-                    <span className={`status-badge ${userInfo?.role === 'admin' ? 'online' : 'recent'}`}>
-                      {userInfo?.role === 'admin' ? '👑 Admin' : userInfo?.role === 'responsable' ? '🎯 Responsable' : '👤 Employé'}
+                    <span className={`status-badge ${userInfo?.role === 'super_admin' ? 'online' : userInfo?.role === 'admin' ? 'online' : 'recent'}`}>
+                      {userInfo?.role === 'super_admin' ? '👑 Super Admin' : userInfo?.role === 'admin' ? '👑 Admin' : userInfo?.role === 'responsable' ? '🎯 Responsable' : '👤 Employé'}
                     </span>
                     {userInfo?.service && (
                       <span className="status-badge today">🏢 {userInfo.service}</span>
