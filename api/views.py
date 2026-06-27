@@ -291,18 +291,6 @@ def create_user_account(request):
             )
         except Exception:
             pass
-    if email:
-        try:
-            send_mail(
-                subject="[DMT] Vos coordonnees de connexion",
-                message=f"Bonjour {username},\n\nVotre compte DMT a ete cree.\n\nIdentifiant : {username}\nMot de passe : {password}\nRole : {role}\nService : {service or chr(39)+chr(78)+chr(111)+chr(110)+chr(32)+chr(100)+chr(101)+chr(102)+chr(105)+chr(110)+chr(105)}\n\nCordialement,\nEquipe DMT",
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[email],
-                fail_silently=True,
-            )
-        except Exception:
-            pass
-    return Response({'success': 'Utilisateur créé.', 'id': user.id}, status=status.HTTP_201_CREATED)
 
 
 @api_view(['PUT'])
