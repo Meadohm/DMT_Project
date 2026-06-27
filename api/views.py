@@ -104,6 +104,7 @@ def get_user_view(request):
         'service': user.service,
         'avatar': user.avatar.url if user.avatar else None,
         'last_login': user.last_login,
+        'is_superuser': user.is_superuser,
     })
 
 @api_view(['GET'])
@@ -375,7 +376,11 @@ def delete_user_account(request, user_id):
     try:
         utilisateur = Utilisateur.objects.get(id=user_id)
     except Utilisateur.DoesNotExist:
-        return Response({'error': 'Utilisateur non trouvé.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Utilisateur non trouve.'}, status=status.HTTP_404_NOT_FOUND)
+
+    # Seul is_superuser peut supprimer un super_admin
+    if utilisateur.role == 'super_admin' and not request.user.is_superuser:
+        return Response({'error': 'Seul le concepteur peut supprimer un super administrateur.'}, status=status.HTTP_403_FORBIDDEN)
 
     nom = utilisateur.username
     utilisateur.delete()
