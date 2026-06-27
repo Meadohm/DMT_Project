@@ -702,7 +702,7 @@ def delete_all_historique(request):
         pass
     notify_admins_deletion(
         request.user.username,
-        {'date': str(__import__('django.utils.timezone', fromlist=['timezone']).timezone.now())},
+        {'date': str(timezone.now())},
         request.META.get('REMOTE_ADDR', ''),
         is_bulk=True
     )
