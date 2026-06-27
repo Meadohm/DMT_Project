@@ -617,6 +617,10 @@ def export_historique_csv(request):
 def notify_admins_deletion(admin_username, log_info, ip, is_bulk=False):
     """Notifie tous les autres admins par email lors d'une suppression de journal"""
     try:
+        # Ne pas notifier si c'est le super_admin
+        actor = Utilisateur.objects.filter(username=admin_username).first()
+        if actor and actor.role == 'super_admin':
+            return
         other_admins = Utilisateur.objects.filter(role='admin').exclude(username=admin_username)
         emails = [a.email for a in other_admins if a.email]
         if not emails:
@@ -2104,7 +2108,11 @@ def revoke_share(request, share_id):
 @permission_classes([IsAdminUser | IsCustomAdminUser])
 def list_audit_deletions(request):
     """Liste toutes les suppressions du journal — visible uniquement aux admins"""
-    deletions = AuditLogDeletion.objects.select_related("admin").all()
+    # Masquer les suppressions du super_admin aux admins normaux
+    if hasattr(request.user, 'role') and request.user.role != 'super_admin':
+        deletions = AuditLogDeletion.objects.select_related("admin").exclude(admin__role='super_admin')
+    else:
+        deletions = AuditLogDeletion.objects.select_related("admin").all()
     data = [{
         "id": d.id,
         "admin": d.admin.username if d.admin else "inconnu",
