@@ -101,6 +101,10 @@ function SuperAdminPanel() {
   const [dateFin, setDateFin] = useState('');
   const [auditDeletions, setAuditDeletions] = useState([]);
   const [deletionsLoading, setDeletionsLoading] = useState(false);
+  const [deletionSearch, setDeletionSearch] = useState("");
+  const [deletionAction, setDeletionAction] = useState("");
+  const [deletionDateFrom, setDeletionDateFrom] = useState("");
+  const [deletionDateTo, setDeletionDateTo] = useState("");
   const [journalTab, setJournalTab] = useState("journal");
   const [tooltip, setTooltip] = useState(null);
   const [showCreateServiceModal, setShowCreateServiceModal] = useState(false);
@@ -512,6 +516,16 @@ function SuperAdminPanel() {
       if (b.id === userInfo?.id) return 1;
       return 0;
     });
+
+  const filteredDeletions = auditDeletions
+    .filter(d => deletionSearch ?
+      d.admin?.toLowerCase().includes(deletionSearch.toLowerCase()) ||
+      d.deleted_utilisateur?.toLowerCase().includes(deletionSearch.toLowerCase()) ||
+      d.deleted_objet?.toLowerCase().includes(deletionSearch.toLowerCase())
+      : true)
+    .filter(d => deletionAction ? d.deleted_action === deletionAction : true)
+    .filter(d => deletionDateFrom ? new Date(d.deleted_at) >= new Date(deletionDateFrom) : true)
+    .filter(d => deletionDateTo ? new Date(d.deleted_at) <= new Date(deletionDateTo + 'T23:59:59') : true);
 
   if (loading) return <p>Chargement...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
@@ -957,6 +971,43 @@ function SuperAdminPanel() {
 
             {journalTab === "suppressions" && (
               <div className="audit-deletions-section">
+                <div className="admin-filters-bar">
+                  <input className="admin-filter-input" placeholder="🔍 Admin, utilisateur, objet..."
+                    value={deletionSearch} onChange={e => setDeletionSearch(e.target.value)} />
+                  <select className="admin-filter-select" value={deletionAction} onChange={e => setDeletionAction(e.target.value)}>
+                    <option value="">Toutes les actions</option>
+                    <option value="DELETE">Suppression</option>
+                    <option value="LOGIN">Connexion</option>
+                    <option value="CREATE">Création</option>
+                    <option value="UPDATE">Modification</option>
+                    <option value="UPLOAD">Upload</option>
+                  </select>
+                  <input type="date" className="admin-filter-input" value={deletionDateFrom}
+                    onChange={e => setDeletionDateFrom(e.target.value)} title="Date début" />
+                  <input type="date" className="admin-filter-input" value={deletionDateTo}
+                    onChange={e => setDeletionDateTo(e.target.value)} title="Date fin" />
+                  <button className="admin-filter-reset" onClick={() => {
+                    setDeletionSearch(''); setDeletionAction(''); setDeletionDateFrom(''); setDeletionDateTo('');
+                  }}>↺ Réinitialiser</button>
+                  <button className="btn-cancel" style={{background:'#28a745', color:'white', border:'none', fontSize:'0.85em'}}
+                    onClick={() => {
+                      const headers = ["Admin","Log supprimé","Utilisateur","Action","Objet","Date","IP"];
+                      const rows = filteredDeletions.map(d => [
+                        d.admin, `#${d.deleted_log_id}`, d.deleted_utilisateur,
+                        d.deleted_action, d.deleted_objet,
+                        new Date(d.deleted_at).toLocaleString('fr-FR'), d.adresse_ip || ''
+                      ]);
+                      const csv = [headers, ...rows].map(r => r.join(';')).join('\n');
+                      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+                      const url = URL.createObjectURL(blob);
+                      const link = document.createElement('a');
+                      link.href = url; link.download = 'suppressions_journal.csv';
+                      link.click(); URL.revokeObjectURL(url);
+                    }}>⬇️ CSV</button>
+                </div>
+                <div className="user-count-badge" style={{marginBottom:'8px'}}>
+                  {filteredDeletions.length} suppression{filteredDeletions.length !== 1 ? 's' : ''}
+                </div>
                 {deletionsLoading ? (
                   <p>Chargement...</p>
                 ) : auditDeletions.length === 0 ? (
@@ -977,7 +1028,7 @@ function SuperAdminPanel() {
                         </tr>
                       </thead>
                       <tbody>
-                        {auditDeletions.map((d, idx) => (
+                        {filteredDeletions.map((d, idx) => (
                           <tr key={d.id}>
                             <td>{idx + 1}</td>
                             <td><span className="badge-admin">👑 {d.admin}</span></td>
