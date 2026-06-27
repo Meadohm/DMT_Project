@@ -189,7 +189,18 @@ def update_user_role(request, user_id):
     except Utilisateur.DoesNotExist:
         return Response({'error': 'Utilisateur non trouvé'}, status=status.HTTP_404_NOT_FOUND)
 
-    new_role = request.data.get('role', '').lower()
+    # Admin normal ne peut pas modifier le rôle d'un autre admin ou super_admin
+    if (hasattr(request.user, 'role') and
+        request.user.role == 'admin' and
+        utilisateur.role in ['admin', 'super_admin']):
+        return Response({'error': 'Vous ne pouvez pas modifier le rôle d'un administrateur.'}, status=status.HTTP_403_FORBIDDEN)
+    # Admin normal ne peut pas promouvoir au rôle admin ou super_admin
+    new_role_requested = request.data.get('role', '').lower()
+    if (hasattr(request.user, 'role') and
+        request.user.role == 'admin' and
+        new_role_requested in ['admin', 'super_admin']):
+        return Response({'error': 'Vous ne pouvez pas attribuer le rôle administrateur.'}, status=status.HTTP_403_FORBIDDEN)
+    new_role = new_role_requested
     valid_roles = dict((c[0].lower(), c[0]) for c in Utilisateur.ROLE_CHOICES)
     if new_role not in valid_roles:
         return Response({'error': 'Rôle non valide'}, status=status.HTTP_400_BAD_REQUEST)
