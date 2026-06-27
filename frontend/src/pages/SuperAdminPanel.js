@@ -192,6 +192,12 @@ function SuperAdminPanel() {
       const usersData = await getUsers();
       setUsers(usersData);
       fetchUserInfo();
+      const currentSection = localStorage.getItem('adminActiveSection');
+      if (currentSection === 'submissions') {
+        const currentPage = parseInt(localStorage.getItem('historiquePage') || '1');
+        fetchHistorique(currentPage, historiqueAction, historiqueSearch, dateDebut, dateFin);
+        fetchAuditDeletions();
+      }
       setLoading(false);
     } catch (err) {
       if (err.response?.status === 403 || err.response?.status === 401) {
