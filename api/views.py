@@ -654,28 +654,32 @@ def notify_admins_deletion(admin_username, log_info, ip, is_bulk=False):
         if not emails:
             return
         if is_bulk:
-            subject = f'[DMT] ⚠️ Suppression massive du journal par {admin_username}'
-            body = f'''Alerte DMT — Suppression journal
-
-L\'administrateur {admin_username} a effacé TOUT le journal d\'activité.
-
-Date : {log_info.get("date", "—")}
-IP : {ip}
-
-Consultez l\'onglet "Suppressions" dans le Journal d\'activité.'''
-        else:
-            subject = f'[DMT] ⚠️ Suppression entrée journal par {admin_username}'
-            body = f'''Alerte DMT — Suppression journal
-
-L\'administrateur {admin_username} a supprimé une entrée du journal.
-
-Entrée supprimée :
-- Utilisateur concerné : {log_info.get("utilisateur", "—")}
-- Action : {log_info.get("action", "—")}
-- Objet : {log_info.get("objet", "—")}
-- IP admin : {ip}
-
-Consultez l\'onglet "Suppressions" dans le Journal d\'activité.'''
+            subject = '[DMT] ⚠️ Alerte sécurité — Suppression massive du journal'
+            body = (
+                f"Bonjour,\n\n"
+                f"L'administrateur {admin_username} vient d'effacer l'intégralité du journal d'activité.\n\n"
+                f"Détails :\n"
+                f"  • Administrateur : {admin_username}\n"
+                f"  • Type           : Suppression massive\n"
+                f"  • Adresse IP     : {ip}\n"
+                f"  • Date           : {log_info.get('date', '—')}\n\n"
+                "Cette action est enregistrée dans l'onglet Suppressions de l'AdminPanel.\n\n"
+                "Cordialement,\nLe système DMT — Doumbia Moussa Transport"
+            )
+            subject = '[DMT] ⚠️ Alerte sécurité — Suppression dans le journal'
+            body = (
+                f"Bonjour,\n\n"
+                f"Une entrée du journal a été supprimée par {admin_username}.\n\n"
+                f"Détails :\n"
+                f"  • Administrateur       : {admin_username}\n"
+                f"  • Utilisateur concerné : {log_info.get('utilisateur', '—')}\n"
+                f"  • Action supprimée     : {log_info.get('action', '—')}\n"
+                f"  • Objet                : {log_info.get('objet', '—')}\n"
+                f"  • Adresse IP           : {ip}\n\n"
+                "Cette action est enregistrée dans l'onglet Suppressions de l'AdminPanel.\n\n"
+                "Si suspecte, contactez le Super Administrateur.\n\n"
+                "Cordialement,\nLe système DMT — Doumbia Moussa Transport"
+            )
         send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, emails, fail_silently=True)
     except Exception as e:
         print(f'Erreur envoi email admins: {e}')
