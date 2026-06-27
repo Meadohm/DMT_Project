@@ -952,18 +952,6 @@ function SuperAdminPanel() {
                 </div>
               </div>
             )}
-            {confirmClearDeletions && (
-              <div className="modal-overlay">
-                <div className="modal-box">
-                  <h3>🗑️ Nettoyer toutes les suppressions ?</h3>
-                  <p>Cette action est irréversible.</p>
-                  <div className="modal-actions">
-                    <button className="btn-cancel" onClick={() => setConfirmClearDeletions(false)}>Annuler</button>
-                    <button className="btn-danger" onClick={handleClearDeletions}>Confirmer</button>
-                  </div>
-                </div>
-              </div>
-            )}
               </>
             )}
 
@@ -1498,6 +1486,18 @@ function SuperAdminPanel() {
           whiteSpace: 'normal',
         }}>
           {tooltip.text}
+        </div>
+      )}
+      {confirmClearDeletions && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h3>🗑️ Nettoyer toutes les suppressions ?</h3>
+            <p>Cette action est irréversible.</p>
+            <div className="modal-actions">
+              <button className="btn-cancel" onClick={() => setConfirmClearDeletions(false)}>Annuler</button>
+              <button className="btn-danger" onClick={handleClearDeletions}>Confirmer</button>
+            </div>
+          </div>
         </div>
       )}
     </div>
