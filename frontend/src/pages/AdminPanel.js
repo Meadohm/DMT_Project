@@ -191,7 +191,9 @@ function AdminPanel() {
       if (currentSection === 'submissions') {
         const currentPage = parseInt(localStorage.getItem('historiquePage') || '1');
         fetchHistorique(currentPage, historiqueAction, historiqueSearch, dateDebut, dateFin);
-        fetchAuditDeletions();
+        if (journalTab === 'suppressions') {
+          fetchAuditDeletions();
+        }
       }
       setLoading(false);
     } catch (err) {
