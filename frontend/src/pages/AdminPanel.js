@@ -942,7 +942,7 @@ function AdminPanel() {
                 {deletionsLoading ? (
                   <p>Chargement...</p>
                 ) : auditDeletions.length === 0 ? (
-                  <p className="no-data">✅ Aucune suppression enregistrée.</p>
+                  <p className="no-data">Aucune suppression enregistrée.</p>
                 ) : (
                   <div className="users-table-wrapper">
                     <table>
