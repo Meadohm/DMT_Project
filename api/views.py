@@ -193,7 +193,7 @@ def update_user_role(request, user_id):
     if (hasattr(request.user, 'role') and
         request.user.role == 'admin' and
         utilisateur.role in ['admin', 'super_admin']):
-        return Response({'error': 'Vous ne pouvez pas modifier le role d'un administrateur.'}, status=status.HTTP_403_FORBIDDEN)
+        return Response({"error": "Vous ne pouvez pas modifier le role d'un administrateur."}, status=status.HTTP_403_FORBIDDEN)
     # Admin normal ne peut pas promouvoir au rôle admin ou super_admin
     new_role_requested = request.data.get('role', '').lower()
     if (hasattr(request.user, 'role') and
