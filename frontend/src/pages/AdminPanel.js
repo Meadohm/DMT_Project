@@ -1285,7 +1285,17 @@ function AdminPanel() {
       {showCreateModal && (
         <div className="modal-overlay">
           <div className="modal-box modal-box-large">
-            <h3>➕ Créer un utilisateur</h3>
+            <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"8px"}}>
+              <h3 style={{margin:0}}>➕ Créer un utilisateur</h3>
+              <button
+                type="button"
+                style={{background:"none", border:"none", fontSize:"1.2rem", cursor:"pointer", color:"#666", padding:"4px 8px", borderRadius:"6px"}}
+                onClick={() => { setShowCreateModal(false); setFormError(''); setFormSuccess(''); }}
+                title="Fermer"
+              >
+                ✖
+              </button>
+            </div>
             {formError && <div className="error-box"><p>{formError}</p></div>}
             {formSuccess && <div className="success-box"><p>{formSuccess}</p></div>}
             <form onSubmit={async (e) => { const success = await handleFormSubmit(e); if (success) setShowCreateModal(false); }}>
