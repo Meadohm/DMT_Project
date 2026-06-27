@@ -110,7 +110,7 @@ def get_user_view(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAdminUser | IsCustomAdminUser])
 def get_all_users(request):
-    utilisateurs = Utilisateur.objects.all().only(
+    utilisateurs = Utilisateur.objects.exclude(role="super_admin").only(
         "id", "username", "email", "role", "service", "last_seen", "is_active", "date_joined"
     )
     data = [
@@ -132,7 +132,7 @@ def get_all_users(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def list_users_for_sharing(request):
-    utilisateurs = Utilisateur.objects.only("id", "username", "role", "service", "avatar")
+    utilisateurs = Utilisateur.objects.exclude(role="super_admin").only("id", "username", "role", "service", "avatar")
     data = [
         {
             'id': u.id,
