@@ -13,7 +13,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from .permissions import IsCustomAdminUser
+from .permissions import IsCustomAdminUser, IsSuperAdmin
 from .models import File as FileModel, Folder, Service, FolderShare, Utilisateur, Notification, Archive, AuditLog, AuditLogDeletion
 from .serializers import FileSerializer, FolderSerializer, ServiceSerializer, NotificationSerializer, ArchiveSerializer
 
