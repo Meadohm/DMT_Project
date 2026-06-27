@@ -785,7 +785,7 @@ function SuperAdminPanel() {
                                     className="delete-user-button"
                                     onClick={() => setConfirmDeleteId(u.id)}
                                     title="Supprimer cet utilisateur"
-                                    disabled={!u.is_active === false}
+                                    disabled={false}
                                   >
                                     🗑️
                                   </button>
@@ -907,7 +907,7 @@ function SuperAdminPanel() {
                           <button className="delete-user-button" onClick={() => setConfirmDeleteHistoriqueId(h.id)}>Supprimer</button>
                         )}
                         {h.utilisateur === userInfo?.username && (
-                          <span className="protected-log">🔒</span>
+                          <span className="protected-log" title="Vous ne pouvez pas supprimer vos propres entrées">🔒</span>
                         )}
                       </td>
                     </tr>

@@ -1129,6 +1129,27 @@ td:last-child {
   cursor: not-allowed;
   display: block;
   text-align: center;
+  position: relative;
+}
+.protected-log::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e293b;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  z-index: 999;
+}
+.protected-log:hover::after {
+  opacity: 1;
 }
 
 .pagination .btn-cancel {

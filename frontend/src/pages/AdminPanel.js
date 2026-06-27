@@ -748,7 +748,9 @@ function AdminPanel() {
                                 >
                                   {u.is_active ? '⏸ Désactiver' : '▶ Réactiver'}
                                 </button>
-                                <button className="delete-user-button" onClick={() => setConfirmDeleteId(u.id)}>Supprimer</button>
+                                {u.role !== 'admin' && u.role !== 'super_admin' && (
+                                  <button className="delete-user-button" onClick={() => setConfirmDeleteId(u.id)}>Supprimer</button>
+                                )}
                               </>
                             )}
                           </td>
@@ -866,7 +868,7 @@ function AdminPanel() {
                           <button className="delete-user-button" onClick={() => setConfirmDeleteHistoriqueId(h.id)}>Supprimer</button>
                         )}
                         {h.utilisateur === userInfo?.username && (
-                          <span className="protected-log">🔒</span>
+                          <span className="protected-log" data-tooltip="Vous ne pouvez pas supprimer vos propres entrées">🔒</span>
                         )}
                       </td>
                     </tr>
