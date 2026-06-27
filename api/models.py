@@ -10,12 +10,14 @@ import re   # indispensable pour upload_to_folder
 ############ Utilisateur personnalisé ###########
 class Utilisateur(AbstractUser):
     ROLE_CHOICES = [
+        ('super_admin', 'Super Administrateur'),
         ('admin', 'Administrateur'),
         ('responsable', 'Responsable de service'),
         ('employe', 'Employé'),
     ]
     role = models.CharField(max_length=225, choices=ROLE_CHOICES, default='employe')
     last_seen = models.DateTimeField(null=True, blank=True)
+    email = models.EmailField(blank=True, unique=False)
     service = models.CharField(max_length=255, null=True, blank=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
 
