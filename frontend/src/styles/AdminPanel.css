@@ -162,6 +162,51 @@ button:active {
   outline: none;
 }
 
+.admin-filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.admin-filter-input {
+  flex: 1;
+  min-width: 180px;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  outline: none;
+}
+
+.admin-filter-select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  outline: none;
+  background: white;
+  cursor: pointer;
+  min-width: 150px;
+}
+
+.admin-filter-reset {
+  padding: 8px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f1f5f9;
+  color: #334155;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.admin-filter-reset:hover {
+  background: #e2e8f0;
+}
+
 /* User table action buttons */
 .reset-password-button,
 .delete-user-button,

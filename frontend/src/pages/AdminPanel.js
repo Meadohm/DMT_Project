@@ -66,6 +66,9 @@ function AdminPanel() {
 
   const [formError, setFormError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [filterRole, setFilterRole] = useState("");
+  const [filterService, setFilterService] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -475,6 +478,25 @@ function AdminPanel() {
 
   const handleTooltipHide = () => setTooltip(null);
 
+  const filteredUsers = users
+    .filter(u => u.username.toLowerCase().includes(searchTerm.toLowerCase()))
+    .filter(u => filterRole ? u.role === filterRole : true)
+    .filter(u => filterService ? u.service === filterService : true)
+    .filter(u => {
+      if (!filterStatus) return true;
+      const diff = u.last_seen ? Date.now() - new Date(u.last_seen).getTime() : Infinity;
+      if (filterStatus === "online") return diff < 600000 && u.is_active;
+      if (filterStatus === "offline") return diff >= 600000 && u.is_active;
+      if (filterStatus === "inactive") return !u.is_active;
+      if (filterStatus === "never") return !u.last_seen;
+      return true;
+    })
+    .sort((a, b) => {
+      if (a.id === userInfo?.id) return -1;
+      if (b.id === userInfo?.id) return 1;
+      return 0;
+    });
+
   if (loading) return <p>Chargement...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
@@ -595,18 +617,41 @@ function AdminPanel() {
             <div className="section-header">
               <h2>Gestion des utilisateurs</h2>
               <span className="user-count-badge">
-                {users.filter(u => u.username.toLowerCase().includes(searchTerm.toLowerCase())).length} / {users.length} utilisateur{users.length !== 1 ? 's' : ''}
+                {filteredUsers.length} / {users.length} utilisateur{users.length !== 1 ? 's' : ''}
               </span>
               <button className="btn-create-user" onClick={() => { setShowCreateModal(true); setFormError(''); setFormSuccess(''); setFormData({ username: '', email: '', password: '', confirmPassword: '', role: 'employe', service: '' }); }}>
                 + Créer un utilisateur
               </button>
             </div>
-            <div className="admin-search-bar">
+            <div className="admin-filters-bar">
               <input
-                placeholder="Rechercher par nom..."
+                className="admin-filter-input"
+                placeholder="🔍 Rechercher par nom..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
+              <select className="admin-filter-select" value={filterRole} onChange={(e) => setFilterRole(e.target.value)}>
+                <option value="">Tous les rôles</option>
+                <option value="employe">Employé</option>
+                <option value="responsable">Responsable</option>
+                <option value="admin">Admin</option>
+              </select>
+              <select className="admin-filter-select" value={filterService} onChange={(e) => setFilterService(e.target.value)}>
+                <option value="">Tous les services</option>
+                {[...new Set(users.map(u => u.service).filter(Boolean))].map(s => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+              <select className="admin-filter-select" value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+                <option value="">Tous les statuts</option>
+                <option value="online">🟢 En ligne</option>
+                <option value="offline">🔴 Hors ligne</option>
+                <option value="never">⚫ Jamais connecté</option>
+                <option value="inactive">🚫 Désactivé</option>
+              </select>
+              <button className="admin-filter-reset" onClick={() => { setSearchTerm(''); setFilterRole(''); setFilterService(''); setFilterStatus(''); }}>
+                ↺ Réinitialiser
+              </button>
             </div>
             <div className="users-table-wrapper">
               <table>
@@ -622,14 +667,7 @@ function AdminPanel() {
                   </tr>
                 </thead>
                 <tbody>
-                  {users
-                    .filter(u => u.username.toLowerCase().includes(searchTerm.toLowerCase()))
-                    .sort((a, b) => {
-                      if (a.id === userInfo?.id) return -1;
-                      if (b.id === userInfo?.id) return 1;
-                      return 0;
-                    })
-                    .map((u, index) => {
+                  {filteredUsers.map((u, index) => {
                       const { label: statusLabel, type: statusType } = getRelativeTime(u.last_seen, u.is_active);
                       return editingUser === u.id ? (
                         <tr key={u.id} className="editing-row">
