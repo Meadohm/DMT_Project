@@ -514,6 +514,9 @@ def check_file_shared(request, file_id):
 @permission_classes([IsAdminUser | IsCustomAdminUser])
 def get_historique(request):
     logs = AuditLog.objects.select_related('utilisateur').order_by('-timestamp')
+    # Masquer les actions du super_admin aux admins normaux
+    if hasattr(request.user, 'role') and request.user.role != 'super_admin':
+        logs = logs.exclude(utilisateur__role='super_admin')
 
     action_filter = request.GET.get('action', '')
     search = request.GET.get('search', '')
