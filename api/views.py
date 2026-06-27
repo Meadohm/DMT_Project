@@ -660,6 +660,12 @@ def delete_historique(request, log_id):
         log = AuditLog.objects.get(id=log_id)
     except AuditLog.DoesNotExist:
         return Response({'error': 'Entree non trouvee.'}, status=status.HTTP_404_NOT_FOUND)
+    # Admin normal ne peut pas supprimer ses propres entrées
+    if (hasattr(request.user, 'role') and
+        request.user.role == 'admin' and
+        log.utilisateur and
+        log.utilisateur.id == request.user.id):
+        return Response({'error': 'Vous ne pouvez pas supprimer vos propres entrées du journal.'}, status=status.HTTP_403_FORBIDDEN)
     try:
         admin = Utilisateur.objects.get(username=request.user.username)
         AuditLogDeletion.objects.create(
