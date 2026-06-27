@@ -689,15 +689,17 @@ def delete_all_historique(request):
     logs = AuditLog.objects.all()
     try:
         admin = Utilisateur.objects.get(username=request.user.username)
-        for log in logs:
-            AuditLogDeletion.objects.create(
+        ip = request.META.get('REMOTE_ADDR')
+        AuditLogDeletion.objects.bulk_create([
+            AuditLogDeletion(
                 admin=admin,
                 deleted_log_id=log.id,
                 deleted_utilisateur=log.utilisateur.username if log.utilisateur else '',
                 deleted_action=log.action,
                 deleted_objet=log.objet,
-                adresse_ip=request.META.get('REMOTE_ADDR'),
-            )
+                adresse_ip=ip,
+            ) for log in logs
+        ])
     except Exception:
         pass
     notify_admins_deletion(
