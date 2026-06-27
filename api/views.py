@@ -291,6 +291,7 @@ def create_user_account(request):
             )
         except Exception:
             pass
+    return Response({"success": "Utilisateur cree.", "id": user.id}, status=status.HTTP_201_CREATED)
 
 
 @api_view(['PUT'])
