@@ -110,9 +110,15 @@ def get_user_view(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
 def get_all_users(request):
-    utilisateurs = Utilisateur.objects.exclude(role="super_admin").only(
-        "id", "username", "email", "role", "service", "last_seen", "is_active", "date_joined"
-    )
+    # Super admin voit tout le monde, admin normal ne voit pas les super_admins
+    if hasattr(request.user, 'role') and request.user.role == 'super_admin':
+        utilisateurs = Utilisateur.objects.all().only(
+            "id", "username", "email", "role", "service", "last_seen", "is_active", "date_joined"
+        )
+    else:
+        utilisateurs = Utilisateur.objects.exclude(role="super_admin").only(
+            "id", "username", "email", "role", "service", "last_seen", "is_active", "date_joined"
+        )
     data = [
         {
             'id': u.id,
