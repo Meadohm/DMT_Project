@@ -108,7 +108,7 @@ def get_user_view(request):
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAdminUser | IsCustomAdminUser])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
 def get_all_users(request):
     utilisateurs = Utilisateur.objects.exclude(role="super_admin").only(
         "id", "username", "email", "role", "service", "last_seen", "is_active", "date_joined"
@@ -182,7 +182,7 @@ def update_password_view(request):
 
 @api_view(['PUT'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAdminUser | IsCustomAdminUser])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
 def update_user_role(request, user_id):
     try:
         utilisateur = Utilisateur.objects.get(id=user_id)
@@ -209,7 +209,7 @@ def update_user_role(request, user_id):
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAdminUser | IsCustomAdminUser])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
 def reset_user_password(request, user_id):
     try:
         utilisateur = Utilisateur.objects.get(id=user_id)
@@ -247,7 +247,7 @@ def reset_user_password(request, user_id):
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAdminUser | IsCustomAdminUser])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
 def create_user_account(request):
     username = request.data.get('username', '').strip()
     email = request.data.get('email', '').strip()
@@ -285,7 +285,7 @@ def create_user_account(request):
 
 @api_view(['PUT'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAdminUser | IsCustomAdminUser])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
 def update_user_account(request, user_id):
     try:
         utilisateur = Utilisateur.objects.get(id=user_id)
@@ -322,7 +322,7 @@ def update_user_account(request, user_id):
 
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAdminUser | IsCustomAdminUser])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
 def delete_user_account(request, user_id):
     if request.user.id == user_id:
         return Response({'error': 'Vous ne pouvez pas supprimer votre propre compte.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -347,7 +347,7 @@ def delete_user_account(request, user_id):
 
 @api_view(['PUT'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAdminUser | IsCustomAdminUser])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
 def toggle_user_active(request, user_id):
     try:
         user = Utilisateur.objects.get(id=user_id)
@@ -389,7 +389,7 @@ def toggle_user_active(request, user_id):
 ##### FICHIERS CENTRALISÉS #####
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAdminUser | IsCustomAdminUser])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
 def synchroniser_fichiers(request):
     for f in FileModel.objects.all():
         if f.fichier and os.path.exists(f.fichier.path):
@@ -400,7 +400,7 @@ def synchroniser_fichiers(request):
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAdminUser | IsCustomAdminUser])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
 def list_centralized_files(request):
     files = FileModel.objects.select_related('utilisateur', 'folder').prefetch_related('folder__shares__user').all()
     data = []
@@ -438,7 +438,7 @@ def list_centralized_files(request):
 
 @api_view(['PUT'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAdminUser | IsCustomAdminUser])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
 def update_centralized_file(request, file_id):
     try:
         f = FileModel.objects.get(id=file_id)
@@ -464,7 +464,7 @@ def update_centralized_file(request, file_id):
 
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAdminUser | IsCustomAdminUser])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
 def delete_centralized_file(request, file_id):
     try:
         f = FileModel.objects.select_related('folder').get(id=file_id)
@@ -487,7 +487,7 @@ def delete_centralized_file(request, file_id):
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAdminUser | IsCustomAdminUser])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
 def check_file_shared(request, file_id):
     try:
         f = FileModel.objects.select_related('folder').get(id=file_id)
@@ -511,7 +511,7 @@ def check_file_shared(request, file_id):
 ##### HISTORIQUE (AuditLog) #####
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAdminUser | IsCustomAdminUser])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
 def get_historique(request):
     logs = AuditLog.objects.select_related('utilisateur').order_by('-timestamp')
     # Masquer les actions du super_admin aux admins normaux
@@ -568,7 +568,7 @@ def get_historique(request):
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAdminUser | IsCustomAdminUser])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
 def export_historique_csv(request):
     logs = AuditLog.objects.select_related('utilisateur').order_by('-timestamp')
 
@@ -654,7 +654,7 @@ Consultez l\'onglet "Suppressions" dans le Journal d\'activité.'''
 
 @api_view(["DELETE"])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAdminUser | IsCustomAdminUser])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
 def delete_historique(request, log_id):
     try:
         log = AuditLog.objects.get(id=log_id)
@@ -684,7 +684,7 @@ def delete_historique(request, log_id):
 
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAdminUser | IsCustomAdminUser])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
 def delete_all_historique(request):
     logs = AuditLog.objects.all()
     try:
@@ -712,7 +712,7 @@ def delete_all_historique(request):
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAdminUser | IsCustomAdminUser])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
 def get_disk_usage(request):
     import shutil
     total, used, free = shutil.disk_usage('/')
@@ -726,7 +726,7 @@ def get_disk_usage(request):
 ##### SERVICES #####
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAdminUser | IsCustomAdminUser])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
 def create_service(request):
     nom = request.data.get('nom', '').strip()
     description = request.data.get('description', '').strip()
@@ -785,7 +785,7 @@ def list_services(request):
 
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAdminUser | IsCustomAdminUser])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
 def delete_service(request, service_id):
     try:
         service = Service.objects.get(id=service_id)
@@ -804,7 +804,7 @@ def delete_service(request, service_id):
 
 @api_view(['PUT'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAdminUser | IsCustomAdminUser])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
 def update_service(request, service_id):
     try:
         service = Service.objects.get(id=service_id)
@@ -848,7 +848,7 @@ def update_service(request, service_id):
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAdminUser | IsCustomAdminUser])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
 def get_dashboard_stats(request):
     from django.utils import timezone
     from django.utils.timezone import now
@@ -2105,7 +2105,7 @@ def revoke_share(request, share_id):
 
 @api_view(["GET"])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAdminUser | IsCustomAdminUser])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
 def list_audit_deletions(request):
     """Liste toutes les suppressions du journal — visible uniquement aux admins"""
     # Masquer les suppressions du super_admin aux admins normaux
