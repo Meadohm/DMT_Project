@@ -643,14 +643,13 @@ def export_historique_csv(request):
 
 
 def notify_admins_deletion(admin_username, log_info, ip, is_bulk=False):
-    """Notifie tous les autres admins par email lors d'une suppression de journal"""
+    """Notifie tous les admins et super_admins par email lors d'une suppression de journal"""
     try:
-        # Ne pas notifier si c'est le super_admin
-        actor = Utilisateur.objects.filter(username=admin_username).first()
-        if actor and actor.role == 'super_admin':
-            return
-        other_admins = Utilisateur.objects.filter(role='admin').exclude(username=admin_username)
-        emails = [a.email for a in other_admins if a.email]
+        # Notifier tous les admins et super_admins sauf l'auteur
+        recipients = Utilisateur.objects.filter(
+            role__in=['admin', 'super_admin']
+        ).exclude(username=admin_username)
+        emails = [a.email for a in recipients if a.email]
         if not emails:
             return
         if is_bulk:
@@ -666,6 +665,7 @@ def notify_admins_deletion(admin_username, log_info, ip, is_bulk=False):
                 "Cette action est enregistrée dans l'onglet Suppressions de l'AdminPanel.\n\n"
                 "Cordialement,\nLe système DMT — Doumbia Moussa Transport"
             )
+        else:
             subject = '[DMT] ⚠️ Alerte sécurité — Suppression dans le journal'
             body = (
                 f"Bonjour,\n\n"
