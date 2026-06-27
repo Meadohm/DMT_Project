@@ -29,7 +29,9 @@ function Login() {
       await login(username, password);
       const user = await getUser();
 
-      if (user.role === "admin") {
+      if (user.role === "super_admin") {
+        navigate("/super-admin");
+      } else if (user.role === "admin") {
         navigate("/admin");
       } else if (user.role === "responsable") {
         navigate("/dashboard-responsable");
