@@ -710,10 +710,15 @@ function AdminPanel() {
                           <td data-label="#">{index + 1}</td>
                           <td data-label="Nom">{u.username}</td>
                           <td data-label="Rôle">
-                            <select value={u.role} onChange={(e) => handleUpdateRole(u.id, e.target.value)}>
+                            <select
+                              value={u.role}
+                              onChange={(e) => handleUpdateRole(u.id, e.target.value)}
+                              disabled={u.id === userInfo?.id || u.role === 'admin' || u.role === 'super_admin'}
+                              title={u.role === 'admin' || u.role === 'super_admin' ? "Vous ne pouvez pas modifier le rôle d'un administrateur" : ''}
+                            >
                               <option value="employe">Employé</option>
                               <option value="responsable">Responsable</option>
-                              <option value="admin">Admin</option>
+                              <option value="admin" disabled>Admin</option>
                             </select>
                           </td>
                           <td data-label="Service">{u.service || '—'}</td>

@@ -714,7 +714,7 @@ function SuperAdminPanel() {
                           <td data-label="#">{index + 1}</td>
                           <td data-label="Nom"><input value={editUserData.username} onChange={(e) => setEditUserData({ ...editUserData, username: e.target.value })} /></td>
                           <td data-label="Rôle">
-                            <select value={u.role} onChange={(e) => handleUpdateRole(u.id, e.target.value)} disabled={u.username === 'FOFANA' || u.id === userInfo?.id}>
+                            <select value={u.role} onChange={(e) => handleUpdateRole(u.id, e.target.value)} disabled={u.id === userInfo?.id || u.role === 'super_admin'}>
                               <option value="super_admin">👑 Super Admin</option>
                               <option value="employe">Employé</option>
                               <option value="responsable">Responsable</option>
@@ -741,7 +741,7 @@ function SuperAdminPanel() {
                           <td data-label="#">{index + 1}</td>
                           <td data-label="Nom">{u.username}</td>
                           <td data-label="Rôle">
-                            <select value={u.role} onChange={(e) => handleUpdateRole(u.id, e.target.value)} disabled={u.username === 'FOFANA' || u.id === userInfo?.id}>
+                            <select value={u.role} onChange={(e) => handleUpdateRole(u.id, e.target.value)} disabled={u.id === userInfo?.id || u.role === 'super_admin'}>
                               <option value="super_admin">👑 Super Admin</option>
                               <option value="employe">Employé</option>
                               <option value="responsable">Responsable</option>
