@@ -2113,3 +2113,12 @@ def list_audit_deletions(request):
         "adresse_ip": d.adresse_ip,
     } for d in deletions]
     return Response(data)
+
+@api_view(["DELETE"])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsSuperAdmin])
+def clear_audit_deletions(request):
+    """Nettoyer toutes les suppressions du journal — super_admin uniquement"""
+    count = AuditLogDeletion.objects.count()
+    AuditLogDeletion.objects.all().delete()
+    return Response({"message": f"{count} suppression(s) effacee(s)."}, status=status.HTTP_200_OK)
