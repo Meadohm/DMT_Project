@@ -780,12 +780,13 @@ function SuperAdminPanel() {
                                 >
                                   {u.is_active ? '⏸ Désactiver' : '▶ Réactiver'}
                                 </button>
-                                {userInfo?.role === 'super_admin' && u.role !== 'super_admin' && (
+                                {u.id !== userInfo?.id && (
+                                  u.role !== 'super_admin' || userInfo?.is_superuser === true
+                                ) && !u.is_superuser && (
                                   <button
                                     className="delete-user-button"
                                     onClick={() => setConfirmDeleteId(u.id)}
                                     title="Supprimer cet utilisateur"
-                                    disabled={false}
                                   >
                                     🗑️
                                   </button>
