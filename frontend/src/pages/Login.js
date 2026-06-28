@@ -77,8 +77,27 @@ function Login() {
 
         {/* Message de bienvenue */}
         <div className="welcome-message">
-          <h2>🔐 CENTRALISATION DES DONNÉES</h2>
-          <p>Connectez-vous à votre espace collaboratif sécurisé</p>
+          <div className="product-brand">
+            <h1 className="product-name">DocFlow <span className="product-pro">Pro</span></h1>
+            <p className="product-by">by DMT GENICI GROUPE</p>
+          </div>
+          <p className="product-tagline">
+            Gérez, partagez et sécurisez vos documents d'entreprise en toute sérénité
+          </p>
+          <div className="product-features">
+            <div className="feature-item">
+              <span className="feature-icon">🔒</span>
+              <span>Sécurité enterprise</span>
+            </div>
+            <div className="feature-item">
+              <span className="feature-icon">📂</span>
+              <span>Collaboration fluide</span>
+            </div>
+            <div className="feature-item">
+              <span className="feature-icon">📊</span>
+              <span>Multi-rôles intelligent</span>
+            </div>
+          </div>
         </div>
 
         {/* Messages */}
