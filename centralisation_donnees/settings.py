@@ -153,3 +153,12 @@ DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 RATELIMIT_USE_CACHE = 'default'
+
+# Cache pour django-ratelimit
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': '/tmp/django_cache',
+    }
+}
+RATELIMIT_USE_CACHE = 'default'
