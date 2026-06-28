@@ -165,3 +165,6 @@ CACHES = {
     }
 }
 RATELIMIT_USE_CACHE = 'default'
+
+# Handler 403 pour ratelimit JSON
+RATELIMIT_FAIL_OPEN = False

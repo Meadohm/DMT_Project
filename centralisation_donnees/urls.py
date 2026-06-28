@@ -27,3 +27,13 @@ urlpatterns = [
     path('', home, name='home'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+from django.http import JsonResponse
+def ratelimit_handler(request, exception):
+    return JsonResponse({'error': 'Trop de tentatives de connexion. Veuillez patienter 10 minutes.'}, status=429)
+handler403 = ratelimit_handler
+
+from django.http import JsonResponse
+def ratelimit_handler(request, exception):
+    return JsonResponse({'error': 'Trop de tentatives de connexion. Veuillez patienter 10 minutes.'}, status=429)
+handler403 = ratelimit_handler
