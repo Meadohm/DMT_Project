@@ -269,6 +269,8 @@
   color: #003366;
   letter-spacing: -0.5px;
   margin: 0;
+  width: 100%;
+  text-align: center;
 }
 .product-pro {
   color: #6c63ff;
@@ -280,6 +282,8 @@
   letter-spacing: 2px;
   text-transform: uppercase;
   margin: 0 0 12px;
+  width: 100%;
+  text-align: center;
 }
 .product-tagline {
   font-size: 0.92rem;
