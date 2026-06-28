@@ -59,9 +59,8 @@ def home(request):
 ##### AUTHENTIFICATION & UTILISATEURS #####
 @api_view(['POST'])
 @permission_classes([AllowAny])
-@ratelimit(key='ip', rate='5/10m', method='POST', block=True)
+@ratelimit(key='ip', rate='5/10m', method='POST', block=False)
 def login_view(request):
-    from django_ratelimit.exceptions import Ratelimited as RatelimitedEx
     if getattr(request, 'limited', False):
         return Response({'error': 'Trop de tentatives de connexion. Veuillez patienter 10 minutes.'}, status=429)
     username = request.data.get('username')
