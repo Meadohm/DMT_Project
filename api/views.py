@@ -3,6 +3,8 @@ from django.db.models import Count
 from django.contrib.auth import authenticate, get_user_model
 from django.conf import settings
 from django.core.mail import send_mail
+from django_ratelimit.decorators import ratelimit
+from django_ratelimit.exceptions import Ratelimited
 from django.core.files import File as DjangoFile
 from django.utils.crypto import get_random_string
 from django.http import HttpResponse, FileResponse
@@ -57,7 +59,11 @@ def home(request):
 ##### AUTHENTIFICATION & UTILISATEURS #####
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@ratelimit(key='ip', rate='5/10m', method='POST', block=True)
 def login_view(request):
+    from django_ratelimit.exceptions import Ratelimited as RatelimitedEx
+    if getattr(request, 'limited', False):
+        return Response({'error': 'Trop de tentatives de connexion. Veuillez patienter 10 minutes.'}, status=429)
     username = request.data.get('username')
     password = request.data.get('password')
     user = authenticate(username=username, password=password)
@@ -130,6 +136,7 @@ def get_all_users(request):
             'last_seen': (u.last_seen or u.last_login).isoformat() if (u.last_seen or u.last_login) else None,
             'is_active': u.is_active,
             'date_joined': u.date_joined.isoformat() if u.date_joined else None,
+            'is_superuser': u.is_superuser,
         }
         for u in utilisateurs
     ]
