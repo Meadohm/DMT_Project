@@ -19,7 +19,23 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [countdown, setCountdown] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (countdown === null || countdown <= 0) return;
+    const timer = setInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setError('');
+          return null;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [countdown]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -43,6 +59,7 @@ function Login() {
       const message = e.response?.data?.error || e.response?.data?.detail || 'Erreur de connexion.';
       if (status === 429) {
         setError('🚫 Trop de tentatives. Veuillez patienter 10 minutes.');
+        setCountdown(600);
       } else if (status === 403) {
         setError('🚫 ' + message);
       } else {
@@ -103,7 +120,16 @@ function Login() {
         </div>
 
         {/* Messages */}
-        {error && <div className="alert error">{error}</div>}
+        {error && (
+          <div className="alert error">
+            {error}
+            {countdown !== null && (
+              <div className="countdown">
+                ⏱ Réessayez dans : {Math.floor(countdown / 60)}:{String(countdown % 60).padStart(2, '0')}
+              </div>
+            )}
+          </div>
+        )}
         {loading && <div className="alert loading">⏳ Chargement en cours...</div>}
 
         {/* Formulaire */}
