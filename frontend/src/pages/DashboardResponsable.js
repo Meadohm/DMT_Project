@@ -5,6 +5,7 @@ import { getUserInfo } from "../services/fileService";
 import { checkTokenValidity } from "../services/authService";
 import {
   listFolders,
+  listFoldersService,
   createFolder,
   renameFolder,
   deleteFolder,
@@ -91,7 +92,7 @@ function DashboardResponsable() {
   // === Fonction pour charger les dossiers (optimisée & triée) ===
   const fetchFolders = async () => {
     try {
-      const res = await listFolders();
+      const res = await listFoldersService();
       const data = res || [];
 
       const sorted = [...data].sort(

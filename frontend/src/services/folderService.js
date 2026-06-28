@@ -17,6 +17,20 @@ export const listFolders = async () => {
   }
 };
 
+//Lister les dossiers du service (responsable)
+export const listFoldersService = async () => {
+  try {
+    const token = getToken();
+    const res = await axios.get(`${API_BASE_URL}/folders/service/`, {
+      headers: { Authorization: `Token ${token}` },
+    });
+    return res.data;
+  } catch (error) {
+    console.error("❌ Erreur récupération dossiers service :", error.response || error.message);
+    throw error;
+  }
+};
+
 //Créer un dossier
 export const createFolder = async (name) => {
   try {
