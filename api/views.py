@@ -976,6 +976,39 @@ def get_dashboard_stats(request):
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
+def list_folders_service(request):
+    """
+    Retourne tous les dossiers des employés du même service
+    que le responsable connecté + ceux partagés avec lui.
+    """
+    user = request.user
+
+    if not user.service:
+        return Response(
+            {'error': 'Aucun service associé à ce compte.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    service_folders = Folder.objects.filter(
+        proprietaire__service=user.service,
+        is_archived=False
+    ).prefetch_related("shares__user")
+
+    shared = Folder.objects.filter(
+        shares__user=user
+    ).prefetch_related("shares__user")
+
+    all_folders = (service_folders | shared).distinct()
+
+    serializer = FolderSerializer(
+        all_folders, many=True, context={"request": request}
+    )
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def list_folders(request):
     """
     Retourne tous les dossiers appartenant à l'utilisateur

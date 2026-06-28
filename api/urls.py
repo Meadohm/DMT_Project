@@ -46,6 +46,7 @@ urlpatterns = [
 
    # FOLDERS
     path('folders/', views.list_folders, name='list_folders'),
+    path('folders/service/', views.list_folders_service, name='list_folders_service'),
     path('folders/create/', views.create_folder, name='create_folder'),
     path('folders/<int:parent_id>/subfolders/', views.create_subfolder, name='create_subfolder'),
     path('folders/<int:folder_id>/rename/', views.rename_folder, name='rename_folder'),
