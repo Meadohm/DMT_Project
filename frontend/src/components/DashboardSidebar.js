@@ -130,8 +130,10 @@ function DashboardSidebar({
           )}
         </div>
 
-        {/* 🤝 Partagés avec moi */}
-        <h4 className="sidebar-section">🤝 Partagés avec moi</h4>
+        {/* 🤝 Partagés avec moi / 🏢 Dossiers service */}
+        <h4 className="sidebar-section">
+          {role === "responsable" ? "🏢 Dossiers service" : "🤝 Partagés avec moi"}
+        </h4>
         <div className="section-scroll">
           {sharedFolders.length === 0 ? (
             <p className="no-folder-msg1">Aucun dossier partagé</p>
