@@ -44,6 +44,7 @@ function DashboardSidebar({
   onShareFolder,
   onDeleteShared,
   onLeaveFolder,
+  externalFolders = [],
   role = "employe",
 }) {
   const [openMenuId, setOpenMenuId] = useState(null);
@@ -226,6 +227,40 @@ function DashboardSidebar({
             </button>
           )}
         </div>
+
+        {role === "responsable" && (
+          <>
+            <h4 className="sidebar-section">🤝 Partagés avec moi</h4>
+            <div className="section-scroll">
+              {externalFolders.length === 0 ? (
+                <p className="no-folder-msg1">Aucun dossier partagé</p>
+              ) : (
+                <ul className="folder-list">
+                  {externalFolders.map((folder) => (
+                    <li
+                      key={folder.id}
+                      className={activeFolder?.id === folder.id ? "active" : ""}
+                      onClick={() => onSelect(folder)}
+                    >
+                      <div className="folder-item">
+                        <span className="folder-icon">📂</span>
+                        <span className="folder-name">{folder.nom}</span>
+                        <div className="folder-actions">
+                          <button
+                            className={`star ${favorites.includes(folder.id) ? "active" : "inactive"}`}
+                            onClick={(e) => { e.stopPropagation(); onToggleFavorite(folder.id); }}
+                          >
+                            {favorites.includes(folder.id) ? "⭐" : "☆"}
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </>
+        )}
 
       </div>
 

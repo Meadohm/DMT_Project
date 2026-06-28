@@ -1005,7 +1005,22 @@ def list_folders_service(request):
     serializer = FolderSerializer(
         all_folders, many=True, context={"request": request}
     )
-    return Response(serializer.data)
+    data = serializer.data
+
+    # Injecter permissions complètes pour les dossiers du service
+    # dont le responsable n'est pas propriétaire
+    for folder in data:
+        if not folder.get("permissions"):
+            folder["permissions"] = {
+                "can_read": True,
+                "can_write": False,
+                "can_update": False,
+                "can_delete": False,
+                "can_delete_folder": False,
+                "can_share": False,
+            }
+
+    return Response(data)
 
 
 @api_view(['GET'])
