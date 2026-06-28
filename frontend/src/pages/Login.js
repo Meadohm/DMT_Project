@@ -77,9 +77,9 @@ function Login() {
 
         {/* Message de bienvenue */}
         <div className="welcome-message">
-          <div className="product-brand">
-            <h1 className="product-name">DocFlow <span className="product-pro">Pro</span></h1>
-            <p className="product-by">by DMT GENICI GROUPE</p>
+          <div className="product-brand" style={{width:'100%', textAlign:'center', display:'flex', flexDirection:'column', alignItems:'center'}}>
+            <h1 className="product-name" style={{textAlign:'center', width:'100%', margin:0}}>DocFlow <span className="product-pro">Pro</span></h1>
+            <p className="product-by" style={{textAlign:'center', width:'100%', margin:'2px 0 12px'}}>by DMT GENICI GROUPE</p>
           </div>
           <p className="product-tagline">
             Gérez, partagez et sécurisez vos documents d'entreprise en toute sérénité
