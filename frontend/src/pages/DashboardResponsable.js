@@ -357,7 +357,7 @@ function DashboardResponsable() {
   };
 
   // 🔍 Filtrage et regroupement dossiers
-  const { myFolders, sharedFolders, favoriteFolders } = useMemo(() => {
+  const { myFolders, sharedFolders, externalFolders, favoriteFolders } = useMemo(() => {
     const lowerSearch = searchTerm.toLowerCase();
     const filtered = folders.filter((f) =>
       f.nom.toLowerCase().includes(lowerSearch)
