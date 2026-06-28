@@ -40,8 +40,10 @@ function Login() {
       }
     } catch (e) {
       const status = e.response?.status;
-      const message = e.response?.data?.error || 'Erreur de connexion.';
-      if (status === 403) {
+      const message = e.response?.data?.error || e.response?.data?.detail || 'Erreur de connexion.';
+      if (status === 429) {
+        setError('🚫 Trop de tentatives. Veuillez patienter 10 minutes.');
+      } else if (status === 403) {
         setError('🚫 ' + message);
       } else {
         setError('⚠️ ' + message);
