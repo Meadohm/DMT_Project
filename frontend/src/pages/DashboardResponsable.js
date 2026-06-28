@@ -362,15 +362,17 @@ function DashboardResponsable() {
     const filtered = folders.filter((f) =>
       f.nom.toLowerCase().includes(lowerSearch)
     );
+    const userService = userInfo?.service ?? null;
     return {
       myFolders: filtered.filter((f) => f.proprietaire?.id === userInfo?.id),
       sharedFolders: filtered.filter((f) =>
         f.proprietaire?.id !== userInfo?.id &&
-        f.service === userInfo?.service
+        (userService ? f.service === userService : true)
       ),
       externalFolders: filtered.filter((f) =>
         f.proprietaire?.id !== userInfo?.id &&
-        f.service !== userInfo?.service
+        userService &&
+        f.service !== userService
       ),
       favoriteFolders: filtered.filter((f) => favorites.includes(f.id)),
     };
