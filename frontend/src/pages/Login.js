@@ -23,16 +23,29 @@ function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (countdown === null || countdown <= 0) return;
+    const until = localStorage.getItem('rateLimitUntil');
+    if (until) {
+      const remaining = Math.floor((parseInt(until) - Date.now()) / 1000);
+      if (remaining > 0) {
+        setCountdown(remaining);
+        setError('🚫 Trop de tentatives. Veuillez patienter.');
+      } else {
+        localStorage.removeItem('rateLimitUntil');
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (countdown === null || countdown <= 0) {
+      if (countdown === 0) {
+        localStorage.removeItem('rateLimitUntil');
+        setError('');
+        setCountdown(null);
+      }
+      return;
+    }
     const timer = setInterval(() => {
-      setCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          setError('');
-          return null;
-        }
-        return prev - 1;
-      });
+      setCountdown(prev => prev - 1);
     }, 1000);
     return () => clearInterval(timer);
   }, [countdown]);
@@ -58,8 +71,10 @@ function Login() {
       const status = e.response?.status;
       const message = e.response?.data?.error || e.response?.data?.detail || 'Erreur de connexion.';
       if (status === 429) {
-        setError('🚫 Trop de tentatives. Veuillez patienter 10 minutes.');
+        const until = Date.now() + 10 * 60 * 1000;
+        localStorage.setItem('rateLimitUntil', until.toString());
         setCountdown(600);
+        setError('🚫 Trop de tentatives. Veuillez patienter 10 minutes.');
       } else if (status === 403) {
         setError('🚫 ' + message);
       } else {
@@ -120,16 +135,7 @@ function Login() {
         </div>
 
         {/* Messages */}
-        {error && (
-          <div className="alert error">
-            {error}
-            {countdown !== null && (
-              <div className="countdown">
-                ⏱ Réessayez dans : {Math.floor(countdown / 60)}:{String(countdown % 60).padStart(2, '0')}
-              </div>
-            )}
-          </div>
-        )}
+        {error && <div className="alert error">{error}</div>}
         {loading && <div className="alert loading">⏳ Chargement en cours...</div>}
 
         {/* Formulaire */}
@@ -202,8 +208,13 @@ function Login() {
           </div>
 
           {/* Submit */}
-          <button type="submit" disabled={loading} className="login-btn">
-            Se connecter
+          <button
+            type="submit"
+            disabled={loading || countdown !== null}
+            className="login-btn"
+            style={{opacity: countdown !== null ? 0.5 : 1, cursor: countdown !== null ? 'not-allowed' : 'pointer'}}
+          >
+            {countdown !== null ? `⏱ ${Math.floor(countdown/60)}:${String(countdown%60).padStart(2,'0')}` : 'Se connecter'}
           </button>
         </form>
       </div>
