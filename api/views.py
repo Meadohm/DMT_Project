@@ -990,12 +990,14 @@ def list_folders_service(request):
         )
 
     service_folders = Folder.objects.filter(
-        proprietaire__service=user.service,
+        service=user.service,
         is_archived=False
     ).prefetch_related("shares__user")
 
     shared = Folder.objects.filter(
         shares__user=user
+    ).exclude(
+        service=user.service
     ).prefetch_related("shares__user")
 
     all_folders = (service_folders | shared).distinct()
