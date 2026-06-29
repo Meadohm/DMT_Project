@@ -100,7 +100,7 @@ function DashboardSidebar({
                   onToggleFavorite={onToggleFavorite}
                   isFavorite={true}
                   contextMode={favContextMode}
-                  onLeave={isSharedExternal ? (f) => onLeaveFolder(f) : null}
+                  onLeave={isSharedExternal ? (f) => { setConfirmLeaveFolder(f); } : null}
                 />
               );
             })
@@ -274,7 +274,7 @@ function DashboardSidebar({
                       onToggleFavorite={onToggleFavorite}
                       isFavorite={favorites.includes(folder.id)}
                       contextMode="shared"
-                      onLeave={(folder) => onLeaveFolder(folder)}
+                      onLeave={(folder) => { setConfirmLeaveFolder(folder); }}
                     />
                   ))
               )}
