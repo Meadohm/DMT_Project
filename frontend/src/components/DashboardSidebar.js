@@ -79,30 +79,20 @@ function DashboardSidebar({
           {favoriteFolders.length === 0 ? (
             <p className="no-folder-msg1">Aucun favori</p>
           ) : (
-            <ul className="folder-list">
-              {favoriteFolders.map((folder) => (
-                <li
-                  key={folder.id}
-                  className={`${
-                    activeFolder?.id === folder.id ? "active" : ""
-                  } favorite`}
-                  onClick={() => onSelect(folder)}
-                  title={folder.nom}
-                >
-                  📂 <span className="folder-name">{folder.nom}</span>
-                  <button
-                    className="star"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onToggleFavorite(folder.id);
-                    }}
-                    title="Retirer des favoris"
-                  >
-                    ❌
-                  </button>
-                </li>
-              ))}
-            </ul>
+            favoriteFolders.map((folder) => (
+              <FolderTree
+                key={folder.id}
+                folder={folder}
+                activeFolder={activeFolder}
+                onSelect={onSelect}
+                onCreateSubfolder={onCreateSubfolder}
+                onRename={onRenameFolder}
+                onDelete={onDeleteFolder}
+                onShare={onShareFolder}
+                onToggleFavorite={onToggleFavorite}
+                isFavorite={true}
+              />
+            ))
           )}
         </div>
 
