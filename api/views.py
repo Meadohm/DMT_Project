@@ -30,6 +30,13 @@ def has_folder_permission(user, folder, action: str) -> bool:
 
     share = FolderShare.objects.filter(folder=folder, user=user).first()
     if not share:
+        # Responsable peut lire les dossiers de son service sans FolderShare explicite
+        if (action == "read"
+                and hasattr(user, 'role')
+                and user.role == 'responsable'
+                and folder.service
+                and folder.service == user.service):
+            return True
         return False
 
     # Lecture autorisée par défaut si l'utilisateur a accès au partage
