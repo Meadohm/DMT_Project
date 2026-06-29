@@ -2376,6 +2376,8 @@ body.dark .user-info-service-inline {
   letter-spacing: 0.05em;
   padding: 8px 4px 4px;
   margin: 0;
+  flex: 0 0 100%;
+  width: 100%;
 }
 
 .user-item-owner {
