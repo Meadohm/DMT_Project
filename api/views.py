@@ -68,8 +68,8 @@ def home(request):
     return HttpResponse("Bienvenue sur l'API de centralisation des données !")
 
 ##### AUTHENTIFICATION & UTILISATEURS #####
-@csrf_exempt
 @api_view(['POST'])
+@authentication_classes([])
 @permission_classes([AllowAny])
 @ratelimit(key='ip', rate='5/10m', method='POST', block=False)
 def login_view(request):
