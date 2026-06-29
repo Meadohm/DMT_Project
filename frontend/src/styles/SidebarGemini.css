@@ -585,3 +585,24 @@
   background: rgba(108,99,255,0.2);
   color: #6c63ff;
 }
+/* ====== BADGE PROPRIÉTAIRE DOSSIER SERVICE ====== */
+.folder-name-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+
+.folder-owner-badge {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.45);
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar.sidebar-teal .folder-owner-badge {
+  color: rgba(255, 255, 255, 0.5);
+}

@@ -145,6 +145,7 @@ function DashboardSidebar({
                   onShare={onShareFolder}
                   onToggleFavorite={onToggleFavorite}
                   isFavorite={favorites.includes(folder.id)}
+                  showOwner={true}
                 />
               ))
           ) : (

@@ -38,6 +38,7 @@ function FolderTree({
   onShare,
   onToggleFavorite,
   isFavorite,
+  showOwner = false,
 }) {
   const [expanded, setExpanded] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -133,12 +134,19 @@ function FolderTree({
 
         {/* 📁 Icône + Nom */}
         <span className="folder-icon">📁</span>
-        <span
-          className="folder-name"
-          data-title={folder.nom}
-        >
-          {folder.nom}
-        </span>
+        <div className="folder-name-block">
+          <span
+            className="folder-name"
+            data-title={folder.nom}
+          >
+            {folder.nom}
+          </span>
+          {showOwner && folder.proprietaire?.username && (
+            <span className="folder-owner-badge">
+              par {folder.proprietaire.username}
+            </span>
+          )}
+        </div>
 
 
         {/* === Actions === */}
