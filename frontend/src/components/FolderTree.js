@@ -39,6 +39,8 @@ function FolderTree({
   onToggleFavorite,
   isFavorite,
   showOwner = false,
+  contextMode = null,
+  onLeave = null,
 }) {
   const [expanded, setExpanded] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -230,8 +232,9 @@ function FolderTree({
                 onRename={() => onRename(folder)}
                 onShare={() => onShare(folder)}
                 onDelete={() => onDelete(folder)}
+                onLeave={onLeave}
                 onClose={() => setMenuOpen(false)}
-                mode={folder.parent ? "child" : "owner"} // 🟢 Ajout distinction
+                mode={contextMode || (folder.parent ? "child" : "owner")}
               />
             )}
           </div>

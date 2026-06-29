@@ -146,6 +146,7 @@ function DashboardSidebar({
                   onToggleFavorite={onToggleFavorite}
                   isFavorite={favorites.includes(folder.id)}
                   showOwner={true}
+                  contextMode="service_readonly"
                 />
               ))
           ) : (
@@ -261,6 +262,8 @@ function DashboardSidebar({
                       onShare={onShareFolder}
                       onToggleFavorite={onToggleFavorite}
                       isFavorite={favorites.includes(folder.id)}
+                      contextMode="shared"
+                      onLeave={(folder) => onLeaveFolder(folder)}
                     />
                   ))
               )}
