@@ -7,6 +7,8 @@ import API_BASE_URL from "../config";
 function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
+  const [filterService, setFilterService] = useState("");
+  const [filterRole, setFilterRole] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [permissionsMap, setPermissionsMap] = useState({});
   const [existingShares, setExistingShares] = useState([]);
@@ -49,10 +51,15 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
 
   const existingUserIds = existingShares.map(s => s.user_id);
 
-  // Filtrer utilisateurs sans accès + recherche
+  const availableServices = [...new Set(users.map(u => u.service).filter(Boolean))].sort();
+
+  // Filtrer utilisateurs sans accès + recherche + filtres
   const availableUsers = users.filter(u =>
     !existingUserIds.includes(u.id) &&
-    u.username.toLowerCase().includes(search.toLowerCase())
+    (u.username.toLowerCase().includes(search.toLowerCase()) ||
+     (u.service && u.service.toLowerCase().includes(search.toLowerCase()))) &&
+    (filterService ? u.service === filterService : true) &&
+    (filterRole ? u.role === filterRole : true)
   );
 
   // Groupement par service
@@ -88,6 +95,14 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
         {isSelected && <span className="badge-selected">✓</span>}
       </div>
     );
+  };
+
+  const selectAllInGroup = (groupUsers) => {
+    const newUsers = groupUsers.filter(u => !selectedUsers.find(s => s.id === u.id));
+    setSelectedUsers(prev => [...prev, ...newUsers]);
+    const newPerms = {};
+    newUsers.forEach(u => { newPerms[u.id] = { write: false, update: false, delete: false, delete_folder: false }; });
+    setPermissionsMap(prev => ({ ...prev, ...newPerms }));
   };
 
   const toggleUser = (user) => {
@@ -250,12 +265,38 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
         {/* Zone 2 — Ajouter accès */}
         <div className="share-zone">
           <h4 className="share-zone-title">➕ Ajouter un accès</h4>
-          <input
-            className="share-search"
-            placeholder="🔍 Rechercher un utilisateur..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
+          <div className="share-filters-bar">
+            <input
+              className="share-search"
+              placeholder="🔍 Rechercher par nom ou service..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+            <select
+              className="share-filter-select"
+              value={filterService}
+              onChange={e => setFilterService(e.target.value)}
+            >
+              <option value="">Tous les services</option>
+              {availableServices.map(s => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+            <select
+              className="share-filter-select"
+              value={filterRole}
+              onChange={e => setFilterRole(e.target.value)}
+            >
+              <option value="">Tous les rôles</option>
+              <option value="employe">Employé</option>
+              <option value="responsable">Responsable</option>
+            </select>
+            {(search || filterService || filterRole) && (
+              <button className="share-filter-reset" onClick={() => { setSearch(''); setFilterService(''); setFilterRole(''); }}>
+                ↺
+              </button>
+            )}
+          </div>
           <div className="user-list">
             {availableUsers.length === 0 && !ownerUser ? (
               <p className="no-users-msg">Aucun utilisateur disponible.</p>
@@ -285,7 +326,12 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
                 {/* Même service */}
                 {sameServiceUsers.length > 0 && (
                   <>
-                    <p className="share-group-label">🏢 {folderService || "Mon service"}</p>
+                    <div className="share-group-header">
+                      <p className="share-group-label">🏢 {folderService || "Mon service"}</p>
+                      <button className="btn-select-all-group" onClick={() => selectAllInGroup(sameServiceUsers)}>
+                        ✅ Tout sélectionner
+                      </button>
+                    </div>
                     {sameServiceUsers.map(u => renderUserCard(u, false))}
                   </>
                 )}
@@ -293,13 +339,28 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
                 {/* Autres services */}
                 {otherServiceUsers.length > 0 && (
                   <>
-                    <p className="share-group-label">🌐 Autres services</p>
+                    <div className="share-group-header">
+                      <p className="share-group-label">🌐 Autres services</p>
+                      <button className="btn-select-all-group" onClick={() => selectAllInGroup(otherServiceUsers)}>
+                        ✅ Tout sélectionner
+                      </button>
+                    </div>
                     {otherServiceUsers.map(u => renderUserCard(u, true))}
                   </>
                 )}
               </>
             )}
           </div>
+
+          {/* Compteur sélection */}
+          {selectedUsers.length > 0 && (
+            <div className="share-selection-count">
+              {selectedUsers.length} utilisateur{selectedUsers.length > 1 ? 's' : ''} sélectionné{selectedUsers.length > 1 ? 's' : ''}
+              <button className="share-clear-selection" onClick={() => { setSelectedUsers([]); setPermissionsMap({}); }}>
+                ✖ Effacer la sélection
+              </button>
+            </div>
+          )}
 
           {/* Permissions nouveaux utilisateurs */}
           {selectedUsers.length > 0 && (
