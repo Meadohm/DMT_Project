@@ -232,6 +232,9 @@ function FolderTree({
                 onRename={() => onRename(folder)}
                 onShare={() => onShare(folder)}
                 onDelete={() => onDelete(folder)}
+                onDelete={contextMode === "shared"
+                  ? (folder.permissions?.can_delete_folder ? onDelete : null)
+                  : onDelete}
                 onLeave={onLeave}
                 onClose={() => setMenuOpen(false)}
                 mode={contextMode && folder.parent ? "none" : contextMode || (folder.parent ? "child" : "owner")}
