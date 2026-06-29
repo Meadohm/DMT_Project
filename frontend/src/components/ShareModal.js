@@ -163,6 +163,8 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
     delete_folder: "📁 Supprimer dossier",
   };
 
+  if (!folder) return null;
+
   return (
     <div className="modal-overlay">
       <div className="modal-content share-modal">
