@@ -1023,10 +1023,16 @@ def list_folders_service(request):
         is_archived=False
     ).prefetch_related("shares__user")
 
-    shared = Folder.objects.filter(
+    shared_direct = Folder.objects.filter(
         shares__user=user
     ).exclude(
         service=user.service
+    )
+    shared_ids = set(shared_direct.values_list('id', flat=True))
+    all_shared_ids = get_descendant_folder_ids(shared_ids)
+    shared = Folder.objects.filter(
+        id__in=all_shared_ids,
+        is_archived=False
     ).prefetch_related("shares__user")
 
     all_folders = (service_folders | shared).distinct()
