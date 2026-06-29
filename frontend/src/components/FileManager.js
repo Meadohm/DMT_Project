@@ -469,9 +469,7 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                       <span
                         className={`folder-name-clickable${index === breadcrumb.length - 1 ? " breadcrumb-active" : " breadcrumb-link"}`}
                         onClick={() => {
-                          if (index === breadcrumb.length - 1) {
-                            setShareInfoOpen(true);
-                          } else {
+                          if (index < breadcrumb.length - 1) {
                             setActiveFolder(crumb);
                           }
                         }}
@@ -480,13 +478,13 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                       </span>
                     </span>
                   ))}
-                  {rootSharedFolder ? (
+                  {rootSharedFolder?.proprietaire ? (
                     <span className="shared-info">
                       (🤝 partagé par {rootSharedFolder.proprietaire.username}
                       {" le " +
-                        new Date(rootSharedFolder.shares[0].shared_at).toLocaleDateString("fr-FR") +
+                        new Date(rootSharedFolder.shares?.[0]?.shared_at).toLocaleDateString("fr-FR") +
                         " à " +
-                        new Date(rootSharedFolder.shares[0].shared_at).toLocaleTimeString("fr-FR")}
+                        new Date(rootSharedFolder.shares?.[0]?.shared_at).toLocaleTimeString("fr-FR")}
                       )
                     </span>
                   ) : (
