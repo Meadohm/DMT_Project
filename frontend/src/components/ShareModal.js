@@ -80,10 +80,10 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
           </svg>
         </div>
         <div className="user-info-block">
+          <span className="user-info-name">{user.username}</span>
           {showService && user.service && (
             <span className="user-info-service">{user.service}</span>
           )}
-          <span className="user-info-name">{user.username}</span>
         </div>
         {isSelected && <span className="badge-selected">✓</span>}
       </div>
@@ -286,7 +286,7 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
                 {sameServiceUsers.length > 0 && (
                   <>
                     <p className="share-group-label">🏢 {folderService || "Mon service"}</p>
-                    {sameServiceUsers.map(u => renderUserCard(u, true))}
+                    {sameServiceUsers.map(u => renderUserCard(u, false))}
                   </>
                 )}
 
