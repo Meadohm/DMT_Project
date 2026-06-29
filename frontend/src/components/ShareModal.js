@@ -97,6 +97,27 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
     );
   };
 
+  const isAllSelected = (groupUsers) =>
+    groupUsers.length > 0 && groupUsers.every(u => selectedUsers.find(s => s.id === u.id));
+
+  const toggleSelectGroup = (groupUsers) => {
+    if (isAllSelected(groupUsers)) {
+      setSelectedUsers(prev => prev.filter(u => !groupUsers.find(g => g.id === u.id)));
+      setPermissionsMap(prev => {
+        const p = { ...prev };
+        groupUsers.forEach(u => delete p[u.id]);
+        return p;
+      });
+    } else {
+      const newUsers = groupUsers.filter(u => !selectedUsers.find(s => s.id === u.id));
+      setSelectedUsers(prev => [...prev, ...newUsers]);
+      setPermissionsMap(prev => ({
+        ...prev,
+        ...Object.fromEntries(newUsers.map(u => [u.id, { write: false, update: false, delete: false, delete_folder: false }]))
+      }));
+    }
+  };
+
   const selectAllInGroup = (groupUsers) => {
     const newUsers = groupUsers.filter(u => !selectedUsers.find(s => s.id === u.id));
     setSelectedUsers(prev => [...prev, ...newUsers]);
@@ -328,8 +349,8 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
                   <div className="share-group-block">
                     <div className="share-group-header">
                       <p className="share-group-label">🏢 {folderService || "Mon service"}</p>
-                      <button className="btn-select-all-group" onClick={() => selectAllInGroup(sameServiceUsers)}>
-                        ✅ Tout sélectionner
+                      <button className="btn-select-all-group" onClick={() => toggleSelectGroup(sameServiceUsers)}>
+                        {isAllSelected(sameServiceUsers) ? "☑ Tout désélectionner" : "☐ Tout sélectionner"}
                       </button>
                     </div>
                     <div className="share-group-cards">
@@ -343,8 +364,8 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
                   <div className="share-group-block">
                     <div className="share-group-header">
                       <p className="share-group-label">🌐 Autres services</p>
-                      <button className="btn-select-all-group" onClick={() => selectAllInGroup(otherServiceUsers)}>
-                        ✅ Tout sélectionner
+                      <button className="btn-select-all-group" onClick={() => toggleSelectGroup(otherServiceUsers)}>
+                        {isAllSelected(otherServiceUsers) ? "☑ Tout désélectionner" : "☐ Tout sélectionner"}
                       </button>
                     </div>
                     <div className="share-group-cards">
