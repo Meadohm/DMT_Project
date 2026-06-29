@@ -2288,6 +2288,18 @@ body.dark .share-search {
   border-color: #2d3555;
 }
 
+body.dark .share-filter-select {
+  background: #1a2040;
+  color: #e6e8f0;
+  border-color: #2d3555;
+}
+
+body.dark .share-filter-reset {
+  background: #2d3555;
+  color: #e6e8f0;
+  border-color: #3d4670;
+}
+
 .btn-toggle-all {
   background: #e0e7ff;
   color: #3730a3;
@@ -2508,11 +2520,18 @@ body.dark .share-group-label {
 }
 .share-filter-reset {
   padding: 6px 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #6c63ff;
   border-radius: 8px;
   background: #f1f5f9;
+  color: #6c63ff;
   cursor: pointer;
   font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.share-filter-reset:hover {
+  background: #6c63ff;
+  color: white;
 }
 .share-group-header {
   display: flex;
