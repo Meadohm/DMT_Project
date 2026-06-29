@@ -66,7 +66,7 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
     u => (!u.service || u.service !== folderService) && u.id !== ownerUser?.id
   );
 
-  const renderUserCard = (user) => {
+  const renderUserCard = (user, showService = false) => {
     const isSelected = selectedUsers.find(u => u.id === user.id);
     return (
       <div
@@ -80,10 +80,10 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
           </svg>
         </div>
         <div className="user-info-block">
-          <span className="user-info-name">{user.username}</span>
-          {user.service && (
+          {showService && user.service && (
             <span className="user-info-service">{user.service}</span>
           )}
+          <span className="user-info-name">{user.username}</span>
         </div>
         {isSelected && <span className="badge-selected">✓</span>}
       </div>
@@ -286,7 +286,7 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
                 {sameServiceUsers.length > 0 && (
                   <>
                     <p className="share-group-label">🏢 {folderService || "Mon service"}</p>
-                    {sameServiceUsers.map(renderUserCard)}
+                    {sameServiceUsers.map(u => renderUserCard(u, false))}
                   </>
                 )}
 
@@ -294,7 +294,7 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
                 {otherServiceUsers.length > 0 && (
                   <>
                     <p className="share-group-label">🌐 Autres services</p>
-                    {otherServiceUsers.map(renderUserCard)}
+                    {otherServiceUsers.map(u => renderUserCard(u, true))}
                   </>
                 )}
               </>
