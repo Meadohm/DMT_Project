@@ -55,6 +55,41 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
     u.username.toLowerCase().includes(search.toLowerCase())
   );
 
+  // Groupement par service
+  const folderService = folder?.service || "";
+  const ownerUser = users.find(u => u.id === folder?.proprietaire?.id);
+
+  const sameServiceUsers = availableUsers.filter(
+    u => u.service && u.service === folderService && u.id !== ownerUser?.id
+  );
+  const otherServiceUsers = availableUsers.filter(
+    u => (!u.service || u.service !== folderService) && u.id !== ownerUser?.id
+  );
+
+  const renderUserCard = (user) => {
+    const isSelected = selectedUsers.find(u => u.id === user.id);
+    return (
+      <div
+        key={user.id}
+        className={`user-item ${isSelected ? "active" : ""}`}
+        onClick={() => toggleUser(user)}
+      >
+        <div className="user-avatar small svg-avatar">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 1115 0v.75H4.5v-.75z" />
+          </svg>
+        </div>
+        <div className="user-info-block">
+          <span className="user-info-name">{user.username}</span>
+          {user.service && (
+            <span className="user-info-service">{user.service}</span>
+          )}
+        </div>
+        {isSelected && <span className="badge-selected">✓</span>}
+      </div>
+    );
+  };
+
   const toggleUser = (user) => {
     if (selectedUsers.find(u => u.id === user.id)) {
       setSelectedUsers(prev => prev.filter(u => u.id !== user.id));
@@ -222,31 +257,48 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
             onChange={e => setSearch(e.target.value)}
           />
           <div className="user-list">
-            {availableUsers.length === 0 ? (
+            {availableUsers.length === 0 && !ownerUser ? (
               <p className="no-users-msg">Aucun utilisateur disponible.</p>
-            ) : availableUsers.map(user => {
-              const isSelected = selectedUsers.find(u => u.id === user.id);
-              return (
-                <div
-                  key={user.id}
-                  className={`user-item ${isSelected ? "active" : ""}`}
-                  onClick={() => toggleUser(user)}
-                >
-                  <div className="user-avatar small svg-avatar">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 1115 0v.75H4.5v-.75z" />
-                    </svg>
-                  </div>
-                  <div className="user-info-block">
-                    <span className="user-info-name">{user.username}</span>
-                    {user.service && (
-                      <span className="user-info-service">{user.service}</span>
-                    )}
-                  </div>
-                  {isSelected && <span className="badge-selected">✓</span>}
-                </div>
-              );
-            })}
+            ) : (
+              <>
+                {/* Propriétaire — non sélectionnable */}
+                {ownerUser && (
+                  <>
+                    <p className="share-group-label">👑 Propriétaire</p>
+                    <div className="user-item user-item-owner disabled">
+                      <div className="user-avatar small svg-avatar">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 1115 0v.75H4.5v-.75z" />
+                        </svg>
+                      </div>
+                      <div className="user-info-block">
+                        <span className="user-info-name">{ownerUser.username}</span>
+                        {ownerUser.service && (
+                          <span className="user-info-service">{ownerUser.service}</span>
+                        )}
+                      </div>
+                      <span className="badge-owner">Propriétaire</span>
+                    </div>
+                  </>
+                )}
+
+                {/* Même service */}
+                {sameServiceUsers.length > 0 && (
+                  <>
+                    <p className="share-group-label">🏢 {folderService || "Mon service"}</p>
+                    {sameServiceUsers.map(renderUserCard)}
+                  </>
+                )}
+
+                {/* Autres services */}
+                {otherServiceUsers.length > 0 && (
+                  <>
+                    <p className="share-group-label">🌐 Autres services</p>
+                    {otherServiceUsers.map(renderUserCard)}
+                  </>
+                )}
+              </>
+            )}
           </div>
 
           {/* Permissions nouveaux utilisateurs */}

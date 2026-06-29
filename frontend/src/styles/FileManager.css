@@ -2366,3 +2366,39 @@ body.dark .user-info-service,
 body.dark .user-info-service-inline {
   color: #aab4c8;
 }
+
+/* ====== SHARE MODAL — GROUPEMENT ====== */
+.share-group-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 8px 4px 4px;
+  margin: 0;
+}
+
+.user-item-owner {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+  pointer-events: none;
+}
+
+.badge-owner {
+  font-size: 0.7rem;
+  background: #e0e7ff;
+  color: #4f46e5;
+  border-radius: 10px;
+  padding: 2px 8px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+body.dark .badge-owner {
+  background: rgba(79, 70, 229, 0.2);
+  color: #a5b4fc;
+}
+
+body.dark .share-group-label {
+  color: #aab4c8;
+}
