@@ -82,10 +82,13 @@ function DashboardSidebar({
             favoriteFolders.map((folder) => {
               const isSharedExternal = externalFolders.some(f => f.id === folder.id);
               const isServiceFolder = sharedFolders.some(f => f.id === folder.id);
+              const isSharedWithMe = isSharedExternal || (role === "employe" && isServiceFolder);
               const favContextMode = isSharedExternal
                 ? "shared"
-                : isServiceFolder
+                : isServiceFolder && role === "responsable"
                 ? "service_readonly"
+                : isServiceFolder && role === "employe"
+                ? "shared"
                 : null;
               return (
                 <FolderTree
@@ -100,7 +103,7 @@ function DashboardSidebar({
                   onToggleFavorite={onToggleFavorite}
                   isFavorite={true}
                   contextMode={favContextMode}
-                  onLeave={isSharedExternal ? (f) => { setConfirmLeaveFolder(f); } : null}
+                  onLeave={isSharedWithMe ? (f) => { setConfirmLeaveFolder(f); } : null}
                 />
               );
             })
