@@ -8,6 +8,7 @@ from django_ratelimit.exceptions import Ratelimited
 from django.core.files import File as DjangoFile
 from django.utils.crypto import get_random_string
 from django.http import HttpResponse, FileResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.authentication import TokenAuthentication
@@ -67,6 +68,7 @@ def home(request):
     return HttpResponse("Bienvenue sur l'API de centralisation des données !")
 
 ##### AUTHENTIFICATION & UTILISATEURS #####
+@csrf_exempt
 @api_view(['POST'])
 @permission_classes([AllowAny])
 @ratelimit(key='ip', rate='5/10m', method='POST', block=False)
