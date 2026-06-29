@@ -286,7 +286,7 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
                 {sameServiceUsers.length > 0 && (
                   <>
                     <p className="share-group-label">🏢 {folderService || "Mon service"}</p>
-                    {sameServiceUsers.map(u => renderUserCard(u, false))}
+                    {sameServiceUsers.map(u => renderUserCard(u, true))}
                   </>
                 )}
 
