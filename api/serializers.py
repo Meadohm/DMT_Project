@@ -108,6 +108,46 @@ class FolderSerializer(serializers.ModelSerializer):
 
         share = FolderShare.objects.filter(folder=obj, user=user).first()
         if not share:
+            # Héritage : chercher le share sur le dossier parent (récursif)
+            parent = obj.parent
+            while parent:
+                parent_share = FolderShare.objects.filter(folder=parent, user=user).first()
+                if parent_share:
+                    return {
+                        "can_read": parent_share.can_read,
+                        "can_write": parent_share.can_write,
+                        "can_update": parent_share.can_update,
+                        "can_delete": parent_share.can_delete,
+                        "can_delete_folder": parent_share.can_delete_folder,
+                        "can_share": False,
+                    }
+                # Responsable peut lire les dossiers de son service
+                if (hasattr(user, 'role')
+                        and user.role == 'responsable'
+                        and parent.service
+                        and parent.service == user.service):
+                    return {
+                        "can_read": True,
+                        "can_write": False,
+                        "can_update": False,
+                        "can_delete": False,
+                        "can_delete_folder": False,
+                        "can_share": False,
+                    }
+                parent = parent.parent
+            # Responsable peut lire les dossiers racine de son service
+            if (hasattr(user, 'role')
+                    and user.role == 'responsable'
+                    and obj.service
+                    and obj.service == user.service):
+                return {
+                    "can_read": True,
+                    "can_write": False,
+                    "can_update": False,
+                    "can_delete": False,
+                    "can_delete_folder": False,
+                    "can_share": False,
+                }
             return {}
 
         return {
