@@ -55,6 +55,7 @@ const ContextMenu = ({ onRename, onShare, onDelete, onLeave, anchorRef, onClose,
     }
   }, [mode]);
 
+  if (mode === "none") return null;
   if (!pos.visible) return null;
 
   /* === Gestion des clics sur action === */

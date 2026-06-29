@@ -234,7 +234,7 @@ function FolderTree({
                 onDelete={() => onDelete(folder)}
                 onLeave={onLeave}
                 onClose={() => setMenuOpen(false)}
-                mode={contextMode || (folder.parent ? "child" : "owner")}
+                mode={contextMode && folder.parent ? "none" : contextMode || (folder.parent ? "child" : "owner")}
               />
             )}
           </div>
