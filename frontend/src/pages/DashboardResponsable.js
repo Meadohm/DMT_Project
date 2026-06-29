@@ -117,7 +117,11 @@ function DashboardResponsable() {
       sortRecursively(roots);
 
       setFolders(roots);
-      if (roots.length > 0) setActiveFolder(roots[0]);
+      // Auto-sélectionner uniquement le premier dossier personnel
+      const myRoots = roots.filter(
+        (f) => f.proprietaire?.id === userInfo?.id
+      );
+      if (!activeFolder && myRoots.length > 0) setActiveFolder(myRoots[0]);
 
       const saved = JSON.parse(localStorage.getItem("expandedFolders") || "[]");
       if (saved.length > 0) {
@@ -196,6 +200,14 @@ function DashboardResponsable() {
     const interval = setInterval(() => {
       setNotifications((prev) => [...prev]);
     }, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Polling sidebar — refresh dossiers toutes les 30s
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchFolders();
+    }, 30000);
     return () => clearInterval(interval);
   }, []);
 

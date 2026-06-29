@@ -30,7 +30,10 @@ def has_folder_permission(user, folder, action: str) -> bool:
 
     share = FolderShare.objects.filter(folder=folder, user=user).first()
     if not share:
-        # Responsable peut lire les dossiers de son service sans FolderShare explicite
+        # Héritage : vérifier le dossier parent récursivement
+        if folder.parent:
+            return has_folder_permission(user, folder.parent, action)
+        # Responsable peut lire les dossiers racine de son service
         if (action == "read"
                 and hasattr(user, 'role')
                 and user.role == 'responsable'
