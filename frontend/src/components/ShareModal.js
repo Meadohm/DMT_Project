@@ -325,28 +325,32 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
 
                 {/* Même service */}
                 {sameServiceUsers.length > 0 && (
-                  <>
+                  <div className="share-group-block">
                     <div className="share-group-header">
                       <p className="share-group-label">🏢 {folderService || "Mon service"}</p>
                       <button className="btn-select-all-group" onClick={() => selectAllInGroup(sameServiceUsers)}>
                         ✅ Tout sélectionner
                       </button>
                     </div>
-                    {sameServiceUsers.map(u => renderUserCard(u, false))}
-                  </>
+                    <div className="share-group-cards">
+                      {sameServiceUsers.map(u => renderUserCard(u, false))}
+                    </div>
+                  </div>
                 )}
 
                 {/* Autres services */}
                 {otherServiceUsers.length > 0 && (
-                  <>
+                  <div className="share-group-block">
                     <div className="share-group-header">
                       <p className="share-group-label">🌐 Autres services</p>
                       <button className="btn-select-all-group" onClick={() => selectAllInGroup(otherServiceUsers)}>
                         ✅ Tout sélectionner
                       </button>
                     </div>
-                    {otherServiceUsers.map(u => renderUserCard(u, true))}
-                  </>
+                    <div className="share-group-cards">
+                      {otherServiceUsers.map(u => renderUserCard(u, true))}
+                    </div>
+                  </div>
                 )}
               </>
             )}

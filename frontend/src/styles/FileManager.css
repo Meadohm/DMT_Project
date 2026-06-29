@@ -2508,7 +2508,23 @@ body.dark .share-group-label {
   justify-content: space-between;
   align-items: center;
   margin: 8px 0 4px;
+  flex: 0 0 100%;
+  width: 100%;
 }
+
+.share-group-block {
+  flex: 0 0 100%;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.share-group-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+
 .btn-select-all-group {
   font-size: 0.75rem;
   padding: 3px 8px;
