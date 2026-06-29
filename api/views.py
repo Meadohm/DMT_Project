@@ -983,6 +983,25 @@ def get_dashboard_stats(request):
     })
 
 ##### FOLDERS CRUD #####
+def get_descendant_folder_ids(folder_ids):
+    """Retourne récursivement tous les IDs des sous-dossiers"""
+    all_ids = set(folder_ids)
+    current_level = set(folder_ids)
+    while current_level:
+        children = set(
+            Folder.objects.filter(
+                parent__in=current_level,
+                is_archived=False
+            ).values_list('id', flat=True)
+        )
+        new_children = children - all_ids
+        if not new_children:
+            break
+        all_ids.update(new_children)
+        current_level = new_children
+    return all_ids
+
+
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -1046,10 +1065,15 @@ def list_folders(request):
         is_archived=False
     ).prefetch_related("shares__user")
 
-    shared = Folder.objects.filter(
+    shared_direct = Folder.objects.filter(
         shares__user=request.user
+    )
+    shared_ids = set(shared_direct.values_list('id', flat=True))
+    all_shared_ids = get_descendant_folder_ids(shared_ids)
+    shared = Folder.objects.filter(
+        id__in=all_shared_ids,
+        is_archived=False
     ).prefetch_related("shares__user")
-
     all_folders = (folders | shared).distinct()
 
     serializer = FolderSerializer(all_folders, many=True, context={"request": request})
