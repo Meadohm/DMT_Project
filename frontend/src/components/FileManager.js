@@ -20,7 +20,7 @@ import "react-h5-audio-player/lib/styles.css"; */
 
 import API_BASE_URL from "../config";
 
-function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed = false }) {
+function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed = false, folders = [] }) {
   const [files, setFiles] = useState([]);
   const [dragOver, setDragOver] = useState(false);
   const [previewFileData, setPreviewFileData] = useState(null);
@@ -37,6 +37,37 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
   const [renameModalOpen, setRenameModalOpen] = useState(false);
   const [fileToRename, setFileToRename] = useState(null);
   const [newFileName, setNewFileName] = useState("");
+
+  // ── Breadcrumb ──────────────────────────────────────────────────────────
+  const folderMap = React.useMemo(() => {
+    const map = {};
+    const traverse = (list) => {
+      list.forEach(f => {
+        map[f.id] = f;
+        if (f.children?.length) traverse(f.children);
+      });
+    };
+    traverse(folders);
+    return map;
+  }, [folders]);
+
+  const breadcrumb = React.useMemo(() => {
+    if (!activeFolder) return [];
+    const chain = [];
+    let current = folderMap[activeFolder.id] || activeFolder;
+    while (current) {
+      chain.unshift(current);
+      current = current.parent ? folderMap[current.parent] : null;
+    }
+    return chain;
+  }, [activeFolder, folderMap]);
+
+  const rootSharedFolder = React.useMemo(() => {
+    for (const f of breadcrumb) {
+      if (f.is_shared && f.shares?.length > 0) return f;
+    }
+    return null;
+  }, [breadcrumb]);
 
   // 🔹 Nouvelle modale pour permissions refusées
   const [permissionModalOpen, setPermissionModalOpen] = useState(false);
@@ -432,19 +463,30 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
               <div className="file-content-scroll">
                 <h3 className="folder-title">
                   📑 Contenu du dossier :{" "}
-                  <span
-                    className="folder-name-clickable"
-                    onClick={() => setShareInfoOpen(true)}
-                  >
-                    {activeFolder?.nom}
-                  </span>
-                  {activeFolder?.is_shared && activeFolder?.shares?.length > 0 ? (
+                  {breadcrumb.map((crumb, index) => (
+                    <span key={crumb.id}>
+                      {index > 0 && <span className="breadcrumb-sep"> › </span>}
+                      <span
+                        className={`folder-name-clickable${index === breadcrumb.length - 1 ? " breadcrumb-active" : " breadcrumb-link"}`}
+                        onClick={() => {
+                          if (index === breadcrumb.length - 1) {
+                            setShareInfoOpen(true);
+                          } else {
+                            setActiveFolder(crumb);
+                          }
+                        }}
+                      >
+                        {crumb.nom}
+                      </span>
+                    </span>
+                  ))}
+                  {rootSharedFolder ? (
                     <span className="shared-info">
-                      (🤝 partagé par {activeFolder.proprietaire.username}
+                      (🤝 partagé par {rootSharedFolder.proprietaire.username}
                       {" le " +
-                        new Date(activeFolder.shares[0].shared_at).toLocaleDateString("fr-FR") +
+                        new Date(rootSharedFolder.shares[0].shared_at).toLocaleDateString("fr-FR") +
                         " à " +
-                        new Date(activeFolder.shares[0].shared_at).toLocaleTimeString("fr-FR")}
+                        new Date(rootSharedFolder.shares[0].shared_at).toLocaleTimeString("fr-FR")}
                       )
                     </span>
                   ) : (

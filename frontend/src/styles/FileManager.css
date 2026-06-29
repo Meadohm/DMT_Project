@@ -2315,3 +2315,24 @@ body.dark .share-modal-close:hover { background: #2b2f53; color: #ef4444; }
   text-overflow: ellipsis;
   max-width: 300px;
 }
+
+/* ====== BREADCRUMB ====== */
+.breadcrumb-link {
+  cursor: pointer;
+  opacity: 0.7;
+  font-weight: 500;
+  transition: opacity 0.15s ease;
+}
+.breadcrumb-link:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+.breadcrumb-active {
+  cursor: pointer;
+  font-weight: 700;
+}
+.breadcrumb-sep {
+  color: #999;
+  font-weight: 400;
+  margin: 0 2px;
+}

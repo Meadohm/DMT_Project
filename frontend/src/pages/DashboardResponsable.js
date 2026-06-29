@@ -450,6 +450,7 @@ function DashboardResponsable() {
             setActiveFolder={setActiveFolder}
             userInfo={userInfo}
             sidebarCollapsed={sidebarCollapsed}
+            folders={folders}
           />
         ) : (
           <div className="empty-state">

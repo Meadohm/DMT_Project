@@ -452,6 +452,7 @@ const handleClearNotifications = async () => {
             setActiveFolder={setActiveFolder}
             userInfo={userInfo}
             sidebarCollapsed={sidebarCollapsed}
+            folders={folders}
           />
         ) : (
           <div className="empty-state">
