@@ -256,6 +256,8 @@ function FolderTree({
               onShare={onShare}
               onToggleFavorite={onToggleFavorite}
               isFavorite={isFavorite}
+              contextMode={contextMode}
+              onLeave={onLeave}
             />
           ))}
         </div>
