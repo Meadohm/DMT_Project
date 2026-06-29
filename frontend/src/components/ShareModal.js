@@ -297,7 +297,7 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
               </button>
             )}
           </div>
-          <div className="user-list">
+          <div className="user-list-container">
             {availableUsers.length === 0 && !ownerUser ? (
               <p className="no-users-msg">Aucun utilisateur disponible.</p>
             ) : (

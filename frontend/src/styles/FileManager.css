@@ -641,6 +641,11 @@ body.dark .upload-compact-bar svg {
   overflow: hidden;
 }
 
+.user-list-container {
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .user-item {
   flex: 0 0 calc(33.33% - 10px);
   min-width: 90px;
@@ -2530,6 +2535,15 @@ body.dark .share-group-label {
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.share-group-cards .user-item {
+  flex: 0 0 calc(33.33% - 8px);
+  min-width: 90px;
+  max-width: 150px;
+  box-sizing: border-box;
 }
 
 .btn-select-all-group {
