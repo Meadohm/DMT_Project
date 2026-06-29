@@ -615,7 +615,6 @@ body.dark .upload-compact-bar svg {
   width: min(600px, 92vw);
   max-height: 90vh;
   overflow-y: auto;
-  overflow-x: hidden;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   animation: fadeIn 0.3s ease;
   box-sizing: border-box;
@@ -2519,9 +2518,12 @@ body.dark .share-group-label {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
   margin: 8px 0 4px;
-  flex: 0 0 100%;
   width: 100%;
+  box-sizing: border-box;
+  padding-right: 0;
 }
 
 .share-group-block {
