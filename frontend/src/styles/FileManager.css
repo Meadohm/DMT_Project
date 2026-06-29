@@ -59,14 +59,30 @@
 
 /* Animation */
 @keyframes waveAnim {
-  0% { transform: rotate(0deg); }
-  10% { transform: rotate(14deg); }
-  20% { transform: rotate(-8deg); }
-  30% { transform: rotate(14deg); }
-  40% { transform: rotate(-4deg); }
-  50% { transform: rotate(10deg); }
-  60% { transform: rotate(0deg); }
-  100% { transform: rotate(0deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(14deg);
+  }
+  20% {
+    transform: rotate(-8deg);
+  }
+  30% {
+    transform: rotate(14deg);
+  }
+  40% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+  60% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
 }
 
 /* NOTIFICATION BELL */
@@ -85,7 +101,9 @@
   width: 26px;
   height: 26px;
   color: white;
-  transition: transform 0.2s ease, color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
 }
 
 /* MODALE FULL NOTIFS */
@@ -96,7 +114,7 @@
   width: 600px;
   max-height: 80vh;
   overflow-y: auto;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   animation: fadeIn 0.3s ease;
 }
 
@@ -118,7 +136,7 @@
   align-items: center;
   gap: 8px;
   color: #333;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   transition: background 0.2s;
 }
 
@@ -146,7 +164,6 @@
   transform: scale(1.2);
   color: #e63946;
 }
-
 
 /* COMPTE */
 .account-btn {
@@ -183,13 +200,13 @@
   border-radius: 25px;
   padding: 6px 12px;
   margin: 0 20px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   width: 280px;
   transition: 0.3s;
 }
 
 .search-bar:focus-within {
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .search-bar input {
@@ -299,7 +316,7 @@
   color: #444;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   max-width: 500px;
   margin-left: auto;
   margin-right: auto;
@@ -337,7 +354,7 @@
   border-radius: 8px;
   cursor: pointer;
   transition: 0.3s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .empty-state .create-btn:hover {
@@ -474,22 +491,27 @@ body.dark .upload-compact-bar svg {
   transition: all 0.4s ease;
 }
 
-.upload-zone, .file-content-scroll {
+.upload-zone,
+.file-content-scroll {
   background-color: var(--card-bg);
   color: var(--text-color);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
-.folder-title, .shared-files h3, .no-folder-msg {
+.folder-title,
+.shared-files h3,
+.no-folder-msg {
   color: var(--text-color);
 }
 
-.file-item, .shared-file-card {
+.file-item,
+.shared-file-card {
   background: var(--card-bg);
   color: var(--text-color);
   border: 1px solid var(--border-color);
 }
-
 
 .upload-zone.drag-over {
   background: #ede9fe;
@@ -575,10 +597,14 @@ body.dark .upload-compact-bar svg {
 /* MODALE PARTAGE */
 .modal-overlay {
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.6);
-  display: flex; justify-content: center; align-items: center;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   z-index: 2000;
 }
 
@@ -589,7 +615,7 @@ body.dark .upload-compact-bar svg {
   width: 600px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   animation: fadeIn 0.3s ease;
 }
 
@@ -653,7 +679,7 @@ body.dark .upload-compact-bar svg {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .user-avatar.small.svg-avatar svg {
@@ -704,7 +730,8 @@ body.dark .upload-compact-bar svg {
   color: #2d3436;
 }
 
-.cancel-btn, .confirm-btn {
+.cancel-btn,
+.confirm-btn {
   padding: 8px 16px;
   border: none;
   border-radius: 6px;
@@ -739,14 +766,20 @@ body.dark .upload-compact-bar svg {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.9);}
-  to { opacity: 1; transform: scale(1);}
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .shared-files {
-  max-height: 250px;       /* limite la hauteur de la liste */
-  overflow-y: auto;        /* scroll si trop d’éléments */
-  padding-right: 6px;      /* espace pour éviter la barre collée */
+  max-height: 250px; /* limite la hauteur de la liste */
+  overflow-y: auto; /* scroll si trop d’éléments */
+  padding-right: 6px; /* espace pour éviter la barre collée */
 }
 
 .shared-file-card {
@@ -793,11 +826,9 @@ body.dark .upload-compact-bar svg {
   transition: background 0.2s;
 }
 
-
 .toggle-btn:hover {
   background: #434190;
 }
-
 
 /* Checkbox moderne */
 .checkbox-modern {
@@ -849,7 +880,7 @@ body.dark .upload-compact-bar svg {
   border-radius: 10px;
   padding: 12px;
   background: #fafafa;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .permission-block h4 {
@@ -911,7 +942,6 @@ body.dark .upload-compact-bar svg {
   border: 1px solid #abebc6;
   display: inline-block;
 }
-
 
 /* Nom du dossier cliquable */
 .folder-name-clickable {
@@ -982,7 +1012,7 @@ body.dark .upload-compact-bar svg {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 /* Couleurs réutilisées */
@@ -1007,7 +1037,6 @@ body.dark .upload-compact-bar svg {
   color: #d4a10c;
 }
 
-
 /* Bouton suppression dossier (sidebar) */
 .folder-actions button.delete-folder-btn {
   border: none;
@@ -1018,7 +1047,9 @@ body.dark .upload-compact-bar svg {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease, color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
 }
 
 .folder-actions button.delete-folder-btn .icon-trash {
@@ -1084,7 +1115,9 @@ body.dark .upload-compact-bar svg {
   color: #ff4b5c;
   font-size: 18px;
   cursor: pointer;
-  transition: transform 0.2s ease, color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
 }
 
 .close-preview:hover {
@@ -1093,14 +1126,14 @@ body.dark .upload-compact-bar svg {
 }
 
 /* Optimisation pour PDF et images */
-.file-preview iframe, .file-preview img {
+.file-preview iframe,
+.file-preview img {
   width: 100%;
   height: 75vh;
   border: none;
   border-radius: 10px;
   object-fit: contain;
 }
-
 
 .upload-zone.hidden {
   opacity: 0;
@@ -1162,7 +1195,6 @@ body.dark .upload-compact-bar svg {
   background: #e63946;
   transform: scale(1.1);
 }
-
 
 /* Le titre collé en haut et visible */
 .file-manager.full-preview-mode .preview-header {
@@ -1296,10 +1328,15 @@ body.dark .upload-compact-bar svg {
 
 /* Animation fluide */
 @keyframes fadeInPreview {
-  from { opacity: 0; transform: scale(0.97); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
-
 
 /* TABLE PREVIEW (Excel, CSV) */
 .file-preview table {
@@ -1316,12 +1353,12 @@ body.dark .upload-compact-bar svg {
   font-size: 14px;
   text-align: left;
   vertical-align: top;
-  white-space: nowrap;      /* évite les coupures dans cellules */
+  white-space: nowrap; /* évite les coupures dans cellules */
 }
 
 .file-preview table {
   display: block;
-  overflow-x: auto;         /* scroll horizontal */
+  overflow-x: auto; /* scroll horizontal */
 }
 
 /* CSV PREVIEW */
@@ -1424,7 +1461,9 @@ body.dark .upload-compact-bar svg {
 .file-icon {
   font-size: 18px;
   margin-right: 8px;
-  transition: transform 0.2s ease, color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
 }
 
 /* Effet hover sur le nom du fichier */
@@ -1432,7 +1471,6 @@ body.dark .upload-compact-bar svg {
   transform: scale(1.2) rotate(-5deg);
   color: #6c63ff; /* violet élégant */
 }
-
 
 /* TEXT PREVIEW */
 .text-preview {
@@ -1463,7 +1501,7 @@ body.dark .upload-compact-bar svg {
 
 .folder-list li.favorite {
   background: rgba(255, 215, 0, 0.15); /* fond léger jaune */
-  border-left: 4px solid #ffd700;       /* barre jaune à gauche */
+  border-left: 4px solid #ffd700; /* barre jaune à gauche */
 }
 
 .folder-list li.favorite:hover {
@@ -1481,7 +1519,9 @@ body.dark .upload-compact-bar svg {
   cursor: pointer;
   font-size: 14px;
   margin-left: 6px;
-  transition: transform 0.2s ease, color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
 }
 
 .folder-list li button.star.active {
@@ -1490,7 +1530,6 @@ body.dark .upload-compact-bar svg {
 .folder-list li button.star.inactive {
   color: #bbb;
 }
-
 
 /* Styles pour la boîte de partage moderne */
 .share-info-modal {
@@ -1512,7 +1551,7 @@ body.dark .upload-compact-bar svg {
   border: 1px solid #e4e6ef;
   border-radius: 10px;
   padding: 15px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .share-username {
@@ -1612,7 +1651,7 @@ body.dark .upload-compact-bar svg {
   position: relative;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 /* Contenu du dossier scrollable */
@@ -1663,7 +1702,6 @@ body.dark .upload-compact-bar svg {
   object-fit: contain;
 }
 
-
 .file-preview-container {
   background: rgba(255, 255, 255, 0.78) !important;
   backdrop-filter: blur(12px) saturate(180%) !important;
@@ -1710,7 +1748,8 @@ body.dark .upload-compact-bar svg {
 }
 
 /* Icônes SVG modernes */
-.rename-btn, .delete-btn {
+.rename-btn,
+.delete-btn {
   border: none;
   background: transparent;
   cursor: pointer;
@@ -1723,12 +1762,14 @@ body.dark .upload-compact-bar svg {
   justify-content: center;
 }
 
-.rename-btn:hover, .delete-btn:hover {
+.rename-btn:hover,
+.delete-btn:hover {
   transform: scale(1.15);
   background: rgba(108, 99, 255, 0.1);
 }
 
-.rename-btn svg, .delete-btn svg {
+.rename-btn svg,
+.delete-btn svg {
   width: 18px;
   height: 18px;
 }
@@ -1742,7 +1783,6 @@ body.dark .upload-compact-bar svg {
 .delete-btn svg {
   stroke: #ff4b5c;
 }
-
 
 /* ================================
    🔧 AJUSTEMENT THÈME SOMBRE (FileManager)
@@ -1774,7 +1814,6 @@ body.dark .file-item:hover {
 body.dark .folder-title {
   color: var(--text-color);
 }
-
 
 /*Footer parfaitement aligné avec la sidebar */
 .footer {
@@ -1878,7 +1917,7 @@ body.dark .folder-title {
 .emp-welcome-avatar {
   width: 38px;
   height: 38px;
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1906,7 +1945,7 @@ body.dark .folder-title {
   display: block;
   font-size: 0.7em;
   opacity: 0.85;
-  background: rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 10px;
   padding: 2px 8px;
   margin-top: 2px;
@@ -1989,7 +2028,7 @@ body.dark .folder-title {
   flex-shrink: 0;
 }
 .emp-topbar-search-icon:hover {
-  background: rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.15);
 }
 .emp-topbar-search input {
   position: absolute;
@@ -1997,13 +2036,15 @@ body.dark .folder-title {
   width: 100%;
   padding: 7px 14px 7px 36px;
   border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.3);
-  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.15);
   color: white;
   outline: none;
   font-size: 0.85rem;
 }
-.emp-topbar-search input::placeholder { color: rgba(255,255,255,0.6); }
+.emp-topbar-search input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
 
 @media (max-width: 1280px) {
   .emp-topbar {
@@ -2133,7 +2174,7 @@ body.dark .folder-title {
   display: block;
 }
 
- /*  SHARE MODAL — REFONTE PHASE 2 */
+/*  SHARE MODAL — REFONTE PHASE 2 */
 .share-zone {
   margin-bottom: 16px;
   border: 1px solid #eee;
@@ -2176,8 +2217,13 @@ body.dark .folder-title {
   font-size: 0.78rem;
   font-weight: 600;
 }
-.btn-revoke:hover { background: #dc2626; }
-.btn-revoke:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-revoke:hover {
+  background: #dc2626;
+}
+.btn-revoke:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 .existing-share-perms {
   display: flex;
   flex-wrap: wrap;
@@ -2242,7 +2288,9 @@ body.dark .share-search {
   font-size: 0.75rem;
   font-weight: 600;
 }
-.btn-toggle-all:hover { background: #c7d2fe; }
+.btn-toggle-all:hover {
+  background: #c7d2fe;
+}
 body.dark .btn-toggle-all {
   background: #2b2f53;
   color: #a5b4fc;
@@ -2265,9 +2313,15 @@ body.dark .btn-toggle-all {
   font-size: 0.85rem;
   font-weight: 600;
 }
-.btn-save-perms:hover { background: #00509e; }
-body.dark .share-zone-footer { border-top-color: #2d3555; }
-body.dark .btn-save-perms { background: #1e3a5f; }
+.btn-save-perms:hover {
+  background: #00509e;
+}
+body.dark .share-zone-footer {
+  border-top-color: #2d3555;
+}
+body.dark .btn-save-perms {
+  background: #1e3a5f;
+}
 
 .share-modal-header {
   display: flex;
@@ -2288,8 +2342,13 @@ body.dark .btn-save-perms { background: #1e3a5f; }
   background: #f1f5f9;
   color: #ef4444;
 }
-body.dark .share-modal-close { color: #aab4c8; }
-body.dark .share-modal-close:hover { background: #2b2f53; color: #ef4444; }
+body.dark .share-modal-close {
+  color: #aab4c8;
+}
+body.dark .share-modal-close:hover {
+  background: #2b2f53;
+  color: #ef4444;
+}
 
 .folder-title {
   font-size: 0.9rem;
