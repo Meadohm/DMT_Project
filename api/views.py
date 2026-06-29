@@ -1248,9 +1248,24 @@ def delete_folder(request, folder_id):
 @permission_classes([IsAuthenticated])
 def share_folder(request, folder_id):
     try:
-        folder = Folder.objects.get(id=folder_id, proprietaire=request.user)
+        folder = Folder.objects.get(id=folder_id)
     except Folder.DoesNotExist:
         return Response({'error': 'Dossier non trouvé'}, status=status.HTTP_404_NOT_FOUND)
+
+    user = request.user
+    is_owner = folder.proprietaire == user
+    is_responsable_service = (
+        hasattr(user, 'role') and
+        user.role == 'responsable' and
+        folder.service and
+        folder.service == user.service
+    )
+    has_share_permission = FolderShare.objects.filter(
+        folder=folder, user=user, can_read=True
+    ).exists()
+
+    if not is_owner and not is_responsable_service and not has_share_permission:
+        return Response({'error': 'Permission insuffisante pour partager ce dossier.'}, status=status.HTTP_403_FORBIDDEN)
 
     payload = request.data
     if not isinstance(payload, list):
