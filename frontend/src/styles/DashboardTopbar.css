@@ -81,6 +81,12 @@
   max-width: none;
 }
 
+.topbar-role-badge.topbar-role-employe {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  font-size: 0.72em;
+}
+
 .emp-topbar-search {
   width: 32px;
   max-width: 32px;

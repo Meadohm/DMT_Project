@@ -101,6 +101,11 @@ function DashboardTopbar({
                 🏢 {userInfo.service ? `Responsable · ${userInfo.service}` : "Responsable"}
               </span>
             )}
+            {role === "employe" && userInfo.service && (
+              <span className="topbar-role-badge topbar-role-employe">
+                👤 {userInfo.service}
+              </span>
+            )}
           </div>
         </div>
       </div>
