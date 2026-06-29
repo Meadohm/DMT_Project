@@ -237,7 +237,12 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 1115 0v.75H4.5v-.75z" />
                     </svg>
                   </div>
-                  <span>{user.username}</span>
+                  <div className="user-info-block">
+                    <span className="user-info-name">{user.username}</span>
+                    {user.service && (
+                      <span className="user-info-service">{user.service}</span>
+                    )}
+                  </div>
                   {isSelected && <span className="badge-selected">✓</span>}
                 </div>
               );
@@ -250,7 +255,7 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
               {selectedUsers.map(user => (
                 <div key={user.id} className="permission-block">
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                    <h4>👤 {user.username}</h4>
+                    <h4>👤 {user.username} {user.service && <span className="user-info-service-inline">· {user.service}</span>}</h4>
                     <button className="btn-toggle-all" onClick={() => toggleAllPerms(user.id)}>
                       {Object.keys(PERM_LABELS).every(p => permissionsMap[user.id]?.[p]) ? "☐ Tout décocher" : "☑ Tout cocher"}
                     </button>

@@ -2336,3 +2336,33 @@ body.dark .share-modal-close:hover { background: #2b2f53; color: #ef4444; }
   font-weight: 400;
   margin: 0 2px;
 }
+
+/* ====== SHARE MODAL — USER INFO ====== */
+.user-info-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.user-info-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.user-info-service {
+  font-size: 0.75rem;
+  color: #888;
+  font-style: italic;
+}
+
+.user-info-service-inline {
+  font-size: 0.8rem;
+  color: #888;
+  font-weight: 400;
+}
+
+body.dark .user-info-service,
+body.dark .user-info-service-inline {
+  color: #aab4c8;
+}
