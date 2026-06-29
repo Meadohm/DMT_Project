@@ -636,10 +636,15 @@ body.dark .upload-compact-bar svg {
   flex-wrap: wrap;
   gap: 12px;
   margin: 15px 0;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .user-item {
-  flex: 0 0 calc(25% - 10px);
+  flex: 0 0 calc(33.33% - 10px);
+  min-width: 90px;
+  max-width: 150px;
   text-align: center;
   border: 2px solid #ddd;
   border-radius: 10px;
