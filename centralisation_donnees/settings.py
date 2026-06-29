@@ -12,7 +12,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = True
 ALLOWED_HOSTS = ["192.168.1.116", "localhost", "127.0.0.1"]
-CSRF_TRUSTED_ORIGINS = ["http://192.168.1.116:3000", "http://localhost:3000"]
+CSRF_TRUSTED_ORIGINS = [
+    "http://192.168.1.116",
+    "http://192.168.1.116:3000",
+    "http://localhost:3000",
+    "http://localhost",
+]
 # ALLOWED_HOSTS = ['*']
 
 # ============================
