@@ -79,20 +79,31 @@ function DashboardSidebar({
           {favoriteFolders.length === 0 ? (
             <p className="no-folder-msg1">Aucun favori</p>
           ) : (
-            favoriteFolders.map((folder) => (
-              <FolderTree
-                key={folder.id}
-                folder={folder}
-                activeFolder={activeFolder}
-                onSelect={onSelect}
-                onCreateSubfolder={onCreateSubfolder}
-                onRename={onRenameFolder}
-                onDelete={onDeleteFolder}
-                onShare={onShareFolder}
-                onToggleFavorite={onToggleFavorite}
-                isFavorite={true}
-              />
-            ))
+            favoriteFolders.map((folder) => {
+              const isSharedExternal = externalFolders.some(f => f.id === folder.id);
+              const isServiceFolder = sharedFolders.some(f => f.id === folder.id);
+              const favContextMode = isSharedExternal
+                ? "shared"
+                : isServiceFolder
+                ? "service_readonly"
+                : null;
+              return (
+                <FolderTree
+                  key={folder.id}
+                  folder={folder}
+                  activeFolder={activeFolder}
+                  onSelect={onSelect}
+                  onCreateSubfolder={onCreateSubfolder}
+                  onRename={onRenameFolder}
+                  onDelete={onDeleteFolder}
+                  onShare={onShareFolder}
+                  onToggleFavorite={onToggleFavorite}
+                  isFavorite={true}
+                  contextMode={favContextMode}
+                  onLeave={isSharedExternal ? (f) => onLeaveFolder(f) : null}
+                />
+              );
+            })
           )}
         </div>
 
