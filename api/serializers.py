@@ -132,10 +132,10 @@ class FolderSerializer(serializers.ModelSerializer):
                         "can_update": False,
                         "can_delete": False,
                         "can_delete_folder": False,
-                        "can_share": False,
+                        "can_share": True,
                     }
                 parent = parent.parent
-            # Responsable peut lire les dossiers racine de son service
+            # Responsable peut lire ET partager les dossiers de son service
             if (hasattr(user, 'role')
                     and user.role == 'responsable'
                     and obj.service
@@ -146,7 +146,7 @@ class FolderSerializer(serializers.ModelSerializer):
                     "can_update": False,
                     "can_delete": False,
                     "can_delete_folder": False,
-                    "can_share": False,
+                    "can_share": True,
                 }
             return {}
 
