@@ -75,7 +75,15 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 
 ### Responsable
 - Toutes les fonctionnalités Employé
-- Vue dédiée au service avec identité visuelle distincte
+- Identité visuelle dédiée (palette teal, badge service)
+- Vue consolidée des dossiers de son service (lecture seule par défaut)
+- Héritage automatique des permissions sur les sous-dossiers
+- Partage de dossiers du service avec n'importe quel collaborateur
+- ShareModal intelligent : groupement par service, propriétaire mis en avant, filtres multicritères
+- Section dédiée aux dossiers reçus en partage hors service
+- Quitter un dossier partagé sans affecter le propriétaire
+- Migration automatique des dossiers récents lors d'un changement de service
+- Breadcrumb hiérarchique cliquable dans la navigation de fichiers
 
 ### Administrateur
 - Gestion complète des utilisateurs (créer, éditer, désactiver, supprimer)
@@ -219,6 +227,9 @@ DMT_Project
 
 ## Versions
 
+**v1.4.0 — Juin 2026**
+DashboardResponsable complet · Composants Topbar/Sidebar mutualisés entre rôles · Héritage de permissions récursif sur les sous-dossiers · Endpoint dédié vue service · ShareModal repensé (groupement, filtres, sélection groupée) · Migration automatique des dossiers lors d'un changement de service · Correctifs CSRF cross-navigateur
+
 **v1.3.0 — Juin 2026**
 SuperAdminPanel avec rôle isolé · AuditLogDeletion · Email automatique aux admins · Rate limiting Redis (5/10min) · Filtres avancés utilisateurs · Email de bienvenue · Refonte login DocFlow Pro · Décompte rate limit persistant
 
@@ -235,7 +246,6 @@ API REST Django + React · Authentification RBAC 4 rôles · Gestion dossiers et
 
 ## Roadmap
 
-- DashboardResponsable — vue service complète
 - JWT — expiration de session et refresh token
 - Docker + déploiement cloud AWS/GCP
 - Gunicorn + Nginx en production
