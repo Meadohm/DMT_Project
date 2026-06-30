@@ -648,7 +648,7 @@ function SuperAdminPanel() {
                 <div className="dashboard-card-arrow">→</div>
               </div>
               <div className="dashboard-card dashboard-card-disk">
-                <div className="dashboard-card-icon">🖴</div>
+                <div className="dashboard-card-icon">💽</div>
                 <div className="dashboard-card-content">
                   <h3>Espace disque</h3>
                   <div className="dashboard-card-main">{dashboardStats?.disk?.used_pct ?? 0}%</div>
