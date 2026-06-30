@@ -618,6 +618,30 @@ function AdminPanel() {
                 </div>
                 <div className="dashboard-card-arrow">→</div>
               </div>
+              <div className="dashboard-card dashboard-card-disk">
+                <div className="dashboard-card-icon">🖴</div>
+                <div className="dashboard-card-content">
+                  <h3>Espace disque</h3>
+                  <div className="dashboard-card-main">{dashboardStats?.disk?.used_pct ?? 0}%</div>
+                  <div className="disk-progress-bar">
+                    <div
+                      className={`disk-progress-fill ${
+                        (dashboardStats?.disk?.used_pct ?? 0) > 85 ? "disk-critical" :
+                        (dashboardStats?.disk?.used_pct ?? 0) > 65 ? "disk-warning" : ""
+                      }`}
+                      style={{ width: `${dashboardStats?.disk?.used_pct ?? 0}%` }}
+                    />
+                  </div>
+                  <div className="dashboard-card-details">
+                    <span className="dash-detail">
+                      {dashboardStats?.disk?.used_gb ?? 0} GB / {dashboardStats?.disk?.total_gb ?? 0} GB
+                    </span>
+                    <span className="dash-detail" style={{fontSize:'0.75em', marginTop:'4px'}}>
+                      {dashboardStats?.disk?.free_gb ?? 0} GB libres
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </>
         )}

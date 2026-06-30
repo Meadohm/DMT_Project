@@ -1492,3 +1492,35 @@ tr.user-inactive td {
   padding: 40px;
   color: #666;
 }
+/* ====== ESPACE DISQUE ====== */
+.dashboard-card-disk {
+  cursor: default;
+}
+
+.disk-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 8px 0;
+}
+
+.disk-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  border-radius: 6px;
+  transition: width 0.4s ease;
+}
+
+.disk-progress-fill.disk-warning {
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.disk-progress-fill.disk-critical {
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+body.dark .disk-progress-bar {
+  background: #2d3555;
+}
