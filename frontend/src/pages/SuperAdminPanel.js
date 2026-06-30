@@ -489,7 +489,7 @@ function SuperAdminPanel() {
     }
     try {
       await createUser(formData);
-      setFormSuccess(`✅ Utilisateur "${formData.username}" créé avec succès.`);
+      setFormSuccess(`Utilisateur "${formData.username}" créé avec succès.`);
       showToast(`Utilisateur "${formData.username}" créé avec succès.`);
       setFormData({ username: '', email: '', password: '', confirmPassword: '', role: 'employe', service: '' });
       fetchData();
@@ -1396,7 +1396,7 @@ function SuperAdminPanel() {
             <p>Nouveau mot de passe :</p>
             <div className="password-display">{resetPasswordModal.newPassword}</div>
             {resetPasswordModal.emailEnvoye
-              ? <p className="modal-note success-note">✅ Email envoyé à l'utilisateur.</p>
+              ? <p className="modal-note success-note">Email envoyé à l'utilisateur.</p>
               : <p className="modal-note">⚠️ Email non envoyé — communiquez ce mot de passe manuellement.</p>
             }
             <button className="btn-primary" onClick={() => setResetPasswordModal(null)}>Fermer</button>

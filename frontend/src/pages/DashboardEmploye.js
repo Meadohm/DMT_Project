@@ -115,7 +115,7 @@ function DashboardEmploye() {
         }
       });
 
-      // 🔹 Trie récursif des enfants
+      // Trie récursif des enfants
       const sortRecursively = (folders) => {
         folders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         folders.forEach(f => f.children && sortRecursively(f.children));
@@ -218,7 +218,7 @@ function DashboardEmploye() {
 
   const { notifications, refresh, setNotifications } = useNotifications();
 
-  // 🔁 Force le rafraîchissement du temps toutes les 60 secondes
+  // Force le rafraîchissement du temps toutes les 60 secondes
     useEffect(() => {
       const interval = setInterval(() => {
         setNotifications((prev) => [...prev]); // redéclenche un rendu
@@ -366,7 +366,7 @@ const handleClearNotifications = async () => {
     }
   };
 
-  // ⭐ Gestion Favoris
+  // Gestion Favoris
   const toggleFavorite = (folderId) => {
     let updated;
     if (favorites.includes(folderId)) {
@@ -378,7 +378,7 @@ const handleClearNotifications = async () => {
     localStorage.setItem("favorites", JSON.stringify(updated));
   };
 
-  // 🔍 Filtrage et regroupement dossiers
+  // Filtrage et regroupement dossiers
   const { myFolders, sharedFolders, favoriteFolders } = useMemo(() => {
     const lowerSearch = searchTerm.toLowerCase();
     const filtered = folders.filter((f) =>

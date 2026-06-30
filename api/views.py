@@ -23,7 +23,7 @@ from .serializers import FileSerializer, FolderSerializer, ServiceSerializer, No
 logger = logging.getLogger(__name__)
 Utilisateur = get_user_model()
 
-##### HELPER PERMISSIONS #####
+# HELPER PERMISSIONS
 def has_folder_permission(user, folder, action: str) -> bool:
     """ Vérifie si un utilisateur a les droits nécessaires sur un dossier via FolderShare """
     if user == folder.proprietaire:
@@ -63,11 +63,11 @@ def safe_folder_name(name: str) -> str:
     """ Nettoie un nom de dossier pour l'OS """
     return re.sub(r'[^a-zA-Z0-9_-]', '_', name)
 
-##### PAGE ACCUEIL #####
+# PAGE ACCUEIL
 def home(request):
     return HttpResponse("Bienvenue sur l'API de centralisation des données !")
 
-##### AUTHENTIFICATION & UTILISATEURS #####
+# AUTHENTIFICATION & UTILISATEURS
 @api_view(['POST'])
 @authentication_classes([])
 @permission_classes([AllowAny])
@@ -336,7 +336,7 @@ Pour vous connecter, rendez-vous sur : http://192.168.1.116/
 Pour des raisons de sécurité, nous vous recommandons de modifier votre mot de passe dès votre première connexion.
 
 Cordialement,
-L'équipe DMT — Doumbia Moussa Transport
+Chef de Service Informatique - Équipe DMT
 """,
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[email],
@@ -472,7 +472,7 @@ def toggle_user_active(request, user_id):
     })
 
 
-##### FICHIERS CENTRALISÉS #####
+# FICHIERS CENTRALISÉS
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
@@ -594,7 +594,7 @@ def check_file_shared(request, file_id):
     })
 
 
-##### HISTORIQUE (AuditLog) #####
+# HISTORIQUE (AuditLog)
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
@@ -720,8 +720,8 @@ def notify_admins_deletion(admin_username, log_info, ip, is_bulk=False):
                 f"  • Type           : Suppression massive\n"
                 f"  • Adresse IP     : {ip}\n"
                 f"  • Date           : {log_info.get('date', '—')}\n\n"
-                "Cette action est enregistrée dans l'onglet Suppressions de l'AdminPanel.\n\n"
-                "Cordialement,\nLe système DMT — Doumbia Moussa Transport"
+                "Cette action est enregistrée dans l'onglet Suppressions du Panneau Administrateur.\n\n"
+                "Cordialement,\nDocFlow Pro DMT — Doumbia Moussa Transport"
             )
         else:
             subject = '[DMT] ⚠️ Alerte sécurité — Suppression dans le journal'
@@ -734,9 +734,9 @@ def notify_admins_deletion(admin_username, log_info, ip, is_bulk=False):
                 f"  • Action supprimée     : {log_info.get('action', '—')}\n"
                 f"  • Objet                : {log_info.get('objet', '—')}\n"
                 f"  • Adresse IP           : {ip}\n\n"
-                "Cette action est enregistrée dans l'onglet Suppressions de l'AdminPanel.\n\n"
+                "Cette action est enregistrée dans l'onglet Suppressions du Panneau Administrateur.\n\n"
                 "Si suspecte, contactez le Super Administrateur.\n\n"
-                "Cordialement,\nLe système DMT — Doumbia Moussa Transport"
+                "Cordialement,\nDocFlow Pro DMT — Doumbia Moussa Transport"
             )
         send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, emails, fail_silently=True)
     except Exception as e:
@@ -1002,7 +1002,7 @@ def get_dashboard_stats(request):
         }
     })
 
-##### FOLDERS CRUD #####
+# FOLDERS CRUD
 def get_descendant_folder_ids(folder_ids):
     """Retourne récursivement tous les IDs des sous-dossiers"""
     all_ids = set(folder_ids)
@@ -1509,7 +1509,7 @@ def delete_file(request, file_id):
     logger.info(f"[DELETE] Fichier '{file_obj.nom}' supprimé par {request.user.username}")
     return Response({'success': 'Fichier supprimé'})
 
-##### FILE PREVIEW #####
+# FILE PREVIEW
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -1526,7 +1526,7 @@ def preview_file(request, file_id):
     if not ext:
         return Response({"type": "unsupported", "message": "Extension inconnue"})
 
-    # === URL sécurisée avec token + cache-busting ===
+    # URL sécurisée avec token + cache-busting
     token = Token.objects.get(user=request.user)
     timestamp = int(timezone.now().timestamp() * 1000)
     secure_url = request._request.build_absolute_uri(
@@ -1688,7 +1688,7 @@ def update_share_permission(request, share_id):
         Notification.objects.create(
             user=share.user,
             type="permission",
-            message=f"🔧 Permission(s) mise(s) à jour pour le dossier « {share.folder.nom} » "
+            message=f"Permission(s) mise(s) à jour pour le dossier « {share.folder.nom} » "
                     f"par {request.user.username} : {', '.join(labels)}"
         )
 
@@ -1696,17 +1696,17 @@ def update_share_permission(request, share_id):
         if len(labels) == 1:
             return Response({
                 "success": True,
-                "message": f"✅ Le droit « {labels[0]} » a été mis à jour pour 👤 {user_name}."
+                "message": f"Le droit « {labels[0]} » a été mis à jour pour 👤 {user_name}."
             })
         else:
             return Response({
                 "success": True,
-                "message": f"✅ Les droits {', '.join(labels)} ont été mis à jour pour 👤 {user_name}."
+                "message": f"Les droits {', '.join(labels)} ont été mis à jour pour 👤 {user_name}."
             })
 
-    return Response({"success": True, "message": "✅ Aucune permission modifiée."})
+    return Response({"success": True, "message": "Aucune permission modifiée."})
 
-##### ARCHIVES (Création, Liste, Téléchargement, Suppression) #####
+# ARCHIVES (Création, Liste, Téléchargement, Suppression)
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -1992,7 +1992,7 @@ def share_archive(request, archive_id):
         Notification.objects.create(
             user=user,
             type="archive_share",
-            message=f"📦 Nouvelle archive partagée : « {archive.folder_name} » par {request.user.username}"
+            message=f"Nouvelle archive partagée : « {archive.folder_name} » par {request.user.username}"
         )
         shared_users.append(user.username)
 
@@ -2009,7 +2009,7 @@ def share_archive(request, archive_id):
 @permission_classes([IsAuthenticated])
 def unarchive_folder(request, archive_id):
     """
-    ♻️ Désarchive un dossier lié à une archive et le réaffiche dans la sidebar.
+     Désarchive un dossier lié à une archive et le réaffiche dans la sidebar.
     """
     try:
         archive = Archive.objects.get(id=archive_id, owner=request.user)
@@ -2032,12 +2032,12 @@ def unarchive_folder(request, archive_id):
     Notification.objects.create(
         user=request.user,
         type="archive",
-        message=f"♻️ Le dossier « {folder.nom} » a été désarchivé avec succès."
+        message=f"Le dossier « {folder.nom} » a été désarchivé avec succès."
     )
 
     return Response({'success': f"Dossier « {folder.nom} » restauré."}, status=status.HTTP_200_OK)
 
-##### GESTION DES NOTIFICATIONS #####
+# GESTION DES NOTIFICATIONS
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -2048,7 +2048,7 @@ def create_notification(request):
     Exemple de payload attendu :
     {
         "type": "info",
-        "message": "🗑️ Le dossier X a été supprimé par Y.",
+        "message": "Le dossier X a été supprimé par Y.",
         "recipients": [1, 2, 3]  # (optionnel)
     }
     """
@@ -2084,7 +2084,6 @@ def create_notification(request):
         )
 
 
-
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -2093,7 +2092,6 @@ def list_notifications(request):
     since = timezone.now() - timezone.timedelta(hours=48)
     notifs = Notification.objects.filter(user=request.user, created_at__gte=since).order_by("-created_at")
     return Response(NotificationSerializer(notifs, many=True).data)
-
 
 
 @api_view(['DELETE'])
@@ -2225,7 +2223,7 @@ def bulk_create_archive(request):
             Notification.objects.create(
                 user=request.user,
                 type='archive',
-                message=f'📦 Le dossier « {folder.nom} » a été archivé ({archive_format.upper()}).'
+                message=f'Le dossier « {folder.nom} » a été archivé ({archive_format.upper()}).'
             )
             results.append(folder.nom)
 

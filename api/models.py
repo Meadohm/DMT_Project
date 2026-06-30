@@ -7,7 +7,7 @@ import os
 import hashlib
 import re   # indispensable pour upload_to_folder
 
-############ Utilisateur personnalisé ###########
+# Utilisateur personnalisé
 class Utilisateur(AbstractUser):
     ROLE_CHOICES = [
         ('super_admin', 'Super Administrateur'),
@@ -27,7 +27,7 @@ class Utilisateur(AbstractUser):
     def __str__(self):
         return self.username
 
-############ Nouveau modèle Folder ###########
+# Nouveau modèle Folder ###########
 class Folder(models.Model):
     nom = models.CharField(max_length=255)
     proprietaire = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="folders")
@@ -53,7 +53,7 @@ class Folder(models.Model):
     def __str__(self):
         return f"{self.nom} ({self.proprietaire.username})"
 
-############ Nouveau modèle FolderShare ###########
+# Nouveau modèle FolderShare
 class FolderShare(models.Model):
     folder = models.ForeignKey("Folder", on_delete=models.CASCADE, related_name="shares")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="folder_shares")
@@ -78,7 +78,7 @@ class FolderShare(models.Model):
         if self.can_delete_folder: perms.append("suppr dossier")
         return f"Partage {self.folder.nom} → {self.user.username} ({', '.join(perms) or 'aucun droit'})"
 
-########### Helper → chemin dynamique fichier ###########
+# Helper → chemin dynamique fichier
 def upload_to_folder(instance, filename):
     """
     Stocke le fichier dans uploads/<id_nom>/<filename>
@@ -89,7 +89,7 @@ def upload_to_folder(instance, filename):
         folder_name = "misc"
     return os.path.join("uploads", folder_name, filename)
 
-############ Modèle File ###########
+# Modèle File
 class File(models.Model):
     folder = models.ForeignKey(Folder, on_delete=models.CASCADE, related_name="files", null=True, blank=True)
     utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="files")
@@ -123,7 +123,7 @@ class File(models.Model):
             return hasher.hexdigest()
         return None
 
-############ Service ###########
+# Service
 class Service(models.Model):
     STATUT_CHOICES = [
         ('actif', 'Actif'),
@@ -141,7 +141,7 @@ class Service(models.Model):
     def __str__(self):
         return self.nom
 
-############ Notifications ###########
+# Notifications
 class Notification(models.Model):
     NOTIF_TYPES = [
         ('share', 'Partage de dossier'),
@@ -162,7 +162,7 @@ class Notification(models.Model):
     def __str__(self):
         return f"{self.user.username} → {self.type} ({'lu' if self.is_read else 'non lu'})"
 
-########### Archivage ###########
+# Archivage
 User = get_user_model()
 
 class Archive(models.Model):
@@ -183,7 +183,7 @@ class Archive(models.Model):
     def __str__(self):
         return f"Archive {self.folder_name} de {self.owner.username}"
 
-########### Audit et traçabilité complète ###########
+# Audit et traçabilité complète
 class AuditLog(models.Model):
     ACTION_CHOICES = [
         ('LOGIN', 'Connexion'),
@@ -214,7 +214,7 @@ class AuditLog(models.Model):
 
     def __str__(self):
         return f"{self.timestamp} | {self.utilisateur} | {self.action} | {self.objet}"
-########### Traçabilité suppressions Journal ###########
+# Traçabilité suppressions Journal
 class AuditLogDeletion(models.Model):
     """Trace chaque suppression d'une entrée AuditLog — immuable"""
     admin = models.ForeignKey(

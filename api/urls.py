@@ -35,7 +35,6 @@ urlpatterns = [
     path('centralized-files/<int:file_id>/update/', views.update_centralized_file, name='update_centralized_file'),
     path('centralized-files/<int:file_id>/delete/', views.delete_centralized_file, name='delete_centralized_file'),
     path('centralized-files/<int:file_id>/check-shared/', views.check_file_shared, name='check_file_shared'),
-    
 
     # SERVICES
     path('services/', views.list_services, name='list_services'),
@@ -53,8 +52,6 @@ urlpatterns = [
     path('folders/<int:folder_id>/delete/', views.delete_folder, name='delete_folder'),
     path('folders/<int:folder_id>/share/', views.share_folder, name='share_folder'),
     
-
-
     # FILES CRUD
     path('folders/<int:folder_id>/upload/', views.upload_file, name='upload_file'),
     path('folders/<int:folder_id>/files/', views.list_files_by_folder, name='list_files_by_folder'),
@@ -83,7 +80,6 @@ urlpatterns = [
     path("folders/<int:folder_id>/leave/", views.leave_folder, name="leave_folder"),
     path("shares/<int:share_id>/revoke/", views.revoke_share, name="revoke_share"),
 
-    
     # Notifications
     path('notifications/create/', views.create_notification, name='create_notification'),
     path('notifications/', views.list_notifications, name='list_notifications'),

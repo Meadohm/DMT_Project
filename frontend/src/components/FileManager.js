@@ -38,7 +38,7 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
   const [fileToRename, setFileToRename] = useState(null);
   const [newFileName, setNewFileName] = useState("");
 
-  // ── Breadcrumb ──────────────────────────────────────────────────────────
+  // ── Breadcrumb ────────────────────────────────────────────────
   const folderMap = React.useMemo(() => {
     const map = {};
     const traverse = (list) => {
@@ -69,21 +69,17 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
     return null;
   }, [breadcrumb]);
 
-  // 🔹 Nouvelle modale pour permissions refusées
+  // Nouvelle modale pour permissions refusées
   const [permissionModalOpen, setPermissionModalOpen] = useState(false);
   const [permissionMessage, setPermissionMessage] = useState("");
 
   const [shareInfoOpen, setShareInfoOpen] = useState(false);
-
-  
 
   useEffect(() => {
     if (activeFolder) fetchFiles();
   }, [activeFolder]);
 
   
-
-
     // Déclare refreshActiveFolder AVANT handlePermissionChange
     const refreshActiveFolder = async () => {
       if (!activeFolder) return;
@@ -133,14 +129,14 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
         });
 
 
-        // ✅ Toast de confirmation de mise à jour
+        // Toast de confirmation de mise à jour
         setToast({
           type: "success",
-          message: "✅ Permission mise à jour avec succès !",
+          message: "Permission mise à jour avec succès !",
         });
         setTimeout(() => setToast(null), 3000);
 
-        // 🔄 Rafraîchir dossier actif immédiatement
+        // Rafraîchir dossier actif immédiatement
         await refreshActiveFolder();
       } catch (err) {
         console.error("❌ Erreur mise à jour permission", err);
@@ -176,7 +172,7 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
             Array.from(selectedFiles).map((file) => uploadFile(activeFolder.id, file))
           );
 
-          // 🔄 Rafraîchit la liste après upload
+          // Rafraîchit la liste après upload
           await fetchFiles();
 
           // Affiche un toast de confirmation
@@ -186,7 +182,7 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
             message: `${fileCount} fichier${fileCount > 1 ? "s" : ""} uploadé${fileCount > 1 ? "s" : ""} avec succès !`,
           });
 
-          // 🔁 Cache le toast automatiquement après 3 secondes
+          // Cache le toast automatiquement après 3 secondes
           setTimeout(() => setToast(null), 3000);
 
         } catch (err) {

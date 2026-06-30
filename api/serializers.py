@@ -3,18 +3,13 @@ from .models import File, Folder, Service, FolderShare, Utilisateur, Notificatio
 from django.conf import settings
 import os
 
-# ==============================
 # Utilisateur
-# ==============================
 class UtilisateurSerializer(serializers.ModelSerializer):
     class Meta:
         model = Utilisateur
         fields = ['id', 'username', 'email', 'role', 'service', 'avatar']
 
-
-# ==============================
 # FolderShare (permissions fines)
-# ==============================
 class FolderShareSerializer(serializers.ModelSerializer):
     user = UtilisateurSerializer(read_only=True)
     user_id = serializers.PrimaryKeyRelatedField(
@@ -38,14 +33,11 @@ class FolderShareSerializer(serializers.ModelSerializer):
             'shared_at',
         ]
 
-
-# ==============================
 # Folder
-# ==============================
 class FolderSerializer(serializers.ModelSerializer):
     proprietaire = UtilisateurSerializer(read_only=True)
     shares = serializers.SerializerMethodField()
-    parent = serializers.SerializerMethodField()  # 🔹 Ajout pour envoyer l’ID parent clair
+    parent = serializers.SerializerMethodField()  
     permissions = serializers.SerializerMethodField()
 
     class Meta:
@@ -55,7 +47,7 @@ class FolderSerializer(serializers.ModelSerializer):
             'nom',
             'proprietaire',
             'service',
-            'parent',           # 🔹 ajouté ici
+            'parent',        
             'is_shared',
             'is_archived',
             'shares',
@@ -64,12 +56,12 @@ class FolderSerializer(serializers.ModelSerializer):
             'permissions',
         ]
 
-    # --- parent ---
+    # parent
     def get_parent(self, obj):
         """Retourne l’ID du dossier parent (None si racine)"""
         return obj.parent.id if obj.parent else None
 
-    # --- shares ---
+    # shares
     def get_shares(self, obj):
         """Liste les utilisateurs avec lesquels ce dossier est partagé"""
         shares = FolderShare.objects.filter(folder=obj)
@@ -88,7 +80,7 @@ class FolderSerializer(serializers.ModelSerializer):
             for s in shares
         ]
 
-    # --- permissions ---
+    # permissions
     def get_permissions(self, obj):
         """Retourne les droits de l'utilisateur courant sur ce dossier"""
         request = self.context.get("request")
@@ -159,10 +151,7 @@ class FolderSerializer(serializers.ModelSerializer):
             "can_share": False,
         }
 
-
-# ==============================
 # File
-# ==============================
 class FileSerializer(serializers.ModelSerializer):
     utilisateur = UtilisateurSerializer(read_only=True)
     url = serializers.SerializerMethodField()
@@ -188,20 +177,13 @@ class FileSerializer(serializers.ModelSerializer):
             return request.build_absolute_uri(obj.fichier.url)
         return None
 
-
-# ==============================
 # Service
-# ==============================
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
         fields = ['id', 'nom']
 
-
-
-# ==============================
 # Mettre à jour les permissions
-# ==============================
 class SharePermissionUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = FolderShare
@@ -219,10 +201,7 @@ class NotificationSerializer(serializers.ModelSerializer):
         model = Notification
         fields = ['id', 'type', 'message', 'is_read', 'created_at']
 
-
-# ==============================
 # Archivage
-# ==============================
 class ArchiveSerializer(serializers.ModelSerializer):
     type_archive = serializers.SerializerMethodField()
 
@@ -232,7 +211,7 @@ class ArchiveSerializer(serializers.ModelSerializer):
             "id",
             "folder_name",
             "file",
-            "size",            # ✅ Important : taille brute en octets
+            "size",        
             "created_at",
             "expires_at",
             "is_active",
