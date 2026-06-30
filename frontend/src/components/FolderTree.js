@@ -94,7 +94,7 @@ function FolderTree({
       document.documentElement.style.setProperty("--tooltip-y", `${e.clientY}px`);
     };
 
-    // 🔄 On écoute sur tout le document pour couvrir tous les FolderTree (y compris “Partagés avec moi”)
+    // On écoute sur tout le document pour couvrir tous les FolderTree (y compris “Partagés avec moi”)
     document.addEventListener("mousemove", updateTooltipCoords);
 
     return () => document.removeEventListener("mousemove", updateTooltipCoords);

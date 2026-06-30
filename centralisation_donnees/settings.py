@@ -20,9 +20,7 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 # ALLOWED_HOSTS = ['*']
 
-# ============================
 # Applications
-# ============================
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -71,9 +69,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'centralisation_donnees.wsgi.application'
 
-# ============================
 # Base de données (Postgres)
-# ============================
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -85,9 +81,7 @@ DATABASES = {
     }
 }
 
-# ============================
 # Auth & sécurité
-# ============================
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -105,9 +99,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'api.Utilisateur'
 
-# ============================
 # DRF
-# ============================
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
@@ -119,9 +111,7 @@ REST_FRAMEWORK = {
     ],
 }
 
-# ============================
 # Logging
-# ============================
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -140,10 +130,7 @@ X_FRAME_OPTIONS = 'ALLOWALL'
 # Facultatif : pour désactiver les protections COOP/COEP si activées
 SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 
-
-# ============================
 # Email
-# ============================
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -152,9 +139,7 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER')
 
-# ============================
 # Media (fichiers uploadés)
-# ============================
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 RATELIMIT_USE_CACHE = 'default'

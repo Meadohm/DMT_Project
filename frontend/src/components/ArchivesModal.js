@@ -209,11 +209,11 @@ export default function ArchivesModal({ onClose, onRefreshFolders, userInfo, onR
         <div className="archive-tabs">
           <button className={`archive-tab${activeTab === "create" ? " active" : ""}`}
             onClick={() => setActiveTab("create")}>
-            📦 Créer
+            Créer
           </button>
           <button className={`archive-tab${activeTab === "list" ? " active" : ""}`}
             onClick={() => setActiveTab("list")}>
-            📋 Mes archives {archives.length > 0 && <span className="tab-badge">{archives.length}</span>}
+            Mes archives {archives.length > 0 && <span className="tab-badge">{archives.length}</span>}
           </button>
         </div>
 

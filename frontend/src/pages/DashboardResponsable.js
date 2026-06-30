@@ -356,7 +356,7 @@ function DashboardResponsable() {
     }
   };
 
-  // ⭐ Gestion Favoris
+  // Gestion Favoris
   const toggleFavorite = (folderId) => {
     let updated;
     if (favorites.includes(folderId)) {
@@ -368,7 +368,7 @@ function DashboardResponsable() {
     localStorage.setItem("favorites", JSON.stringify(updated));
   };
 
-  // 🔍 Filtrage et regroupement dossiers
+  // Filtrage et regroupement dossiers
   const { myFolders, sharedFolders, externalFolders, favoriteFolders } = useMemo(() => {
     const lowerSearch = searchTerm.toLowerCase();
     const filtered = folders.filter((f) =>
