@@ -1492,7 +1492,8 @@ tr.user-inactive td {
   padding: 40px;
   color: #666;
 }
-/* ====== ESPACE DISQUE ====== */
+
+/* ESPACE DISQUE */
 .dashboard-card-disk {
   cursor: default;
 }
@@ -1523,4 +1524,58 @@ tr.user-inactive td {
 
 body.dark .disk-progress-bar {
   background: #2d3555;
+}
+
+/* RÉPARTITION RÔLES */
+.roles-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.role-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+}
+
+.role-bar-label {
+  flex: 0 0 90px;
+  color: #6b7280;
+}
+
+.role-bar-track {
+  flex: 1;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.role-bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.4s ease;
+}
+
+.role-bar-count {
+  flex: 0 0 24px;
+  text-align: right;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+body.dark .role-bar-label {
+  color: #aab4c8;
+}
+
+body.dark .role-bar-track {
+  background: #2d3555;
+}
+
+body.dark .role-bar-count {
+  color: #e6e8f0;
 }

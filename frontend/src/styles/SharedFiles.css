@@ -1,4 +1,4 @@
-/* ✅ src/styles/SharedFiles.css — version corrigée et isolée */
+/* src/styles/SharedFiles.css — version corrigée et isolée */
 
 /* Isolation du composant pour éviter les conflits avec FileManager.css */
 .shared-files-container {
@@ -45,7 +45,7 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   cursor: pointer;
   
-  /* ✅ Valeurs initiales corrigées */
+  /* Valeurs initiales corrigées */
   opacity: 1;                /* était 0 */
   transform: translateY(0);  /* était 10px */
   transition: transform 0.25s ease, box-shadow 0.25s ease;
@@ -67,7 +67,6 @@
     transform: translateY(0);
   }
 }
-
 
 /* Survol */
 .shared-file-card:hover {
@@ -180,7 +179,7 @@ body.dark .shared-actions button:hover {
   background: #6a5cff;
 }
 
-/* === 🔹 Header harmonisé de la section partagée === */
+/* Header harmonisé de la section partagée */
 .shared-files-header {
   display: flex;
   justify-content: space-between;

@@ -1,5 +1,4 @@
-/* SidebarGemini.css */
-/* 📦 Sidebar principale */
+/*Sidebar principale */
 .sidebar {
   position: fixed;
   top: 0;
@@ -34,8 +33,6 @@
   background-color: rgba(108, 99, 255, 0.6);
 }
 
-
-
 /* Supprime tout effet scroll horizontal */
 .sidebar::-webkit-scrollbar {
   width: 6px;
@@ -48,7 +45,7 @@
   background: rgba(255, 255, 255, 0.35);
 }
 
-/* 📂 Sections de la sidebar */
+/* Sections de la sidebar */
 .sidebar-top-fixed {
   display: flex;
   align-items: center;
@@ -59,7 +56,7 @@
   border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-/* ➕ Bouton Nouveau dossier */
+/* Bouton Nouveau dossier */
 .new-folder-btn {
   flex: 1;
   background: #6c63ff;
@@ -94,13 +91,12 @@
   background: #5a52e0;
 }
 
-/* === 📁 Dossiers === */
+/* Dossiers  */
 .folder-list {
   list-style: none;
   margin: 0;
   padding: 0;
 }
-
 
 .folder-item {
   display: flex;
@@ -123,7 +119,7 @@
   background: rgba(108, 99, 255, 0.25);
 }
 
-/* ====== ACTIONS SUR DOSSIERS ====== */
+/* ACTIONS SUR DOSSIERS */
 
 .folder-actions button {
   border: none;
@@ -149,7 +145,6 @@
   stroke-width: 2;
 }
 
-
 .folder-left {
   display: flex;
   align-items: center;
@@ -165,7 +160,7 @@
   font-size: 14px;
 }
 
-/* === ✨ Harmonisation tooltip & nom de dossier (Sidebar) === */
+/* Harmonisation tooltip & nom de dossier (Sidebar)  */
 .folder-list .folder-name[title]:hover::after {
   content: attr(title);
   position: absolute;
@@ -185,8 +180,7 @@
   animation: tooltipFadeIn 0.25s ease forwards;
 }
 
-
-/* ⭐ Icônes et ⋮ actions */
+/* Icônes et ⋮ actions */
 .folder-actions {
   display: flex;
   align-items: center;
@@ -215,12 +209,10 @@
   pointer-events: none;
 }
 
-
 .folder-list li:hover {
   background-color: rgba(124, 58, 237, 0.07);
   border-radius: 8px;
 }
-
 
 .context-btn:hover {
   background: rgba(108, 99, 255, 0.2);
@@ -247,7 +239,6 @@
   isolation: isolate;
 }
 
-
 .context-menu button {
   background: transparent;
   border: none;
@@ -268,7 +259,6 @@
   color: #fff;
 }
 
-
 /* Animation fluide */
 @keyframes fadeSlide {
   from {
@@ -281,7 +271,7 @@
   }
 }
 
-/* === ✨ Effet verre givré Gemini - Context Menu === */
+/* Effet verre givré Gemini - Context Menu  */
 .context-menu.glass-effect {
   backdrop-filter: blur(10px) saturate(180%);
   -webkit-backdrop-filter: blur(10px) saturate(180%);
@@ -321,7 +311,7 @@
   color: #6c63ff;
 }
 
-/* === ✨ GEMINI+ MENU CONTEXTUEL PREMIUM === */
+/* MENU CONTEXTUEL PREMIUM  */
 
 .context-menu.glass-effect {
   backdrop-filter: blur(10px) saturate(180%);
@@ -385,12 +375,12 @@
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
 }
 
-/* ✨ Petit fade complémentaire au scale-fade */
+/* Petit fade complémentaire au scale-fade */
 .context-menu.glass-effect.scale-fade {
   animation: scaleFadeIn 0.25s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
 
-/* === Scroll indépendant par section === */
+/*  Scroll indépendant par section  */
 .section-scroll {
   overflow-y: visible;
   overflow-x: hidden;
@@ -409,7 +399,7 @@
   background-color: rgba(108, 99, 255, 0.6);
 }
 
-/* === Correction du contexte z-index du menu contextuel (⋮) === */
+/*  Correction du contexte z-index du menu contextuel (⋮)  */
 .folder-menu-wrapper {
   position: relative;
   z-index: 10; /*permet au menu de se superposer */
@@ -419,7 +409,7 @@
   z-index: 999999 !important; /* 🔥 assure qu’il reste au-dessus du scroll */
 }
 
-/* === 🧭 MENU CONTEXTUEL MODERNE GEMINI+ (extérieur sidebar) === */
+/* MENU CONTEXTUEL MODERNE GEMINI+ (extérieur sidebar)  */
 .context-menu.modern-menu {
   position: fixed !important;
   background: rgba(255, 255, 255, 0.75);
@@ -474,7 +464,7 @@
   }
 }
 
-/* === Forcer le menu au-dessus du FileManager === */
+/*  Forcer le menu au-dessus du FileManager  */
 .context-menu.modern-menu {
   isolation: isolate;
   z-index: 9999999 !important;
@@ -488,7 +478,7 @@
 }
 
 
-/* === Forcer le menu contextuel à rester visible au-dessus === */
+/*  Forcer le menu contextuel à rester visible au-dessus  */
 .main-content,
 .sidebar {
   overflow: visible !important;
@@ -585,7 +575,7 @@
   background: rgba(108,99,255,0.2);
   color: #6c63ff;
 }
-/* ====== BADGE PROPRIÉTAIRE DOSSIER SERVICE ====== */
+/*  BADGE PROPRIÉTAIRE DOSSIER SERVICE  */
 .folder-name-block {
   display: flex;
   flex-direction: column;

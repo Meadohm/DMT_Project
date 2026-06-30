@@ -1795,9 +1795,7 @@ body.dark .upload-compact-bar svg {
   stroke: #ff4b5c;
 }
 
-/* ================================
-   🔧 AJUSTEMENT THÈME SOMBRE (FileManager)
-   ================================ */
+/* AJUSTEMENT THÈME SOMBRE (FileManager)*/
 body.dark .upload-zone {
   background-color: var(--upload-bg);
   border: 2px dashed var(--border-color);
@@ -1899,8 +1897,7 @@ body.dark .folder-title {
   }
 }
 
-/* ====== EMP TOPBAR ====== */
-
+/*  EMP TOPBAR  */
 .emp-topbar {
   display: flex;
   align-items: center;
@@ -2397,7 +2394,7 @@ body.dark .share-modal-close:hover {
   max-width: 300px;
 }
 
-/* ====== BREADCRUMB ====== */
+/*  BREADCRUMB  */
 .breadcrumb-link {
   cursor: pointer;
   opacity: 0.7;
@@ -2418,7 +2415,7 @@ body.dark .share-modal-close:hover {
   margin: 0 2px;
 }
 
-/* ====== SHARE MODAL — USER INFO ====== */
+/*  SHARE MODAL — USER INFO  */
 .user-info-block {
   display: flex;
   flex-direction: column;
@@ -2458,7 +2455,7 @@ body.dark .user-info-service-undefined {
   color: #fbbf24;
 }
 
-/* ====== SHARE MODAL — GROUPEMENT ====== */
+/*  SHARE MODAL — GROUPEMENT  */
 .share-group-label {
   font-size: 0.75rem;
   font-weight: 700;

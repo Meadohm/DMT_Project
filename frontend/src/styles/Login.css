@@ -10,7 +10,7 @@
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/*Slideshow arrière-plan */
+/* Slideshow arrière-plan */
 .login-bg-slideshow {
   position: fixed;
   top: 0;
@@ -234,7 +234,6 @@
   background: #ccc;
   cursor: not-allowed;
 }
-
 
 .hidden {
   opacity: 0;

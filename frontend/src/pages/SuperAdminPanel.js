@@ -683,6 +683,33 @@ function SuperAdminPanel() {
                 </div>
                 <div className="dashboard-card-arrow">→</div>
               </div>
+              <div className="dashboard-card dashboard-card-roles" onClick={() => setActiveSection("users")}>
+                <div className="dashboard-card-icon">🧩</div>
+                <div className="dashboard-card-content">
+                  <h3>Répartition rôles</h3>
+                  <div className="roles-bars">
+                    {[
+                      { label: "Employés", value: dashboardStats?.roles?.employe ?? 0, color: "#3b82f6" },
+                      { label: "Responsables", value: dashboardStats?.roles?.responsable ?? 0, color: "#0e9e87" },
+                      { label: "Admins", value: dashboardStats?.roles?.admin ?? 0, color: "#f59e0b" },
+                      { label: "Super Admin", value: dashboardStats?.roles?.super_admin ?? 0, color: "#a855f7" },
+                    ].map((r) => {
+                      const total = dashboardStats?.users?.total || 1;
+                      const pct = Math.round((r.value / total) * 100);
+                      return (
+                        <div key={r.label} className="role-bar-row">
+                          <span className="role-bar-label">{r.label}</span>
+                          <div className="role-bar-track">
+                            <div className="role-bar-fill" style={{ width: `${pct}%`, background: r.color }} />
+                          </div>
+                          <span className="role-bar-count">{r.value}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+                <div className="dashboard-card-arrow">→</div>
+              </div>
             </div>
           </>
         )}

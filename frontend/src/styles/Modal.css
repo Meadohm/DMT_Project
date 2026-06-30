@@ -1,5 +1,4 @@
 /* styles/Modal.css */
-
 /* Overlay sombre */
 .modal-overlay {
   position: fixed;
@@ -137,7 +136,7 @@
   transform: translateY(-1px);
 }
 
-/* ===== Historique modal spéciale ===== */
+/* Historique modal spéciale  */
 .modal-content.historique-modal {
   width: 800px;
   max-height: 90vh;
@@ -146,7 +145,7 @@
 }
 
 
-/* ====== MODALE DE NOTIFICATION (Succès / Erreur) ====== */
+/* MODALE DE NOTIFICATION (Succès / Erreur) = */
 .modal-content.success-modal {
   border-left: 6px solid #27ae60; /* vert succès */
 }
@@ -174,7 +173,6 @@
   font-size: 15px;
   font-weight: 500;
 }
-
 
 /* Recherche */
 .historique-search {

@@ -6,7 +6,7 @@
   position: relative;
 }
 
-/* === NOM DES DOSSIERS === */
+/*  NOM DES DOSSIERS  */
 .folder-name {
   color: #f7f7f7;
   font-weight: 500;
@@ -27,7 +27,7 @@
   font-weight: 600;
 }
 
-/* === STRUCTURE GLOBALE === */
+/*  STRUCTURE GLOBALE  */
 .folder-node {
   display: flex;
   align-items: center;
@@ -50,7 +50,7 @@
   padding-left: 0.6rem;
 }
 
-/* === BOUTONS === */
+/*  BOUTONS  */
 .add-subfolder,
 .context-btn,
 .star {
@@ -80,7 +80,7 @@
   color: #888;
 }
 
-/* === CONTEXT MENU === */
+/*  CONTEXT MENU  */
 .context-menu {
   /*position: absolute;*/
   right: 0;
@@ -124,7 +124,7 @@
   }
 }
 
-/* === Flèche animée pour sous-dossiers === */
+/*  Flèche animée pour sous-dossiers  */
 .arrow {
   display: inline-block;
   width: 16px;
@@ -151,12 +151,12 @@
   color: var(--primary-color, #6c63ff);
 }
 
-/* 📁 Icône dossier */
+/* Icône dossier */
 .folder-icon {
   margin-right: 6px;
 }
 
-/* === Menu contextuel moderne Gemini+ === */
+/*  Menu contextuel moderne Gemini+  */
 .folder-menu-wrapper {
   position: relative;
   z-index: 10;
@@ -235,7 +235,7 @@
   }
 }
 
-/* === Modale création sous-dossier (Gemini+ style) === */
+/*  Modale création sous-dossier (Gemini+ style)  */
 .subfolder-modal .modal-overlay {
   position: fixed;
   top: 0;
@@ -301,11 +301,6 @@
   color: #fff;
 }
 
-/*.cancel-btn {
-  background: rgba(255, 255, 255, 0.1);
-  color: #ddd;
-}*/
-
 .confirm-btn:hover {
   background: #7b72ff;
 }
@@ -346,7 +341,7 @@
   }
 }
 
-/* === ✅ TOOLTIP GLOBAL FIX — sans double affichage === */
+/* TOOLTIP GLOBAL FIX — sans double affichage  */
 .folder-name[data-title] {
   position: relative;
 }
@@ -380,8 +375,6 @@
   }
 }
 
-
-
 /* Désactivation visible pour les boutons inactifs */
 .folder-actions button.disabled {
   display: none;
@@ -398,7 +391,7 @@
   }
 }
 
-/* ✅ S’assure que le tooltip reste visible même dans les zones masquées */
+/* S’assure que le tooltip reste visible même dans les zones masquées */
 .sidebar,
 .section-scroll,
 .shared-files {

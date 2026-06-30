@@ -1,11 +1,11 @@
-/* ================================
+/* 
    THEME GLOBAL UNIFIÉ (v2.5)
    Compatible avec tous les composants :
    DashboardEmploye, FileManager, Modales, Footer, Sidebar
-   ================================ */
+    */
 
 :root {
-  /* 🎨 Mode clair */
+  /* Mode clair */
   --bg-color: #f9f9ff;
   --text-color: #1a1a1a;
   --header-bg: #6d5dfc;
@@ -21,7 +21,7 @@
   --input-bg: #ffffff;
 }
 
-/* 🌙 Mode sombre */
+/* Mode sombre */
 body.dark {
   --bg-color: #0f1629;
   --text-color: #e6e8f0;
@@ -39,7 +39,7 @@ body.dark {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* 🌍 Structure de base */
+/* Structure de base */
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
@@ -59,9 +59,9 @@ body {
   border-right: 1px solid var(--border-color);
 }
 
-/* ================================
+/* 
    FOOTER ALIGNÉ ET PROPRE
-   ================================ */
+    */
 .footer {
   background: var(--header-bg);
   color: var(--text-color);
@@ -71,9 +71,9 @@ body {
   transition: background 0.3s ease;
 }
 
-/* ================================
+/* 
    UPLOADER + ZONE DE FICHIERS
-   ================================ */
+    */
 .upload-zone {
   background: var(--upload-bg);
   color: var(--text-color);
@@ -101,9 +101,9 @@ body {
   color: var(--text-color);
 }
 
-/* ================================
+/* 
    CONTENU DU DOSSIER / FICHIERS
-   ================================ */
+    */
 .folder-title,
 .folder-name-clickable,
 .file-item,
@@ -137,9 +137,9 @@ button:hover {
   color: var(--text-color);
 }
 
-/* ================================
+/* 
    MODALES (Archives, Password, etc.)
-   ================================ */
+    */
 .modal,
 .archive-modal-content {
   background: var(--card-bg) !important;
@@ -172,9 +172,9 @@ select:focus {
   box-shadow: 0 0 4px var(--button-bg);
 }
 
-/* ================================
+/* 
    ANIMATIONS / TRANSITIONS
-   ================================ */
+    */
 body.dark {
   animation: themeFade 0.4s ease;
 }
@@ -190,9 +190,9 @@ body.dark {
   }
 }
 
-/* ================================
+/* 
    DARK MODE — NOUVEAUX COMPOSANTS
-   ================================ */
+    */
 
 /* Topbar employé */
 body.dark .emp-topbar {
@@ -537,9 +537,9 @@ body.dark .spinner {
   border-top-color: #4c58ff;
 }
 
-/* ================================
+/* 
    DARK MODE — FILEMANAGER + TABLEAUX
-   ================================ */
+    */
 
 /* Zone principale FileManager */
 body.dark .file-manager {
@@ -648,9 +648,9 @@ body.dark .no-share {
   color: #aab4c8;
 }
 
-/* ================================
+/* 
    DARK MODE — FIXES FINAUX
-   ================================ */
+    */
 
 /* Suppression animation saut */
 body.dark {

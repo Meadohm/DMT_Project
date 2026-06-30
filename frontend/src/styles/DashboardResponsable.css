@@ -1,9 +1,9 @@
-/* ============================================================
+/* 
    DashboardResponsable.css
    Overrides palette teal pour sidebar + éléments responsable
-   ============================================================ */
+    */
 
-/* ====== SIDEBAR TEAL ====== */
+/* SIDEBAR TEAL */
 .sidebar.sidebar-teal {
   background-color: #0d3d3d;
 }
@@ -65,7 +65,7 @@
   background-color: rgba(14, 158, 135, 0.6);
 }
 
-/* ====== DARK MODE TEAL ====== */
+/* DARK MODE TEAL */
 body.dark .sidebar.sidebar-teal {
   background-color: #062020;
 }
