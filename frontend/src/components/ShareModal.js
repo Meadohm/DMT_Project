@@ -87,10 +87,12 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
           </svg>
         </div>
         <div className="user-info-block">
-          <span className="user-info-name">{user.username}</span>
-          {showService && user.service && (
-            <span className="user-info-service">{user.service}</span>
+          {showService && (
+            <span className={`user-info-service ${!user.service ? "user-info-service-undefined" : ""}`}>
+              {user.service || "Service non défini"}
+            </span>
           )}
+          <span className="user-info-name">{user.username}</span>
         </div>
         {isSelected && <span className="badge-selected">✓</span>}
       </div>

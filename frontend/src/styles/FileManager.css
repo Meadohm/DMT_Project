@@ -2448,6 +2448,16 @@ body.dark .user-info-service-inline {
   color: #aab4c8;
 }
 
+.user-info-service-undefined {
+  color: #d97706;
+  font-style: italic;
+  opacity: 0.85;
+}
+
+body.dark .user-info-service-undefined {
+  color: #fbbf24;
+}
+
 /* ====== SHARE MODAL — GROUPEMENT ====== */
 .share-group-label {
   font-size: 0.75rem;
