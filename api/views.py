@@ -2,6 +2,7 @@ import os, hashlib, shutil, logging, re, csv, zipfile, mimetypes
 from django.db.models import Count
 from django.contrib.auth import authenticate, get_user_model
 from django.conf import settings
+import shutil
 from django.core.mail import send_mail
 from django_ratelimit.decorators import ratelimit
 from django_ratelimit.exceptions import Ratelimited
@@ -999,7 +1000,13 @@ def get_dashboard_stats(request):
             'last_action': last_log.objet if last_log else '—',
             'last_user': last_log.utilisateur.username if last_log and last_log.utilisateur else '—',
             'last_date': last_log.timestamp.strftime('%d/%m/%Y %H:%M') if last_log else '—',
-        }
+        },
+        'disk': {
+            'total_gb': round(shutil.disk_usage(settings.BASE_DIR).total / (1024**3), 1),
+            'used_gb': round(shutil.disk_usage(settings.BASE_DIR).used / (1024**3), 1),
+            'free_gb': round(shutil.disk_usage(settings.BASE_DIR).free / (1024**3), 1),
+            'used_pct': round((shutil.disk_usage(settings.BASE_DIR).used / shutil.disk_usage(settings.BASE_DIR).total) * 100, 1),
+        },
     })
 
 # FOLDERS CRUD
