@@ -642,6 +642,18 @@ function AdminPanel() {
                   </div>
                 </div>
               </div>
+              <div className="dashboard-card dashboard-card-folders" onClick={() => setActiveSection("files")}>
+                <div className="dashboard-card-icon">🗂️</div>
+                <div className="dashboard-card-content">
+                  <h3>Dossiers</h3>
+                  <div className="dashboard-card-main">{dashboardStats?.folders?.total ?? '—'}</div>
+                  <div className="dashboard-card-details">
+                    <span className="dash-detail online">🤝 {dashboardStats?.folders?.shared ?? 0} partagés</span>
+                    <span className="dash-detail">🔒 {dashboardStats?.folders?.private ?? 0} privés</span>
+                  </div>
+                </div>
+                <div className="dashboard-card-arrow">→</div>
+              </div>
             </div>
           </>
         )}
