@@ -971,6 +971,11 @@ def get_dashboard_stats(request):
     total_files = FileModel.objects.count()
     total_size = sum(f.taille or 0 for f in FileModel.objects.only('taille'))
 
+    # Dossiers
+    total_folders = Folder.objects.filter(is_archived=False).count()
+    shared_folders = Folder.objects.filter(is_archived=False, is_shared=True).count()
+    private_folders = total_folders - shared_folders
+
     # Journal
     total_logs = AuditLog.objects.count()
     today = now().date()
@@ -1006,6 +1011,11 @@ def get_dashboard_stats(request):
             'used_gb': round(shutil.disk_usage(settings.BASE_DIR).used / (1024**3), 1),
             'free_gb': round(shutil.disk_usage(settings.BASE_DIR).free / (1024**3), 1),
             'used_pct': round((shutil.disk_usage(settings.BASE_DIR).used / shutil.disk_usage(settings.BASE_DIR).total) * 100, 1),
+        },
+        'folders': {
+            'total': total_folders,
+            'shared': shared_folders,
+            'private': private_folders,
         },
     })
 
