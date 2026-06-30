@@ -369,10 +369,28 @@ def update_user_account(request, user_id):
     if email and Utilisateur.objects.filter(email=email).exclude(id=user_id).exists():
         return Response({'error': 'Cet email est déjà utilisé.'}, status=status.HTTP_400_BAD_REQUEST)
 
+    old_service = utilisateur.service
     utilisateur.username = username
     utilisateur.email = email
     utilisateur.service = service
     utilisateur.save()
+
+    # Migration : si le service change, migrer les dossiers récents (< 30 jours)
+    if old_service != service and service:
+        from datetime import timedelta
+        cutoff = timezone.now() - timedelta(days=30)
+        migrated_count = Folder.objects.filter(
+            proprietaire=utilisateur,
+            service=old_service,
+            created_at__gte=cutoff
+        ).update(service=service)
+        if migrated_count > 0:
+            AuditLog.objects.create(
+                utilisateur=request.user,
+                action='UPDATE',
+                objet=f"Migration dossiers : {username}",
+                details=f"{migrated_count} dossier(s) migré(s) de '{old_service}' vers '{service}'",
+            )
 
     AuditLog.objects.create(
         utilisateur=request.user,
