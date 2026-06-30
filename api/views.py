@@ -971,6 +971,12 @@ def get_dashboard_stats(request):
     total_files = FileModel.objects.count()
     total_size = sum(f.taille or 0 for f in FileModel.objects.only('taille'))
 
+    # Répartition par rôle
+    role_employe = Utilisateur.objects.filter(role='employe').count()
+    role_responsable = Utilisateur.objects.filter(role='responsable').count()
+    role_admin = Utilisateur.objects.filter(role='admin').count()
+    role_super_admin = Utilisateur.objects.filter(role='super_admin').count()
+
     # Dossiers
     total_folders = Folder.objects.filter(is_archived=False).count()
     shared_folders = Folder.objects.filter(is_archived=False, is_shared=True).count()
@@ -1016,6 +1022,12 @@ def get_dashboard_stats(request):
             'total': total_folders,
             'shared': shared_folders,
             'private': private_folders,
+        },
+        'roles': {
+            'employe': role_employe,
+            'responsable': role_responsable,
+            'admin': role_admin,
+            'super_admin': role_super_admin,
         },
     })
 
