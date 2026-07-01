@@ -603,7 +603,7 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                         </span>
 
                         <div className="file-actions">
-                          {file.utilisateur?.id === userInfo?.id && (
+                          {parseInt(file.utilisateur?.id) === parseInt(userInfo?.id) && (
                           <button
                             className="move-btn"
                             title="Déplacer"
