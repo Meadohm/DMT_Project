@@ -20,7 +20,7 @@ import "react-h5-audio-player/lib/styles.css"; */
 
 import API_BASE_URL from "../config";
 
-function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed = false, folders = [] }) {
+function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed = false, folders = [], onRefreshNotifications = null }) {
   const [files, setFiles] = useState([]);
   const [dragOver, setDragOver] = useState(false);
   const [previewFileData, setPreviewFileData] = useState(null);
@@ -214,6 +214,7 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
         try {
           await deleteFile(fileToDelete.id);
           setFiles((prev) => prev.filter((f) => f.id !== fileToDelete.id));
+          if (onRefreshNotifications) onRefreshNotifications();
         } catch (err) {
           console.error("❌ Erreur suppression fichier", err);
           setPermissionMessage("⛔ Suppression impossible.");
@@ -244,6 +245,7 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
               f.id === fileToRename.id ? { ...f, nom: updated.nom } : f
             )
           );
+          if (onRefreshNotifications) onRefreshNotifications();
         } catch (err) {
           console.error("❌ Erreur renommage fichier", err);
           setPermissionMessage("⛔ Impossible de renommer ce fichier.");

@@ -451,6 +451,7 @@ function DashboardResponsable() {
             userInfo={userInfo}
             sidebarCollapsed={sidebarCollapsed}
             folders={folders}
+            onRefreshNotifications={refresh}
           />
         ) : (
           <div className="empty-state">
