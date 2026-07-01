@@ -992,7 +992,7 @@ def get_dashboard_stats(request):
     weekly_trend = []
     for i in range(6, -1, -1):
         day = today - datetime.timedelta(days=i)
-        count = FileModel.objects.filter(created_at__date=day).count()
+        count = FileModel.objects.filter(updated_at__date=day).count()
         weekly_trend.append({
             'date': day.strftime('%d/%m'),
             'uploads': count,
