@@ -227,6 +227,9 @@ DMT_Project
 
 ## Versions
 
+**v1.4.2 — Juillet 2026**
+Filtres et tri dans liste de fichiers · Recherche globale cross-dossiers · Déplacement fichier (propriétaire) · Notifications suppression/renommage fichier · Dashboard stats complet (disque, dossiers, rôles, tendance) · Fix upload vidéo 500MB · Fix polling activeFolder
+
 **v1.4.0 — Juin 2026**
 DashboardResponsable complet · Composants Topbar/Sidebar mutualisés entre rôles · Héritage de permissions récursif sur les sous-dossiers · Endpoint dédié vue service · ShareModal repensé (groupement, filtres, sélection groupée) · Migration automatique des dossiers lors d'un changement de service · Correctifs CSRF cross-navigateur
 
@@ -241,16 +244,6 @@ AdminPanel complet 6 sections · Journal d'activité filtres et CSV · Gestion s
 
 **v1.0.0 — Mars 2026**
 API REST Django + React · Authentification RBAC 4 rôles · Gestion dossiers et fichiers · Partage avec permissions granulaires · Notifications temps réel
-
----
-
-## Roadmap
-
-- JWT — expiration de session et refresh token
-- Docker + déploiement cloud AWS/GCP
-- Gunicorn + Nginx en production
-- Tests unitaires Django sur les endpoints critiques
-- Recherche globale cross-dossiers
 
 ---
 
