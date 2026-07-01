@@ -42,6 +42,7 @@ urlpatterns = [
     path('services/<int:service_id>/delete/', views.delete_service, name='delete_service'),
     path('services/<int:service_id>/update/', views.update_service, name='update_service'),
     path('dashboard-stats/', views.get_dashboard_stats, name='dashboard_stats'),
+    path('search/', views.search_files, name='search_files'),
 
    # FOLDERS
     path('folders/', views.list_folders, name='list_folders'),

@@ -1043,6 +1043,60 @@ def get_dashboard_stats(request):
         'weekly_trend': weekly_trend,
     })
 
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def search_files(request):
+    """
+    Recherche globale de fichiers accessibles par l'utilisateur.
+    Paramètre : ?q=terme
+    """
+    query = request.GET.get('q', '').strip()
+    if not query or len(query) < 2:
+        return Response({'results': [], 'total': 0})
+
+    user = request.user
+
+    # Dossiers accessibles par l'utilisateur
+    owned_folders = Folder.objects.filter(proprietaire=user, is_archived=False)
+    shared_folder_ids = get_descendant_folder_ids(
+        set(FolderShare.objects.filter(user=user).values_list('folder_id', flat=True))
+    )
+    shared_folders = Folder.objects.filter(id__in=shared_folder_ids, is_archived=False)
+
+    # Responsable : accès aux dossiers de son service
+    service_folders = Folder.objects.none()
+    if hasattr(user, 'role') and user.role == 'responsable' and user.service:
+        service_folders = Folder.objects.filter(service=user.service, is_archived=False)
+
+    accessible_folders = (owned_folders | shared_folders | service_folders).distinct()
+
+    # Recherche fichiers par nom
+    from api.models import File as FileModel
+    results = FileModel.objects.filter(
+        folder__in=accessible_folders,
+        nom__icontains=query
+    ).select_related('folder', 'folder__proprietaire', 'utilisateur').order_by('-updated_at')[:20]
+
+    data = []
+    for f in results:
+        data.append({
+            'id': f.id,
+            'nom': f.nom,
+            'type_fichier': f.type_fichier,
+            'taille': f.taille,
+            'updated_at': f.updated_at,
+            'folder': {
+                'id': f.folder.id,
+                'nom': f.folder.nom,
+            },
+            'uploadeur': f.utilisateur.username if f.utilisateur else '—',
+        })
+
+    return Response({'results': data, 'total': len(data)})
+
+
 # FOLDERS CRUD
 def get_descendant_folder_ids(folder_ids):
     """Retourne récursivement tous les IDs des sous-dossiers"""
