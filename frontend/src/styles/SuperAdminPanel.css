@@ -778,13 +778,6 @@ td:last-child {
   letter-spacing: 0.05em;
 }
 
-.admin-topbar-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
-}
-
 .admin-topbar-date {
   font-size: 0.82em;
   opacity: 0.8;
