@@ -795,20 +795,22 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                     onChange={e => setMoveTargetFolderId(e.target.value)}
                   >
                     <option value="">-- Sélectionner un dossier --</option>
-                    {(function flattenOwned(list, depth = 0) {
-                      const opts = [];
-                      for (const f of list) {
-                        if (f.proprietaire?.id === userInfo?.id && f.id !== activeFolder?.id) {
-                          opts.push(
-                            <option key={f.id} value={f.id}>
-                              {"  ".repeat(depth)}📁 {f.nom}
-                            </option>
-                          );
+                    {folders
+                      .filter(f => f.proprietaire?.id === userInfo?.id && !f.parent)
+                      .flatMap(f => {
+                        const opts = [];
+                        if (f.id !== activeFolder?.id) {
+                          opts.push(<option key={f.id} value={f.id}>📁 {f.nom}</option>);
                         }
-                        if (f.children?.length) opts.push(...flattenOwned(f.children, depth + 1));
-                      }
-                      return opts;
-                    })(folders)}
+                        if (f.children?.length) {
+                          f.children
+                            .filter(c => f.proprietaire?.id === userInfo?.id && c.id !== activeFolder?.id)
+                            .forEach(c => opts.push(
+                              <option key={c.id} value={c.id}>　📁 {c.nom}</option>
+                            ));
+                        }
+                        return opts;
+                      })}
                   </select>
                   <div className="modal-actions" style={{marginTop:'16px', display:'flex', gap:'8px', justifyContent:'flex-end'}}>
                     <button className="btn-cancel-confirm" onClick={() => setMoveModalOpen(false)}>Annuler</button>
