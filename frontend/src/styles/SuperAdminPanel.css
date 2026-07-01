@@ -1637,3 +1637,32 @@ tr.user-inactive td {
 .admin-panel-container.dark .modal-box p {
   color: var(--text-color);
 }
+
+/* Mon Profil — email et labels visibles */
+.admin-panel-container.dark .account-section {
+  color: var(--text-color);
+}
+.admin-panel-container.dark .account-profile-card {
+  background: var(--card-bg);
+  color: var(--text-color);
+}
+.admin-panel-container.dark .account-email {
+  color: var(--text-color);
+  opacity: 0.85;
+}
+.admin-panel-container.dark .account-username {
+  color: var(--text-color);
+}
+.admin-panel-container.dark .account-layout label,
+.admin-panel-container.dark .account-section label {
+  color: var(--text-color);
+}
+.admin-panel-container.dark .account-layout input {
+  background: var(--input-bg);
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+.admin-panel-container.dark .account-profile-info p,
+.admin-panel-container.dark .account-profile-info span {
+  color: var(--text-color);
+}
