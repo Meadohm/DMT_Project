@@ -26,6 +26,8 @@ import AdminFileManager from "../services/AdminFileManager";
 import API_BASE_URL from "../config";
 import logo from "../assets/dmt.png";
 import "../styles/SuperAdminPanel.css";
+import useTheme from "../hooks/useTheme";
+import "../styles/theme.css";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 
 const getRelativeTime = (dateStr, isActive = true) => {
@@ -123,6 +125,7 @@ function SuperAdminPanel() {
   };
 
   const [currentTime, setCurrentTime] = useState(new Date());
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -541,7 +544,7 @@ function SuperAdminPanel() {
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
-    <div className="admin-panel-container">
+    <div className={`admin-panel-container ${theme === "dark" ? "dark" : ""}`}>
       <aside className={`admin-sidebar${sidebarCollapsed ? ' sidebar-collapsed' : ''}`}>
         <button className="sidebar-toggle" onClick={() => setSidebarCollapsed(!sidebarCollapsed)} title={sidebarCollapsed ? 'Déplier' : 'Replier'}>
           {sidebarCollapsed ? '→' : '←'}
@@ -575,6 +578,9 @@ function SuperAdminPanel() {
               <span className="admin-topbar-date">{formatDate(currentTime)}</span>
               <span className="admin-topbar-time">{formatTime(currentTime)}</span>
             </div>
+            <button className="theme-toggle-btn" onClick={toggleTheme} title={theme === "dark" ? "Mode clair" : "Mode sombre"}>
+              {theme === "dark" ? "☀️" : "🌙"}
+            </button>
             <button onClick={handleLogout} className="topbar-logout-button">
               ⏻ Déconnexion
             </button>

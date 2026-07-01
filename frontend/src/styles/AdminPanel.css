@@ -1598,3 +1598,117 @@ body.dark .dashboard-card-trend .recharts-cartesian-grid-horizontal line {
 body.dark .dashboard-card-trend .recharts-text {
   fill: #aab4c8;
 }
+
+/* MODE SOMBRE AdminPanel */
+.admin-panel-container.dark {
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+.admin-panel-container.dark .admin-topbar {
+  background: var(--header-bg);
+  color: var(--text-color);
+}
+.admin-panel-container.dark .admin-sidebar {
+  background: var(--sidebar-bg);
+  color: var(--text-color);
+}
+.admin-panel-container.dark .admin-sidebar button {
+  color: var(--text-color);
+}
+.admin-panel-container.dark .admin-sidebar button:hover,
+.admin-panel-container.dark .admin-sidebar button.active {
+  background: var(--hover-bg);
+}
+.admin-panel-container.dark .admin-content {
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+.admin-panel-container.dark .dashboard-card {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--text-color);
+}
+.admin-panel-container.dark table {
+  background: var(--card-bg);
+  color: var(--text-color);
+}
+.admin-panel-container.dark th {
+  background: var(--sidebar-bg);
+  color: var(--text-color);
+}
+.admin-panel-container.dark td {
+  border-color: var(--border-color);
+  color: var(--text-color);
+}
+.admin-panel-container.dark tr:hover {
+  background: var(--hover-bg);
+}
+.admin-panel-container.dark input,
+.admin-panel-container.dark select,
+.admin-panel-container.dark textarea {
+  background: var(--input-bg);
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+.admin-panel-container.dark .modal-box,
+.admin-panel-container.dark .modal-overlay .modal-box {
+  background: var(--card-bg);
+  color: var(--text-color);
+}
+.admin-panel-container.dark .section-header {
+  border-color: var(--border-color);
+}
+.admin-panel-container.dark .admin-filters-bar input,
+.admin-panel-container.dark .admin-filters-bar select {
+  background: var(--input-bg);
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+.admin-panel-container.dark .historique-filters input,
+.admin-panel-container.dark .historique-filters select {
+  background: var(--input-bg);
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+.admin-panel-container.dark .journal-tab {
+  color: var(--text-color);
+}
+.admin-panel-container.dark .journal-tab.active {
+  border-bottom-color: var(--button-bg);
+  color: var(--button-bg);
+}
+.admin-panel-container.dark .register-form-card,
+.admin-panel-container.dark .form-group input,
+.admin-panel-container.dark .form-group select {
+  background: var(--input-bg);
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+.admin-panel-container.dark .error-box {
+  background: #3d1515;
+  color: #ffaaaa;
+}
+.admin-panel-container.dark .success-box {
+  background: #0d3320;
+  color: #aaffcc;
+}
+.admin-panel-container.dark .badge-admin {
+  background: #2d2000;
+  color: #ffd700;
+}
+.admin-panel-container.dark .users-table-wrapper {
+  background: var(--card-bg);
+}
+.theme-toggle-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
+  margin-right: 4px;
+}
+.theme-toggle-btn:hover {
+  background: rgba(255,255,255,0.15);
+}
