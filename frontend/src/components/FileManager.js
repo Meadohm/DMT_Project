@@ -37,6 +37,9 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
   const [renameModalOpen, setRenameModalOpen] = useState(false);
   const [fileToRename, setFileToRename] = useState(null);
   const [newFileName, setNewFileName] = useState("");
+  const [fileSearch, setFileSearch] = useState("");
+  const [fileSortBy, setFileSortBy] = useState("date_desc");
+  const [fileTypeFilter, setFileTypeFilter] = useState("all");
 
   // ── Breadcrumb ────────────────────────────────────────────────
   const folderMap = React.useMemo(() => {
@@ -50,6 +53,40 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
     traverse(folders);
     return map;
   }, [folders]);
+
+  const filteredFiles = React.useMemo(() => {
+    let result = [...files];
+    // Filtre par recherche
+    if (fileSearch.trim()) {
+      result = result.filter(f =>
+        f.nom.toLowerCase().includes(fileSearch.toLowerCase())
+      );
+    }
+    // Filtre par type
+    if (fileTypeFilter !== "all") {
+      const typeMap = {
+        documents: ["pdf", "doc", "docx", "xls", "xlsx", "txt", "csv"],
+        images: ["jpg", "jpeg", "png", "gif", "webp", "svg"],
+        videos: ["mp4", "mkv", "avi", "mov"],
+        audio: ["mp3", "wav"],
+      };
+      const exts = typeMap[fileTypeFilter] || [];
+      result = result.filter(f => {
+        const ext = f.nom.split(".").pop()?.toLowerCase();
+        return exts.includes(ext);
+      });
+    }
+    // Tri
+    result.sort((a, b) => {
+      if (fileSortBy === "name_asc") return a.nom.localeCompare(b.nom);
+      if (fileSortBy === "name_desc") return b.nom.localeCompare(a.nom);
+      if (fileSortBy === "size_asc") return (a.taille || 0) - (b.taille || 0);
+      if (fileSortBy === "size_desc") return (b.taille || 0) - (a.taille || 0);
+      if (fileSortBy === "date_asc") return new Date(a.updated_at) - new Date(b.updated_at);
+      return new Date(b.updated_at) - new Date(a.updated_at); // date_desc par défaut
+    });
+    return result;
+  }, [files, fileSearch, fileSortBy, fileTypeFilter]);
 
   const breadcrumb = React.useMemo(() => {
     if (!activeFolder) return [];
@@ -490,9 +527,42 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                   )}
                 </h3>
 
+                {files.length > 0 && (
+                  <div className="file-filters-bar">
+                    <input
+                      className="file-filter-search"
+                      placeholder="🔍 Rechercher un fichier..."
+                      value={fileSearch}
+                      onChange={e => setFileSearch(e.target.value)}
+                    />
+                    <select
+                      className="file-filter-select"
+                      value={fileTypeFilter}
+                      onChange={e => setFileTypeFilter(e.target.value)}
+                    >
+                      <option value="all">Tous les types</option>
+                      <option value="documents">📄 Documents</option>
+                      <option value="images">🖼️ Images</option>
+                      <option value="videos">🎬 Vidéos</option>
+                      <option value="audio">🎵 Audio</option>
+                    </select>
+                    <select
+                      className="file-filter-select"
+                      value={fileSortBy}
+                      onChange={e => setFileSortBy(e.target.value)}
+                    >
+                      <option value="date_desc">📅 Plus récent</option>
+                      <option value="date_asc">📅 Plus ancien</option>
+                      <option value="name_asc">🔤 Nom A-Z</option>
+                      <option value="name_desc">🔤 Nom Z-A</option>
+                      <option value="size_desc">📦 Plus grand</option>
+                      <option value="size_asc">📦 Plus petit</option>
+                    </select>
+                  </div>
+                )}
                 {files.length > 0 ? (
                   <ul className="file-list">
-                    {files.map((file) => (
+                    {filteredFiles.map((file) => (
                       <li key={file.id} className="file-item">
                         <span className="file-name" onClick={() => handlePreview(file)}>
                           <span className="file-icon">{getFileIcon(file.nom)}</span> {file.nom}
