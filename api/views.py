@@ -971,16 +971,6 @@ def get_dashboard_stats(request):
     total_files = FileModel.objects.count()
     total_size = sum(f.taille or 0 for f in FileModel.objects.only('taille'))
 
-    # Tendance hebdomadaire — uploads par jour (7 derniers jours)
-    weekly_trend = []
-    for i in range(6, -1, -1):
-        day = today - datetime.timedelta(days=i)
-        count = FileModel.objects.filter(created_at__date=day).count()
-        weekly_trend.append({
-            'date': day.strftime('%d/%m'),
-            'uploads': count,
-        })
-
     # Répartition par rôle
     role_employe = Utilisateur.objects.filter(role='employe').count()
     role_responsable = Utilisateur.objects.filter(role='responsable').count()
@@ -997,6 +987,16 @@ def get_dashboard_stats(request):
     today = now().date()
     today_logs = AuditLog.objects.filter(timestamp__date=today).count()
     last_log = AuditLog.objects.order_by('-timestamp').first()
+
+    # Tendance hebdomadaire — uploads par jour (7 derniers jours)
+    weekly_trend = []
+    for i in range(6, -1, -1):
+        day = today - datetime.timedelta(days=i)
+        count = FileModel.objects.filter(created_at__date=day).count()
+        weekly_trend.append({
+            'date': day.strftime('%d/%m'),
+            'uploads': count,
+        })
 
     return Response({
         'users': {
