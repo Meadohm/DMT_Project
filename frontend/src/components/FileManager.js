@@ -6,6 +6,7 @@ import {
   deleteFile,
   previewFile,
   renameFile,
+  moveFile,
 } from "../services/fileService";
 import { updateSharePermission } from "../services/folderService";
 import * as XLSX from "xlsx";
@@ -37,6 +38,9 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
   const [renameModalOpen, setRenameModalOpen] = useState(false);
   const [fileToRename, setFileToRename] = useState(null);
   const [newFileName, setNewFileName] = useState("");
+  const [moveModalOpen, setMoveModalOpen] = useState(false);
+  const [fileToMove, setFileToMove] = useState(null);
+  const [moveTargetFolderId, setMoveTargetFolderId] = useState("");
   const [fileSearch, setFileSearch] = useState("");
   const [fileSortBy, setFileSortBy] = useState("date_desc");
   const [fileTypeFilter, setFileTypeFilter] = useState("all");
@@ -298,6 +302,29 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
           setRenameModalOpen(false);
           setFileToRename(null);
           setNewFileName("");
+        }
+      };
+
+      // Déplacement
+      const handleMoveRequest = (file) => {
+        setFileToMove(file);
+        setMoveTargetFolderId("");
+        setMoveModalOpen(true);
+      };
+
+      const handleMoveConfirm = async () => {
+        if (!moveTargetFolderId || !fileToMove) return;
+        try {
+          await moveFile(fileToMove.id, parseInt(moveTargetFolderId));
+          setFiles((prev) => prev.filter((f) => f.id !== fileToMove.id));
+          setMoveModalOpen(false);
+          setFileToMove(null);
+          setToast({ type: "success", message: "Fichier déplacé avec succès." });
+          setTimeout(() => setToast(null), 3000);
+          if (onRefreshNotifications) onRefreshNotifications();
+        } catch (err) {
+          setToast({ type: "error", message: err.message || "Erreur lors du déplacement." });
+          setTimeout(() => setToast(null), 3000);
         }
       };
 
@@ -576,6 +603,18 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                         </span>
 
                         <div className="file-actions">
+                          {file.utilisateur?.id === userInfo?.id && (
+                          <button
+                            className="move-btn"
+                            title="Déplacer"
+                            onClick={() => handleMoveRequest(file)}
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M3 7h18M3 12h18M3 17h18" />
+                            </svg>
+                          </button>
+                          )}
+
                           {activeFolder.permissions?.can_update && (
                           <button
                             className="rename-btn"
@@ -741,6 +780,48 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                   <strong>{fileToDelete?.nom}</strong> ?
                 </p>
               </Modal>
+            )}
+
+            {moveModalOpen && fileToMove && (
+              <div className="modal-overlay">
+                <div className="modal-content">
+                  <h3>📦 Déplacer : <strong>{fileToMove.nom}</strong></h3>
+                  <p style={{fontSize:'0.85rem', color:'#6b7280', marginBottom:'12px'}}>
+                    Choisir le dossier destination (vos dossiers uniquement)
+                  </p>
+                  <select
+                    className="move-folder-select"
+                    value={moveTargetFolderId}
+                    onChange={e => setMoveTargetFolderId(e.target.value)}
+                  >
+                    <option value="">-- Sélectionner un dossier --</option>
+                    {(function flattenOwned(list, depth = 0) {
+                      const opts = [];
+                      for (const f of list) {
+                        if (f.proprietaire?.id === userInfo?.id && f.id !== activeFolder?.id) {
+                          opts.push(
+                            <option key={f.id} value={f.id}>
+                              {"  ".repeat(depth)}📁 {f.nom}
+                            </option>
+                          );
+                        }
+                        if (f.children?.length) opts.push(...flattenOwned(f.children, depth + 1));
+                      }
+                      return opts;
+                    })(folders)}
+                  </select>
+                  <div className="modal-actions" style={{marginTop:'16px', display:'flex', gap:'8px', justifyContent:'flex-end'}}>
+                    <button className="btn-cancel-confirm" onClick={() => setMoveModalOpen(false)}>Annuler</button>
+                    <button
+                      className="btn-confirm"
+                      onClick={handleMoveConfirm}
+                      disabled={!moveTargetFolderId}
+                    >
+                      Déplacer
+                    </button>
+                  </div>
+                </div>
+              </div>
             )}
 
             {renameModalOpen && (

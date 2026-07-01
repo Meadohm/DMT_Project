@@ -58,6 +58,24 @@ export const renameFile = async (fileId, newName) => {
   }
 };
 
+// Déplacer un fichier vers un autre dossier
+export const moveFile = async (fileId, folderId) => {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${API_BASE_URL}/files/${fileId}/move/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Token ${token}`,
+    },
+    body: JSON.stringify({ folder_id: folderId }),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || "Erreur déplacement fichier");
+  }
+  return res.json();
+};
+
 // Supprimer un fichier
 export const deleteFile = async (fileId) => {
   try {
