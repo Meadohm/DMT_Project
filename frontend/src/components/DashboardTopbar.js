@@ -212,6 +212,7 @@ function DashboardTopbar({
                             {n.type === "upload" && <>{n.message}</>}
                             {n.type === "archive" && <>{n.message}</>}
                             {n.type === "info" && <>ℹ️ {n.message}</>}
+                            {n.type === "warning" && <>⚠️ {n.message}</>}
                           </div>
                           <div className="notif-time-right">
                             {formatRelativeTime(n.created_at)} ⏰
