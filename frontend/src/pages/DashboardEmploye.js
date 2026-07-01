@@ -35,6 +35,10 @@ import logo from "../assets/dmt.png";
 function DashboardEmploye() {
   const [folders, setFolders] = useState([]);
   const [activeFolder, setActiveFolder] = useState(null);
+  const activeFolderRef = useRef(null);
+  useEffect(() => {
+    activeFolderRef.current = activeFolder;
+  }, [activeFolder]);
   const [userInfo, setUserInfo] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -123,7 +127,7 @@ function DashboardEmploye() {
       sortRecursively(roots);
 
       setFolders(roots);
-      if (!activeFolder && roots.length > 0) setActiveFolder(roots[0]);
+      if (!activeFolderRef.current && roots.length > 0) setActiveFolder(roots[0]);
 
       // 🔹 Restauration automatique de l’expansion sauvegardée
       const saved = JSON.parse(localStorage.getItem("expandedFolders") || "[]");
