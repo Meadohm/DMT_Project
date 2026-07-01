@@ -41,6 +41,13 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
   const [fileSortBy, setFileSortBy] = useState("date_desc");
   const [fileTypeFilter, setFileTypeFilter] = useState("all");
 
+  // Réinitialiser filtres quand le dossier actif change
+  React.useEffect(() => {
+    setFileSearch("");
+    setFileSortBy("date_desc");
+    setFileTypeFilter("all");
+  }, [activeFolder?.id]);
+
   // ── Breadcrumb ────────────────────────────────────────────────
   const folderMap = React.useMemo(() => {
     const map = {};
