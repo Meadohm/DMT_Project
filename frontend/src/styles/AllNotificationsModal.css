@@ -263,7 +263,7 @@
   margin-right: 15px;  /* décollage du bord droit */
 }
 
-.notif-dropdown, .account-dropdown {
+.notif-dropdown {
   position: absolute;
   top: 45px;   /* descend un peu plus bas */
   right: 0;
@@ -273,6 +273,19 @@
   padding: 12px;
   width: 320px;
   max-width: 320px;
+  z-index: 2000;
+}
+
+.account-dropdown {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+  padding: 12px;
+  width: 220px;
+  max-width: 220px;
   z-index: 2000;
 }
 
