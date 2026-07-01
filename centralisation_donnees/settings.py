@@ -139,6 +139,10 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER')
 
+# Taille maximale des fichiers uploadés (500 MB)
+DATA_UPLOAD_MAX_MEMORY_SIZE = 524288000
+FILE_UPLOAD_MAX_MEMORY_SIZE = 524288000
+
 # Media (fichiers uploadés)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
