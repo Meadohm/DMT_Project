@@ -498,9 +498,10 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
 
                         <div className="file-actions">
                           <button
-                            className="rename-btn"
+                            className={`rename-btn${!activeFolder.permissions?.can_update ? " btn-disabled" : ""}`}
                             title={activeFolder.permissions?.can_update ? "Renommer" : "⛔ Vous n’avez pas l’autorisation"}
-                            onClick={() => handleRenameRequest(file)}
+                            onClick={() => { if (activeFolder.permissions?.can_update) handleRenameRequest(file); }}
+                            disabled={!activeFolder.permissions?.can_update}
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232a2.5 2.5 0 013.536 3.536L7.5 20.036H4v-3.5L15.232 5.232z" />
