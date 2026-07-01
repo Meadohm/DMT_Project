@@ -181,7 +181,6 @@
   gap: 20px;
   flex-shrink: 0;
   margin-left: 16px;
-  white-space: nowrap;
 }
 
 .emp-topbar-clock {
