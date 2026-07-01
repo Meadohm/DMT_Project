@@ -1760,6 +1760,31 @@ body.dark .upload-compact-bar svg {
 
 
 
+.move-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: #9ca3af;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s, background 0.2s;
+}
+
+.move-btn:hover {
+  color: #6c63ff;
+  background: rgba(108, 99, 255, 0.08);
+}
+
+body.dark .move-btn {
+  color: #aab4c8;
+}
+
+body.dark .move-btn:hover {
+  color: #a5b4fc;
+}
+
 /* Icônes SVG modernes */
 .rename-btn,
 .delete-btn {
