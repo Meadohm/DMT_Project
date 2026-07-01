@@ -413,7 +413,7 @@ def delete_user_account(request, user_id):
     try:
         utilisateur = Utilisateur.objects.get(id=user_id)
     except Utilisateur.DoesNotExist:
-        return Response({'error': 'Utilisateur non trouve.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Utilisateur non trouvé.'}, status=status.HTTP_404_NOT_FOUND)
 
     # Seul is_superuser peut supprimer un super_admin
     if utilisateur.role == 'super_admin' and not request.user.is_superuser:
@@ -776,7 +776,7 @@ def delete_historique(request, log_id):
         is_bulk=False
     )
     log.delete()
-    return Response({'success': 'Entree supprimee.'})
+    return Response({'success': 'Entrée supprimée.'})
 
 
 @api_view(['DELETE'])
@@ -2445,7 +2445,7 @@ def revoke_share(request, share_id):
     Notification.objects.create(
         user=share.user,
         type="info",
-        message=f"Votre acces au dossier {folder_name} a ete revoque par {request.user.username}."
+        message=f"Votre accès au dossier {folder_name} a été révoqué par {request.user.username}."
     )
     try:
         utilisateur = Utilisateur.objects.get(username=request.user.username)
@@ -2453,12 +2453,12 @@ def revoke_share(request, share_id):
             utilisateur=utilisateur,
             action="DELETE",
             objet=f"Revocation partage : {folder_name} pour {username}",
-            details=f"Revocation manuelle par le proprietaire",
+            details=f"Révocation manuelle par le propriétaire",
         )
     except Exception:
         pass
     share.delete()
-    return Response({"message": f"Acces de {username} revoque."}, status=status.HTTP_200_OK)
+    return Response({"message": f"Accès de {username} révoqué."}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
 @authentication_classes([TokenAuthentication])
