@@ -497,26 +497,29 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                         </span>
 
                         <div className="file-actions">
+                          {activeFolder.permissions?.can_update && (
                           <button
-                            className={`rename-btn${!activeFolder.permissions?.can_update ? " btn-disabled" : ""}`}
-                            title={activeFolder.permissions?.can_update ? "Renommer" : "⛔ Vous n’avez pas l’autorisation"}
-                            onClick={() => { if (activeFolder.permissions?.can_update) handleRenameRequest(file); }}
-                            disabled={!activeFolder.permissions?.can_update}
+                            className="rename-btn"
+                            title="Renommer"
+                            onClick={() => handleRenameRequest(file)}
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232a2.5 2.5 0 013.536 3.536L7.5 20.036H4v-3.5L15.232 5.232z" />
                             </svg>
                           </button>
+                          )}
 
+                          {activeFolder.permissions?.can_delete && (
                           <button
                             className="delete-btn"
-                            title={activeFolder.permissions?.can_delete ? "Supprimer" : "⛔ Vous n’avez pas l’autorisation"}
+                            title="Supprimer"
                             onClick={() => handleDeleteRequest(file)}
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M6 7h12M9 7V4h6v3m2 0v13a2 2 0 01-2 2H8a2 2 0 01-2-2V7z" />
                             </svg>
                           </button>
+                          )}
                         </div>
 
                       </li>
