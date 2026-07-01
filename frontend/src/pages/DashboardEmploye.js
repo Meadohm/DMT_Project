@@ -96,18 +96,18 @@ function DashboardEmploye() {
     }
   };
 
-  // === Fonction pour charger les dossiers (optimisée & triée) ===
+  // Fonction pour charger les dossiers (optimisée & triée) 
   const fetchFolders = async () => {
     try {
       const res = await listFolders();
       const data = res || [];
 
-      // 🔹 Tri du plus récent au plus ancien (par date de création)
+      // Tri du plus récent au plus ancien (par date de création)
       const sorted = [...data].sort(
         (a, b) => new Date(b.created_at) - new Date(a.created_at)
       );
 
-      // 🔹 Construction hiérarchique parent → enfants
+      // Construction hiérarchique parent → enfants
       const byId = Object.fromEntries(sorted.map(f => [f.id, { ...f, children: [] }]));
       const roots = [];
 
@@ -129,7 +129,7 @@ function DashboardEmploye() {
       setFolders(roots);
       // Ne pas auto-sélectionner — l'utilisateur choisit son dossier
 
-      // 🔹 Restauration automatique de l’expansion sauvegardée
+      // Restauration automatique de l’expansion sauvegardée
       const saved = JSON.parse(localStorage.getItem("expandedFolders") || "[]");
       if (saved.length > 0) {
         setTimeout(() => {
@@ -162,7 +162,7 @@ function DashboardEmploye() {
     navigate("/");
   };
 
-  // ==== Gestion modales ====
+  // Gestion modales
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState(null);
   const [inputValue, setInputValue] = useState("");
@@ -233,20 +233,20 @@ function DashboardEmploye() {
 
 const handleClearNotifications = async () => {
   try {
-    await clearAll();  // ⚡ supprime réellement du backend
+    await clearAll();  // supprime réellement du backend
     setNotifications([]); // vide localement
   } catch (err) {
     console.error("❌ Erreur suppression notifications", err);
   }
 };
 
-  // === Confirmation modale universelle (création / renommage / suppression) ===
+  // Confirmation modale universelle (création / renommage / suppression)
   const handleConfirm = async () => {
     try {
       if (modalType === "create") {
         const newFolder = await createFolder(inputValue);
 
-        // 🔹 Insertion du dossier en haut de la liste
+        // Insertion du dossier en haut de la liste
         setFolders(prev => [newFolder, ...prev]);
         setActiveFolder(newFolder);
 
@@ -324,7 +324,6 @@ const handleClearNotifications = async () => {
       }
     }
   };
-
 
   const handleCreateSubfolder = async (parentId, name) => {
     try {
