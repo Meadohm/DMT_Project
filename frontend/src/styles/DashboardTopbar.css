@@ -180,7 +180,8 @@
   align-items: center;
   gap: 20px;
   flex-shrink: 0;
-  margin-left: 16px;
+  margin-left: auto;
+  padding-left: 16px;
 }
 
 .emp-topbar-clock {
