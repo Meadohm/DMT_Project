@@ -1509,6 +1509,7 @@ def rename_file(request, file_id):
         return Response({'error': 'Nom invalide'}, status=status.HTTP_400_BAD_REQUEST)
 
     # Mise à jour en base
+    old_name = file_obj.nom
     file_obj.nom = new_name
     file_obj.save(update_fields=["nom", "updated_at"])
 
@@ -1521,6 +1522,15 @@ def rename_file(request, file_id):
     adresse_ip=request.META.get('REMOTE_ADDR')
     )
     
+    # Notifications — propriétaire du dossier uniquement (si ce n'est pas lui qui renomme)
+    folder = file_obj.folder
+    if folder.proprietaire != request.user:
+        Notification.objects.create(
+            user=folder.proprietaire,
+            type="info",
+            message=f"{request.user.username} a renommé le fichier '{old_name}' → '{new_name}' dans le dossier '{folder.nom}'."
+        )
+
     return Response(FileSerializer(file_obj, context={"request": request}).data)
 
 
@@ -1546,8 +1556,25 @@ def delete_file(request, file_id):
         adresse_ip=request.META.get('REMOTE_ADDR')
     )
     
+    # Sauvegarder les infos avant suppression
+    folder = file_obj.folder
+    file_nom = file_obj.nom
     file_obj.delete()
-    logger.info(f"[DELETE] Fichier '{file_obj.nom}' supprimé par {request.user.username}")
+    logger.info(f"[DELETE] Fichier '{file_nom}' supprimé par {request.user.username}")
+
+    # Notifications — propriétaire + tous les destinataires sauf l'auteur
+    destinataires = set()
+    if folder.proprietaire != request.user:
+        destinataires.add(folder.proprietaire)
+    for share in FolderShare.objects.filter(folder=folder).select_related('user'):
+        if share.user != request.user:
+            destinataires.add(share.user)
+    for dest in destinataires:
+        Notification.objects.create(
+            user=dest,
+            type="warning",
+            message=f"{request.user.username} a supprimé le fichier '{file_nom}' dans le dossier '{folder.nom}'."
+        )
     return Response({'success': 'Fichier supprimé'})
 
 # FILE PREVIEW
