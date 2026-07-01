@@ -96,9 +96,9 @@
 }
 
 .emp-topbar-search.expanded {
-  width: 160px;
-  max-width: 160px;
-  flex-shrink: 2;
+  width: 200px;
+  max-width: 200px;
+  flex-shrink: 1;
 }
 
 @media (max-width: 1366px) {
@@ -177,6 +177,7 @@
   align-items: center;
   gap: 20px;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .emp-topbar-clock {
