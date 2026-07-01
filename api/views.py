@@ -1588,6 +1588,50 @@ def rename_file(request, file_id):
     return Response(FileSerializer(file_obj, context={"request": request}).data)
 
 
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def move_file(request, file_id):
+    """
+    Déplacer un fichier vers un autre dossier.
+    Seul le propriétaire du fichier peut le déplacer.
+    Le dossier destination doit lui appartenir.
+    """
+    try:
+        file_obj = FileModel.objects.get(id=file_id)
+    except FileModel.DoesNotExist:
+        return Response({'error': 'Fichier non trouvé'}, status=status.HTTP_404_NOT_FOUND)
+
+    if file_obj.utilisateur != request.user:
+        return Response({'error': 'Seul le propriétaire du fichier peut le déplacer.'}, status=status.HTTP_403_FORBIDDEN)
+
+    dest_folder_id = request.data.get('folder_id')
+    if not dest_folder_id:
+        return Response({'error': 'Dossier destination requis.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        dest_folder = Folder.objects.get(id=dest_folder_id, proprietaire=request.user)
+    except Folder.DoesNotExist:
+        return Response({'error': 'Dossier destination non trouvé ou non autorisé.'}, status=status.HTTP_404_NOT_FOUND)
+
+    if dest_folder.id == file_obj.folder.id:
+        return Response({'error': 'Le fichier est déjà dans ce dossier.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    old_folder_nom = file_obj.folder.nom
+    file_obj.folder = dest_folder
+    file_obj.save(update_fields=['folder', 'updated_at'])
+
+    AuditLog.objects.create(
+        utilisateur=request.user,
+        action='UPDATE',
+        objet=f"Fichier déplacé : {file_obj.nom}",
+        details=f"De '{old_folder_nom}' vers '{dest_folder.nom}'",
+        adresse_ip=request.META.get('REMOTE_ADDR')
+    )
+
+    return Response({'success': f"Fichier déplacé vers '{dest_folder.nom}'."})
+
+
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
