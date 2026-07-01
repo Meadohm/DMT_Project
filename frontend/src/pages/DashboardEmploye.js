@@ -127,7 +127,7 @@ function DashboardEmploye() {
       sortRecursively(roots);
 
       setFolders(roots);
-      if (!activeFolderRef.current && roots.length > 0) setActiveFolder(roots[0]);
+      // Ne pas auto-sélectionner — l'utilisateur choisit son dossier
 
       // 🔹 Restauration automatique de l’expansion sauvegardée
       const saved = JSON.parse(localStorage.getItem("expandedFolders") || "[]");
