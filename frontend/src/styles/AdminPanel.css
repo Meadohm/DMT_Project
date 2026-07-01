@@ -1705,3 +1705,52 @@ body.dark .dashboard-card-trend .recharts-text {
 .theme-toggle-btn:hover {
   background: rgba(255,255,255,0.15);
 }
+
+/* ===== DARK MODE — FIXES SUPPLEMENTAIRES ===== */
+
+/* Lignes tableau alternées */
+.admin-panel-container.dark tbody tr:nth-child(even) {
+  background: var(--hover-bg) !important;
+}
+.admin-panel-container.dark tbody tr:nth-child(odd) {
+  background: var(--card-bg) !important;
+}
+.admin-panel-container.dark .editing-row {
+  background: #1a2a4a !important;
+}
+.admin-panel-container.dark .users-table-wrapper tbody tr:nth-child(even) td:nth-child(1),
+.admin-panel-container.dark .users-table-wrapper tbody tr:nth-child(even) td:nth-child(2) {
+  background: var(--hover-bg) !important;
+}
+
+/* Labels formulaires */
+.admin-panel-container.dark .form-group label {
+  color: var(--text-color);
+}
+.admin-panel-container.dark label {
+  color: var(--text-color);
+}
+
+/* Mon Compte — email visible */
+.admin-panel-container.dark .account-info {
+  background: var(--card-bg);
+  color: var(--text-color);
+}
+.admin-panel-container.dark .account-info p,
+.admin-panel-container.dark .account-info span,
+.admin-panel-container.dark .account-info td,
+.admin-panel-container.dark .account-info strong {
+  color: var(--text-color);
+}
+
+/* Modal créer service — labels visibles */
+.admin-panel-container.dark .service-form label,
+.admin-panel-container.dark .modal-box label {
+  color: var(--text-color);
+}
+.admin-panel-container.dark .modal-box h3 {
+  color: var(--text-color);
+}
+.admin-panel-container.dark .modal-box p {
+  color: var(--text-color);
+}

@@ -858,7 +858,9 @@ function AdminPanel() {
           </>
         )}
 
-        {activeSection === "files" && <AdminFileManager />}
+        <div style={{ display: activeSection === "files" ? "block" : "none" }}>
+          <AdminFileManager />
+        </div>
 
         {activeSection === "submissions" && (
           <>
