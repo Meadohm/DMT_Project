@@ -1783,17 +1783,17 @@ body.dark .dashboard-card-trend .recharts-text {
   color: var(--text-color);
 }
 
-/* Mon Profil — email et labels visibles */
+/* Mon Profil — dark mode */
 .admin-panel-container.dark .account-section {
   color: var(--text-color);
 }
-.admin-panel-container.dark .account-profile-card {
+.admin-panel-container.dark .account-profile-card,
+.admin-panel-container.dark .account-form-card {
   background: var(--card-bg);
-  color: var(--text-color);
+  border-color: var(--border-color);
 }
 .admin-panel-container.dark .account-email {
-  color: var(--text-color);
-  opacity: 0.85;
+  color: #aab4c8;
 }
 .admin-panel-container.dark .account-username {
   color: var(--text-color);
@@ -1802,12 +1802,37 @@ body.dark .dashboard-card-trend .recharts-text {
 .admin-panel-container.dark .account-section label {
   color: var(--text-color);
 }
-.admin-panel-container.dark .account-layout input {
+.admin-panel-container.dark .account-layout input,
+.admin-panel-container.dark .account-password-form input {
   background: var(--input-bg);
   color: var(--text-color);
   border-color: var(--border-color);
 }
-.admin-panel-container.dark .account-profile-info p,
-.admin-panel-container.dark .account-profile-info span {
+.admin-panel-container.dark .account-form-title {
   color: var(--text-color);
+}
+/* Status badges dark — garder leurs couleurs propres */
+.admin-panel-container.dark .status-badge.online {
+  background: #1a3a2a;
+  color: #6fcf97;
+}
+.admin-panel-container.dark .status-badge.recent {
+  background: #1a2a3a;
+  color: #6bb5ff;
+}
+.admin-panel-container.dark .status-badge.today {
+  background: #2a2a1a;
+  color: #f2c94c;
+}
+.admin-panel-container.dark .status-badge.yesterday {
+  background: #2a1a0a;
+  color: #f2994a;
+}
+.admin-panel-container.dark .status-badge.old {
+  background: #2a2a2a;
+  color: #aaaaaa;
+}
+.admin-panel-container.dark .status-badge.inactive {
+  background: #3a1a1a;
+  color: #eb5757;
 }
