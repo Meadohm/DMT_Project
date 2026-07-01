@@ -123,7 +123,7 @@ function DashboardEmploye() {
       sortRecursively(roots);
 
       setFolders(roots);
-      if (roots.length > 0) setActiveFolder(roots[0]);
+      if (!activeFolder && roots.length > 0) setActiveFolder(roots[0]);
 
       // 🔹 Restauration automatique de l’expansion sauvegardée
       const saved = JSON.parse(localStorage.getItem("expandedFolders") || "[]");
