@@ -432,6 +432,20 @@ function DashboardResponsable() {
           colorScheme="teal"
           searchTerm={searchTerm}
           onSearch={setSearchTerm}
+          onSelectFolder={(folder) => {
+            const found = folders.find(f => f.id === folder.id) ||
+              (function findInTree(list) {
+                for (const f of list) {
+                  if (f.id === folder.id) return f;
+                  if (f.children?.length) {
+                    const r = findInTree(f.children);
+                    if (r) return r;
+                  }
+                }
+                return null;
+              })(folders);
+            if (found) setActiveFolder(found);
+          }}
           now={now}
           notifications={notifications}
           onClearNotifications={handleClearNotifications}

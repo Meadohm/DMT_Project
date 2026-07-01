@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { markAllRead } from "../services/notificationService";
 import { formatRelativeTime } from "../utils/timeUtils";
+import API_BASE_URL from "../config";
 import "../styles/DashboardTopbar.css";
 
 /**
@@ -30,6 +31,7 @@ function DashboardTopbar({
   colorScheme = "blue",
   searchTerm,
   onSearch,
+  onSelectFolder = null,
   now,
   notifications = [],
   onClearNotifications,
@@ -44,6 +46,9 @@ function DashboardTopbar({
   const [notifOpen, setNotifOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [searchExpanded, setSearchExpanded] = useState(false);
+  const [globalResults, setGlobalResults] = useState([]);
+  const [globalLoading, setGlobalLoading] = useState(false);
+  const [showGlobalResults, setShowGlobalResults] = useState(false);
 
   const notifRef = useRef(null);
   const accountRef = useRef(null);
@@ -67,6 +72,34 @@ function DashboardTopbar({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Recherche globale de fichiers
+  useEffect(() => {
+    if (!searchTerm || searchTerm.length < 2) {
+      setGlobalResults([]);
+      setShowGlobalResults(false);
+      return;
+    }
+    const timeout = setTimeout(async () => {
+      setGlobalLoading(true);
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(`${API_BASE_URL}/search/?q=${encodeURIComponent(searchTerm)}`, {
+          headers: { Authorization: `Token ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setGlobalResults(data.results || []);
+          setShowGlobalResults(true);
+        }
+      } catch (err) {
+        console.error("Erreur recherche globale", err);
+      } finally {
+        setGlobalLoading(false);
+      }
+    }, 400);
+    return () => clearTimeout(timeout);
+  }, [searchTerm]);
 
   const toggleNotif = () => {
     setNotifOpen((prev) => !prev);
@@ -137,6 +170,29 @@ function DashboardTopbar({
             onKeyDown={(e) => e.key === "Escape" && setSearchExpanded(false)}
             style={{ display: searchExpanded ? "block" : "none" }}
           />
+          {showGlobalResults && (
+            <div className="global-search-results">
+              {globalLoading && <p className="search-loading">Recherche...</p>}
+              {!globalLoading && globalResults.length === 0 && (
+                <p className="search-no-result">Aucun fichier trouvé.</p>
+              )}
+              {!globalLoading && globalResults.map(r => (
+                <div
+                  key={r.id}
+                  className="search-result-item"
+                  onClick={() => {
+                    if (onSelectFolder) onSelectFolder(r.folder);
+                    setShowGlobalResults(false);
+                    onSearch("");
+                    setSearchExpanded(false);
+                  }}
+                >
+                  <span className="search-result-name">📄 {r.nom}</span>
+                  <span className="search-result-folder">📂 {r.folder.nom}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
