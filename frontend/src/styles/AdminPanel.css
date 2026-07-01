@@ -1579,3 +1579,22 @@ body.dark .role-bar-track {
 body.dark .role-bar-count {
   color: #e6e8f0;
 }
+
+/* TENDANCE HEBDOMADAIRE */
+.dashboard-card-trend {
+  cursor: default;
+  grid-column: span 2;
+}
+
+.trend-chart-wrapper {
+  width: 100%;
+  margin-top: 8px;
+}
+
+body.dark .dashboard-card-trend .recharts-cartesian-grid-horizontal line {
+  stroke: #2d3555;
+}
+
+body.dark .dashboard-card-trend .recharts-text {
+  fill: #aab4c8;
+}

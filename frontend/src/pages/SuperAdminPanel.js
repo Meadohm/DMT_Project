@@ -26,6 +26,7 @@ import AdminFileManager from "../services/AdminFileManager";
 import API_BASE_URL from "../config";
 import logo from "../assets/dmt.png";
 import "../styles/SuperAdminPanel.css";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 
 const getRelativeTime = (dateStr, isActive = true) => {
   if (!isActive) return { label: 'Inactif', type: 'inactive' };
@@ -709,6 +710,25 @@ function SuperAdminPanel() {
                   </div>
                 </div>
                 <div className="dashboard-card-arrow">→</div>
+              </div>
+              <div className="dashboard-card dashboard-card-trend">
+                <div className="dashboard-card-content" style={{width:'100%'}}>
+                  <h3>📈 Tendance hebdomadaire — Uploads</h3>
+                  <div className="trend-chart-wrapper">
+                    <ResponsiveContainer width="100%" height={160}>
+                      <BarChart data={dashboardStats?.weekly_trend ?? []} margin={{top:8, right:8, left:-20, bottom:0}}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                        <XAxis dataKey="date" tick={{fontSize:11}} axisLine={false} tickLine={false} />
+                        <YAxis allowDecimals={false} tick={{fontSize:11}} axisLine={false} tickLine={false} />
+                        <Tooltip
+                          formatter={(value) => [value, "Uploads"]}
+                          contentStyle={{fontSize:'0.8rem', borderRadius:'8px'}}
+                        />
+                        <Bar dataKey="uploads" fill="#6c63ff" radius={[4,4,0,0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
               </div>
             </div>
           </>
