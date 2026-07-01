@@ -1621,6 +1621,34 @@ body.dark .dashboard-card-trend .recharts-text {
   border-color: var(--border-color);
   color: var(--text-color);
 }
+
+.admin-panel-container.dark .dashboard-card-main {
+  color: #e6e8f0;
+}
+
+.admin-panel-container.dark .dashboard-card-content h3 {
+  color: #aab4c8;
+}
+
+.admin-panel-container.dark .dash-detail {
+  color: #8892a4;
+}
+
+.admin-panel-container.dark .dashboard-card-arrow {
+  color: #4a5568;
+}
+
+.admin-panel-container.dark .dashboard-card:hover .dashboard-card-arrow {
+  color: #a5b4fc;
+}
+
+.admin-panel-container.dark .role-bar-label {
+  color: #aab4c8;
+}
+
+.admin-panel-container.dark .role-bar-count {
+  color: #e6e8f0;
+}
 .admin-panel-container.dark table {
   background: var(--card-bg);
   color: var(--text-color);
