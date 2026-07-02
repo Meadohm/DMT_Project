@@ -22,6 +22,7 @@ import { validatePassword } from "../services/validators";
 
 import { getHistorique, deleteHistorique } from "../services/fileService";
 import AdminFileManager from "../services/AdminFileManager";
+import HelpModalAdmin from "../components/HelpModalAdmin";
 
 import API_BASE_URL from "../config";
 import logo from "../assets/dmt.png";
@@ -113,6 +114,7 @@ function AdminPanel() {
   const [editServiceForm, setEditServiceForm] = useState({ nom: '', description: '', statut: 'actif', responsable_id: '' });
   const [editServiceError, setEditServiceError] = useState('');
   const [dashboardStats, setDashboardStats] = useState(null);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
@@ -551,6 +553,9 @@ function AdminPanel() {
             </div>
             <button className="theme-toggle-btn" onClick={toggleTheme} title={theme === "dark" ? "Mode clair" : "Mode sombre"}>
               {theme === "dark" ? "☀️" : "🌙"}
+            </button>
+            <button className="theme-toggle-btn" onClick={() => setHelpOpen(true)} title="Aide">
+              ❓
             </button>
             <button onClick={handleLogout} className="topbar-logout-button">
               ⏻ Déconnexion
@@ -1568,6 +1573,8 @@ function AdminPanel() {
           {tooltip.text}
         </div>
       )}
+
+      {helpOpen && <HelpModalAdmin onClose={() => setHelpOpen(false)} />}
     </div>
   );
 }
