@@ -489,7 +489,7 @@ function DashboardResponsable() {
       {/* --- FOOTER --- */}
       <footer className="footer">
         <div className="footer-inner">
-          <span className="footer-brand"><strong>DMT</strong> — Filiale de <strong>GENICI GROUPE</strong></span>
+          <span className="footer-brand"><strong>DMT</strong> - Filiale de <strong>GENICI GROUPE</strong></span>
           <span className="footer-sep">•</span>
           <span className="footer-contact">+225 01 02 19 19 55 • dmt-genici@gmail.com</span>
           <span className="footer-sep">•</span>
