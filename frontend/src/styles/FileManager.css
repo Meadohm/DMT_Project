@@ -2820,3 +2820,51 @@ body.dark .file-filter-select {
   from { opacity: 0; transform: translateX(-50%) translateY(20px); }
   to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
+
+/* ====== FOOTER MODERNE ====== */
+.footer {
+  margin-top: auto;
+  padding: 14px 28px;
+  border-top: 1px solid rgba(108, 99, 255, 0.15);
+  background: transparent;
+}
+
+.footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+  color: #9ca3af;
+  letter-spacing: 0.02em;
+}
+
+.footer-brand strong {
+  color: #6c63ff;
+  font-weight: 700;
+}
+
+.footer-sep {
+  color: #d1d5db;
+}
+
+.footer-contact {
+  color: #9ca3af;
+}
+
+.footer-copy {
+  color: #9ca3af;
+}
+
+body.dark .footer {
+  border-top-color: rgba(108, 99, 255, 0.2);
+}
+
+body.dark .footer-inner {
+  color: #6b7280;
+}
+
+body.dark .footer-sep {
+  color: #374151;
+}

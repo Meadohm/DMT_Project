@@ -493,13 +493,13 @@ const handleClearNotifications = async () => {
 
       {/* --- FOOTER --- */}
       <footer className="footer">
-        <p className="footer-line">
-          <strong>DMT</strong> – Filiale de <strong>GENICI GROUPE</strong>
-        </p>
-        <p className="footer-line">
-          +225 01 02 19 19 55 • dmt-genici@gmail.com • © 2025 - Développé par{" "}
-          <strong>M. Mohamed Fofana</strong>
-        </p>
+        <div className="footer-inner">
+          <span className="footer-brand"><strong>DMT</strong> — Filiale de <strong>GENICI GROUPE</strong></span>
+          <span className="footer-sep">•</span>
+          <span className="footer-contact">+225 01 02 19 19 55 • dmt-genici@gmail.com</span>
+          <span className="footer-sep">•</span>
+          <span className="footer-copy">© {new Date().getFullYear()}</span>
+        </div>
       </footer>
 
       {/* --- MODALES --- */}
