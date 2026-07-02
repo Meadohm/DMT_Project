@@ -2751,3 +2751,40 @@ body.dark .file-filter-select {
   background: white;
   border-top: 1px solid #e8edf2;
 }
+
+/* Help modal — mode sombre */
+.dark .help-modal-box {
+  background: var(--card-bg);
+  color: var(--text-color);
+}
+.dark .help-modal-header h2 {
+  color: var(--text-color);
+}
+.dark .help-modal-close {
+  color: var(--text-color);
+}
+.dark .help-modal-close:hover {
+  background: var(--hover-bg);
+}
+.dark .help-modal-subtitle {
+  color: #aab4c8;
+}
+.dark .help-accordion-item {
+  border-color: var(--border-color);
+}
+.dark .help-accordion-header {
+  background: var(--card-bg);
+  color: var(--text-color);
+}
+.dark .help-accordion-header:hover {
+  background: var(--hover-bg);
+}
+.dark .help-accordion-item.open .help-accordion-header {
+  background: var(--sidebar-bg);
+  color: white;
+}
+.dark .help-accordion-content {
+  background: var(--card-bg);
+  color: #ccd6f6;
+  border-top-color: var(--border-color);
+}
