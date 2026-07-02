@@ -17,8 +17,10 @@ export default function useAutoLogout(role, onLogout, onWarning) {
 
   const logout = useCallback(() => {
     localStorage.setItem('logout', Date.now().toString());
-    localStorage.clear();
-    window.location.replace("/");
+    setTimeout(() => {
+      localStorage.clear();
+      window.location.replace("/");
+    }, 100);
   }, []);
 
   const resetTimer = useCallback(() => {
