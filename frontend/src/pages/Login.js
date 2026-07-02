@@ -23,6 +23,11 @@ function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Retirer le dark mode sur la page login
+    document.body.classList.remove('dark');
+  }, []);
+
+  useEffect(() => {
     const until = localStorage.getItem('rateLimitUntil');
     if (until) {
       const remaining = Math.floor((parseInt(until) - Date.now()) / 1000);
