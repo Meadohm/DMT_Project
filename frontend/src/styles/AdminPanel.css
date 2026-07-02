@@ -873,6 +873,12 @@ td:last-child {
   background-color: #e8f0fe;
 }
 
+.admin-panel-container.dark .users-table-wrapper tbody tr:hover td:nth-child(1),
+.admin-panel-container.dark .users-table-wrapper tbody tr:hover td:nth-child(2) {
+  background: var(--hover-bg) !important;
+  color: var(--text-color) !important;
+}
+
 .btn-create-user {
   background: linear-gradient(135deg, #003366, #00509e);
   color: white;
