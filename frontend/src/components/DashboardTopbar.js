@@ -3,7 +3,9 @@ import React, { useState, useRef, useEffect } from "react";
 import { markAllRead } from "../services/notificationService";
 import { formatRelativeTime } from "../utils/timeUtils";
 import API_BASE_URL from "../config";
+import HelpModal from "./HelpModal";
 import "../styles/DashboardTopbar.css";
+
 
 /**
  * DashboardTopbar — Barre supérieure partagée Employé / Responsable
@@ -49,6 +51,7 @@ function DashboardTopbar({
   const [globalResults, setGlobalResults] = useState([]);
   const [globalLoading, setGlobalLoading] = useState(false);
   const [showGlobalResults, setShowGlobalResults] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const notifRef = useRef(null);
   const accountRef = useRef(null);
@@ -349,12 +352,10 @@ function DashboardTopbar({
                   >
                     📜 Historique partagés
                   </li>
-                  <li
-                    style={{ opacity: 0.45, cursor: "not-allowed" }}
-                    title="Bientôt disponible"
-                  >
-                    ❓ Aide
-                  </li>
+                  <li onClick={() => { setAccountOpen(false); setHelpOpen(true); }}>
+                  ❓ Aide
+                </li>
+                
                 </ul>
               </div>
             )}
@@ -362,6 +363,8 @@ function DashboardTopbar({
 
         </div>
       </div>
+
+      {helpOpen && <HelpModal onClose={() => setHelpOpen(false)} />}
     </div>
   );
 }
