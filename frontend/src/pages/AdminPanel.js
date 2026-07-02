@@ -554,11 +554,11 @@ function AdminPanel() {
             <button className="theme-toggle-btn" onClick={toggleTheme} title={theme === "dark" ? "Mode clair" : "Mode sombre"}>
               {theme === "dark" ? "☀️" : "🌙"}
             </button>
-            <button className="theme-toggle-btn" onClick={() => setHelpOpen(true)} title="Aide">
-              ❓
-            </button>
             <button onClick={handleLogout} className="topbar-logout-button">
               ⏻ Déconnexion
+            </button>
+            <button className="theme-toggle-btn" onClick={() => setHelpOpen(true)} title="Aide">
+              ❓
             </button>
           </div>
         </div>
