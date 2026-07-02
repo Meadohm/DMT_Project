@@ -2788,3 +2788,35 @@ body.dark .file-filter-select {
   color: #ccd6f6;
   border-top-color: var(--border-color);
 }
+
+.auto-logout-warning {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #7c3aed;
+  color: white;
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  animation: slideUp 0.3s ease;
+}
+.auto-logout-warning button {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 1rem;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}

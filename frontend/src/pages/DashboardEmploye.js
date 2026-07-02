@@ -13,6 +13,7 @@ import {
 } from "../services/folderService";
 import { updatePassword } from "../services/passwordService";
 import useTheme from "../hooks/useTheme";
+import useAutoLogout from "../hooks/useAutoLogout";
 import "../styles/theme.css";
 import Toast from "../components/Toast";
 import FileManager from "../components/FileManager";
@@ -44,6 +45,7 @@ function DashboardEmploye() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [archivesOpen, setArchivesOpen] = useState(false);
+  const [showLogoutWarning, setShowLogoutWarning] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const now = useClock();
 
@@ -55,6 +57,12 @@ function DashboardEmploye() {
   );
 
   const navigate = useNavigate();
+
+  useAutoLogout(
+    userInfo?.role || 'employe',
+    () => { localStorage.clear(); navigate("/"); },
+    () => setShowLogoutWarning(true)
+  );
 
    // Authentification et récupération données
   useEffect(() => {
@@ -694,6 +702,12 @@ const handleClearNotifications = async () => {
                   />
                 )}
 
+                {showLogoutWarning && (
+                  <div className="auto-logout-warning">
+                    ⚠️ Votre session expire dans 2 minutes. Cliquez n'importe où pour rester connecté.
+                    <button onClick={() => setShowLogoutWarning(false)}>✖</button>
+                  </div>
+                )}
 
     </div>
   );

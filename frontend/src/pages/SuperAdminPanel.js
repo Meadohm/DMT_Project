@@ -1,6 +1,7 @@
 // src/pages/AdminPanel.js
 
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
   getUsers,
@@ -23,6 +24,7 @@ import { validatePassword } from "../services/validators";
 import { getHistorique, deleteHistorique } from "../services/fileService";
 import AdminFileManager from "../services/AdminFileManager";
 import HelpModalAdmin from "../components/HelpModalAdmin";
+import useAutoLogout from "../hooks/useAutoLogout";
 
 import API_BASE_URL from "../config";
 import logo from "../assets/dmt.png";
@@ -120,6 +122,7 @@ function SuperAdminPanel() {
   const [editServiceError, setEditServiceError] = useState('');
   const [dashboardStats, setDashboardStats] = useState(null);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [showLogoutWarning, setShowLogoutWarning] = useState(false);
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
@@ -128,6 +131,13 @@ function SuperAdminPanel() {
 
   const [currentTime, setCurrentTime] = useState(new Date());
   const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
+
+  useAutoLogout(
+    userInfo?.role || 'employe',
+    () => { localStorage.clear(); navigate("/"); },
+    () => setShowLogoutWarning(true)
+  );
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -1668,6 +1678,13 @@ function SuperAdminPanel() {
       )}
 
       {helpOpen && <HelpModalAdmin onClose={() => setHelpOpen(false)} />}
+
+      {showLogoutWarning && (
+        <div className="auto-logout-warning">
+          ⚠️ Votre session expire dans 2 minutes. Cliquez n'importe où pour rester connecté.
+          <button onClick={() => setShowLogoutWarning(false)}>✖</button>
+        </div>
+      )}
     </div>
   );
 }
