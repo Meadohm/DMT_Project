@@ -1,5 +1,6 @@
 // src/pages/DashboardEmploye.js
 import React, { useEffect, useState, useMemo, useRef } from "react";
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { getUserInfo } from "../services/fileService";
 import { leaveFolder } from "../services/folderService";
@@ -58,10 +59,13 @@ function DashboardEmploye() {
 
   const navigate = useNavigate();
 
+  const handleWarning = useCallback(() => setShowLogoutWarning(true), []);
+  const handleAutoLogout = useCallback(() => { localStorage.clear(); navigate("/"); }, [navigate]);
+
   useAutoLogout(
     userInfo?.role || 'employe',
-    () => { localStorage.clear(); navigate("/"); },
-    () => setShowLogoutWarning(true)
+    handleAutoLogout,
+    handleWarning
   );
 
    // Authentification et récupération données

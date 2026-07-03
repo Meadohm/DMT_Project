@@ -1,5 +1,6 @@
 // src/pages/DashboardResponsable.js
 import React, { useEffect, useState, useMemo, useRef } from "react";
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { getUserInfo } from "../services/fileService";
 import { checkTokenValidity } from "../services/authService";
@@ -53,10 +54,13 @@ function DashboardResponsable() {
 
   const navigate = useNavigate();
 
+  const handleWarning = useCallback(() => setShowLogoutWarning(true), []);
+  const handleAutoLogout = useCallback(() => { localStorage.clear(); navigate("/"); }, [navigate]);
+
   useAutoLogout(
     userInfo?.role || 'employe',
-    () => { localStorage.clear(); navigate("/"); },
-    () => setShowLogoutWarning(true)
+    handleAutoLogout,
+    handleWarning
   );
 
   // Authentification et récupération données

@@ -1,6 +1,7 @@
 // src/pages/AdminPanel.js
 
 import React, { useEffect, useState } from "react";
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
@@ -128,10 +129,13 @@ function AdminPanel() {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
+  const handleWarning = useCallback(() => setShowLogoutWarning(true), []);
+  const handleAutoLogout = useCallback(() => { localStorage.clear(); navigate("/"); }, [navigate]);
+
   useAutoLogout(
     userInfo?.role || 'employe',
-    () => { localStorage.clear(); navigate("/"); },
-    () => setShowLogoutWarning(true)
+    handleAutoLogout,
+    handleWarning
   );
 
   useEffect(() => {
