@@ -3,6 +3,7 @@
 .dashboard-container {
   padding: 20px;
   padding-left: 240px;
+  padding-bottom: 60px;
   min-height: auto;
   position: relative;
   display: flex;
@@ -1660,7 +1661,7 @@ body.dark .upload-compact-bar svg {
 .file-manager {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 180px);
+  height: calc(100vh - 240px);
   overflow: hidden;
   position: relative;
   background: #fff;
@@ -1852,23 +1853,6 @@ body.dark .file-item:hover {
 
 body.dark .folder-title {
   color: var(--text-color);
-}
-
-/*Footer parfaitement aligné avec la sidebar */
-.footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  background: #ffffff;
-  border-top: 1px solid #ddd;
-  padding: 8px 0;
-  font-size: 0.85rem;
-  color: #333;
-  text-align: left;
-  box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.08);
-  z-index: 50;
 }
 
 .footer p {
