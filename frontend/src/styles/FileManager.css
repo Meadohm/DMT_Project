@@ -1173,7 +1173,7 @@ body.dark .upload-compact-bar svg {
   top: 80px; /* en dessous du header */
   left: 220px; /* commence après la sidebar */
   right: 0;
-  bottom: 40px; /* juste au-dessus du footer */
+  bottom: 55px; /* juste au-dessus du footer */
   width: calc(100% - 240px); /* largeur visible, sans recouvrir sidebar */
   margin: 0 auto;
   background: #fff;
@@ -2808,13 +2808,14 @@ body.dark .file-filter-select {
   to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
-/* ====== FOOTER MODERNE ====== */
+/* FOOTER MODERNE */
 .footer {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   padding: 10px 28px;
+  padding-left: 260px;
   border-top: 1px solid rgba(108, 99, 255, 0.15);
   background: #ffffff;
   z-index: 50;
