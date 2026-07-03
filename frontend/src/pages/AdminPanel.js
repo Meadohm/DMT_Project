@@ -357,7 +357,16 @@ function AdminPanel() {
     setPasswordVisible(!passwordVisible);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        await fetch(`${process.env.REACT_APP_API_URL || 'http://192.168.1.116:8000/api'}/logout/`, {
+          method: 'POST',
+          headers: { Authorization: `Token ${token}` }
+        });
+      }
+    } catch (e) {}
     localStorage.clear();
     window.location.replace("/");
   };

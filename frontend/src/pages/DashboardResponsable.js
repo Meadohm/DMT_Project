@@ -157,10 +157,18 @@ function DashboardResponsable() {
       .filter(f => f.id !== id)
       .map(f => ({ ...f, children: deleteFromTree(f.children || [], id) }));
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        await fetch(`${process.env.REACT_APP_API_URL || 'http://192.168.1.116:8000/api'}/logout/`, {
+          method: 'POST',
+          headers: { Authorization: `Token ${token}` }
+        });
+      }
+    } catch (e) {}
     localStorage.clear();
-    setIsAuthenticated(false);
-    navigate("/");
+    window.location.replace("/");
   };
 
   // ==== Gestion modales ====

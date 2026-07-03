@@ -15,8 +15,17 @@ export default function useAutoLogout(role, onLogout, onWarning) {
 
   const timeout = TIMEOUTS[role] || TIMEOUTS.employe;
 
-  const logout = useCallback(() => {
-    localStorage.setItem('logout', Date.now().toString());
+  const logout = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        await fetch(`${process.env.REACT_APP_API_URL || 'http://192.168.1.116:8000/api'}/logout/`, {
+          method: 'POST',
+          headers: { Authorization: `Token ${token}` }
+        });
+      }
+    } catch (e) {}
+    localStorage.setItem('logout_signal', Date.now().toString());
     setTimeout(() => {
       localStorage.clear();
       window.location.replace("/");
@@ -43,7 +52,7 @@ export default function useAutoLogout(role, onLogout, onWarning) {
   useEffect(() => {
     // Écoute déconnexion depuis un autre onglet
     const handleStorageEvent = (e) => {
-      if (e.key === 'logout') {
+      if (e.key === 'logout_signal') {
         localStorage.clear();
         window.location.replace("/");
       }
