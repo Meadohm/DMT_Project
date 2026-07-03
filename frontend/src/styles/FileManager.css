@@ -3,7 +3,7 @@
 .dashboard-container {
   padding: 20px;
   padding-left: 240px;
-  min-height: calc(100vh - 160px);
+  min-height: auto;
   position: relative;
   display: flex;
   flex-direction: column;
