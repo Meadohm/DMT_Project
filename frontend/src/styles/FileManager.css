@@ -1674,7 +1674,7 @@ body.dark .upload-compact-bar svg {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 10px 15px;
+  padding: 10px 15px 80px 15px;
   scrollbar-width: thin;
   scrollbar-color: #8b5cf6 #f1f1f1;
 }
