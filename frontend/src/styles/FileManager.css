@@ -387,7 +387,7 @@ button[aria-label="partager"]:hover .icon-action {
 /* Pour éviter que le contenu soit caché derrière le footer */
 .main-content {
   margin-left: 80px;
-  padding-bottom: 40px;
+  padding-bottom: 80px;
   margin-top: 0;
   min-height: auto;
   overflow: auto;
