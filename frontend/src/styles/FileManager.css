@@ -1173,7 +1173,7 @@ body.dark .upload-compact-bar svg {
   top: 80px; /* en dessous du header */
   left: 220px; /* commence après la sidebar */
   right: 0;
-  bottom: 55px; /* juste au-dessus du footer */
+  bottom: 40px; /* juste au-dessus du footer */
   width: calc(100% - 240px); /* largeur visible, sans recouvrir sidebar */
   margin: 0 auto;
   background: #fff;
