@@ -1661,11 +1661,12 @@ body.dark .upload-compact-bar svg {
   display: flex;
   flex-direction: column;
   min-height: 300px;
-  overflow: visible;
+  overflow: hidden;
   position: relative;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 60px;
 }
 
 /* Contenu du dossier scrollable */
