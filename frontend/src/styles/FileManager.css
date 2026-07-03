@@ -400,11 +400,12 @@ button[aria-label="partager"]:hover .icon-action {
 .file-manager {
   border: 2px dashed #6c63ff;
   border-radius: 12px;
-  padding: 30px;
+  padding: 20px;
   text-align: center;
   transition: all 0.3s ease;
   background: white;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 16px;
 }
 
 .file-manager.drag-over {
