@@ -2141,6 +2141,73 @@ body.dark .folder-title {
   }
 }
 
+/* RESPONSIVE TABLETTE 768px - 1024px */
+@media (max-width: 1024px) {
+  .dashboard-container {
+    padding-left: 80px;
+  }
+  .file-manager {
+    height: calc(100vh - 200px);
+  }
+  .folder-title {
+    font-size: 0.85rem;
+  }
+  .shared-folder-info {
+    max-width: 200px;
+  }
+}
+
+/* ===== RESPONSIVE MOBILE < 768px ===== */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding-left: 0;
+    padding-top: 10px;
+    padding-bottom: 70px;
+  }
+  .file-manager {
+    height: calc(100vh - 160px);
+    border-radius: 0;
+  }
+  .file-content-scroll {
+    padding: 8px 10px 20px 10px;
+  }
+  .file-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .folder-title {
+    font-size: 0.8rem;
+    flex-wrap: wrap;
+  }
+  .emp-topbar {
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 10px;
+  }
+  .emp-topbar-clock {
+    display: none;
+  }
+  .emp-topbar-left {
+    flex: 1;
+  }
+}
+
+/* RESPONSIVE MOBILE < 480px */
+@media (max-width: 480px) {
+  .file-grid {
+    grid-template-columns: 1fr;
+  }
+  .emp-topbar-actions {
+    gap: 4px;
+  }
+  .topbar-role-badge {
+    display: none;
+  }
+  .file-manager {
+    height: calc(100vh - 140px);
+  }
+}
+
 .table-wrapper {
   overflow-x: auto;
   overflow-y: auto;
