@@ -395,16 +395,6 @@ button[aria-label="partager"]:hover .icon-action {
 
 /* FILE MANAGER */
 
-.file-manager {
-  border: 2px dashed #6c63ff;
-  border-radius: 12px;
-  padding: 30px;
-  text-align: center;
-  transition: all 0.3s ease;
-  background: white;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-}
-
 .file-manager.drag-over {
   background: #f0eaff;
   border-color: #574fd6;
@@ -1657,11 +1647,12 @@ body.dark .upload-compact-bar svg {
 .file-manager {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 200px); /* hauteur totale visible sans déborder */
-  overflow: hidden; /* empêche le débordement global */
+  min-height: 400px;
+  overflow: hidden;
   position: relative;
   background: #fff;
   border-radius: 12px;
+  border: 2px dashed #6c63ff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
