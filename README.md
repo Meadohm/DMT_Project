@@ -227,23 +227,35 @@ DMT_Project
 
 ## Versions
 
+**v1.4.5 — Juillet 2026**
+Responsive complet tablette/mobile (1024px, 768px, 480px) · Footer fix · Auto-logout par inactivité multi-navigateurs · Logout backend token invalidé · Centre d'aide HelpModal tous dashboards · Mode sombre AdminPanel/SuperAdminPanel complet · Déconnexion automatique sync multi-navigateurs
+
+**v1.4.4 — Juillet 2026**
+Fix layout FileManager hauteur contrainte · Suppression footer fixed obsolète · Padding dashboard corrigé
+
+**v1.4.3 — Juillet 2026**
+Centre aide DocFlow Pro (HelpModal employé/responsable/admin) · Auto-logout inactivité par rôle · Déconnexion multi-navigateurs via token backend · Mode sombre AdminPanel et SuperAdminPanel
+
 **v1.4.2 — Juillet 2026**
 Filtres et tri dans liste de fichiers · Recherche globale cross-dossiers · Déplacement fichier (propriétaire) · Notifications suppression/renommage fichier · Dashboard stats complet (disque, dossiers, rôles, tendance) · Fix upload vidéo 500MB · Fix polling activeFolder
 
+**v1.4.1 — Juin 2026**
+Correctifs mineurs DashboardResponsable · Alignement features Employé/Responsable · Fix permissions héritées sous-dossiers
+
 **v1.4.0 — Juin 2026**
-DashboardResponsable complet · Composants Topbar/Sidebar mutualisés entre rôles · Héritage de permissions récursif sur les sous-dossiers · Endpoint dédié vue service · ShareModal repensé (groupement, filtres, sélection groupée) · Migration automatique des dossiers lors d'un changement de service · Correctifs CSRF cross-navigateur
+DashboardResponsable complet · Composants Topbar/Sidebar mutualisés · Héritage permissions récursif · Endpoint vue service · ShareModal repensé · Migration dossiers changement service · Fix CSRF cross-navigateur
 
 **v1.3.0 — Juin 2026**
-SuperAdminPanel avec rôle isolé · AuditLogDeletion · Email automatique aux admins · Rate limiting Redis (5/10min) · Filtres avancés utilisateurs · Email de bienvenue · Refonte login DocFlow Pro · Décompte rate limit persistant
+SuperAdminPanel isolé · AuditLogDeletion · Email automatique admins · Rate limiting Redis · Filtres utilisateurs · Email bienvenue · Refonte login DocFlow Pro
 
 **v1.2.0 — Mai 2026**
-Archives avec expiration automatique · Historique fichiers partagés · ShareModal deux zones · Quitter un dossier partagé · Mode sombre complet · Sous-dossiers (limite 2 niveaux)
+Archives expiration automatique · Historique fichiers partagés · ShareModal deux zones · Quitter dossier partagé · Mode sombre · Sous-dossiers 2 niveaux
 
 **v1.1.0 — Avril 2026**
-AdminPanel complet 6 sections · Journal d'activité filtres et CSV · Gestion services CRUD · Aperçu fichiers Office
+AdminPanel 6 sections · Journal activité filtres CSV · Gestion services CRUD · Aperçu fichiers Office
 
 **v1.0.0 — Mars 2026**
-API REST Django + React · Authentification RBAC 4 rôles · Gestion dossiers et fichiers · Partage avec permissions granulaires · Notifications temps réel
+API REST Django + React · Auth RBAC 4 rôles · Gestion dossiers fichiers · Partage permissions · Notifications temps réel
 
 ---
 
