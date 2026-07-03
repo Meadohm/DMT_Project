@@ -1,20 +1,20 @@
 import { useEffect, useRef, useCallback } from "react";
 
-const TIMEOUTS = {
+/* const TIMEOUTS = {
   super_admin: 20 * 1000,   // 20 secondes
   admin: 20 * 1000,
   responsable: 20 * 1000,
   employe: 20 * 1000,
 };
-const WARNING_BEFORE = 10 * 1000; // warning 10 secondes avant
+const WARNING_BEFORE = 10 * 1000; // warning 10 secondes avant */
 
-/* const TIMEOUTS = {
+const TIMEOUTS = {
   super_admin: 10 * 60 * 1000,  // 10 min
   admin: 15 * 60 * 1000,         // 15 min
   responsable: 30 * 60 * 1000,   // 30 min
   employe: 30 * 60 * 1000,       // 30 min
 };
-const WARNING_BEFORE = 2 * 60 * 1000; // avertissement 2 min avant */
+const WARNING_BEFORE = 2 * 60 * 1000; // avertissement 2 min avant
 
 export default function useAutoLogout(role, onLogout, onWarning) {
   const timerRef = useRef(null);
