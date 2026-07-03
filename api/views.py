@@ -2490,3 +2490,14 @@ def clear_audit_deletions(request):
     count = AuditLogDeletion.objects.count()
     AuditLogDeletion.objects.all().delete()
     return Response({"message": f"{count} suppression(s) effacee(s)."}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def logout_view(request):
+    """Invalide le token — déconnecte tous les appareils"""
+    try:
+        request.user.auth_token.delete()
+    except Exception:
+        pass
+    return Response({'success': 'Deconnecte.'})
