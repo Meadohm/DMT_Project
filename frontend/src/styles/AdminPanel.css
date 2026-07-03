@@ -760,6 +760,9 @@ td:last-child {
   box-shadow: 0 4px 16px rgba(0, 51, 102, 0.2);
   flex-wrap: wrap;
   gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .admin-topbar-left {
