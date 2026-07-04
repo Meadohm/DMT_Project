@@ -555,6 +555,7 @@ function DashboardResponsable() {
         <ShareModal
           folder={currentFolder}
           onClose={() => setShareModalOpen(false)}
+          currentUser={userInfo}
           onConfirm={handleShareConfirm}
           onRevoke={async () => { await fetchFolders(); }}
         />

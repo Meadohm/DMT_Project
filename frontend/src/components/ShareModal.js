@@ -4,7 +4,7 @@ import "../styles/FileManager.css";
 //import "../styles/ShareModal.css";
 import API_BASE_URL from "../config";
 
-function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
+function ShareModal({ folder, onClose, onConfirm, onRevoke, currentUser }) {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [filterService, setFilterService] = useState("");
@@ -262,6 +262,7 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
                     >
                       {Object.keys(PERM_LABELS).every(p => share[p]) ? "☐ Tout décocher" : "☑ Tout cocher"}
                     </button>
+                    {currentUser && folder?.proprietaire?.id === currentUser.id && (
                     <button
                       className="btn-revoke"
                       onClick={() => setConfirmRevokeShare(share)}
@@ -269,6 +270,7 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke }) {
                     >
                       🚫 Révoquer
                     </button>
+                    )}
                   </div>
                 </div>
                 <div className="existing-share-perms">

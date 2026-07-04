@@ -561,6 +561,7 @@ const handleClearNotifications = async () => {
         <ShareModal
           folder={currentFolder}
           onClose={() => setShareModalOpen(false)}
+          currentUser={userInfo}
           onConfirm={confirmShare}
           onRevoke={async () => { await fetchFolders(); }}
         />
