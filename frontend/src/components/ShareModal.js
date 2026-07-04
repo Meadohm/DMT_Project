@@ -65,6 +65,7 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke, currentUser }) {
   // Groupement par service
   const folderService = folder?.service || "";
   const ownerUser = users.find(u => u.id === folder?.proprietaire?.id);
+  const isOwner = currentUser && folder?.proprietaire?.id === currentUser?.id;
 
   const sameServiceUsers = availableUsers.filter(
     u => u.service && u.service === folderService && u.id !== ownerUser?.id
@@ -273,7 +274,7 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke, currentUser }) {
                     )}
                   </div>
                 </div>
-                <div className="existing-share-perms">
+                {isOwner && <div className="existing-share-perms">
                   {Object.keys(PERM_LABELS).map(perm => (
                     <label key={perm} className="checkbox-modern small">
                       <input type="checkbox" checked={share[perm] || false} onChange={() => updateExistingPerm(share, perm)} />
@@ -281,7 +282,7 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke, currentUser }) {
                       <span>{PERM_LABELS[perm]}</span>
                     </label>
                   ))}
-                </div>
+                </div>}
               </div>
             ))}
           </div>
