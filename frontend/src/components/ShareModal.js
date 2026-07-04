@@ -256,13 +256,6 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke, currentUser }) {
                 <div className="existing-share-header">
                   <span className="existing-share-username">👤 {share.username}</span>
                   <div style={{ display: "flex", gap: "6px" }}>
-                    <button
-                      className="btn-toggle-all"
-                      onClick={() => toggleAllExistingPerms(share)}
-                      title="Tout cocher / décocher"
-                    >
-                      {Object.keys(PERM_LABELS).every(p => share[p]) ? "☐ Tout décocher" : "☑ Tout cocher"}
-                    </button>
                     {currentUser && folder?.proprietaire?.id === currentUser.id && (
                     <button
                       className="btn-revoke"
@@ -275,6 +268,13 @@ function ShareModal({ folder, onClose, onConfirm, onRevoke, currentUser }) {
                   </div>
                 </div>
                 {isOwner && <div className="existing-share-perms">
+                  <button
+                    className="btn-toggle-all"
+                    onClick={() => toggleAllExistingPerms(share)}
+                    title="Tout cocher / décocher"
+                  >
+                    {Object.keys(PERM_LABELS).every(p => share[p]) ? "☐ Tout décocher" : "☑ Tout cocher"}
+                  </button>
                   {Object.keys(PERM_LABELS).map(perm => (
                     <label key={perm} className="checkbox-modern small">
                       <input type="checkbox" checked={share[perm] || false} onChange={() => updateExistingPerm(share, perm)} />
