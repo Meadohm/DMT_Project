@@ -281,7 +281,9 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
           return;
         }
         setFileToRename(file);
-        setNewFileName(file.nom);
+        // Afficher le nom sans la date pour la zone de saisie
+        const nameWithoutDate = file.nom.replace(/_\d{4}-\d{2}-\d{2}(\(\d+\))?(\.[^.]+)?$/, (match, p1, p2) => p2 || '');
+        setNewFileName(nameWithoutDate);
         setRenameModalOpen(true);
       };
 
