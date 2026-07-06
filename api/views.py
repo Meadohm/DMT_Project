@@ -18,7 +18,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from .permissions import IsCustomAdminUser, IsSuperAdmin
-from .models import File as FileModel, Folder, Service, FolderShare, Utilisateur, Notification, Archive, AuditLog, AuditLogDeletion, FileRenameHistory
+from .models import File as FileModel, Folder, Service, FolderShare, Utilisateur, Notification, Archive, AuditLog, AuditLogDeletion, FileRenameHistory, Trash
 from .serializers import FileSerializer, FolderSerializer, ServiceSerializer, NotificationSerializer, ArchiveSerializer
 
 logger = logging.getLogger(__name__)
@@ -1356,16 +1356,29 @@ def delete_folder(request, folder_id):
     folder_name = f"{folder.id}_{safe_folder_name(folder.nom)}"
     folder_path = os.path.join(settings.MEDIA_ROOT, "uploads", folder_name)
 
+    # Déplacer en corbeille
+    Trash.objects.create(
+        item_type='folder',
+        item_id=folder.id,
+        nom=folder.nom,
+        original_name=folder.original_name,
+        deleted_by=request.user,
+        folder_nom=folder.nom,
+        file_path=folder_path,
+        size_bytes=0,
+        metadata={
+            'service': folder.service,
+            'proprietaire_id': folder.proprietaire.id if folder.proprietaire else None,
+        }
+    )
     if os.path.exists(folder_path):
         shutil.rmtree(folder_path)
-        
     AuditLog.objects.create(
         utilisateur=request.user,
         action='DELETE',
         objet=f"Dossier : {folder.nom}",
         adresse_ip=request.META.get('REMOTE_ADDR')
     )
-    
     folder.delete()
     return Response({'success': 'Dossier supprimé avec son contenu'})
 
@@ -1680,20 +1693,31 @@ def delete_file(request, file_id):
     if not has_folder_permission(request.user, file_obj.folder, "delete_file"):
         return Response({'error': 'Accès refusé'}, status=status.HTTP_403_FORBIDDEN)
 
-    if file_obj.fichier and os.path.exists(file_obj.fichier.path):
-        os.remove(file_obj.fichier.path)
-
+    folder = file_obj.folder
+    file_nom = file_obj.nom
+    # Déplacer en corbeille au lieu de supprimer
+    Trash.objects.create(
+        item_type='file',
+        item_id=file_obj.id,
+        nom=file_obj.nom,
+        original_name=file_obj.original_name,
+        deleted_by=request.user,
+        folder_nom=folder.nom,
+        file_path=file_obj.fichier.name if file_obj.fichier else '',
+        size_bytes=file_obj.taille or 0,
+        metadata={
+            'folder_id': folder.id,
+            'type_fichier': file_obj.type_fichier,
+            'uploadeur_id': file_obj.utilisateur.id if file_obj.utilisateur else None,
+        }
+    )
+    file_obj.delete()
     AuditLog.objects.create(
         utilisateur=request.user,
         action='DELETE',
-        objet=f"Fichier : {file_obj.nom}",
+        objet=f"Fichier : {file_nom}",
         adresse_ip=request.META.get('REMOTE_ADDR')
     )
-    
-    # Sauvegarder les infos avant suppression
-    folder = file_obj.folder
-    file_nom = file_obj.nom
-    file_obj.delete()
     logger.info(f"[DELETE] Fichier '{file_nom}' supprimé par {request.user.username}")
 
     # Notifications — propriétaire + tous les destinataires sauf l'auteur
@@ -1710,6 +1734,62 @@ def delete_file(request, file_id):
             message=f"{request.user.username} a supprimé le fichier '{file_nom}' dans le dossier '{folder.nom}'."
         )
     return Response({'success': 'Fichier supprimé'})
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
+def list_trash(request):
+    items = Trash.objects.all()
+    total_size = sum(i.size_bytes for i in items)
+    data = [{
+        'id': i.id,
+        'item_type': i.item_type,
+        'nom': i.nom,
+        'original_name': i.original_name,
+        'deleted_by': i.deleted_by.username if i.deleted_by else '—',
+        'deleted_at': i.deleted_at.strftime('%d/%m/%Y %H:%M'),
+        'folder_nom': i.folder_nom,
+        'size_bytes': i.size_bytes,
+    } for i in items]
+    return Response({'items': data, 'total': len(data), 'total_size_mb': round(total_size / 1024 / 1024, 2)})
+
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
+def empty_trash(request):
+    """Vider la corbeille après vérification credentials admin"""
+    email = request.data.get('email')
+    password = request.data.get('password')
+    if not email or not password:
+        return Response({'error': 'Email et mot de passe requis.'}, status=status.HTTP_400_BAD_REQUEST)
+    from django.contrib.auth import authenticate
+    user = authenticate(username=request.user.username, password=password)
+    if not user or user.email != email:
+        return Response({'error': 'Credentials invalides.'}, status=status.HTTP_403_FORBIDDEN)
+    count = Trash.objects.count()
+    Trash.objects.all().delete()
+    AuditLog.objects.create(
+        utilisateur=request.user,
+        action='DELETE',
+        objet=f"Corbeille vidée : {count} éléments supprimés définitivement",
+        adresse_ip=request.META.get('REMOTE_ADDR')
+    )
+    return Response({'success': f'{count} éléments supprimés définitivement.'})
+
+
+@api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
+def delete_trash_item(request, trash_id):
+    """Supprimer un élément définitivement de la corbeille"""
+    try:
+        item = Trash.objects.get(id=trash_id)
+    except Trash.DoesNotExist:
+        return Response({'error': 'Élément introuvable.'}, status=status.HTTP_404_NOT_FOUND)
+    item.delete()
+    return Response({'success': 'Élément supprimé définitivement.'})
 
 # FILE PREVIEW
 @api_view(['GET'])

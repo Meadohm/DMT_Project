@@ -90,5 +90,9 @@ urlpatterns = [
     path('notifications/clear/', views.clear_notifications, name='clear_notifications'),
     path('notifications/<int:pk>/', views.delete_notification, name='delete_notification'),
 
+    # Corbeille
+    path('trash/', views.list_trash, name='list_trash'),
+    path('trash/empty/', views.empty_trash, name='empty_trash'),
+    path('trash/<int:trash_id>/delete/', views.delete_trash_item, name='delete_trash_item'),
 
 ]
