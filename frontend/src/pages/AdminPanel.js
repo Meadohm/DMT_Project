@@ -97,6 +97,25 @@ function AdminPanel() {
     setSelectedTrashIds([]);
   };
 
+  const handleRestoreSelected = async () => {
+    const fileIds = selectedTrashIds.filter(id =>
+      trashItems.find(i => i.id === id)?.item_type === 'file'
+    );
+    if (fileIds.length === 0) {
+      alert('Seuls les fichiers peuvent être restaurés. Aucun fichier sélectionné.');
+      return;
+    }
+    if (!window.confirm(`Restaurer ${fileIds.length} fichier(s) ?`)) return;
+    for (const id of fileIds) {
+      await fetch(`${API_BASE_URL}/trash/${id}/restore/`, {
+        method: 'POST',
+        headers: { Authorization: `Token ${localStorage.getItem('token')}` }
+      });
+    }
+    setTrashItems(prev => prev.filter(i => !fileIds.includes(i.id)));
+    setSelectedTrashIds([]);
+  };
+
   // Formulaire utilisateur
   const [formData, setFormData] = useState({
     username: "",
@@ -1456,9 +1475,14 @@ function AdminPanel() {
               </button>
               <button className="btn-secondary" onClick={fetchTrash}>↺ Actualiser</button>
               {selectedTrashIds.length > 0 && (
-                <button className="btn-danger" onClick={handleDeleteSelected}>
-                  🗑️ Supprimer la sélection ({selectedTrashIds.length})
-                </button>
+                <>
+                  <button className="btn-edit" onClick={handleRestoreSelected}>
+                    ↩️ Restaurer la sélection ({selectedTrashIds.filter(id => trashItems.find(i => i.id === id)?.item_type === 'file').length} fichiers)
+                  </button>
+                  <button className="btn-danger" onClick={handleDeleteSelected}>
+                    🗑️ Supprimer la sélection ({selectedTrashIds.length})
+                  </button>
+                </>
               )}
             </div>
             {/* Alerte volume */}
