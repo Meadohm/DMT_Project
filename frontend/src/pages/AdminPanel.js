@@ -60,6 +60,11 @@ function AdminPanel() {
     localStorage.getItem('adminActiveSection') || "dashboard"
   );
   const [historique, setHistorique] = useState([]);
+  const [trashItems, setTrashItems] = useState([]);
+  const [trashLoading, setTrashLoading] = useState(false);
+  const [emptyTrashModal, setEmptyTrashModal] = useState(false);
+  const [trashEmail, setTrashEmail] = useState('');
+  const [trashPassword, setTrashPassword] = useState('');
 
   // Formulaire utilisateur
   const [formData, setFormData] = useState({
@@ -180,6 +185,79 @@ function AdminPanel() {
   useEffect(() => {
     localStorage.setItem('adminActiveSection', activeSection);
   }, [activeSection]);
+
+  const fetchTrash = async () => {
+    setTrashLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/trash/`, {
+        headers: { Authorization: `Token ${localStorage.getItem('token')}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setTrashItems(data.items || []);
+      }
+    } catch (err) {
+      console.error('Erreur corbeille', err);
+    } finally {
+      setTrashLoading(false);
+    }
+  };
+
+  const handleRestoreTrash = async (id, nom) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/trash/${id}/restore/`, {
+        method: 'POST',
+        headers: { Authorization: `Token ${localStorage.getItem('token')}` }
+      });
+      if (res.ok) {
+        setTrashItems(prev => prev.filter(i => i.id !== id));
+        alert(`✅ "${nom}" restauré avec succès.`);
+      } else {
+        const err = await res.json();
+        alert(`❌ ${err.error}`);
+      }
+    } catch (err) {
+      alert('Erreur lors de la restauration.');
+    }
+  };
+
+  const handleDeleteTrashItem = async (id, nom) => {
+    if (!window.confirm(`Supprimer définitivement "${nom}" ?`)) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/trash/${id}/delete/`, {
+        method: 'DELETE',
+        headers: { Authorization: `Token ${localStorage.getItem('token')}` }
+      });
+      if (res.ok) setTrashItems(prev => prev.filter(i => i.id !== id));
+    } catch (err) {
+      alert('Erreur suppression.');
+    }
+  };
+
+  const handleEmptyTrash = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/trash/empty/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Token ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ email: trashEmail, password: trashPassword })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setTrashItems([]);
+        setEmptyTrashModal(false);
+        setTrashEmail('');
+        setTrashPassword('');
+        alert(`✅ ${data.success}`);
+      } else {
+        alert(`❌ ${data.error}`);
+      }
+    } catch (err) {
+      alert('Erreur vidage corbeille.');
+    }
+  };
 
   const fetchDashboardStats = async () => {
     try {
@@ -550,6 +628,7 @@ function AdminPanel() {
         <button className={activeSection === "files" ? "active" : ""} onClick={() => setActiveSection("files")}>Gestion fichiers</button>
         <button className={activeSection === "submissions" ? "active" : ""} onClick={() => { setActiveSection("submissions"); fetchHistorique(1, historiqueAction, historiqueSearch, dateDebut, dateFin); }}>Journal d'activité</button>
         <button className={activeSection === "createService" ? "active" : ""} onClick={() => setActiveSection("createService")}>Créer un service</button>
+        <button className={activeSection === "trash" ? "active" : ""} onClick={() => { setActiveSection("trash"); fetchTrash(); }}>🗑️ Corbeille</button>
         <button className={activeSection === "account" ? "active" : ""} onClick={() => setActiveSection("account")}>Mon Profil</button>
         <div className="sidebar-bottom">
           <div className="sidebar-logo">
@@ -1326,6 +1405,95 @@ function AdminPanel() {
                 </div>
               </form>
             </div>
+          </div>
+        )}
+
+        {activeSection === "trash" && (
+          <div className="trash-section">
+            <div className="section-header">
+              <h2>🗑️ Corbeille</h2>
+              <button
+                className="btn-danger"
+                onClick={() => { fetchTrash(); setEmptyTrashModal(true); }}
+                disabled={trashItems.length === 0}
+              >
+                🔥 Vider la corbeille
+              </button>
+              <button className="btn-secondary" onClick={fetchTrash}>↺ Actualiser</button>
+            </div>
+            {trashLoading ? (
+              <p>Chargement...</p>
+            ) : trashItems.length === 0 ? (
+              <p className="no-data">Corbeille vide.</p>
+            ) : (
+              <table className="users-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Type</th>
+                    <th>Nom</th>
+                    <th>Dossier</th>
+                    <th>Supprimé par</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {trashItems.map((item, idx) => (
+                    <tr key={item.id}>
+                      <td>{idx + 1}</td>
+                      <td>{item.item_type === 'file' ? '📄' : '📁'}</td>
+                      <td>{item.nom}</td>
+                      <td>{item.folder_nom || '—'}</td>
+                      <td>{item.deleted_by}</td>
+                      <td>{item.deleted_at}</td>
+                      <td>
+                        {item.item_type === 'file' && (
+                          <button
+                            className="btn-edit"
+                            onClick={() => handleRestoreTrash(item.id, item.nom)}
+                          >
+                            ↩️ Restaurer
+                          </button>
+                        )}
+                        <button
+                          className="btn-danger-sm"
+                          onClick={() => handleDeleteTrashItem(item.id, item.nom)}
+                        >
+                          🗑️ Supprimer
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+            {emptyTrashModal && (
+              <div className="modal-overlay">
+                <div className="modal-box">
+                  <h3>🔐 Confirmer le vidage</h3>
+                  <p>Entrez vos credentials pour vider définitivement la corbeille.</p>
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    value={trashEmail}
+                    onChange={e => setTrashEmail(e.target.value)}
+                    className="form-input"
+                  />
+                  <input
+                    type="password"
+                    placeholder="Mot de passe"
+                    value={trashPassword}
+                    onChange={e => setTrashPassword(e.target.value)}
+                    className="form-input"
+                  />
+                  <div className="modal-actions">
+                    <button className="btn-cancel-confirm" onClick={() => setEmptyTrashModal(false)}>Annuler</button>
+                    <button className="btn-danger" onClick={handleEmptyTrash}>Vider définitivement</button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
