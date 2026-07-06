@@ -1589,7 +1589,7 @@ tr.user-inactive td {
   background: rgba(255,255,255,0.15);
 }
 
-/* ===== DARK MODE — FIXES SUPPLEMENTAIRES ===== */
+/* DARK MODE — FIXES SUPPLEMENTAIRES */
 
 /* Lignes tableau alternées */
 .admin-panel-container.dark tbody tr:nth-child(even) {
@@ -1692,7 +1692,7 @@ tr.user-inactive td {
   color: #eb5757;
 }
 
-/* ====== CORBEILLE ====== */
+/* CORBEILLE */
 .trash-alert {
   background: #fef3c7;
   border: 1px solid #f59e0b;
