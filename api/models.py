@@ -125,6 +125,16 @@ class File(models.Model):
             return hasher.hexdigest()
         return None
 
+class FileRenameHistory(models.Model):
+    file = models.ForeignKey(File, on_delete=models.CASCADE, related_name='rename_history')
+    old_name = models.CharField(max_length=255)
+    new_name = models.CharField(max_length=255)
+    renamed_by = models.ForeignKey(Utilisateur, on_delete=models.SET_NULL, null=True)
+    renamed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-renamed_at']
+
 # Service
 class Service(models.Model):
     STATUT_CHOICES = [

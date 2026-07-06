@@ -18,7 +18,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from .permissions import IsCustomAdminUser, IsSuperAdmin
-from .models import File as FileModel, Folder, Service, FolderShare, Utilisateur, Notification, Archive, AuditLog, AuditLogDeletion
+from .models import File as FileModel, Folder, Service, FolderShare, Utilisateur, Notification, Archive, AuditLog, AuditLogDeletion, FileRenameHistory
 from .serializers import FileSerializer, FolderSerializer, ServiceSerializer, NotificationSerializer, ArchiveSerializer
 
 logger = logging.getLogger(__name__)
@@ -1074,9 +1074,15 @@ def search_files(request):
 
     # Recherche fichiers par nom
     from api.models import File as FileModel
+    from django.db.models import Q
+    # Fichiers dont l'historique des noms contient la query
+    history_file_ids = FileRenameHistory.objects.filter(
+        old_name__icontains=query
+    ).values_list('file_id', flat=True)
+
     results = FileModel.objects.filter(
-        folder__in=accessible_folders,
-        nom__icontains=query
+        Q(nom__icontains=query) | Q(original_name__icontains=query) | Q(id__in=history_file_ids),
+        folder__in=accessible_folders
     ).select_related('folder', 'folder__proprietaire', 'utilisateur').order_by('-updated_at')[:20]
 
     data = []
@@ -1575,6 +1581,13 @@ def rename_file(request, file_id):
     old_name = file_obj.nom
     file_obj.nom = new_name
     file_obj.save(update_fields=["nom", "updated_at"])
+
+    FileRenameHistory.objects.create(
+        file=file_obj,
+        old_name=old_name,
+        new_name=new_name,
+        renamed_by=request.user
+    )
 
     logger.info(f"[RENAME] Fichier renommé en '{new_name}' par {request.user.username}")
     
