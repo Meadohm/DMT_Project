@@ -1577,6 +1577,20 @@ def rename_file(request, file_id):
     if not new_name:
         return Response({'error': 'Nom invalide'}, status=status.HTTP_400_BAD_REQUEST)
 
+    # Extraire la date d'upload originale du nom actuel ou de updated_at
+    import re
+    date_pattern = r'_\d{4}-\d{2}-\d{2}$'
+    # Récupérer la date depuis le nom original ou le fichier
+    original_date_match = re.search(r'(\d{4}-\d{2}-\d{2})', file_obj.nom)
+    upload_date = original_date_match.group(1) if original_date_match else file_obj.updated_at.strftime('%Y-%m-%d')
+
+    # Supprimer toute date existante dans le nouveau nom
+    base_new_name = re.sub(r'_\d{4}-\d{2}-\d{2}(\(\d+\))?(\.[^.]+)?$', '', new_name)
+    # Séparer extension
+    base_no_ext, ext = os.path.splitext(base_new_name)
+    # Reconstruire avec date d'upload immuable
+    new_name = f"{base_no_ext}_{upload_date}{ext}"
+
     # Mise à jour en base
     old_name = file_obj.nom
     file_obj.nom = new_name
