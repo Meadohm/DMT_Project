@@ -47,7 +47,8 @@ class FolderSerializer(serializers.ModelSerializer):
             'nom',
             'proprietaire',
             'service',
-            'parent',        
+            'parent',
+            'original_name',
             'is_shared',
             'is_archived',
             'shares',
@@ -169,6 +170,7 @@ class FileSerializer(serializers.ModelSerializer):
             'type_fichier',
             'extension',
             'updated_at',
+            'original_name',
         ]
 
     def get_url(self, obj):

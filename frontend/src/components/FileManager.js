@@ -600,6 +600,11 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                       <li key={file.id} className="file-item">
                         <span className="file-name" onClick={() => handlePreview(file)}>
                           <span className="file-icon">{getFileIcon(file.nom)}</span> {file.nom}
+                          {file.original_name && file.original_name !== file.nom.replace(/_\d{4}-\d{2}-\d{2}.*$/, '') && (
+                            <span className="file-original-name" title={`Nom original : ${file.original_name}`}>
+                              ({file.original_name})
+                            </span>
+                          )}
                         </span>
 
                         <div className="file-actions">
