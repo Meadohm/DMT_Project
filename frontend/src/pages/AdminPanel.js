@@ -69,6 +69,33 @@ function AdminPanel() {
   const [trashTypeFilter, setTrashTypeFilter] = useState('');
   const [trashPage, setTrashPage] = useState(1);
   const TRASH_PAGE_SIZE = 10;
+  const [selectedTrashIds, setSelectedTrashIds] = useState([]);
+
+  const toggleTrashSelect = (id) => {
+    setSelectedTrashIds(prev =>
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const toggleSelectAllTrash = (items) => {
+    if (selectedTrashIds.length === items.length) {
+      setSelectedTrashIds([]);
+    } else {
+      setSelectedTrashIds(items.map(i => i.id));
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    if (!window.confirm(`Supprimer définitivement ${selectedTrashIds.length} élément(s) ?`)) return;
+    for (const id of selectedTrashIds) {
+      await fetch(`${API_BASE_URL}/trash/${id}/delete/`, {
+        method: 'DELETE',
+        headers: { Authorization: `Token ${localStorage.getItem('token')}` }
+      });
+    }
+    setTrashItems(prev => prev.filter(i => !selectedTrashIds.includes(i.id)));
+    setSelectedTrashIds([]);
+  };
 
   // Formulaire utilisateur
   const [formData, setFormData] = useState({
@@ -1428,6 +1455,11 @@ function AdminPanel() {
                 🔥 Vider la corbeille
               </button>
               <button className="btn-secondary" onClick={fetchTrash}>↺ Actualiser</button>
+              {selectedTrashIds.length > 0 && (
+                <button className="btn-danger" onClick={handleDeleteSelected}>
+                  🗑️ Supprimer la sélection ({selectedTrashIds.length})
+                </button>
+              )}
             </div>
             {/* Alerte volume */}
             {trashItems.length >= 3 && (
@@ -1468,6 +1500,12 @@ function AdminPanel() {
               <table className="users-table">
                 <thead>
                   <tr>
+                    <th>
+                      <input type="checkbox"
+                        onChange={() => toggleSelectAllTrash(paginated)}
+                        checked={selectedTrashIds.length === paginated.length && paginated.length > 0}
+                      />
+                    </th>
                     <th>#</th>
                     <th>Type</th>
                     <th>Nom</th>
@@ -1479,7 +1517,13 @@ function AdminPanel() {
                 </thead>
                 <tbody>
                   {paginated.map((item, idx) => (
-                    <tr key={item.id}>
+                    <tr key={item.id} className={selectedTrashIds.includes(item.id) ? "row-selected" : ""}>
+                      <td>
+                        <input type="checkbox"
+                          checked={selectedTrashIds.includes(item.id)}
+                          onChange={() => toggleTrashSelect(item.id)}
+                        />
+                      </td>
                       <td>{idx + 1}</td>
                       <td>{item.item_type === 'file' ? '📄' : '📁'}</td>
                       <td>{item.nom}</td>

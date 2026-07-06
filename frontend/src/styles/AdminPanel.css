@@ -1867,3 +1867,11 @@ body.dark .dashboard-card-trend .recharts-text {
   border-color: #f59e0b;
   color: #fbbf24;
 }
+
+.row-selected {
+  background: rgba(108, 99, 255, 0.08) !important;
+}
+
+.admin-panel-container.dark .row-selected {
+  background: rgba(108, 99, 255, 0.15) !important;
+}
