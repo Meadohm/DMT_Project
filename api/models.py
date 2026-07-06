@@ -135,6 +135,22 @@ class FileRenameHistory(models.Model):
     class Meta:
         ordering = ['-renamed_at']
 
+class Trash(models.Model):
+    ITEM_TYPES = [('file', 'Fichier'), ('folder', 'Dossier')]
+    item_type = models.CharField(max_length=10, choices=ITEM_TYPES)
+    item_id = models.IntegerField()
+    nom = models.CharField(max_length=255)
+    original_name = models.CharField(max_length=255, blank=True, null=True)
+    deleted_by = models.ForeignKey(Utilisateur, on_delete=models.SET_NULL, null=True, related_name='trash_items')
+    deleted_at = models.DateTimeField(auto_now_add=True)
+    folder_nom = models.CharField(max_length=255, blank=True, null=True)
+    file_path = models.CharField(max_length=500, blank=True, null=True)
+    size_bytes = models.BigIntegerField(default=0)
+    metadata = models.JSONField(default=dict, blank=True)
+
+    class Meta:
+        ordering = ['-deleted_at']
+
 # Service
 class Service(models.Model):
     STATUT_CHOICES = [
