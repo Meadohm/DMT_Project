@@ -94,5 +94,6 @@ urlpatterns = [
     path('trash/', views.list_trash, name='list_trash'),
     path('trash/empty/', views.empty_trash, name='empty_trash'),
     path('trash/<int:trash_id>/delete/', views.delete_trash_item, name='delete_trash_item'),
+    path('trash/<int:trash_id>/restore/', views.restore_trash_item, name='restore_trash_item'),
 
 ]

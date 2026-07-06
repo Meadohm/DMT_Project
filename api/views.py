@@ -1791,6 +1791,47 @@ def delete_trash_item(request, trash_id):
     item.delete()
     return Response({'success': 'Élément supprimé définitivement.'})
 
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
+def restore_trash_item(request, trash_id):
+    """Restaurer un élément depuis la corbeille"""
+    try:
+        item = Trash.objects.get(id=trash_id)
+    except Trash.DoesNotExist:
+        return Response({'error': 'Élément introuvable.'}, status=status.HTTP_404_NOT_FOUND)
+
+    if item.item_type == 'file':
+        # Vérifier que le dossier parent existe encore
+        folder_id = item.metadata.get('folder_id')
+        try:
+            folder = Folder.objects.get(id=folder_id)
+        except Folder.DoesNotExist:
+            return Response({'error': 'Dossier parent introuvable — restauration impossible.'}, status=status.HTTP_400_BAD_REQUEST)
+        # Recréer l'entrée fichier en DB (le fichier physique est encore sur disque)
+        from api.models import File as FileModel
+        file_obj = FileModel.objects.create(
+            nom=item.nom,
+            original_name=item.original_name,
+            folder=folder,
+            fichier=item.file_path,
+            taille=item.size_bytes,
+            type_fichier=item.metadata.get('type_fichier', ''),
+            utilisateur_id=item.metadata.get('uploadeur_id'),
+        )
+        item.delete()
+        AuditLog.objects.create(
+            utilisateur=request.user,
+            action='UPDATE',
+            objet=f"Restauration fichier : {item.nom}",
+            adresse_ip=request.META.get('REMOTE_ADDR')
+        )
+        return Response({'success': f"Fichier '{item.nom}' restauré."})
+
+    elif item.item_type == 'folder':
+        return Response({'error': 'Restauration de dossier non supportée — complexité trop élevée.'}, status=status.HTTP_400_BAD_REQUEST)
+
 # FILE PREVIEW
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
