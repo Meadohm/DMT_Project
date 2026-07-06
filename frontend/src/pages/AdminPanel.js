@@ -70,6 +70,8 @@ function AdminPanel() {
   const [trashPage, setTrashPage] = useState(1);
   const TRASH_PAGE_SIZE = 10;
   const [selectedTrashIds, setSelectedTrashIds] = useState([]);
+  const [confirmTrashAction, setConfirmTrashAction] = useState(null);
+  // confirmTrashAction = { type: 'delete_single'|'restore_single'|'delete_selected'|'restore_selected', item: null|{id, nom} }
 
   const toggleTrashSelect = (id) => {
     setSelectedTrashIds(prev =>
@@ -86,7 +88,6 @@ function AdminPanel() {
   };
 
   const handleDeleteSelected = async () => {
-    if (!window.confirm(`Supprimer définitivement ${selectedTrashIds.length} élément(s) ?`)) return;
     for (const id of selectedTrashIds) {
       await fetch(`${API_BASE_URL}/trash/${id}/delete/`, {
         method: 'DELETE',
@@ -95,6 +96,7 @@ function AdminPanel() {
     }
     setTrashItems(prev => prev.filter(i => !selectedTrashIds.includes(i.id)));
     setSelectedTrashIds([]);
+    setConfirmTrashAction(null);
   };
 
   const handleRestoreSelected = async () => {
@@ -102,10 +104,9 @@ function AdminPanel() {
       trashItems.find(i => i.id === id)?.item_type === 'file'
     );
     if (fileIds.length === 0) {
-      alert('Seuls les fichiers peuvent être restaurés. Aucun fichier sélectionné.');
+      setConfirmTrashAction(null);
       return;
     }
-    if (!window.confirm(`Restaurer ${fileIds.length} fichier(s) ?`)) return;
     for (const id of fileIds) {
       await fetch(`${API_BASE_URL}/trash/${id}/restore/`, {
         method: 'POST',
@@ -114,6 +115,7 @@ function AdminPanel() {
     }
     setTrashItems(prev => prev.filter(i => !fileIds.includes(i.id)));
     setSelectedTrashIds([]);
+    setConfirmTrashAction(null);
   };
 
   // Formulaire utilisateur
@@ -257,35 +259,26 @@ function AdminPanel() {
     }
   };
 
-  const handleRestoreTrash = async (id, nom) => {
+  const handleRestoreTrash = async (id) => {
     try {
       const res = await fetch(`${API_BASE_URL}/trash/${id}/restore/`, {
         method: 'POST',
         headers: { Authorization: `Token ${localStorage.getItem('token')}` }
       });
-      if (res.ok) {
-        setTrashItems(prev => prev.filter(i => i.id !== id));
-        alert(`✅ "${nom}" restauré avec succès.`);
-      } else {
-        const err = await res.json();
-        alert(`❌ ${err.error}`);
-      }
-    } catch (err) {
-      alert('Erreur lors de la restauration.');
-    }
+      if (res.ok) setTrashItems(prev => prev.filter(i => i.id !== id));
+    } catch (err) {}
+    setConfirmTrashAction(null);
   };
 
-  const handleDeleteTrashItem = async (id, nom) => {
-    if (!window.confirm(`Supprimer définitivement "${nom}" ?`)) return;
+  const handleDeleteTrashItem = async (id) => {
     try {
       const res = await fetch(`${API_BASE_URL}/trash/${id}/delete/`, {
         method: 'DELETE',
         headers: { Authorization: `Token ${localStorage.getItem('token')}` }
       });
       if (res.ok) setTrashItems(prev => prev.filter(i => i.id !== id));
-    } catch (err) {
-      alert('Erreur suppression.');
-    }
+    } catch (err) {}
+    setConfirmTrashAction(null);
   };
 
   const handleEmptyTrash = async () => {
@@ -1476,10 +1469,10 @@ function AdminPanel() {
               <button className="btn-secondary" onClick={fetchTrash}>↺ Actualiser</button>
               {selectedTrashIds.length > 0 && (
                 <>
-                  <button className="btn-edit" onClick={handleRestoreSelected}>
+                  <button className="btn-edit" onClick={() => setConfirmTrashAction({ type: 'restore_selected' })}>
                     ↩️ Restaurer la sélection ({selectedTrashIds.filter(id => trashItems.find(i => i.id === id)?.item_type === 'file').length} fichiers)
                   </button>
-                  <button className="btn-danger" onClick={handleDeleteSelected}>
+                  <button className="btn-danger" onClick={() => setConfirmTrashAction({ type: 'delete_selected' })}>
                     🗑️ Supprimer la sélection ({selectedTrashIds.length})
                   </button>
                 </>
@@ -1558,14 +1551,14 @@ function AdminPanel() {
                         {item.item_type === 'file' && (
                           <button
                             className="btn-edit"
-                            onClick={() => handleRestoreTrash(item.id, item.nom)}
+                            onClick={() => setConfirmTrashAction({ type: 'restore_single', item })}
                           >
                             ↩️ Restaurer
                           </button>
                         )}
                         <button
                           className="btn-danger-sm"
-                          onClick={() => handleDeleteTrashItem(item.id, item.nom)}
+                          onClick={() => setConfirmTrashAction({ type: 'delete_single', item })}
                         >
                           🗑️ Supprimer
                         </button>
@@ -1587,6 +1580,56 @@ function AdminPanel() {
               </>
               );
             })()}
+            {confirmTrashAction && (
+              <div className="modal-overlay">
+                <div className="modal-box">
+                  {confirmTrashAction.type === 'delete_single' && (
+                    <>
+                      <h3>🗑️ Suppression définitive</h3>
+                      <p>Supprimer définitivement <strong>{confirmTrashAction.item.nom}</strong> ?</p>
+                      <p style={{color:'#ef4444', fontSize:'0.85rem'}}>Cette action est irréversible.</p>
+                      <div className="modal-actions">
+                        <button className="btn-cancel-confirm" onClick={() => setConfirmTrashAction(null)}>Annuler</button>
+                        <button className="btn-danger" onClick={() => handleDeleteTrashItem(confirmTrashAction.item.id)}>Supprimer</button>
+                      </div>
+                    </>
+                  )}
+                  {confirmTrashAction.type === 'restore_single' && (
+                    <>
+                      <h3>↩️ Restauration</h3>
+                      <p>Restaurer <strong>{confirmTrashAction.item.nom}</strong> dans son dossier d'origine ?</p>
+                      <div className="modal-actions">
+                        <button className="btn-cancel-confirm" onClick={() => setConfirmTrashAction(null)}>Annuler</button>
+                        <button className="btn-edit" onClick={() => handleRestoreTrash(confirmTrashAction.item.id)}>Restaurer</button>
+                      </div>
+                    </>
+                  )}
+                  {confirmTrashAction.type === 'delete_selected' && (
+                    <>
+                      <h3>🗑️ Suppression multiple</h3>
+                      <p>Supprimer définitivement <strong>{selectedTrashIds.length} élément(s)</strong> sélectionné(s) ?</p>
+                      <p style={{color:'#ef4444', fontSize:'0.85rem'}}>Cette action est irréversible.</p>
+                      <div className="modal-actions">
+                        <button className="btn-cancel-confirm" onClick={() => setConfirmTrashAction(null)}>Annuler</button>
+                        <button className="btn-danger" onClick={handleDeleteSelected}>Supprimer tout</button>
+                      </div>
+                    </>
+                  )}
+                  {confirmTrashAction.type === 'restore_selected' && (
+                    <>
+                      <h3>↩️ Restauration multiple</h3>
+                      <p>Restaurer <strong>{selectedTrashIds.filter(id => trashItems.find(i => i.id === id)?.item_type === 'file').length} fichier(s)</strong> sélectionné(s) ?</p>
+                      <p style={{fontSize:'0.82rem', color:'#6b7280'}}>Les dossiers sélectionnés seront ignorés.</p>
+                      <div className="modal-actions">
+                        <button className="btn-cancel-confirm" onClick={() => setConfirmTrashAction(null)}>Annuler</button>
+                        <button className="btn-edit" onClick={handleRestoreSelected}>Restaurer</button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
+
             {emptyTrashModal && (
               <div className="modal-overlay">
                 <div className="modal-box">
