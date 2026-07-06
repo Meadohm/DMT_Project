@@ -30,6 +30,7 @@ class Utilisateur(AbstractUser):
 # Nouveau modèle Folder ###########
 class Folder(models.Model):
     nom = models.CharField(max_length=255)
+    original_name = models.CharField(max_length=255, blank=True, null=True)
     proprietaire = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="folders")
     service = models.CharField(max_length=255, blank=True, null=True)
     parent = models.ForeignKey(
@@ -95,6 +96,7 @@ class File(models.Model):
     utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="files")
     fichier = models.FileField(upload_to=upload_to_folder, null=True, blank=True)
     nom = models.CharField(max_length=255, default="")
+    original_name = models.CharField(max_length=255, blank=True, null=True)
     taille = models.BigIntegerField(default=0)
     type_fichier = models.CharField(max_length=255, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -1211,6 +1211,9 @@ def create_folder(request):
 
     folder = Folder.objects.create(nom=nom, proprietaire=request.user, service=request.user.service)
 
+    folder.original_name = nom
+    folder.save(update_fields=['original_name'])
+
     folder_name = f"{folder.id}_{safe_folder_name(folder.nom)}"
     folder_path = os.path.join(settings.MEDIA_ROOT, "uploads", folder_name)
     os.makedirs(folder_path, exist_ok=True)
@@ -1258,6 +1261,9 @@ def create_subfolder(request, parent_id):
         service=request.user.service,
         parent=parent_folder  # nécessite que le modèle Folder ait un champ parent = ForeignKey('self', null=True, blank=True)
     )
+
+    subfolder.original_name = nom
+    subfolder.save(update_fields=['original_name'])
 
     # Crée le dossier physique imbriqué
     parent_path = os.path.join(settings.MEDIA_ROOT, "uploads", f"{parent_folder.id}_{safe_folder_name(parent_folder.nom)}")
@@ -1521,6 +1527,9 @@ def upload_file(request, folder_id):
     type_fichier=fichier.content_type or "application/octet-stream",
     file_hash=hasher.hexdigest()
     )
+
+    file_instance.original_name = base
+    file_instance.save(update_fields=['original_name'])
 
     # Notifier le propriétaire si ce n'est pas lui qui a uploadé
     if request.user != folder.proprietaire:
