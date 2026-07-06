@@ -290,7 +290,10 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
 
       const confirmRenameFile = async () => {
         try {
-          const updated = await renameFile(fileToRename.id, newFileName);
+          // Remettre l'extension avant d'envoyer au backend
+          const ext = fileToRename.nom.match(/\.[^.]+$/)?.[0] || '';
+          const nameToSend = newFileName.endsWith(ext) ? newFileName : newFileName + ext;
+          const updated = await renameFile(fileToRename.id, nameToSend);
           setFiles((prev) =>
             prev.map((f) =>
               f.id === fileToRename.id ? { ...f, nom: updated.nom } : f
