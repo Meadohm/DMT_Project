@@ -1691,3 +1691,20 @@ tr.user-inactive td {
   background: #3a1a1a;
   color: #eb5757;
 }
+
+/* ====== CORBEILLE ====== */
+.trash-alert {
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  color: #92400e;
+  padding: 10px 16px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.admin-panel-container.dark .trash-alert {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: #f59e0b;
+  color: #fbbf24;
+}

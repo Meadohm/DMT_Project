@@ -6,7 +6,7 @@
   position: relative;
 }
 
-/*  NOM DES DOSSIERS  */
+/* NOM DES DOSSIERS */
 .folder-name {
   color: #f7f7f7;
   font-weight: 500;
@@ -27,7 +27,7 @@
   font-weight: 600;
 }
 
-/*  STRUCTURE GLOBALE  */
+/* STRUCTURE GLOBALE  */
 .folder-node {
   display: flex;
   align-items: center;
@@ -124,7 +124,7 @@
   }
 }
 
-/*  Flèche animée pour sous-dossiers  */
+/* Flèche animée pour sous-dossiers */
 .arrow {
   display: inline-block;
   width: 16px;
@@ -156,7 +156,7 @@
   margin-right: 6px;
 }
 
-/*  Menu contextuel moderne Gemini+  */
+/* Menu contextuel moderne Gemini+ */
 .folder-menu-wrapper {
   position: relative;
   z-index: 10;
@@ -203,7 +203,7 @@
   transform: scale(1.02);
 }
 
-/* ✨ Animation fluide scale + fade */
+/* Animation fluide scale + fade */
 .scale-fade {
   animation: scaleFadeIn 0.25s ease forwards;
 }
@@ -235,7 +235,7 @@
   }
 }
 
-/*  Modale création sous-dossier (Gemini+ style)  */
+/* Modale création sous-dossier (Gemini+ style) */
 .subfolder-modal .modal-overlay {
   position: fixed;
   top: 0;

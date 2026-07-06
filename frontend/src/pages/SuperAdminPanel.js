@@ -65,6 +65,10 @@ function SuperAdminPanel() {
   const [emptyTrashModal, setEmptyTrashModal] = useState(false);
   const [trashEmail, setTrashEmail] = useState('');
   const [trashPassword, setTrashPassword] = useState('');
+  const [trashSearch, setTrashSearch] = useState('');
+  const [trashTypeFilter, setTrashTypeFilter] = useState('');
+  const [trashPage, setTrashPage] = useState(1);
+  const TRASH_PAGE_SIZE = 10;
 
   // Formulaire utilisateur
   const [formData, setFormData] = useState({
@@ -189,6 +193,10 @@ function SuperAdminPanel() {
 
   useEffect(() => {
     localStorage.setItem('adminActiveSection', activeSection);
+  }, [activeSection]);
+
+  useEffect(() => {
+    if (activeSection === 'trash') fetchTrash();
   }, [activeSection]);
 
   const fetchTrash = async () => {
@@ -657,7 +665,7 @@ function SuperAdminPanel() {
         <button className={activeSection === "files" ? "active" : ""} onClick={() => setActiveSection("files")}>Gestion fichiers</button>
         <button className={activeSection === "submissions" ? "active" : ""} onClick={() => { setActiveSection("submissions"); fetchHistorique(1, historiqueAction, historiqueSearch, dateDebut, dateFin); }}>Journal d'activité</button>
         <button className={activeSection === "createService" ? "active" : ""} onClick={() => setActiveSection("createService")}>Créer un service</button>
-        <button className={activeSection === "trash" ? "active" : ""} onClick={() => { setActiveSection("trash"); fetchTrash(); }}>🗑️ Corbeille</button>
+        <button className={activeSection === "trash" ? "active" : ""} onClick={() => { setActiveSection("trash"); fetchTrash(); }}> Corbeille</button>
         <button className={activeSection === "account" ? "active" : ""} onClick={() => setActiveSection("account")}>Mon Profil</button>
         <div className="sidebar-bottom">
           <div className="sidebar-logo">
@@ -1491,7 +1499,7 @@ function SuperAdminPanel() {
         {activeSection === "trash" && (
           <div className="trash-section">
             <div className="section-header">
-              <h2>🗑️ Corbeille</h2>
+              <h2>🗑️ Corbeille ({trashItems.length} élément{trashItems.length > 1 ? 's' : ''})</h2>
               <button
                 className="btn-danger"
                 onClick={() => { fetchTrash(); setEmptyTrashModal(true); }}
@@ -1501,11 +1509,42 @@ function SuperAdminPanel() {
               </button>
               <button className="btn-secondary" onClick={fetchTrash}>↺ Actualiser</button>
             </div>
+            {/* Alerte volume */}
+            {trashItems.length >= 3 && (
+              <div className="trash-alert">
+                ⚠️ La corbeille contient {trashItems.length} éléments. Pensez à la vider régulièrement.
+              </div>
+            )}
+            {/* Filtres */}
+            <div className="admin-filters-bar" style={{marginBottom:'12px'}}>
+              <input
+                placeholder="🔍 Rechercher par nom..."
+                value={trashSearch || ''}
+                onChange={e => { setTrashSearch(e.target.value); setTrashPage(1); }}
+                className="filter-input"
+              />
+              <select
+                value={trashTypeFilter || ''}
+                onChange={e => { setTrashTypeFilter(e.target.value); setTrashPage(1); }}
+                className="filter-select"
+              >
+                <option value="">Tous les types</option>
+                <option value="file">📄 Fichiers</option>
+                <option value="folder">📁 Dossiers</option>
+              </select>
+            </div>
             {trashLoading ? (
               <p>Chargement...</p>
             ) : trashItems.length === 0 ? (
               <p className="no-data">Corbeille vide.</p>
-            ) : (
+            ) : (() => {
+              const filtered = trashItems
+                .filter(i => !trashSearch || i.nom.toLowerCase().includes(trashSearch.toLowerCase()))
+                .filter(i => !trashTypeFilter || i.item_type === trashTypeFilter);
+              const totalPages = Math.ceil(filtered.length / TRASH_PAGE_SIZE);
+              const paginated = filtered.slice((trashPage-1)*TRASH_PAGE_SIZE, trashPage*TRASH_PAGE_SIZE);
+              return (
+              <>
               <table className="users-table">
                 <thead>
                   <tr>
@@ -1519,7 +1558,7 @@ function SuperAdminPanel() {
                   </tr>
                 </thead>
                 <tbody>
-                  {trashItems.map((item, idx) => (
+                  {paginated.map((item, idx) => (
                     <tr key={item.id}>
                       <td>{idx + 1}</td>
                       <td>{item.item_type === 'file' ? '📄' : '📁'}</td>
@@ -1547,7 +1586,19 @@ function SuperAdminPanel() {
                   ))}
                 </tbody>
               </table>
-            )}
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="pagination-controls">
+                  <button onClick={() => setTrashPage(1)} disabled={trashPage === 1}>⏮ Première</button>
+                  <button onClick={() => setTrashPage(p => Math.max(1, p-1))} disabled={trashPage === 1}>← Précédent</button>
+                  <span>Page {trashPage} / {totalPages}</span>
+                  <button onClick={() => setTrashPage(p => Math.min(totalPages, p+1))} disabled={trashPage === totalPages}>Suivant →</button>
+                  <button onClick={() => setTrashPage(totalPages)} disabled={trashPage === totalPages}>Dernière ⏭</button>
+                </div>
+              )}
+              </>
+              );
+            })()}
             {emptyTrashModal && (
               <div className="modal-overlay">
                 <div className="modal-box">
