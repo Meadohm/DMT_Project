@@ -1056,6 +1056,10 @@ def get_dashboard_stats(request):
             'free_gb': round(shutil.disk_usage(settings.BASE_DIR).free / (1024**3), 1),
             'used_pct': round((shutil.disk_usage(settings.BASE_DIR).used / shutil.disk_usage(settings.BASE_DIR).total) * 100, 1),
         },
+        'trash': {
+            'total': Trash.objects.count(),
+            'size_mb': round(sum(Trash.objects.values_list('size_bytes', flat=True)) / 1024 / 1024, 2),
+        },
         'folders': {
             'total': total_folders,
             'shared': shared_folders,

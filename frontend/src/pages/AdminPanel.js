@@ -814,6 +814,21 @@ function AdminPanel() {
                 </div>
                 <div className="dashboard-card-arrow">→</div>
               </div>
+              <div className="dashboard-card dashboard-card-trash" onClick={() => { setActiveSection("trash"); fetchTrash(); }}>
+                <div className="dashboard-card-icon">🗑️</div>
+                <div className="dashboard-card-content">
+                  <h3>Corbeille</h3>
+                  <div className="dashboard-card-main">{dashboardStats?.trash?.total ?? 0}</div>
+                  <div className="dashboard-card-details">
+                    <span className={`dash-detail${(dashboardStats?.trash?.total ?? 0) >= 10 ? " inactive" : ""}`}>
+                      {(dashboardStats?.trash?.total ?? 0) >= 10 ? "⚠️ À vider" : "✅ OK"}
+                    </span>
+                    <span className="dash-detail">💾 {dashboardStats?.trash?.size_mb ?? 0} MB</span>
+                  </div>
+                </div>
+                <div className="dashboard-card-arrow">→</div>
+              </div>
+
               <div className="dashboard-card dashboard-card-roles" onClick={() => setActiveSection("users")}>
                 <div className="dashboard-card-icon">🧩</div>
                 <div className="dashboard-card-content">
@@ -1475,7 +1490,7 @@ function AdminPanel() {
               )}
             </div>
             {/* Alerte volume */}
-            {trashItems.length >= 3 && (
+            {trashItems.length >= 10 && (
               <div className="trash-alert">
                 ⚠️ La corbeille contient {trashItems.length} éléments. Pensez à la vider régulièrement.
               </div>

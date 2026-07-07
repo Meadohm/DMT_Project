@@ -1328,6 +1328,9 @@ td:last-child {
 .dashboard-card-services::before { background: linear-gradient(90deg, #28a745, #20c997); }
 .dashboard-card-files::before    { background: linear-gradient(90deg, #ffc107, #fd7e14); }
 .dashboard-card-journal::before  { background: linear-gradient(90deg, #6f42c1, #e83e8c); }
+.dashboard-card-trash::before {
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+}
 
 .dashboard-card-icon {
   font-size: 2.2em;
