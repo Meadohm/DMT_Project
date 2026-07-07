@@ -31,6 +31,9 @@ class Utilisateur(AbstractUser):
 class Folder(models.Model):
     nom = models.CharField(max_length=255)
     original_name = models.CharField(max_length=255, blank=True, null=True)
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+    deleted_by = models.ForeignKey(Utilisateur, on_delete=models.SET_NULL, null=True, blank=True, related_name='deleted_folders')
     proprietaire = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="folders")
     service = models.CharField(max_length=255, blank=True, null=True)
     parent = models.ForeignKey(
