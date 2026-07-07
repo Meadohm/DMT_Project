@@ -701,6 +701,33 @@ def export_historique_csv(request):
     return response
 
 
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
+def restore_folder_from_trash(request, trash_id):
+    """Restaurer un dossier depuis la corbeille via soft delete"""
+    try:
+        item = Trash.objects.get(id=trash_id, item_type='folder')
+    except Trash.DoesNotExist:
+        return Response({'error': 'Dossier introuvable en corbeille.'}, status=status.HTTP_404_NOT_FOUND)
+    try:
+        folder = Folder.objects.get(id=item.item_id)
+    except Folder.DoesNotExist:
+        return Response({'error': 'Dossier introuvable en base.'}, status=status.HTTP_404_NOT_FOUND)
+    folder.is_deleted = False
+    folder.deleted_at = None
+    folder.deleted_by = None
+    folder.save(update_fields=['is_deleted', 'deleted_at', 'deleted_by'])
+    item.delete()
+    AuditLog.objects.create(
+        utilisateur=request.user,
+        action='UPDATE',
+        objet=f"Restauration dossier : {folder.nom}",
+        adresse_ip=request.META.get('REMOTE_ADDR')
+    )
+    return Response({'success': f"Dossier '{folder.nom}' restauré."})
+
+
 def notify_admins_trash(admin_username, count, is_selected=False, ip=''):
     """Notifie tous les admins et super_admins après vidage/suppression corbeille"""
     try:
@@ -1173,7 +1200,8 @@ def list_folders_service(request):
 
     service_folders = Folder.objects.filter(
         service=user.service,
-        is_archived=False
+        is_archived=False,
+        is_deleted=False
     ).prefetch_related("shares__user")
 
     shared_direct = Folder.objects.filter(
@@ -1185,7 +1213,8 @@ def list_folders_service(request):
     all_shared_ids = get_descendant_folder_ids(shared_ids)
     shared = Folder.objects.filter(
         id__in=all_shared_ids,
-        is_archived=False
+        is_archived=False,
+        is_deleted=False
     ).prefetch_related("shares__user")
 
     all_folders = (service_folders | shared).distinct()
@@ -1221,7 +1250,8 @@ def list_folders(request):
     """
     folders = Folder.objects.filter(
         proprietaire=request.user,
-        is_archived=False
+        is_archived=False,
+        is_deleted=False
     ).prefetch_related("shares__user")
 
     shared_direct = Folder.objects.filter(
@@ -1231,7 +1261,8 @@ def list_folders(request):
     all_shared_ids = get_descendant_folder_ids(shared_ids)
     shared = Folder.objects.filter(
         id__in=all_shared_ids,
-        is_archived=False
+        is_archived=False,
+        is_deleted=False
     ).prefetch_related("shares__user")
     all_folders = (folders | shared).distinct()
 
@@ -1388,7 +1419,7 @@ def delete_folder(request, folder_id):
     folder_name = f"{folder.id}_{safe_folder_name(folder.nom)}"
     folder_path = os.path.join(settings.MEDIA_ROOT, "uploads", folder_name)
 
-    # Déplacer en corbeille
+    # Soft delete — marquer comme supprimé sans supprimer physiquement
     Trash.objects.create(
         item_type='folder',
         item_id=folder.id,
@@ -1403,16 +1434,17 @@ def delete_folder(request, folder_id):
             'proprietaire_id': folder.proprietaire.id if folder.proprietaire else None,
         }
     )
-    if os.path.exists(folder_path):
-        shutil.rmtree(folder_path)
+    folder.is_deleted = True
+    folder.deleted_at = timezone.now()
+    folder.deleted_by = request.user
+    folder.save(update_fields=['is_deleted', 'deleted_at', 'deleted_by'])
     AuditLog.objects.create(
         utilisateur=request.user,
         action='DELETE',
         objet=f"Dossier : {folder.nom}",
         adresse_ip=request.META.get('REMOTE_ADDR')
     )
-    folder.delete()
-    return Response({'success': 'Dossier supprimé avec son contenu'})
+    return Response({'success': 'Dossier déplacé en corbeille.'})
 
 
 @api_view(['POST'])
