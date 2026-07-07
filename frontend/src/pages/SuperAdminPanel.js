@@ -65,6 +65,8 @@ function SuperAdminPanel() {
   const [emptyTrashModal, setEmptyTrashModal] = useState(false);
   const [trashEmail, setTrashEmail] = useState('');
   const [trashPassword, setTrashPassword] = useState('');
+  const [showTrashPassword, setShowTrashPassword] = useState(false);
+  const [trashError, setTrashError] = useState('');
   const [trashSearch, setTrashSearch] = useState('');
   const [trashTypeFilter, setTrashTypeFilter] = useState('');
   const [trashPage, setTrashPage] = useState(1);
@@ -264,27 +266,47 @@ function SuperAdminPanel() {
   };
 
   const handleEmptyTrash = async () => {
+    setTrashError('');
     try {
-      const res = await fetch(`${API_BASE_URL}/trash/empty/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Token ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ email: trashEmail, password: trashPassword })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setTrashItems([]);
+      const idsToDelete = selectedTrashIds.length > 0 ? selectedTrashIds : null;
+      let success = true;
+      if (idsToDelete) {
+        // Supprimer uniquement la sélection via credentials
+        const res = await fetch(`${API_BASE_URL}/trash/empty/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Token ${localStorage.getItem('token')}` },
+          body: JSON.stringify({ email: trashEmail, password: trashPassword, ids: idsToDelete })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          setTrashItems(prev => prev.filter(i => !idsToDelete.includes(i.id)));
+          setSelectedTrashIds([]);
+        } else {
+          setTrashError(data.error || 'Credentials invalides.');
+          success = false;
+        }
+      } else {
+        const res = await fetch(`${API_BASE_URL}/trash/empty/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Token ${localStorage.getItem('token')}` },
+          body: JSON.stringify({ email: trashEmail, password: trashPassword })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          setTrashItems([]);
+        } else {
+          setTrashError(data.error || 'Credentials invalides.');
+          success = false;
+        }
+      }
+      if (success) {
         setEmptyTrashModal(false);
         setTrashEmail('');
         setTrashPassword('');
-        alert(`✅ ${data.success}`);
-      } else {
-        alert(`❌ ${data.error}`);
+        setTrashError('');
       }
     } catch (err) {
-      alert('Erreur vidage corbeille.');
+      setTrashError('Erreur réseau.');
     }
   };
 
@@ -1518,10 +1540,12 @@ function SuperAdminPanel() {
               <h2>🗑️ Corbeille ({trashItems.length} élément{trashItems.length > 1 ? 's' : ''})</h2>
               <button
                 className="btn-danger"
-                onClick={() => { fetchTrash(); setEmptyTrashModal(true); }}
+                onClick={() => setEmptyTrashModal(true)}
                 disabled={trashItems.length === 0}
               >
-                🔥 Vider la corbeille
+                {selectedTrashIds.length > 0
+                  ? `🔥 Vider la sélection (${selectedTrashIds.length})`
+                  : `🔥 Vider tout (${trashItems.length})`}
               </button>
               <button className="btn-secondary" onClick={fetchTrash}>↺ Actualiser</button>
               {selectedTrashIds.length > 0 && (
@@ -1646,25 +1670,48 @@ function SuperAdminPanel() {
             {emptyTrashModal && (
               <div className="modal-overlay">
                 <div className="modal-box">
-                  <h3>🔐 Confirmer le vidage</h3>
-                  <p>Entrez vos credentials pour vider définitivement la corbeille.</p>
+                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'12px'}}>
+                    <h3>🔐 Confirmer le vidage</h3>
+                    <button onClick={() => { setEmptyTrashModal(false); setTrashError(''); }} style={{background:'none', border:'none', fontSize:'1.2rem', cursor:'pointer'}}>✕</button>
+                  </div>
+                  <p>{selectedTrashIds.length > 0
+                    ? `Supprimer définitivement ${selectedTrashIds.length} élément(s) sélectionné(s) ?`
+                    : `Vider toute la corbeille (${trashItems.length} élément(s)) définitivement ?`}
+                  </p>
+                  <p style={{color:'#ef4444', fontSize:'0.82rem', marginBottom:'12px'}}>⚠️ Cette action est irréversible. Entrez vos credentials pour confirmer.</p>
                   <input
                     type="email"
-                    placeholder="Email"
+                    placeholder="Votre email"
                     value={trashEmail}
-                    onChange={e => setTrashEmail(e.target.value)}
+                    onChange={e => { setTrashEmail(e.target.value); setTrashError(''); }}
                     className="form-input"
+                    style={{marginBottom:'8px', width:'100%'}}
                   />
-                  <input
-                    type="password"
-                    placeholder="Mot de passe"
-                    value={trashPassword}
-                    onChange={e => setTrashPassword(e.target.value)}
-                    className="form-input"
-                  />
+                  <div style={{position:'relative', marginBottom:'8px'}}>
+                    <input
+                      type={showTrashPassword ? "text" : "password"}
+                      placeholder="Votre mot de passe"
+                      value={trashPassword}
+                      onChange={e => { setTrashPassword(e.target.value); setTrashError(''); }}
+                      className="form-input"
+                      style={{width:'100%', paddingRight:'40px'}}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowTrashPassword(p => !p)}
+                      style={{position:'absolute', right:'10px', top:'50%', transform:'translateY(-50%)', background:'none', border:'none', cursor:'pointer', fontSize:'1rem'}}
+                    >
+                      {showTrashPassword ? '🙈' : '👁️'}
+                    </button>
+                  </div>
+                  {trashError && (
+                    <p style={{color:'#ef4444', fontSize:'0.82rem', marginBottom:'8px'}}>❌ {trashError}</p>
+                  )}
                   <div className="modal-actions">
-                    <button className="btn-cancel-confirm" onClick={() => setEmptyTrashModal(false)}>Annuler</button>
-                    <button className="btn-danger" onClick={handleEmptyTrash}>Vider définitivement</button>
+                    <button className="btn-cancel-confirm" onClick={() => { setEmptyTrashModal(false); setTrashError(''); }}>Annuler</button>
+                    <button className="btn-danger" onClick={handleEmptyTrash} disabled={!trashEmail || !trashPassword}>
+                      🔥 Confirmer la suppression
+                    </button>
                   </div>
                 </div>
               </div>

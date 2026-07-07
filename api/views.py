@@ -701,6 +701,34 @@ def export_historique_csv(request):
     return response
 
 
+def notify_admins_trash(admin_username, count, is_selected=False, ip=''):
+    """Notifie tous les admins et super_admins après vidage/suppression corbeille"""
+    try:
+        recipients = Utilisateur.objects.filter(
+            role__in=['admin', 'super_admin']
+        ).exclude(username=admin_username)
+        emails = [a.email for a in recipients if a.email]
+        if not emails:
+            return
+        action = "éléments sélectionnés" if is_selected else "corbeille complète"
+        subject = f'[DMT] 🗑️ Corbeille vidée — {count} élément(s) supprimé(s)'
+        body = (
+            f"Bonjour,\n\n"
+            f"L'administrateur {admin_username} vient de vider la corbeille.\n\n"
+            f"Détails :\n"
+            f"  • Administrateur : {admin_username}\n"
+            f"  • Action         : Suppression {action}\n"
+            f"  • Éléments       : {count} supprimé(s) définitivement\n"
+            f"  • Adresse IP     : {ip}\n"
+            f"  • Date           : {timezone.now().strftime('%d/%m/%Y %H:%M')}\n\n"
+            "Cette action est enregistrée dans le Journal d'activité.\n\n"
+            "Cordialement,\nDocFlow Pro DMT — Doumbia Moussa Transport"
+        )
+        send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, emails, fail_silently=True)
+    except Exception as e:
+        print(f'Erreur envoi email corbeille: {e}')
+
+
 def notify_admins_deletion(admin_username, log_info, ip, is_bulk=False):
     """Notifie tous les admins et super_admins par email lors d'une suppression de journal"""
     try:
@@ -1768,13 +1796,24 @@ def empty_trash(request):
     user = authenticate(username=request.user.username, password=password)
     if not user or user.email != email:
         return Response({'error': 'Credentials invalides.'}, status=status.HTTP_403_FORBIDDEN)
-    count = Trash.objects.count()
-    Trash.objects.all().delete()
+    ids = request.data.get('ids', None)
+    if ids:
+        qs = Trash.objects.filter(id__in=ids)
+    else:
+        qs = Trash.objects.all()
+    count = qs.count()
+    qs.delete()
     AuditLog.objects.create(
         utilisateur=request.user,
         action='DELETE',
         objet=f"Corbeille vidée : {count} éléments supprimés définitivement",
         adresse_ip=request.META.get('REMOTE_ADDR')
+    )
+    notify_admins_trash(
+        admin_username=request.user.username,
+        count=count,
+        is_selected=False,
+        ip=request.META.get('REMOTE_ADDR', '')
     )
     return Response({'success': f'{count} éléments supprimés définitivement.'})
 
@@ -2278,7 +2317,7 @@ def delete_archive(request, archive_id):
     
     return Response({'success': 'Archive supprimée avec succès.'})
 
-##### ARCHIVE SHARING (Partage d'archive) #####
+# ARCHIVE SHARING (Partage d'archive) 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
