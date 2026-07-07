@@ -90,20 +90,24 @@ function SuperAdminPanel() {
   };
 
   const handleRestoreSelected = async () => {
-    const fileIds = selectedTrashIds.filter(id =>
-      trashItems.find(i => i.id === id)?.item_type === 'file'
-    );
-    if (fileIds.length === 0) {
+    const items = selectedTrashIds
+      .map(id => trashItems.find(i => i.id === id))
+      .filter(Boolean);
+    if (items.length === 0) {
       setConfirmTrashAction(null);
       return;
     }
-    for (const id of fileIds) {
-      await fetch(`${API_BASE_URL}/trash/${id}/restore/`, {
+    for (const item of items) {
+      const endpoint = item.item_type === 'folder'
+        ? `${API_BASE_URL}/trash/${item.id}/restore-folder/`
+        : `${API_BASE_URL}/trash/${item.id}/restore/`;
+      await fetch(endpoint, {
         method: 'POST',
         headers: { Authorization: `Token ${localStorage.getItem('token')}` }
       });
     }
-    setTrashItems(prev => prev.filter(i => !fileIds.includes(i.id)));
+    const restoredIds = items.map(i => i.id);
+    setTrashItems(prev => prev.filter(i => !restoredIds.includes(i.id)));
     setSelectedTrashIds([]);
     setConfirmTrashAction(null);
   };
@@ -254,9 +258,12 @@ function SuperAdminPanel() {
     }
   };
 
-  const handleRestoreTrash = async (id) => {
+  const handleRestoreTrash = async (id, item_type) => {
+    const endpoint = item_type === 'folder'
+      ? `${API_BASE_URL}/trash/${id}/restore-folder/`
+      : `${API_BASE_URL}/trash/${id}/restore/`;
     try {
-      const res = await fetch(`${API_BASE_URL}/trash/${id}/restore/`, {
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { Authorization: `Token ${localStorage.getItem('token')}` }
       });
@@ -1565,7 +1572,7 @@ function SuperAdminPanel() {
               <button className="btn-secondary" onClick={fetchTrash}>↺ Actualiser</button>
               {selectedTrashIds.length > 0 && (
                 <button className="btn-edit" onClick={() => setConfirmTrashAction({ type: 'restore_selected' })}>
-                  ↩️ Restaurer la sélection ({selectedTrashIds.filter(id => trashItems.find(i => i.id === id)?.item_type === 'file').length} fichiers)
+                  ↩️ Restaurer la sélection ({selectedTrashIds.length})
                 </button>
               )}
             </div>
@@ -1620,6 +1627,7 @@ function SuperAdminPanel() {
                     <th>Dossier</th>
                     <th>Supprimé par</th>
                     <th>Date</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1637,6 +1645,14 @@ function SuperAdminPanel() {
                       <td>{item.folder_nom || '—'}</td>
                       <td>{item.deleted_by}</td>
                       <td>{item.deleted_at}</td>
+                      <td>
+                        <button
+                          className="btn-edit"
+                          onClick={() => setConfirmTrashAction({ type: 'restore_single', item })}
+                        >
+                          ↩️ Restaurer
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -1663,15 +1679,14 @@ function SuperAdminPanel() {
                       <p>Restaurer <strong>{confirmTrashAction.item.nom}</strong> dans son dossier d'origine ?</p>
                       <div className="modal-actions">
                         <button className="btn-cancel-confirm" onClick={() => setConfirmTrashAction(null)}>Annuler</button>
-                        <button className="btn-edit" onClick={() => handleRestoreTrash(confirmTrashAction.item.id)}>Restaurer</button>
+                        <button className="btn-edit" onClick={() => handleRestoreTrash(confirmTrashAction.item.id, confirmTrashAction.item.item_type)}>Restaurer</button>
                       </div>
                     </>
                   )}
                   {confirmTrashAction.type === 'restore_selected' && (
                     <>
                       <h3>↩️ Restauration multiple</h3>
-                      <p>Restaurer <strong>{selectedTrashIds.filter(id => trashItems.find(i => i.id === id)?.item_type === 'file').length} fichier(s)</strong> sélectionné(s) ?</p>
-                      <p style={{fontSize:'0.82rem', color:'#6b7280'}}>Les dossiers sélectionnés seront ignorés.</p>
+                      <p>Restaurer <strong>{selectedTrashIds.length} élément(s)</strong> sélectionné(s) ?</p>
                       <div className="modal-actions">
                         <button className="btn-cancel-confirm" onClick={() => setConfirmTrashAction(null)}>Annuler</button>
                         <button className="btn-edit" onClick={handleRestoreSelected}>Restaurer</button>
