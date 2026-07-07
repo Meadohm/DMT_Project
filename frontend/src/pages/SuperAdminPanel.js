@@ -87,18 +87,6 @@ function SuperAdminPanel() {
     }
   };
 
-  const handleDeleteSelected = async () => {
-    for (const id of selectedTrashIds) {
-      await fetch(`${API_BASE_URL}/trash/${id}/delete/`, {
-        method: 'DELETE',
-        headers: { Authorization: `Token ${localStorage.getItem('token')}` }
-      });
-    }
-    setTrashItems(prev => prev.filter(i => !selectedTrashIds.includes(i.id)));
-    setSelectedTrashIds([]);
-    setConfirmTrashAction(null);
-  };
-
   const handleRestoreSelected = async () => {
     const fileIds = selectedTrashIds.filter(id =>
       trashItems.find(i => i.id === id)?.item_type === 'file'
@@ -268,17 +256,6 @@ function SuperAdminPanel() {
     try {
       const res = await fetch(`${API_BASE_URL}/trash/${id}/restore/`, {
         method: 'POST',
-        headers: { Authorization: `Token ${localStorage.getItem('token')}` }
-      });
-      if (res.ok) setTrashItems(prev => prev.filter(i => i.id !== id));
-    } catch (err) {}
-    setConfirmTrashAction(null);
-  };
-
-  const handleDeleteTrashItem = async (id) => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/trash/${id}/delete/`, {
-        method: 'DELETE',
         headers: { Authorization: `Token ${localStorage.getItem('token')}` }
       });
       if (res.ok) setTrashItems(prev => prev.filter(i => i.id !== id));
@@ -1548,14 +1525,9 @@ function SuperAdminPanel() {
               </button>
               <button className="btn-secondary" onClick={fetchTrash}>↺ Actualiser</button>
               {selectedTrashIds.length > 0 && (
-                <>
-                  <button className="btn-edit" onClick={() => setConfirmTrashAction({ type: 'restore_selected' })}>
-                    ↩️ Restaurer la sélection ({selectedTrashIds.filter(id => trashItems.find(i => i.id === id)?.item_type === 'file').length} fichiers)
-                  </button>
-                  <button className="btn-danger" onClick={() => setConfirmTrashAction({ type: 'delete_selected' })}>
-                    🗑️ Supprimer la sélection ({selectedTrashIds.length})
-                  </button>
-                </>
+                <button className="btn-edit" onClick={() => setConfirmTrashAction({ type: 'restore_selected' })}>
+                  ↩️ Restaurer la sélection ({selectedTrashIds.filter(id => trashItems.find(i => i.id === id)?.item_type === 'file').length} fichiers)
+                </button>
               )}
             </div>
             {/* Alerte volume */}
@@ -1609,7 +1581,6 @@ function SuperAdminPanel() {
                     <th>Dossier</th>
                     <th>Supprimé par</th>
                     <th>Date</th>
-                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1627,22 +1598,6 @@ function SuperAdminPanel() {
                       <td>{item.folder_nom || '—'}</td>
                       <td>{item.deleted_by}</td>
                       <td>{item.deleted_at}</td>
-                      <td>
-                        {item.item_type === 'file' && (
-                          <button
-                            className="btn-edit"
-                            onClick={() => setConfirmTrashAction({ type: 'restore_single', item })}
-                          >
-                            ↩️ Restaurer
-                          </button>
-                        )}
-                        <button
-                          className="btn-danger-sm"
-                          onClick={() => setConfirmTrashAction({ type: 'delete_single', item })}
-                        >
-                          🗑️ Supprimer
-                        </button>
-                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -1663,17 +1618,6 @@ function SuperAdminPanel() {
             {confirmTrashAction && (
               <div className="modal-overlay">
                 <div className="modal-box">
-                  {confirmTrashAction.type === 'delete_single' && (
-                    <>
-                      <h3>🗑️ Suppression définitive</h3>
-                      <p>Supprimer définitivement <strong>{confirmTrashAction.item.nom}</strong> ?</p>
-                      <p style={{color:'#ef4444', fontSize:'0.85rem'}}>Cette action est irréversible.</p>
-                      <div className="modal-actions">
-                        <button className="btn-cancel-confirm" onClick={() => setConfirmTrashAction(null)}>Annuler</button>
-                        <button className="btn-danger" onClick={() => handleDeleteTrashItem(confirmTrashAction.item.id)}>Supprimer</button>
-                      </div>
-                    </>
-                  )}
                   {confirmTrashAction.type === 'restore_single' && (
                     <>
                       <h3>↩️ Restauration</h3>
@@ -1681,17 +1625,6 @@ function SuperAdminPanel() {
                       <div className="modal-actions">
                         <button className="btn-cancel-confirm" onClick={() => setConfirmTrashAction(null)}>Annuler</button>
                         <button className="btn-edit" onClick={() => handleRestoreTrash(confirmTrashAction.item.id)}>Restaurer</button>
-                      </div>
-                    </>
-                  )}
-                  {confirmTrashAction.type === 'delete_selected' && (
-                    <>
-                      <h3>🗑️ Suppression multiple</h3>
-                      <p>Supprimer définitivement <strong>{selectedTrashIds.length} élément(s)</strong> sélectionné(s) ?</p>
-                      <p style={{color:'#ef4444', fontSize:'0.85rem'}}>Cette action est irréversible.</p>
-                      <div className="modal-actions">
-                        <button className="btn-cancel-confirm" onClick={() => setConfirmTrashAction(null)}>Annuler</button>
-                        <button className="btn-danger" onClick={handleDeleteSelected}>Supprimer tout</button>
                       </div>
                     </>
                   )}
