@@ -1614,7 +1614,7 @@ function AdminPanel() {
                       value={trashPassword}
                       onChange={e => { setTrashPassword(e.target.value); setTrashError(''); }}
                       className="form-input"
-                      style={{width:'100%', paddingRight:'40px'}}
+                      style={{width:'100%', paddingRight:'40px', boxSizing:'border-box'}}
                     />
                     <button
                       type="button"
