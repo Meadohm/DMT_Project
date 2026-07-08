@@ -2955,3 +2955,62 @@ body.dark .folder-file-count {
   background: rgba(108, 99, 255, 0.2);
   color: #a5b4fc;
 }
+
+/* MULTI-SÉLECTION FICHIERS */
+.file-multiselect-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0 10px 0;
+  border-bottom: 1px solid #f3f4f6;
+  margin-bottom: 8px;
+}
+
+.file-select-all {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.btn-delete-selected {
+  background: #fee2e2;
+  color: #ef4444;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-delete-selected:hover {
+  background: #ef4444;
+  color: white;
+}
+
+.file-checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.file-item-selected {
+  background: rgba(108, 99, 255, 0.06) !important;
+}
+
+body.dark .file-multiselect-bar {
+  border-bottom-color: #2d3555;
+}
+
+body.dark .file-select-all {
+  color: #aab4c8;
+}
+
+body.dark .file-item-selected {
+  background: rgba(108, 99, 255, 0.12) !important;
+}

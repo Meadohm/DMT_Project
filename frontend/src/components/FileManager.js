@@ -42,6 +42,25 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
   const [fileToMove, setFileToMove] = useState(null);
   const [moveTargetFolderId, setMoveTargetFolderId] = useState("");
   const [fileSearch, setFileSearch] = useState("");
+  const [selectedFileIds, setSelectedFileIds] = useState([]);
+  const [confirmDeleteFiles, setConfirmDeleteFiles] = useState(false);
+
+  const toggleFileSelect = (id) => {
+    setSelectedFileIds(prev =>
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const toggleSelectAllFiles = () => {
+    const deletableFiles = filteredFiles.filter(f =>
+      activeFolder?.permissions?.can_delete
+    );
+    if (selectedFileIds.length === deletableFiles.length) {
+      setSelectedFileIds([]);
+    } else {
+      setSelectedFileIds(deletableFiles.map(f => f.id));
+    }
+  };
   const [fileSortBy, setFileSortBy] = useState("date_desc");
   const [fileTypeFilter, setFileTypeFilter] = useState("all");
 
@@ -50,6 +69,7 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
     setFileSearch("");
     setFileSortBy("date_desc");
     setFileTypeFilter("all");
+    setSelectedFileIds([]);
   }, [activeFolder?.id]);
 
   // ── Breadcrumb ────────────────────────────────────────────────
@@ -309,6 +329,20 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
           setFileToRename(null);
           setNewFileName("");
         }
+      };
+
+      const handleDeleteSelected = async () => {
+        for (const id of selectedFileIds) {
+          try {
+            await deleteFile(id);
+          } catch (err) {
+            console.error("Erreur suppression fichier", id, err);
+          }
+        }
+        setFiles(prev => prev.filter(f => !selectedFileIds.includes(f.id)));
+        setSelectedFileIds([]);
+        setConfirmDeleteFiles(false);
+        if (onRefreshNotifications) onRefreshNotifications();
       };
 
       // Déplacement
@@ -605,10 +639,39 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                     </select>
                   </div>
                 )}
+                {files.length > 0 && activeFolder?.permissions?.can_delete && (
+                  <div className="file-multiselect-bar">
+                    <label className="file-select-all">
+                      <input
+                        type="checkbox"
+                        onChange={toggleSelectAllFiles}
+                        checked={selectedFileIds.length > 0 && selectedFileIds.length === filteredFiles.filter(f => activeFolder?.permissions?.can_delete).length}
+                      />
+                      Tout sélectionner
+                    </label>
+                    {selectedFileIds.length > 0 && (
+                      <button
+                        className="btn-delete-selected"
+                        onClick={() => setConfirmDeleteFiles(true)}
+                      >
+                        🗑️ Supprimer la sélection ({selectedFileIds.length})
+                      </button>
+                    )}
+                  </div>
+                )}
                 {files.length > 0 ? (
                   <ul className="file-list">
                     {filteredFiles.map((file) => (
-                      <li key={file.id} className="file-item">
+                      <li key={file.id} className={`file-item${selectedFileIds.includes(file.id) ? " file-item-selected" : ""}`}>
+                        {activeFolder?.permissions?.can_delete && (
+                          <input
+                            type="checkbox"
+                            className="file-checkbox"
+                            checked={selectedFileIds.includes(file.id)}
+                            onChange={() => toggleFileSelect(file.id)}
+                            onClick={e => e.stopPropagation()}
+                          />
+                        )}
                         <span className="file-name" onClick={() => handlePreview(file)}>
                           <span className="file-icon">{getFileIcon(file.nom)}</span> {file.nom}
                           {file.original_name && file.original_name !== file.nom.replace(/_\d{4}-\d{2}-\d{2}.*$/, '') && (
@@ -796,6 +859,19 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                   <strong>{fileToDelete?.nom}</strong> ?
                 </p>
               </Modal>
+            )}
+
+            {confirmDeleteFiles && (
+              <div className="modal-overlay">
+                <div className="modal-content">
+                  <h3>🗑️ Supprimer {selectedFileIds.length} fichier{selectedFileIds.length > 1 ? 's' : ''} ?</h3>
+                  <p style={{color:'#ef4444', fontSize:'0.85rem'}}>Cette action est irréversible.</p>
+                  <div className="modal-actions" style={{marginTop:'16px', display:'flex', gap:'8px', justifyContent:'flex-end'}}>
+                    <button className="btn-cancel-confirm" onClick={() => setConfirmDeleteFiles(false)}>Annuler</button>
+                    <button className="btn-danger" onClick={handleDeleteSelected}>Supprimer</button>
+                  </div>
+                </div>
+              </div>
             )}
 
             {moveModalOpen && fileToMove && (
