@@ -205,7 +205,10 @@ function AdminPanel() {
       fetchData();
       fetchServices();
       fetchDashboardStats();
-    }, 5000);
+      if (localStorage.getItem('adminActiveSection') === 'trash') {
+        fetchTrash();
+      }
+    }, 30000);
     const section = localStorage.getItem('adminActiveSection');
     if (section === 'submissions') {
       const savedPage = parseInt(localStorage.getItem('historiquePage') || '1');
