@@ -861,10 +861,10 @@ function SuperAdminPanel() {
                   <h3>Corbeille</h3>
                   <div className="dashboard-card-main">{dashboardStats?.trash?.total ?? 0}</div>
                   <div className="dashboard-card-details">
+                    <span className="dash-detail">📄 {dashboardStats?.trash?.fichiers ?? 0} fichiers · 📁 {dashboardStats?.trash?.dossiers ?? 0} dossiers</span>
                     <span className={`dash-detail${(dashboardStats?.trash?.total ?? 0) >= 10 ? " inactive" : ""}`}>
-                      {(dashboardStats?.trash?.total ?? 0) >= 10 ? "⚠️ À vider" : "✅ OK"}
+                      {(dashboardStats?.trash?.total ?? 0) >= 10 ? "⚠️ À vider" : "✅ OK"} · 💾 {dashboardStats?.trash?.size_mb ?? 0} MB
                     </span>
-                    <span className="dash-detail">💾 {dashboardStats?.trash?.size_mb ?? 0} MB</span>
                   </div>
                 </div>
                 <div className="dashboard-card-arrow">→</div>

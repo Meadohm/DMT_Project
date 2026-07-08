@@ -1099,6 +1099,8 @@ def get_dashboard_stats(request):
         },
         'trash': {
             'total': Trash.objects.count(),
+            'fichiers': Trash.objects.filter(item_type='file').count(),
+            'dossiers': Trash.objects.filter(item_type='folder').count(),
             'size_mb': round(sum(Trash.objects.values_list('size_bytes', flat=True)) / 1024 / 1024, 2),
         },
         'folders': {
