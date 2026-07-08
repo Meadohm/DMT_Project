@@ -107,10 +107,9 @@ function AdminPanel() {
         headers: { Authorization: `Token ${localStorage.getItem('token')}` }
       });
     }
-    const restoredIds = items.map(i => i.id);
-    setTrashItems(prev => prev.filter(i => !restoredIds.includes(i.id)));
     setSelectedTrashIds([]);
     setConfirmTrashAction(null);
+    await fetchTrash(); // Resynchroniser — inclut suppression automatique des parents
   };
 
   // Formulaire utilisateur
@@ -284,7 +283,6 @@ function AdminPanel() {
         });
         const data = await res.json();
         if (res.ok) {
-          setTrashItems(prev => prev.filter(i => !idsToDelete.includes(i.id)));
           setSelectedTrashIds([]);
         } else {
           setTrashError(data.error || 'Credentials invalides.');
@@ -297,9 +295,7 @@ function AdminPanel() {
           body: JSON.stringify({ email: trashEmail, password: trashPassword })
         });
         const data = await res.json();
-        if (res.ok) {
-          setTrashItems([]);
-        } else {
+        if (!res.ok) {
           setTrashError(data.error || 'Credentials invalides.');
           success = false;
         }
@@ -309,6 +305,7 @@ function AdminPanel() {
         setTrashEmail('');
         setTrashPassword('');
         setTrashError('');
+        await fetchTrash(); // Resynchroniser — inclut suppression automatique des parents
       }
       setTrashEmptying(false);
     } catch (err) {
