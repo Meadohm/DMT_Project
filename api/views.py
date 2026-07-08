@@ -1153,6 +1153,14 @@ def get_service_stats(request):
         timestamp__gte=timezone.now() - timedelta(days=7)
     ).select_related('utilisateur').order_by('-timestamp')[:10]
 
+    # Membres connectés aujourd'hui
+    today_start = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    connectes_aujourdhui = membres.filter(last_login__gte=today_start).values_list('username', flat=True)
+    non_connectes_aujourdhui = membres.exclude(last_login__gte=today_start).values_list('username', flat=True)
+
+    # Membres en ligne maintenant (avec noms)
+    membres_en_ligne_noms = membres.filter(last_seen__gte=threshold).values_list('username', flat=True)
+
     activite_recente = [{
         'utilisateur': log.utilisateur.username if log.utilisateur else '—',
         'action': log.action,
@@ -1165,6 +1173,9 @@ def get_service_stats(request):
         'membres': {
             'total': membres.count(),
             'en_ligne': membres_en_ligne,
+            'en_ligne_noms': list(membres_en_ligne_noms),
+            'connectes_aujourdhui': list(connectes_aujourdhui),
+            'non_connectes_aujourdhui': list(non_connectes_aujourdhui),
         },
         'dossiers': {
             'total': total_dossiers,

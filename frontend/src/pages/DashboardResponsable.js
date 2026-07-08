@@ -581,7 +581,36 @@ function DashboardResponsable() {
                 <div className="service-stat-icon">👥</div>
                 <div className="service-stat-value">{serviceStats.membres.total}</div>
                 <div className="service-stat-label">Membres</div>
-                <div className="service-stat-sub">🟢 {serviceStats.membres.en_ligne} en ligne</div>
+                <div className="service-stat-sub">
+                  🟢 {serviceStats.membres.en_ligne} en ligne
+                  {serviceStats.membres.en_ligne_noms?.length > 0 && (
+                    <div style={{marginTop:'4px', fontSize:'0.72rem', color:'#16a34a'}}>
+                      {serviceStats.membres.en_ligne_noms.join(', ')}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="service-stat-card">
+                <div className="service-stat-icon">📅</div>
+                <div className="service-stat-value">{serviceStats.membres.connectes_aujourdhui?.length ?? 0}</div>
+                <div className="service-stat-label">Connectés aujourd'hui</div>
+                <div className="service-stat-sub">
+                  {serviceStats.membres.connectes_aujourdhui?.length > 0
+                    ? <span style={{color:'#16a34a'}}>✅ {serviceStats.membres.connectes_aujourdhui.join(', ')}</span>
+                    : <span>—</span>
+                  }
+                </div>
+              </div>
+              <div className="service-stat-card">
+                <div className="service-stat-icon">💤</div>
+                <div className="service-stat-value">{serviceStats.membres.non_connectes_aujourdhui?.length ?? 0}</div>
+                <div className="service-stat-label">Absents aujourd'hui</div>
+                <div className="service-stat-sub">
+                  {serviceStats.membres.non_connectes_aujourdhui?.length > 0
+                    ? <span style={{color:'#ef4444'}}>❌ {serviceStats.membres.non_connectes_aujourdhui.join(', ')}</span>
+                    : <span style={{color:'#16a34a'}}>✅ Tous connectés</span>
+                  }
+                </div>
               </div>
               <div className="service-stat-card">
                 <div className="service-stat-icon">📁</div>
