@@ -1645,7 +1645,17 @@ function SuperAdminPanel() {
                       </td>
                       <td>{idx + 1}</td>
                       <td>{item.item_type === 'file' ? '📄' : '📁'}</td>
-                      <td>{item.nom}</td>
+                      <td>
+                        <div>{item.nom}</div>
+                        {item.parent_nom && (
+                          <div
+                            style={{fontSize:'0.75rem', color:'#9ca3af', marginTop:'2px'}}
+                            title="La restauration de ce dossier restaurera aussi son parent"
+                          >
+                            📁 sous-dossier de : <strong>{item.parent_nom}</strong> ⚠️
+                          </div>
+                        )}
+                      </td>
                       <td>{item.folder_nom || '—'}</td>
                       <td>{item.deleted_by}</td>
                       <td>{item.deleted_at}</td>
