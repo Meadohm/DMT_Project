@@ -259,6 +259,14 @@ API REST Django + React · Auth RBAC 4 rôles · Gestion dossiers fichiers · Pa
 
 ---
 
+## Roadmap
+
+Les features suivantes sont planifiées pour les prochaines phases :
+- Phase Analytics : statistiques suppressions (graphiques mensuels/hebdomadaires)
+- Phase Chat : système de commentaires par dossier/fichier (WebSocket)
+
+---
+
 ## Confidentialité
 
 Les données opérationnelles réelles de DMT ne sont pas incluses dans ce dépôt. Seul le code source, les modèles et la documentation sont publics. Les fichiers `media`, `.env` sont exclus du versioning.
