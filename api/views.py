@@ -714,10 +714,24 @@ def restore_folder_from_trash(request, trash_id):
         folder = Folder.objects.get(id=item.item_id)
     except Folder.DoesNotExist:
         return Response({'error': 'Dossier introuvable en base.'}, status=status.HTTP_404_NOT_FOUND)
+    # Restaurer le dossier
     folder.is_deleted = False
     folder.deleted_at = None
     folder.deleted_by = None
     folder.save(update_fields=['is_deleted', 'deleted_at', 'deleted_by'])
+
+    # Restaurer les parents supprimés récursivement
+    parent = folder.parent
+    while parent:
+        if parent.is_deleted:
+            parent.is_deleted = False
+            parent.deleted_at = None
+            parent.deleted_by = None
+            parent.save(update_fields=['is_deleted', 'deleted_at', 'deleted_by'])
+            # Retirer du trash si présent
+            Trash.objects.filter(item_type='folder', item_id=parent.id).delete()
+        parent = parent.parent
+
     item.delete()
     AuditLog.objects.create(
         utilisateur=request.user,
