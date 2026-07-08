@@ -83,6 +83,24 @@ function DashboardResponsable() {
     return () => clearInterval(interval);
   }, []);
 
+  // Heartbeat last-seen toutes les 30s
+  useEffect(() => {
+    const heartbeat = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+          await fetch(`${API_BASE_URL}/last-seen/`, {
+            method: 'POST',
+            headers: { Authorization: `Token ${token}` }
+          });
+        }
+      } catch (err) {}
+    };
+    heartbeat();
+    const interval = setInterval(heartbeat, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     (async () => {
       const valid = await checkTokenValidity();
@@ -596,7 +614,7 @@ function DashboardResponsable() {
                 <div className="service-stat-label">Connectés aujourd'hui</div>
                 <div className="service-stat-sub">
                   {serviceStats.membres.connectes_aujourdhui?.length > 0
-                    ? <span style={{color:'#16a34a'}}>✅ {serviceStats.membres.connectes_aujourdhui.join(', ')}</span>
+                    ? <span style={{color:'#16a34a'}}>{serviceStats.membres.connectes_aujourdhui.join(', ')}</span>
                     : <span>—</span>
                   }
                 </div>
@@ -608,7 +626,7 @@ function DashboardResponsable() {
                 <div className="service-stat-sub">
                   {serviceStats.membres.non_connectes_aujourdhui?.length > 0
                     ? <span style={{color:'#ef4444'}}>❌ {serviceStats.membres.non_connectes_aujourdhui.join(', ')}</span>
-                    : <span style={{color:'#16a34a'}}>✅ Tous connectés</span>
+                    : <span style={{color:'#16a34a'}}>Tous connectés</span>
                   }
                 </div>
               </div>

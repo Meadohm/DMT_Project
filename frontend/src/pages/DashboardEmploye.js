@@ -30,6 +30,7 @@ import { clearAll } from "../services/notificationService";
 import useClock from "../hooks/useClock";
 import DashboardTopbar from "../components/DashboardTopbar";
 import DashboardSidebar from "../components/DashboardSidebar";
+import API_BASE_URL from "../config";
 import "../styles/FileManager.css";
 import "../styles/SidebarGemini.css";
 import logo from "../assets/dmt.png";
@@ -84,6 +85,24 @@ function DashboardEmploye() {
     const interval = setInterval(() => {
       fetchFolders();
     }, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Heartbeat last-seen toutes les 30s
+  useEffect(() => {
+    const heartbeat = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+          await fetch(`${API_BASE_URL}/last-seen/`, {
+            method: 'POST',
+            headers: { Authorization: `Token ${token}` }
+          });
+        }
+      } catch (err) {}
+    };
+    heartbeat();
+    const interval = setInterval(heartbeat, 30000);
     return () => clearInterval(interval);
   }, []);
 
