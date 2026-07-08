@@ -10,6 +10,7 @@ const SECTIONS = [
 - Gestion des services : organiser les équipes en services distincts.
 - Gestion fichiers : consulter tous les fichiers uploadés sur la plateforme.
 - Journal d'activité : suivre toutes les actions réalisées par les utilisateurs.
+- Corbeille : restaurer ou supprimer définitivement les fichiers et dossiers supprimés.
 - Mon Profil : modifier vos informations personnelles et votre mot de passe.`
   },
   {
@@ -81,6 +82,24 @@ Il enregistre automatiquement :
 Ce registre ne peut pas être modifié par un administrateur normal. Seul le Super Administrateur peut le nettoyer.
 
 Export CSV disponible avec filtres par admin, action et dates.`
+  },
+  {
+    icon: "🗑️",
+    title: "Corbeille",
+    content: `La corbeille conserve tous les fichiers et dossiers supprimés par les utilisateurs, en attente de restauration ou de suppression définitive.
+
+Restaurer un ou plusieurs éléments :
+Cochez les éléments à restaurer via les cases à cocher, puis cliquez sur "↩️ Restaurer la sélection (N)". Les fichiers retournent dans leur dossier d'origine. Les dossiers restaurés récupèrent automatiquement leurs sous-dossiers et fichiers.
+Note : si vous restaurez un sous-dossier dont le parent est aussi en corbeille, le parent est restauré automatiquement.
+
+Vider la corbeille :
+Cliquez sur "🔥 Vider la sélection (N)" si vous avez sélectionné des éléments, ou "🔥 Vider tout (N)" pour tout supprimer. Une confirmation par email + mot de passe est requise. Cette action est irréversible et un email est envoyé à tous les administrateurs.
+
+Alerte de volume :
+Un avertissement s'affiche automatiquement quand la corbeille dépasse 10 éléments.
+
+Sauvegarde automatique :
+Un backup complet de la base de données et des fichiers media est effectué automatiquement tous les 7 jours à 2h du matin.`
   },
   {
     icon: "🔒",
