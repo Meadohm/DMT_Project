@@ -1193,6 +1193,72 @@ def get_service_stats(request):
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
+def get_user_stats(request):
+    """Stats personnelles de l'utilisateur connecté"""
+    user = request.user
+    from datetime import timedelta
+    from api.models import File as FileModel
+
+    # Dossiers personnels
+    mes_dossiers = Folder.objects.filter(proprietaire=user, is_archived=False, is_deleted=False)
+    total_dossiers = mes_dossiers.count()
+
+    # Fichiers uploadés
+    mes_fichiers = FileModel.objects.filter(utilisateur=user)
+    total_fichiers = mes_fichiers.count()
+    total_size = sum(f.taille or 0 for f in mes_fichiers.only('taille'))
+
+    # Partages reçus
+    partages_recus = FolderShare.objects.filter(user=user).count()
+
+    # Partages donnés
+    partages_donnes = FolderShare.objects.filter(folder__proprietaire=user).count()
+
+    # Activité récente personnelle (10 dernières actions)
+    recent_logs = AuditLog.objects.filter(
+        utilisateur=user,
+        timestamp__gte=timezone.now() - timedelta(days=30)
+    ).order_by('-timestamp')[:10]
+
+    activite_recente = [{
+        'action': log.action,
+        'objet': log.objet,
+        'date': log.timestamp.strftime('%d/%m/%Y %H:%M'),
+    } for log in recent_logs]
+
+    # Taille par dossier (top 5)
+    top_dossiers = []
+    for folder in mes_dossiers.order_by('-created_at')[:10]:
+        size = sum(f.taille or 0 for f in FileModel.objects.filter(folder=folder).only('taille'))
+        top_dossiers.append({
+            'nom': folder.nom,
+            'size_mb': round(size / 1024 / 1024, 2),
+            'nb_fichiers': FileModel.objects.filter(folder=folder).count(),
+        })
+    top_dossiers = sorted(top_dossiers, key=lambda x: x['size_mb'], reverse=True)[:5]
+
+    return Response({
+        'username': user.username,
+        'service': user.service or '—',
+        'dossiers': {
+            'total': total_dossiers,
+        },
+        'fichiers': {
+            'total': total_fichiers,
+            'size_mb': round(total_size / 1024 / 1024, 2),
+        },
+        'partages': {
+            'recus': partages_recus,
+            'donnes': partages_donnes,
+        },
+        'top_dossiers': top_dossiers,
+        'activite_recente': activite_recente,
+    })
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def search_files(request):
     """
     Recherche globale de fichiers accessibles par l'utilisateur.

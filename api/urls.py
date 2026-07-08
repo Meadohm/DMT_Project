@@ -44,6 +44,7 @@ urlpatterns = [
     path('services/<int:service_id>/update/', views.update_service, name='update_service'),
     path('dashboard-stats/', views.get_dashboard_stats, name='dashboard_stats'),
     path('service-stats/', views.get_service_stats, name='get_service_stats'),
+    path('user-stats/', views.get_user_stats, name='get_user_stats'),
     path('search/', views.search_files, name='search_files'),
 
    # FOLDERS
