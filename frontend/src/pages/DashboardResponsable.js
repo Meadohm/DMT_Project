@@ -29,6 +29,7 @@ import { clearAll } from "../services/notificationService";
 import useClock from "../hooks/useClock";
 import DashboardTopbar from "../components/DashboardTopbar";
 import DashboardSidebar from "../components/DashboardSidebar";
+import API_BASE_URL from "../config";
 import "../styles/FileManager.css";
 import "../styles/SidebarGemini.css";
 import "../styles/DashboardResponsable.css";
@@ -181,6 +182,22 @@ function DashboardResponsable() {
   const [inputValue, setInputValue] = useState("");
   const [currentFolder, setCurrentFolder] = useState(null);
   const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [serviceStats, setServiceStats] = useState(null);
+  const [statsOpen, setStatsOpen] = useState(false);
+
+  const fetchServiceStats = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/service-stats/`, {
+        headers: { Authorization: `Token ${localStorage.getItem('token')}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setServiceStats(data);
+      }
+    } catch (err) {
+      console.error('Erreur stats service', err);
+    }
+  };
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -476,6 +493,7 @@ function DashboardResponsable() {
           theme={theme}
           onOpenArchives={() => setArchivesOpen(true)}
           onOpenHistorique={() => setHistoriqueSharedOpen(true)}
+          onOpenStats={() => { fetchServiceStats(); setStatsOpen(true); }}
         />
 
         {activeFolder ? (
@@ -549,6 +567,55 @@ function DashboardResponsable() {
             {notif.message}
           </p>
         </Modal>
+      )}
+
+      {statsOpen && serviceStats && (
+        <div className="modal-overlay" onClick={() => setStatsOpen(false)}>
+          <div className="service-stats-panel" onClick={e => e.stopPropagation()}>
+            <div className="service-stats-header">
+              <h2>📊 Stats — {serviceStats.service}</h2>
+              <button onClick={() => setStatsOpen(false)}>✕</button>
+            </div>
+            <div className="service-stats-cards">
+              <div className="service-stat-card">
+                <div className="service-stat-icon">👥</div>
+                <div className="service-stat-value">{serviceStats.membres.total}</div>
+                <div className="service-stat-label">Membres</div>
+                <div className="service-stat-sub">🟢 {serviceStats.membres.en_ligne} en ligne</div>
+              </div>
+              <div className="service-stat-card">
+                <div className="service-stat-icon">📁</div>
+                <div className="service-stat-value">{serviceStats.dossiers.total}</div>
+                <div className="service-stat-label">Dossiers</div>
+                <div className="service-stat-sub">🤝 {serviceStats.dossiers.partages} partagés · 🔒 {serviceStats.dossiers.prives} privés</div>
+              </div>
+              <div className="service-stat-card">
+                <div className="service-stat-icon">📄</div>
+                <div className="service-stat-value">{serviceStats.fichiers.total}</div>
+                <div className="service-stat-label">Fichiers</div>
+                <div className="service-stat-sub">💾 {serviceStats.fichiers.size_mb} MB</div>
+              </div>
+            </div>
+            <div className="service-stats-activity">
+              <h3>🕐 Activité récente (7 jours)</h3>
+              <table className="service-activity-table">
+                <thead>
+                  <tr><th>Utilisateur</th><th>Action</th><th>Objet</th><th>Date</th></tr>
+                </thead>
+                <tbody>
+                  {serviceStats.activite_recente.map((log, idx) => (
+                    <tr key={idx}>
+                      <td>{log.utilisateur}</td>
+                      <td><span className={`action-badge action-${log.action.toLowerCase()}`}>{log.action}</span></td>
+                      <td>{log.objet}</td>
+                      <td>{log.date}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       )}
 
       {shareModalOpen && (

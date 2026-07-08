@@ -26,6 +26,7 @@ import "../styles/DashboardTopbar.css";
  *  theme             'light' | 'dark'
  *  onOpenArchives    () => void
  *  onOpenHistorique  () => void
+ *  onOpenStats       () => void  (optionnel)
  */
 function DashboardTopbar({
   userInfo,
@@ -44,6 +45,7 @@ function DashboardTopbar({
   theme,
   onOpenArchives,
   onOpenHistorique,
+  onOpenStats = null,
 }) {
   const [notifOpen, setNotifOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
@@ -300,6 +302,16 @@ function DashboardTopbar({
               </div>
             )}
           </div>
+
+          {onOpenStats && (
+            <button
+              className="topbar-action-btn"
+              onClick={onOpenStats}
+              title="Stats service"
+            >
+              📊
+            </button>
+          )}
 
           {/* —— Compte —— */}
           <div className="account-wrapper" ref={accountRef}>

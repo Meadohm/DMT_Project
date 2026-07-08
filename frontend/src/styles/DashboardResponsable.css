@@ -74,3 +74,118 @@ body.dark .sidebar.sidebar-teal .sidebar-top-fixed,
 body.dark .sidebar.sidebar-teal .sidebar-section {
   background: #062020;
 }
+
+/* STATS SERVICE */
+.service-stats-panel {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px;
+  width: min(700px, 92vw);
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+}
+
+.service-stats-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.service-stats-header h2 {
+  color: #0d5c5c;
+  font-size: 1.2rem;
+}
+
+.service-stats-header button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.service-stats-cards {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.service-stat-card {
+  flex: 1;
+  min-width: 140px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+.service-stat-icon {
+  font-size: 1.8rem;
+  margin-bottom: 4px;
+}
+
+.service-stat-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #0d5c5c;
+}
+
+.service-stat-label {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.service-stat-sub {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.service-activity-table {
+  width: 100%;
+  font-size: 0.82rem;
+  border-collapse: collapse;
+}
+
+.service-activity-table th {
+  background: #f0fdf4;
+  color: #0d5c5c;
+  padding: 8px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.service-activity-table td {
+  padding: 8px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.action-badge {
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.action-create { background: #dcfce7; color: #16a34a; }
+.action-delete { background: #fee2e2; color: #dc2626; }
+.action-update { background: #dbeafe; color: #2563eb; }
+.action-login  { background: #f3f4f6; color: #6b7280; }
+
+body.dark .service-stats-panel {
+  background: #1a2040;
+  color: #e6e8f0;
+}
+
+body.dark .service-stat-card {
+  background: #1e2d3d;
+  border-color: #2d4a3e;
+}
+
+body.dark .service-stats-header h2 {
+  color: #0e9e87;
+}
