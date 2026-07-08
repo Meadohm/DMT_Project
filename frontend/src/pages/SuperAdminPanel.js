@@ -67,6 +67,7 @@ function SuperAdminPanel() {
   const [trashPassword, setTrashPassword] = useState('');
   const [showTrashPassword, setShowTrashPassword] = useState(false);
   const [trashError, setTrashError] = useState('');
+  const [trashEmptying, setTrashEmptying] = useState(false);
   const [trashSearch, setTrashSearch] = useState('');
   const [trashTypeFilter, setTrashTypeFilter] = useState('');
   const [trashPage, setTrashPage] = useState(1);
@@ -273,6 +274,8 @@ function SuperAdminPanel() {
   };
 
   const handleEmptyTrash = async () => {
+    if (trashEmptying) return;
+    setTrashEmptying(true);
     setTrashError('');
     try {
       const idsToDelete = selectedTrashIds.length > 0 ? selectedTrashIds : null;
@@ -312,8 +315,10 @@ function SuperAdminPanel() {
         setTrashPassword('');
         setTrashError('');
       }
+      setTrashEmptying(false);
     } catch (err) {
       setTrashError('Erreur réseau.');
+      setTrashEmptying(false);
     }
   };
 
@@ -1627,7 +1632,6 @@ function SuperAdminPanel() {
                     <th>Dossier</th>
                     <th>Supprimé par</th>
                     <th>Date</th>
-                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1645,14 +1649,6 @@ function SuperAdminPanel() {
                       <td>{item.folder_nom || '—'}</td>
                       <td>{item.deleted_by}</td>
                       <td>{item.deleted_at}</td>
-                      <td>
-                        <button
-                          className="btn-edit"
-                          onClick={() => setConfirmTrashAction({ type: 'restore_single', item })}
-                        >
-                          ↩️ Restaurer
-                        </button>
-                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -1739,8 +1735,12 @@ function SuperAdminPanel() {
                   )}
                   <div className="modal-actions">
                     <button className="btn-cancel-confirm" onClick={() => { setEmptyTrashModal(false); setTrashError(''); }}>Annuler</button>
-                    <button className="btn-danger" onClick={handleEmptyTrash} disabled={!trashEmail || !trashPassword}>
-                      🔥 Confirmer la suppression
+                    <button
+                      className="btn-danger"
+                      onClick={handleEmptyTrash}
+                      disabled={!trashEmail || !trashPassword || trashEmptying}
+                    >
+                      {trashEmptying ? '⏳ Suppression en cours...' : '🔥 Confirmer la suppression'}
                     </button>
                   </div>
                 </div>
