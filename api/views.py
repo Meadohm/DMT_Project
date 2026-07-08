@@ -1820,6 +1820,16 @@ def delete_file(request, file_id):
 def list_trash(request):
     items = Trash.objects.all()
     total_size = sum(i.size_bytes for i in items)
+    def get_parent_nom(item):
+        if item.item_type == 'folder':
+            try:
+                folder = Folder.objects.get(id=item.item_id)
+                if folder.parent:
+                    return folder.parent.nom
+            except Folder.DoesNotExist:
+                pass
+        return None
+
     data = [{
         'id': i.id,
         'item_type': i.item_type,
@@ -1829,6 +1839,7 @@ def list_trash(request):
         'deleted_at': i.deleted_at.strftime('%d/%m/%Y %H:%M'),
         'folder_nom': i.folder_nom,
         'size_bytes': i.size_bytes,
+        'parent_nom': get_parent_nom(i),
     } for i in items]
     return Response({'items': data, 'total': len(data), 'total_size_mb': round(total_size / 1024 / 1024, 2)})
 
