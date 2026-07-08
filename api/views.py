@@ -1122,6 +1122,66 @@ def get_dashboard_stats(request):
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
+def get_service_stats(request):
+    """Stats du service pour le responsable connecté"""
+    user = request.user
+    if not hasattr(user, 'role') or user.role != 'responsable' or not user.service:
+        return Response({'error': 'Accès réservé aux responsables avec service.'}, status=status.HTTP_403_FORBIDDEN)
+
+    service = user.service
+    from datetime import timedelta
+
+    # Membres du service
+    membres = Utilisateur.objects.filter(service=service, is_active=True)
+    threshold = timezone.now() - timedelta(minutes=10)
+    membres_en_ligne = membres.filter(last_seen__gte=threshold).count()
+
+    # Dossiers du service
+    dossiers_service = Folder.objects.filter(service=service, is_archived=False, is_deleted=False)
+    total_dossiers = dossiers_service.count()
+    dossiers_partages = dossiers_service.filter(is_shared=True).count()
+    dossiers_prives = total_dossiers - dossiers_partages
+
+    # Fichiers dans les dossiers du service
+    from api.models import File as FileModel
+    total_fichiers = FileModel.objects.filter(folder__in=dossiers_service).count()
+    total_size = sum(f.taille or 0 for f in FileModel.objects.filter(folder__in=dossiers_service).only('taille'))
+
+    # Activité récente du service (7 derniers jours)
+    recent_logs = AuditLog.objects.filter(
+        utilisateur__service=service,
+        timestamp__gte=timezone.now() - timedelta(days=7)
+    ).select_related('utilisateur').order_by('-timestamp')[:10]
+
+    activite_recente = [{
+        'utilisateur': log.utilisateur.username if log.utilisateur else '—',
+        'action': log.action,
+        'objet': log.objet,
+        'date': log.timestamp.strftime('%d/%m/%Y %H:%M'),
+    } for log in recent_logs]
+
+    return Response({
+        'service': service,
+        'membres': {
+            'total': membres.count(),
+            'en_ligne': membres_en_ligne,
+        },
+        'dossiers': {
+            'total': total_dossiers,
+            'partages': dossiers_partages,
+            'prives': dossiers_prives,
+        },
+        'fichiers': {
+            'total': total_fichiers,
+            'size_mb': round(total_size / 1024 / 1024, 2),
+        },
+        'activite_recente': activite_recente,
+    })
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def search_files(request):
     """
     Recherche globale de fichiers accessibles par l'utilisateur.
