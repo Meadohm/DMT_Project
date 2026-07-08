@@ -1244,6 +1244,23 @@ def get_user_stats(request):
         top_dossiers.append(get_folder_stats_recursive(folder))
     top_dossiers = sorted(top_dossiers, key=lambda x: x['size_mb'], reverse=True)[:5]
 
+    # Détail fichiers par type
+    from collections import Counter
+    extensions = []
+    for f in mes_fichiers.only('nom'):
+        ext = f.nom.split('.')[-1].lower() if '.' in f.nom else 'autre'
+        extensions.append(ext)
+    ext_counter = Counter(extensions)
+    fichiers_detail = [{'ext': k, 'count': v} for k, v in ext_counter.most_common(5)]
+
+    # Détail partages donnés
+    partages_donnes_detail = []
+    for share in FolderShare.objects.filter(folder__proprietaire=user).select_related('user', 'folder')[:10]:
+        partages_donnes_detail.append({
+            'dossier': share.folder.nom,
+            'destinataire': share.user.username,
+        })
+
     return Response({
         'username': user.username,
         'service': user.service or '—',
@@ -1253,10 +1270,12 @@ def get_user_stats(request):
         'fichiers': {
             'total': total_fichiers,
             'size_mb': round(total_size / 1024 / 1024, 2),
+            'detail': fichiers_detail,
         },
         'partages': {
             'recus': partages_recus,
             'donnes': partages_donnes,
+            'donnes_detail': partages_donnes_detail,
         },
         'top_dossiers': top_dossiers,
         'activite_recente': activite_recente,
