@@ -625,7 +625,7 @@ const handleClearNotifications = async () => {
             </div>
             {userStats.top_dossiers?.length > 0 && (
               <div className="service-stats-activity" style={{marginBottom:'16px'}}>
-                <h3>📦 Top dossiers par taille</h3>
+                <h3>Top dossiers par taille</h3>
                 <table className="service-activity-table">
                   <thead>
                     <tr><th>Dossier</th><th>Fichiers</th><th>Taille</th></tr>
