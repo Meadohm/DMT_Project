@@ -1228,13 +1228,20 @@ def get_user_stats(request):
 
     # Taille par dossier (top 5)
     top_dossiers = []
-    for folder in mes_dossiers.order_by('-created_at')[:10]:
-        size = sum(f.taille or 0 for f in FileModel.objects.filter(folder=folder).only('taille'))
-        top_dossiers.append({
+    def get_folder_stats_recursive(folder):
+        """Calcule taille + nb fichiers récursivement"""
+        all_ids = get_descendant_folder_ids({folder.id})
+        all_ids.add(folder.id)
+        fichiers = FileModel.objects.filter(folder__id__in=all_ids)
+        total_size = sum(f.taille or 0 for f in fichiers.only('taille'))
+        return {
             'nom': folder.nom,
-            'size_mb': round(size / 1024 / 1024, 2),
-            'nb_fichiers': FileModel.objects.filter(folder=folder).count(),
-        })
+            'size_mb': round(total_size / 1024 / 1024, 2),
+            'nb_fichiers': fichiers.count(),
+        }
+
+    for folder in mes_dossiers.order_by('-created_at')[:10]:
+        top_dossiers.append(get_folder_stats_recursive(folder))
     top_dossiers = sorted(top_dossiers, key=lambda x: x['size_mb'], reverse=True)[:5]
 
     return Response({
