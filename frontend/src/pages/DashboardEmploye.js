@@ -46,6 +46,22 @@ function DashboardEmploye() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [userStats, setUserStats] = useState(null);
+  const [statsOpen, setStatsOpen] = useState(false);
+
+  const fetchUserStats = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/user-stats/`, {
+        headers: { Authorization: `Token ${localStorage.getItem('token')}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setUserStats(data);
+      }
+    } catch (err) {
+      console.error('Erreur stats utilisateur', err);
+    }
+  };
   const [archivesOpen, setArchivesOpen] = useState(false);
   const [showLogoutWarning, setShowLogoutWarning] = useState(false);
   const { theme, toggleTheme } = useTheme();
@@ -476,6 +492,7 @@ const handleClearNotifications = async () => {
           colorScheme="blue"
           searchTerm={searchTerm}
           onSearch={setSearchTerm}
+          onOpenStats={() => { fetchUserStats(); setStatsOpen(true); }}
           onSelectFolder={(folder) => {
             const found = folders.find(f => f.id === folder.id) ||
               (function findInTree(list) {
@@ -575,6 +592,76 @@ const handleClearNotifications = async () => {
         </Modal>
       )}
 
+
+      {statsOpen && userStats && (
+        <div className="modal-overlay" onClick={() => setStatsOpen(false)}>
+          <div className="service-stats-panel" onClick={e => e.stopPropagation()}>
+            <div className="service-stats-header">
+              <h2>📊 Mes stats — {userStats.username}</h2>
+              <button onClick={() => setStatsOpen(false)}>✕</button>
+            </div>
+            <div className="service-stats-cards">
+              <div className="service-stat-card">
+                <div className="service-stat-icon">📁</div>
+                <div className="service-stat-value">{userStats.dossiers.total}</div>
+                <div className="service-stat-label">Mes dossiers</div>
+              </div>
+              <div className="service-stat-card">
+                <div className="service-stat-icon">📄</div>
+                <div className="service-stat-value">{userStats.fichiers.total}</div>
+                <div className="service-stat-label">Mes fichiers</div>
+                <div className="service-stat-sub">💾 {userStats.fichiers.size_mb} MB</div>
+              </div>
+              <div className="service-stat-card">
+                <div className="service-stat-icon">🤝</div>
+                <div className="service-stat-value">{userStats.partages.recus}</div>
+                <div className="service-stat-label">Partagés reçus</div>
+              </div>
+              <div className="service-stat-card">
+                <div className="service-stat-icon">📤</div>
+                <div className="service-stat-value">{userStats.partages.donnes}</div>
+                <div className="service-stat-label">Partagés donnés</div>
+              </div>
+            </div>
+            {userStats.top_dossiers?.length > 0 && (
+              <div className="service-stats-activity" style={{marginBottom:'16px'}}>
+                <h3>📦 Top dossiers par taille</h3>
+                <table className="service-activity-table">
+                  <thead>
+                    <tr><th>Dossier</th><th>Fichiers</th><th>Taille</th></tr>
+                  </thead>
+                  <tbody>
+                    {userStats.top_dossiers.map((d, idx) => (
+                      <tr key={idx}>
+                        <td>📁 {d.nom}</td>
+                        <td>{d.nb_fichiers}</td>
+                        <td>{d.size_mb} MB</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            <div className="service-stats-activity">
+              <h3>🕐 Mon activité récente (30 jours)</h3>
+              <table className="service-activity-table">
+                <thead>
+                  <tr><th>Action</th><th>Objet</th><th>Date</th></tr>
+                </thead>
+                <tbody>
+                  {userStats.activite_recente.map((log, idx) => (
+                    <tr key={idx}>
+                      <td><span className={`action-badge action-${log.action.toLowerCase()}`}>{log.action}</span></td>
+                      <td>{log.objet}</td>
+                      <td>{log.date}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
 
       {shareModalOpen && (
         <ShareModal
