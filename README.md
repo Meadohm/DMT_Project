@@ -90,11 +90,15 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 - Filtres avancés par rôle, service et statut de connexion
 - Gestion des services CRUD
 - Journal d'activité complet avec filtres et export CSV
-- Onglet Suppressions - traçabilité immuable des suppressions de journal
+- Onglet Suppressions — traçabilité immuable des suppressions de journal
 - Notifications email automatiques aux autres admins lors de suppressions
 - Réinitialisation de mots de passe
 - Email de bienvenue avec coordonnées à la création de compte
-- Statistiques tableau de bord
+- Tableau de bord stats : utilisateurs, services, fichiers, dossiers, espace disque, répartition rôles, tendance uploads, corbeille
+- Corbeille : restauration ou suppression définitive des fichiers/dossiers supprimés avec credentials
+- Vidage corbeille avec confirmation email + mot de passe et notification tous les admins
+- Alerte automatique si corbeille ≥ 10 éléments
+- Backup automatique PostgreSQL + media tous les 7 jours
 
 ### Super Administrateur
 - Toutes les fonctionnalités Administrateur
@@ -102,8 +106,9 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 - Création et suppression de comptes administrateurs
 - Modification de tous les rôles sans restriction
 - Nettoyage de l'historique des suppressions
-- Isolation totale - actions invisibles des admins normaux
+- Isolation totale — actions invisibles des admins normaux
 - Compte `is_superuser` immuable, non modifiable par les admins
+- Dashboard et corbeille synchronisés avec AdminPanel
 
 ---
 
@@ -226,6 +231,9 @@ DMT_Project
 ---
 
 ## Versions
+
+**v1.5.0 — Juillet 2026**
+Corbeille admin complète (soft delete dossiers, restauration instantanée, vidage avec credentials) · Cycle de vie fichier (original_name, FileRenameHistory, date upload immuable) · Recherche par historique noms · Backup automatique 7 jours · Multi-sélection suppression fichiers · Dashboard stats complet (disque, dossiers, rôles, tendance, corbeille) · HelpModalAdmin mis à jour
 
 **v1.4.5 — Juillet 2026**
 Responsive complet tablette/mobile (1024px, 768px, 480px) · Footer fix · Auto-logout par inactivité multi-navigateurs · Logout backend token invalidé · Centre d'aide HelpModal tous dashboards · Mode sombre AdminPanel/SuperAdminPanel complet · Déconnexion automatique sync multi-navigateurs
