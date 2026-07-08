@@ -72,6 +72,7 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 - Aperçu inline des fichiers (docx, xlsx, images, PDF)
 - Notifications temps réel
 - Mode sombre · Responsive
+- Panneau "Mes stats" : dossiers, fichiers, taille, partages reçus/donnés, top dossiers, activité 30 jours
 
 ### Responsable
 - Toutes les fonctionnalités Employé
@@ -83,6 +84,7 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 - Section dédiée aux dossiers reçus en partage hors service
 - Quitter un dossier partagé sans affecter le propriétaire
 - Migration automatique des dossiers récents lors d'un changement de service
+- Panneau "Stats service" : membres en ligne, connectés/absents aujourd'hui, dossiers service, fichiers, activité équipe 7 jours
 - Breadcrumb hiérarchique cliquable dans la navigation de fichiers
 
 ### Administrateur
@@ -231,6 +233,9 @@ DMT_Project
 ---
 
 ## Versions
+
+**v1.5.2 — Juillet 2026**
+Stats service responsable (membres en ligne, absents, dossiers, fichiers, activité équipe) · Stats personnelles employé (quota, top dossiers récursif, activité 30j) · Heartbeat last-seen tous dashboards · Corbeille admin complète
 
 **v1.5.0 — Juillet 2026**
 Corbeille admin complète (soft delete dossiers, restauration instantanée, vidage avec credentials) · Cycle de vie fichier (original_name, FileRenameHistory, date upload immuable) · Recherche par historique noms · Backup automatique 7 jours · Multi-sélection suppression fichiers · Dashboard stats complet (disque, dossiers, rôles, tendance, corbeille) · HelpModalAdmin mis à jour

@@ -48,6 +48,67 @@ La cloche 🔔 en haut à droite affiche le nombre de notifications non lues. Cl
 - Archivage multiple : vous pouvez cocher plusieurs fichiers à la fois et les archiver ensemble.`
   },
   {
+    icon: "📊",
+    title: "Mes statistiques",
+    content: `Accédez à vos statistiques personnelles en cliquant sur le bouton 📊 dans la barre supérieure.
+
+Informations disponibles :
+- Nombre de dossiers créés
+- Nombre de fichiers uploadés et taille totale
+- Partages reçus et donnés
+- Top 5 dossiers par taille (sous-dossiers inclus)
+- Activité récente sur 30 jours (uploads, suppressions, renommages)
+
+Les statistiques se mettent à jour à chaque ouverture du panneau.`
+  },
+  {
+    icon: "🔍",
+    title: "Recherche globale",
+    content: `La barre de recherche (icône loupe dans la barre supérieure) permet de retrouver un fichier dans tous vos dossiers accessibles.
+
+Comment ça marche :
+- Tapez au moins 2 caractères pour lancer la recherche
+- Les résultats apparaissent automatiquement après 400ms
+- Cliquez sur un résultat pour accéder directement au dossier contenant le fichier
+
+La recherche couvre :
+- Le nom actuel du fichier
+- Le nom original à la création
+- Tous les noms intermédiaires (historique des renommages)
+
+Ainsi, même si un fichier a été renommé plusieurs fois, vous pouvez le retrouver avec son nom d'origine.`
+  },
+  {
+    icon: "📦",
+    title: "Déplacer un fichier",
+    content: `Vous pouvez déplacer vos propres fichiers vers un autre dossier.
+
+Comment déplacer un fichier :
+1. Ouvrez le dossier contenant le fichier
+2. Cliquez sur l'icône ≡ à droite du fichier
+3. Sélectionnez le dossier de destination dans la liste
+4. Confirmez le déplacement
+
+Restrictions :
+- Seul le propriétaire du fichier peut le déplacer
+- Le dossier de destination doit vous appartenir
+- Seuls vos dossiers personnels (niveau 0 et 1) sont proposés`
+  },
+  {
+    icon: "✏️",
+    title: "Renommer un fichier",
+    content: `Vous pouvez renommer vos propres fichiers directement depuis le gestionnaire de fichiers.
+
+Comment renommer :
+- Cliquez sur l'icône ≡ à droite du fichier, puis "Renommer".
+- Saisissez uniquement le nouveau nom — sans date ni extension, ils sont gérés automatiquement.
+
+Comportement automatique :
+- La date d'upload d'origine reste immuable, même après renommage.
+- L'extension du fichier (.pdf, .docx...) est toujours préservée.
+- Le nom original et tous les noms intermédiaires restent consultables via la recherche globale (voir section "🔍 Recherche globale") — vous pouvez donc retrouver un fichier même en tapant un ancien nom.`
+  },
+  {
     icon: "❓",
     title: "Questions fréquentes",
     content: `Q : Je n'arrive pas à supprimer un fichier — pourquoi ?
