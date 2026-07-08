@@ -2997,6 +2997,8 @@ body.dark .folder-file-count {
   height: 16px;
   cursor: pointer;
   flex-shrink: 0;
+  margin-right: 8px;
+  align-self: center;
 }
 
 .file-item-selected {
