@@ -2939,3 +2939,19 @@ body.dark .footer-sep {
 body.dark .file-original-name {
   color: #6b7280;
 }
+
+.folder-file-count {
+  font-size: 0.75rem;
+  background: rgba(108, 99, 255, 0.1);
+  color: #6c63ff;
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-weight: 600;
+  margin-left: 8px;
+  white-space: nowrap;
+}
+
+body.dark .folder-file-count {
+  background: rgba(108, 99, 255, 0.2);
+  color: #a5b4fc;
+}

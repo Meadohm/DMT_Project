@@ -565,6 +565,11 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                   ) : (
                     <span className="private-info">(📂 Privé)</span>
                   )}
+                  {files.length > 0 && (
+                    <span className="folder-file-count">
+                      {files.length} fichier{files.length > 1 ? 's' : ''}
+                    </span>
+                  )}
                 </h3>
 
                 {files.length > 0 && (
