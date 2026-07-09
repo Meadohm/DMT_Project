@@ -732,6 +732,16 @@ def restore_folder_from_trash(request, trash_id):
             Trash.objects.filter(item_type='folder', item_id=parent.id).delete()
         parent = parent.parent
 
+    # Restaurer récursivement tous les sous-dossiers
+    all_child_ids = get_descendant_folder_ids({folder.id}) - {folder.id}
+    if all_child_ids:
+        Folder.objects.filter(id__in=all_child_ids).update(
+            is_deleted=False,
+            deleted_at=None,
+            deleted_by=None
+        )
+        Trash.objects.filter(item_type='folder', item_id__in=all_child_ids).delete()
+
     item.delete()
     AuditLog.objects.create(
         utilisateur=request.user,
@@ -1656,6 +1666,15 @@ def delete_folder(request, folder_id):
     folder.deleted_at = timezone.now()
     folder.deleted_by = request.user
     folder.save(update_fields=['is_deleted', 'deleted_at', 'deleted_by'])
+
+    # Soft delete récursif sur tous les sous-dossiers
+    all_child_ids = get_descendant_folder_ids({folder.id}) - {folder.id}
+    if all_child_ids:
+        Folder.objects.filter(id__in=all_child_ids).update(
+            is_deleted=True,
+            deleted_at=timezone.now(),
+            deleted_by=request.user
+        )
     AuditLog.objects.create(
         utilisateur=request.user,
         action='DELETE',
