@@ -664,9 +664,8 @@ const handleClearNotifications = async () => {
                 <div className="service-stat-card" style={{minWidth:'200px'}}>
                   <div className="service-stat-icon">📊</div>
                   <div className="service-stat-label" style={{marginBottom:'8px'}}>Mes partages</div>
-                  <ResponsiveContainer width="100%" height={140}>
-                   
-                    <PieChart>
+                  <ResponsiveContainer width="100%" height={120}>
+                    <PieChart margin={{top:8, bottom:8}}>
                       <Pie
                         data={[
                           { name: 'Reçus', value: userStats.partages.recus },
