@@ -510,4 +510,13 @@ body.dark .notif-pagination {
 body.dark .notif-pagination button {
   border-color: #2d3555;
   color: #e6e8f0;
+  background: #1e2d3d;
+}
+
+body.dark .notif-pagination button:disabled {
+  opacity: 0.3;
+}
+
+body.dark .notif-pagination span {
+  color: #aab4c8;
 }

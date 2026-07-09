@@ -2822,7 +2822,14 @@ def clear_notifications(request):
 def delete_notification(request, pk):
     try:
         notif = Notification.objects.get(pk=pk, user=request.user)
+        msg = notif.message[:80]
         notif.delete()
+        AuditLog.objects.create(
+            utilisateur=request.user,
+            action='DELETE',
+            objet=f"Notification supprimée : {msg}",
+            adresse_ip=request.META.get('REMOTE_ADDR', '')
+        )
         return Response({"success": "Notification supprimée."}, status=status.HTTP_204_NO_CONTENT)
     except Notification.DoesNotExist:
         return Response({"error": "Notification introuvable."}, status=status.HTTP_404_NOT_FOUND)
