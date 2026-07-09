@@ -231,3 +231,52 @@ body.dark .service-stat-card {
 body.dark .service-stats-header h2 {
   color: #0e9e87;
 }
+
+/* ONGLETS STATS */
+.stats-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #f3f4f6;
+  padding-bottom: 8px;
+}
+
+.stats-tab {
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #6b7280;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.stats-tab.active {
+  background: #0d5c5c;
+  color: white;
+}
+
+.stats-tab:hover:not(.active) {
+  background: #f0fdf4;
+  color: #0d5c5c;
+}
+
+body.dark .stats-tabs {
+  border-bottom-color: #2d3555;
+}
+
+body.dark .stats-tab {
+  color: #aab4c8;
+}
+
+body.dark .stats-tab.active {
+  background: #0e9e87;
+  color: white;
+}
+
+body.dark .stats-tab:hover:not(.active) {
+  background: #1e2d3d;
+  color: #0e9e87;
+}

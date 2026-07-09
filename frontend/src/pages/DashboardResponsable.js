@@ -30,6 +30,7 @@ import useClock from "../hooks/useClock";
 import DashboardTopbar from "../components/DashboardTopbar";
 import DashboardSidebar from "../components/DashboardSidebar";
 import API_BASE_URL from "../config";
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import "../styles/FileManager.css";
 import "../styles/SidebarGemini.css";
 import "../styles/DashboardResponsable.css";
@@ -201,7 +202,21 @@ function DashboardResponsable() {
   const [currentFolder, setCurrentFolder] = useState(null);
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [serviceStats, setServiceStats] = useState(null);
+  const [userStats, setUserStats] = useState(null);
   const [statsOpen, setStatsOpen] = useState(false);
+  const [statsTab, setStatsTab] = useState('service');
+  const [detailModal, setDetailModal] = useState(null);
+
+  const fetchUserStats = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/user-stats/`, {
+        headers: { Authorization: `Token ${localStorage.getItem('token')}` }
+      });
+      if (res.ok) setUserStats(await res.json());
+    } catch (err) {
+      console.error('Erreur stats user', err);
+    }
+  };
 
   const fetchServiceStats = async () => {
     try {
@@ -511,7 +526,7 @@ function DashboardResponsable() {
           theme={theme}
           onOpenArchives={() => setArchivesOpen(true)}
           onOpenHistorique={() => setHistoriqueSharedOpen(true)}
-          onOpenStats={() => { fetchServiceStats(); setStatsOpen(true); }}
+          onOpenStats={() => { fetchServiceStats(); fetchUserStats(); setStatsOpen(true); }}
         />
 
         {activeFolder ? (
@@ -587,13 +602,30 @@ function DashboardResponsable() {
         </Modal>
       )}
 
-      {statsOpen && serviceStats && (
+      {statsOpen && (
         <div className="modal-overlay" onClick={() => setStatsOpen(false)}>
           <div className="service-stats-panel" onClick={e => e.stopPropagation()}>
             <div className="service-stats-header">
-              <h2>📊 Stats — {serviceStats.service}</h2>
+              <h2>📊 Stats — {userInfo?.username}</h2>
               <button onClick={() => setStatsOpen(false)}>✕</button>
             </div>
+            {/* Onglets */}
+            <div className="stats-tabs">
+              <button
+                className={`stats-tab${statsTab === 'service' ? ' active' : ''}`}
+                onClick={() => setStatsTab('service')}
+              >
+                🏢 Mon service
+              </button>
+              <button
+                className={`stats-tab${statsTab === 'perso' ? ' active' : ''}`}
+                onClick={() => setStatsTab('perso')}
+              >
+                👤 Mes stats
+              </button>
+            </div>
+            {statsTab === 'service' && serviceStats && (
+            <>
             <div className="service-stats-cards">
               <div className="service-stat-card">
                 <div className="service-stat-icon">👥</div>
@@ -660,6 +692,157 @@ function DashboardResponsable() {
                   ))}
                 </tbody>
               </table>
+            </div>
+            </>
+            )}
+            {/* Onglet Mes stats */}
+            {statsTab === 'perso' && userStats && (
+              <>
+                <div className="service-stats-cards">
+                  <div className="service-stat-card">
+                    <div className="service-stat-icon">📁</div>
+                    <div
+                      className="service-stat-value stat-clickable"
+                      onClick={() => setDetailModal({
+                        title: '📁 Mes dossiers',
+                        rows: userStats.dossiers.detail?.map(d => ({
+                          label: d.niveau === 1 ? `　└ 📁 ${d.nom}` : `📁 ${d.nom}`,
+                          value: `${d.nb_fichiers} fichier${d.nb_fichiers > 1 ? 's' : ''}`
+                        }))
+                      })}
+                    >
+                      {userStats.dossiers.total}
+                    </div>
+                    <div className="service-stat-label">Mes dossiers</div>
+                  </div>
+                  <div className="service-stat-card">
+                    <div className="service-stat-icon">📄</div>
+                    <div
+                      className="service-stat-value stat-clickable"
+                      onClick={() => setDetailModal({
+                        title: '📄 Types de fichiers',
+                        rows: userStats.fichiers.detail?.map(d => ({ label: `.${d.ext}`, value: `${d.count} fichier${d.count > 1 ? 's' : ''}` }))
+                      })}
+                    >
+                      {userStats.fichiers.total}
+                    </div>
+                    <div className="service-stat-label">Fichiers uploadés</div>
+                    <div className="service-stat-sub">💾 {userStats.fichiers.size_mb} MB</div>
+                  </div>
+                  <div className="service-stat-card">
+                    <div className="service-stat-icon">🤝</div>
+                    <div
+                      className="service-stat-value stat-clickable"
+                      onClick={() => setDetailModal({
+                        title: '🤝 Partagés reçus',
+                        rows: userStats.partages.recus_detail?.map(d => ({ label: `📁 ${d.dossier}`, value: d.proprietaire }))
+                      })}
+                    >
+                      {userStats.partages.recus}
+                    </div>
+                    <div className="service-stat-label">Partagés reçus</div>
+                  </div>
+                  <div className="service-stat-card">
+                    <div className="service-stat-icon">📤</div>
+                    <div
+                      className="service-stat-value stat-clickable"
+                      onClick={() => setDetailModal({
+                        title: '📤 Partagés donnés',
+                        rows: userStats.partages.donnes_detail?.map(d => ({ label: `📁 ${d.dossier}`, value: d.destinataire }))
+                      })}
+                    >
+                      {userStats.partages.donnes}
+                    </div>
+                    <div className="service-stat-label">Partagés donnés</div>
+                  </div>
+                  {(userStats.partages.recus > 0 || userStats.partages.donnes > 0) && (
+                    <div className="service-stat-card" style={{minWidth:'200px'}}>
+                      <div className="service-stat-icon">📊</div>
+                      <div className="service-stat-label" style={{marginBottom:'8px'}}>Mes partages</div>
+                      <ResponsiveContainer width="100%" height={140}>
+                        <PieChart margin={{top:8, bottom:8}}>
+                          <Pie
+                            data={[
+                              { name: 'Reçus', value: userStats.partages.recus },
+                              { name: 'Donnés', value: userStats.partages.donnes },
+                            ]}
+                            cx="50%" cy="50%"
+                            innerRadius={30} outerRadius={50}
+                            dataKey="value"
+                          >
+                            <Cell fill="#6c63ff" />
+                            <Cell fill="#0e9e87" />
+                          </Pie>
+                          <Tooltip formatter={(v, n) => [v, n]} />
+                          <Legend iconSize={8} style={{fontSize:'0.72rem'}} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                  )}
+                </div>
+                {userStats.top_dossiers?.length > 0 && (
+                  <div className="service-stats-activity" style={{marginBottom:'16px'}}>
+                    <h3>📦 Top dossiers par taille</h3>
+                    <div className="table-scroll-wrapper">
+                      <table>
+                        <thead>
+                          <tr><th>Dossier</th><th>Fichiers</th><th>Taille</th></tr>
+                        </thead>
+                        <tbody>
+                          {userStats.top_dossiers.map((d, idx) => (
+                            <tr key={idx}>
+                              <td>
+                                {d.parent ? `　└ 📁 ${d.nom}` : `📁 ${d.nom}`}
+                                {d.parent && <span style={{fontSize:'0.72rem', color:'#9ca3af', marginLeft:'4px'}}>({d.parent})</span>}
+                              </td>
+                              <td>{d.nb_fichiers}</td>
+                              <td>{d.size_mb} MB</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+                <div className="service-stats-activity">
+                  <h3>🕐 Mon activité récente (30 jours)</h3>
+                  <div className="table-scroll-wrapper">
+                    <table>
+                      <thead>
+                        <tr><th>Action</th><th>Objet</th><th>Date</th></tr>
+                      </thead>
+                      <tbody>
+                        {userStats.activite_recente.map((log, idx) => (
+                          <tr key={idx}>
+                            <td><span className={`action-badge action-${log.action.toLowerCase()}`}>{log.action}</span></td>
+                            <td>{log.objet}</td>
+                            <td>{log.date}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {detailModal && (
+        <div className="detail-modal-overlay" onClick={() => setDetailModal(null)}>
+          <div className="detail-modal-box" onClick={e => e.stopPropagation()}>
+            <div className="detail-modal-header">
+              <span>{detailModal.title}</span>
+              <button onClick={() => setDetailModal(null)}>✕</button>
+            </div>
+            <div className="detail-modal-list">
+              {detailModal.rows?.map((row, i) => (
+                <div key={i} className="detail-modal-row">
+                  <span className="detail-modal-label">{row.label}</span>
+                  <span className="detail-modal-value">{row.value}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
