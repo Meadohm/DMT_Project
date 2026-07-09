@@ -1233,8 +1233,8 @@ def get_user_stats(request):
     def enrich_objet(log):
         objet = log.objet
         # Si c'est un sous-dossier, chercher le parent
-        if 'Dossier :' in objet or 'Sous-dossier :' in objet:
-            nom = objet.split(':', 1)[-1].strip().split(' dans ')[0].strip()
+        if 'Dossier :' in objet and 'Sous-dossier :' not in objet and ' dans ' not in objet:
+            nom = objet.split(':', 1)[-1].strip()
             try:
                 folder = Folder.objects.filter(nom=nom, proprietaire=user).first()
                 if folder and folder.parent:
