@@ -1246,6 +1246,7 @@ def get_user_stats(request):
         total_size = sum(f.taille or 0 for f in fichiers.only('taille'))
         return {
             'nom': folder.nom,
+            'parent': folder.parent.nom if folder.parent else None,
             'size_mb': round(total_size / 1024 / 1024, 2),
             'nb_fichiers': fichiers.count(),
         }
