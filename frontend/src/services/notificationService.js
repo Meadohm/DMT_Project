@@ -9,7 +9,7 @@ export async function listNotifications() {
   const res = await axios.get(`${API_BASE_URL}/notifications/`, {
     headers: { Authorization: `Token ${token}` },
   });
-  return res.data;
+  return res.data.results ?? res.data;
 }
 
 export async function markAllRead() {
