@@ -670,7 +670,10 @@ const handleClearNotifications = async () => {
                   <tbody>
                     {userStats.top_dossiers.map((d, idx) => (
                       <tr key={idx}>
-                        <td>📁 {d.nom}</td>
+                        <td>
+                          {d.parent ? `　└ 📁 ${d.nom}` : `📁 ${d.nom}`}
+                          {d.parent && <span style={{fontSize:'0.72rem', color:'#9ca3af', marginLeft:'4px'}}>({d.parent})</span>}
+                        </td>
                         <td>{d.parent || '—'}</td>
                         <td>{d.nb_fichiers}</td>
                         <td>{d.size_mb} MB</td>
