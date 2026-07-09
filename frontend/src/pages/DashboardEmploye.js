@@ -665,12 +665,13 @@ const handleClearNotifications = async () => {
                 <h3>Top dossiers par taille</h3>
                 <table className="service-activity-table">
                   <thead>
-                    <tr><th>Dossier</th><th>Fichiers</th><th>Taille</th></tr>
+                    <tr><th>Dossier</th><th>Parent</th><th>Fichiers</th><th>Taille</th></tr>
                   </thead>
                   <tbody>
                     {userStats.top_dossiers.map((d, idx) => (
                       <tr key={idx}>
                         <td>📁 {d.nom}</td>
+                        <td>{d.parent || '—'}</td>
                         <td>{d.nb_fichiers}</td>
                         <td>{d.size_mb} MB</td>
                       </tr>
