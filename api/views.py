@@ -2762,8 +2762,40 @@ def create_notification(request):
 def list_notifications(request):
     # Conservation des notifications pendant 48 heures
     since = timezone.now() - timezone.timedelta(hours=48)
-    notifs = Notification.objects.filter(user=request.user, created_at__gte=since).order_by("-created_at")
-    return Response(NotificationSerializer(notifs, many=True).data)
+    qs = Notification.objects.filter(user=request.user, created_at__gte=since).order_by("-created_at")
+
+    # Filtres
+    notif_type = request.GET.get('type', '')
+    search = request.GET.get('search', '')
+    days = request.GET.get('days', '')
+
+    if notif_type:
+        qs = qs.filter(type=notif_type)
+    if search:
+        qs = qs.filter(message__icontains=search)
+    if days:
+        try:
+            from datetime import timedelta
+            qs = qs.filter(created_at__gte=timezone.now() - timedelta(days=int(days)))
+        except ValueError:
+            pass
+
+    # Pagination
+    page = int(request.GET.get('page', 1))
+    page_size = int(request.GET.get('page_size', 20))
+    total = qs.count()
+    start = (page - 1) * page_size
+    end = start + page_size
+    notifs = qs[start:end]
+
+    serializer = NotificationSerializer(notifs, many=True)
+    return Response({
+        'results': serializer.data,
+        'total': total,
+        'page': page,
+        'page_size': page_size,
+        'total_pages': (total + page_size - 1) // page_size,
+    })
 
 
 @api_view(['DELETE'])
@@ -2773,8 +2805,15 @@ def clear_notifications(request):
     """
     Supprime toutes les notifications de l'utilisateur avant l'expiration automatique (24h).
     """
+    count = Notification.objects.filter(user=request.user).count()
     Notification.objects.filter(user=request.user).delete()
-    return Response({'success': 'Toutes les notifications ont été supprimées.'})
+    AuditLog.objects.create(
+        utilisateur=request.user,
+        action='DELETE',
+        objet=f"Notifications effacées : {count} notification(s) supprimées",
+        adresse_ip=request.META.get('REMOTE_ADDR', '')
+    )
+    return Response({'success': f'{count} notification(s) effacée(s).'})
 
 
 # Supprimer une notification précise
