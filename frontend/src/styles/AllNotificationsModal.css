@@ -433,3 +433,80 @@
   margin-top: 3px;
   font-style: italic;
 }
+
+/* FILTRES NOTIFICATIONS */
+.notif-filters {
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px;
+  border-bottom: 1px solid #f3f4f6;
+  flex-wrap: wrap;
+}
+
+.notif-filter-input {
+  flex: 1;
+  min-width: 140px;
+  padding: 6px 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.82rem;
+}
+
+.notif-filter-select {
+  padding: 6px 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  background: white;
+  cursor: pointer;
+}
+
+.notif-type-badge {
+  font-size: 0.72rem;
+  color: #6b7280;
+  margin-bottom: 2px;
+}
+
+.notif-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px;
+  font-size: 0.82rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+.notif-pagination button {
+  background: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+
+.notif-pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+body.dark .notif-filter-input,
+body.dark .notif-filter-select {
+  background: #1a2040;
+  color: #e6e8f0;
+  border-color: #2d3555;
+}
+
+body.dark .notif-filters {
+  border-bottom-color: #2d3555;
+}
+
+body.dark .notif-pagination {
+  border-top-color: #2d3555;
+}
+
+body.dark .notif-pagination button {
+  border-color: #2d3555;
+  color: #e6e8f0;
+}
