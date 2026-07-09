@@ -677,21 +677,23 @@ function DashboardResponsable() {
             </div>
             <div className="service-stats-activity">
               <h3>🕐 Activité récente (7 jours)</h3>
-              <table className="service-activity-table">
-                <thead>
-                  <tr><th>Utilisateur</th><th>Action</th><th>Objet</th><th>Date</th></tr>
-                </thead>
-                <tbody>
-                  {serviceStats.activite_recente.map((log, idx) => (
-                    <tr key={idx}>
-                      <td>{log.utilisateur}</td>
-                      <td><span className={`action-badge action-${log.action.toLowerCase()}`}>{log.action}</span></td>
-                      <td>{log.objet}</td>
-                      <td>{log.date}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <div className="table-scroll-wrapper">
+                <table>
+                  <thead>
+                    <tr><th>Utilisateur</th><th>Action</th><th>Objet</th><th>Date</th></tr>
+                  </thead>
+                  <tbody>
+                    {serviceStats.activite_recente.map((log, idx) => (
+                      <tr key={idx}>
+                        <td>{log.utilisateur}</td>
+                        <td><span className={`action-badge action-${log.action.toLowerCase()}`}>{log.action}</span></td>
+                        <td>{log.objet}</td>
+                        <td>{log.date}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
             </>
             )}
