@@ -31,6 +31,7 @@ import useClock from "../hooks/useClock";
 import DashboardTopbar from "../components/DashboardTopbar";
 import DashboardSidebar from "../components/DashboardSidebar";
 import API_BASE_URL from "../config";
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import "../styles/FileManager.css";
 import "../styles/SidebarGemini.css";
 import logo from "../assets/dmt.png";
@@ -659,11 +660,38 @@ const handleClearNotifications = async () => {
                 </div>
                 <div className="service-stat-label">Partagés donnés</div>
               </div>
+              {(userStats.partages.recus > 0 || userStats.partages.donnes > 0) && (
+                <div className="service-stat-card" style={{minWidth:'200px'}}>
+                  <div className="service-stat-icon">📊</div>
+                  <div className="service-stat-label" style={{marginBottom:'8px'}}>Mes partages</div>
+                  <ResponsiveContainer width="100%" height={120}>
+                    <PieChart>
+                      <Pie
+                        data={[
+                          { name: 'Reçus', value: userStats.partages.recus },
+                          { name: 'Donnés', value: userStats.partages.donnes },
+                        ]}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={30}
+                        outerRadius={50}
+                        dataKey="value"
+                      >
+                        <Cell fill="#6c63ff" />
+                        <Cell fill="#0e9e87" />
+                      </Pie>
+                      <Tooltip formatter={(v, n) => [v, n]} />
+                      <Legend iconSize={8} style={{fontSize:'0.72rem'}} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
             </div>
             {userStats.top_dossiers?.length > 0 && (
               <div className="service-stats-activity" style={{marginBottom:'16px'}}>
                 <h3>Top dossiers par taille</h3>
-                <table className="service-activity-table">
+              <div className="table-scroll-wrapper">
+              <table>
                   <thead>
                     <tr><th>Dossier</th><th>Fichiers</th><th>Taille</th></tr>
                   </thead>
@@ -679,12 +707,14 @@ const handleClearNotifications = async () => {
                       </tr>
                     ))}
                   </tbody>
-                </table>
+              </table>
+              </div>
               </div>
             )}
             <div className="service-stats-activity">
               <h3>🕐 Mon activité récente (30 jours)</h3>
-              <table className="service-activity-table">
+              <div className="table-scroll-wrapper">
+              <table>
                 <thead>
                   <tr><th>Action</th><th>Objet</th><th>Date</th></tr>
                 </thead>
@@ -698,6 +728,7 @@ const handleClearNotifications = async () => {
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           </div>
         </div>

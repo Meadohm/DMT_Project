@@ -151,6 +151,48 @@ body.dark .sidebar.sidebar-teal .sidebar-section {
   border-collapse: collapse;
 }
 
+.table-scroll-wrapper {
+  max-height: 220px;
+  overflow-y: auto;
+  border-radius: 8px;
+  border: 1px solid #f3f4f6;
+}
+
+.table-scroll-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.table-scroll-wrapper thead th {
+  position: sticky;
+  top: 0;
+  background: #f0fdf4;
+  color: #0d5c5c;
+  padding: 8px;
+  text-align: left;
+  font-weight: 600;
+  z-index: 1;
+}
+
+.table-scroll-wrapper tbody td {
+  padding: 8px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+body.dark .table-scroll-wrapper {
+  border-color: #2d3555;
+}
+
+body.dark .table-scroll-wrapper thead th {
+  background: #1e2d3d;
+  color: #0e9e87;
+}
+
+body.dark .table-scroll-wrapper tbody td {
+  border-bottom-color: #2d3555;
+}
+
 .service-activity-table th {
   background: #f0fdf4;
   color: #0d5c5c;
