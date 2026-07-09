@@ -3017,3 +3017,9 @@ body.dark .file-select-all {
 body.dark .file-item-selected {
   background: rgba(108, 99, 255, 0.12) !important;
 }
+
+.stat-tooltip-trigger {
+  cursor: help;
+  border-bottom: 2px dotted #0d5c5c;
+  display: inline-block;
+}

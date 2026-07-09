@@ -608,14 +608,14 @@ const handleClearNotifications = async () => {
               </div>
               <div className="service-stat-card">
                 <div className="service-stat-icon">📄</div>
-                <div className="service-stat-value">{userStats.fichiers.total}</div>
+                <div
+                  className="service-stat-value stat-tooltip-trigger"
+                  title={userStats.fichiers.detail?.map(d => `.${d.ext} : ${d.count}`).join('\n')}
+                >
+                  {userStats.fichiers.total}
+                </div>
                 <div className="service-stat-label">Mes fichiers</div>
                 <div className="service-stat-sub">💾 {userStats.fichiers.size_mb} MB</div>
-                {userStats.fichiers.detail?.map((d, i) => (
-                  <div key={i} style={{fontSize:'0.7rem', color:'#9ca3af', marginTop:'2px'}}>
-                    .{d.ext} : {d.count}
-                  </div>
-                ))}
               </div>
               <div className="service-stat-card">
                 <div className="service-stat-icon">🤝</div>
@@ -624,13 +624,13 @@ const handleClearNotifications = async () => {
               </div>
               <div className="service-stat-card">
                 <div className="service-stat-icon">📤</div>
-                <div className="service-stat-value">{userStats.partages.donnes}</div>
+                <div
+                  className="service-stat-value stat-tooltip-trigger"
+                  title={userStats.partages.donnes_detail?.map(d => `📁 ${d.dossier} → ${d.destinataire}`).join('\n')}
+                >
+                  {userStats.partages.donnes}
+                </div>
                 <div className="service-stat-label">Partagés donnés</div>
-                {userStats.partages.donnes_detail?.map((d, i) => (
-                  <div key={i} style={{fontSize:'0.7rem', color:'#9ca3af', marginTop:'2px'}}>
-                    📁 {d.dossier} → {d.destinataire}
-                  </div>
-                ))}
               </div>
             </div>
             {userStats.top_dossiers?.length > 0 && (
