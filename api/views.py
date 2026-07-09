@@ -1310,10 +1310,17 @@ def get_user_stats(request):
     from collections import Counter
     extensions = []
     for f in mes_fichiers.only('nom'):
-        ext = f.nom.split('.')[-1].lower() if '.' in f.nom else 'autre'
+        parts = f.nom.rsplit('.', 1)
+        ext = parts[-1].lower() if len(parts) > 1 and parts[-1] and len(parts[-1]) <= 5 else 'autre'
         extensions.append(ext)
     ext_counter = Counter(extensions)
-    fichiers_detail = [{'ext': k, 'count': v} for k, v in ext_counter.most_common(5)]
+    # Top 5 extensions + "autre" pour tout le reste
+    top5 = ext_counter.most_common(5)
+    top5_count = sum(v for _, v in top5)
+    autres = total_fichiers - top5_count
+    fichiers_detail = [{'ext': k, 'count': v} for k, v in top5]
+    if autres > 0:
+        fichiers_detail.append({'ext': 'autre', 'count': autres})
 
     # Détail partages donnés
     partages_donnes_detail = []
