@@ -3114,3 +3114,35 @@ body.dark .detail-modal-row {
 body.dark .detail-modal-label {
   color: #aab4c8;
 }
+
+/* DARK MODE STATS EMPLOYÉ */
+body.dark .service-stats-activity h3 {
+  color: #e6e8f0;
+}
+
+body.dark .action-badge {
+  opacity: 0.85;
+}
+
+body.dark .action-create { background: rgba(22, 163, 74, 0.2); color: #4ade80; }
+body.dark .action-delete { background: rgba(220, 38, 38, 0.2); color: #f87171; }
+body.dark .action-update { background: rgba(37, 99, 235, 0.2); color: #60a5fa; }
+body.dark .action-login  { background: rgba(107, 114, 128, 0.2); color: #9ca3af; }
+body.dark .action-upload { background: rgba(124, 58, 237, 0.2); color: #a78bfa; }
+
+body.dark .service-stat-label {
+  color: #aab4c8;
+}
+
+body.dark .service-stat-sub {
+  color: #6b7280;
+}
+
+body.dark .stat-clickable {
+  border-bottom-color: #a5b4fc;
+  color: #e6e8f0;
+}
+
+body.dark .stat-clickable:hover {
+  color: #a5b4fc;
+}
