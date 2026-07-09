@@ -478,12 +478,13 @@
 }
 
 .notif-pagination button {
-  background: none;
+  background: #f3f4f6;
   border: 1px solid #e5e7eb;
   border-radius: 6px;
   padding: 4px 8px;
   cursor: pointer;
   font-size: 0.82rem;
+  color: #374151;
 }
 
 .notif-pagination button:disabled {

@@ -50,6 +50,7 @@ function DashboardTopbar({
   const [notifOpen, setNotifOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [searchExpanded, setSearchExpanded] = useState(false);
+  const [confirmClearDropdown, setConfirmClearDropdown] = useState(false);
   const [globalResults, setGlobalResults] = useState([]);
   const [globalLoading, setGlobalLoading] = useState(false);
   const [showGlobalResults, setShowGlobalResults] = useState(false);
@@ -296,9 +297,28 @@ function DashboardTopbar({
                   </button>
                 )}
 
-                <button className="notif-clear" onClick={onClearNotifications}>
-                  Effacer tout
-                </button>
+                {!confirmClearDropdown ? (
+                  <button className="notif-clear" onClick={() => setConfirmClearDropdown(true)}>
+                    🗑️ Effacer tout
+                  </button>
+                ) : (
+                  <div style={{display:'flex', gap:'6px', padding:'4px'}}>
+                    <button
+                      className="btn-cancel-confirm"
+                      style={{fontSize:'0.75rem', padding:'4px 8px'}}
+                      onClick={() => setConfirmClearDropdown(false)}
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      className="btn-delete-confirm"
+                      style={{fontSize:'0.75rem', padding:'4px 8px'}}
+                      onClick={() => { onClearNotifications(); setConfirmClearDropdown(false); }}
+                    >
+                      Confirmer
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
