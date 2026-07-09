@@ -631,7 +631,7 @@ const handleClearNotifications = async () => {
                 >
                   {userStats.fichiers.total}
                 </div>
-                <div className="service-stat-label">Mes fichiers</div>
+                <div className="service-stat-label">Fichiers uploadés</div>
                 <div className="service-stat-sub">💾 {userStats.fichiers.size_mb} MB</div>
               </div>
               <div className="service-stat-card">
