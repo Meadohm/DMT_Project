@@ -605,7 +605,15 @@ const handleClearNotifications = async () => {
             <div className="service-stats-cards">
               <div className="service-stat-card">
                 <div className="service-stat-icon">📁</div>
-                <div className="service-stat-value">{userStats.dossiers.total}</div>
+                <div
+                  className="service-stat-value stat-clickable"
+                  onClick={() => setDetailModal({
+                    title: '📁 Mes dossiers',
+                    rows: userStats.dossiers.detail?.map(d => ({ label: d.nom, value: `${d.nb_fichiers} fichier${d.nb_fichiers > 1 ? 's' : ''}` }))
+                  })}
+                >
+                  {userStats.dossiers.total}
+                </div>
                 <div className="service-stat-label">Mes dossiers</div>
               </div>
               <div className="service-stat-card">
@@ -624,7 +632,15 @@ const handleClearNotifications = async () => {
               </div>
               <div className="service-stat-card">
                 <div className="service-stat-icon">🤝</div>
-                <div className="service-stat-value">{userStats.partages.recus}</div>
+                <div
+                  className="service-stat-value stat-clickable"
+                  onClick={() => setDetailModal({
+                    title: '🤝 Partagés reçus',
+                    rows: userStats.partages.recus_detail?.map(d => ({ label: `📁 ${d.dossier}`, value: d.proprietaire }))
+                  })}
+                >
+                  {userStats.partages.recus}
+                </div>
                 <div className="service-stat-label">Partagés reçus</div>
               </div>
               <div className="service-stat-card">

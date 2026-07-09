@@ -1244,6 +1244,20 @@ def get_user_stats(request):
         top_dossiers.append(get_folder_stats_recursive(folder))
     top_dossiers = sorted(top_dossiers, key=lambda x: x['size_mb'], reverse=True)[:5]
 
+    # Détail dossiers
+    dossiers_detail = [{
+        'nom': f.nom,
+        'nb_fichiers': FileModel.objects.filter(folder=f).count(),
+    } for f in mes_dossiers.order_by('-created_at')]
+
+    # Détail partages reçus
+    partages_recus_detail = []
+    for share in FolderShare.objects.filter(user=user).select_related('folder', 'folder__proprietaire')[:10]:
+        partages_recus_detail.append({
+            'dossier': share.folder.nom,
+            'proprietaire': f"{share.folder.proprietaire.username} ({share.folder.proprietaire.service or 'Sans service'})" if share.folder.proprietaire else '—',
+        })
+
     # Détail fichiers par type
     from collections import Counter
     extensions = []
@@ -1258,7 +1272,7 @@ def get_user_stats(request):
     for share in FolderShare.objects.filter(folder__proprietaire=user).select_related('user', 'folder')[:10]:
         partages_donnes_detail.append({
             'dossier': share.folder.nom,
-            'destinataire': share.user.username,
+            'destinataire': f"{share.user.username} ({share.user.service or 'Sans service'})",
         })
 
     return Response({
@@ -1266,6 +1280,7 @@ def get_user_stats(request):
         'service': user.service or '—',
         'dossiers': {
             'total': total_dossiers,
+            'detail': dossiers_detail,
         },
         'fichiers': {
             'total': total_fichiers,
@@ -1274,6 +1289,7 @@ def get_user_stats(request):
         },
         'partages': {
             'recus': partages_recus,
+            'recus_detail': partages_recus_detail,
             'donnes': partages_donnes,
             'donnes_detail': partages_donnes_detail,
         },
