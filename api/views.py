@@ -1230,9 +1230,22 @@ def get_user_stats(request):
         timestamp__gte=timezone.now() - timedelta(days=30)
     ).order_by('-timestamp')[:10]
 
+    def enrich_objet(log):
+        objet = log.objet
+        # Si c'est un sous-dossier, chercher le parent
+        if 'Dossier :' in objet or 'Sous-dossier :' in objet:
+            nom = objet.split(':', 1)[-1].strip().split(' dans ')[0].strip()
+            try:
+                folder = Folder.objects.filter(nom=nom, proprietaire=user).first()
+                if folder and folder.parent:
+                    return f"{objet} (└ {folder.parent.nom})"
+            except Exception:
+                pass
+        return objet
+
     activite_recente = [{
         'action': log.action,
-        'objet': log.objet,
+        'objet': enrich_objet(log),
         'date': log.timestamp.strftime('%d/%m/%Y %H:%M'),
     } for log in recent_logs]
 
