@@ -1209,10 +1209,10 @@ def get_user_stats(request):
     total_size = sum(f.taille or 0 for f in mes_fichiers.only('taille'))
 
     # Partages reçus
-    partages_recus = FolderShare.objects.filter(user=user).count()
+    partages_recus = FolderShare.objects.filter(user=user, folder__is_deleted=False, folder__is_archived=False).count()
 
     # Partages donnés
-    partages_donnes = FolderShare.objects.filter(folder__proprietaire=user).count()
+    partages_donnes = FolderShare.objects.filter(folder__proprietaire=user, folder__is_deleted=False, folder__is_archived=False).count()
 
     # Activité récente personnelle (10 dernières actions)
     recent_logs = AuditLog.objects.filter(
@@ -1267,7 +1267,11 @@ def get_user_stats(request):
 
     # Détail partages reçus
     partages_recus_detail = []
-    for share in FolderShare.objects.filter(user=user).select_related('folder', 'folder__proprietaire')[:10]:
+    for share in FolderShare.objects.filter(
+        user=user,
+        folder__is_deleted=False,
+        folder__is_archived=False
+    ).select_related('folder', 'folder__proprietaire')[:10]:
         partages_recus_detail.append({
             'dossier': share.folder.nom,
             'proprietaire': f"{share.folder.proprietaire.username} ({share.folder.proprietaire.service or 'Sans service'})" if share.folder.proprietaire else '—',
@@ -1284,7 +1288,11 @@ def get_user_stats(request):
 
     # Détail partages donnés
     partages_donnes_detail = []
-    for share in FolderShare.objects.filter(folder__proprietaire=user).select_related('user', 'folder')[:10]:
+    for share in FolderShare.objects.filter(
+        folder__proprietaire=user,
+        folder__is_deleted=False,
+        folder__is_archived=False
+    ).select_related('user', 'folder')[:10]:
         partages_donnes_detail.append({
             'dossier': share.folder.nom,
             'destinataire': f"{share.user.username} ({share.user.service or 'Sans service'})",
