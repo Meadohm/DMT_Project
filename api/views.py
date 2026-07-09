@@ -2822,7 +2822,7 @@ def clear_notifications(request):
 def delete_notification(request, pk):
     try:
         notif = Notification.objects.get(pk=pk, user=request.user)
-        msg = notif.message[:80]
+        msg = notif.message[:200]
         notif.delete()
         AuditLog.objects.create(
             utilisateur=request.user,
