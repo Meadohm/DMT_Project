@@ -1213,8 +1213,13 @@ def get_user_stats(request):
     mes_dossiers = Folder.objects.filter(proprietaire=user, is_archived=False, is_deleted=False)
     total_dossiers = mes_dossiers.count()
 
-    # Fichiers uploadés
-    mes_fichiers = FileModel.objects.filter(utilisateur=user)
+    # Fichiers uploadés — exclure ceux dans des dossiers supprimés/archivés
+    # (les fichiers sans dossier ne sont jamais exclus)
+    from django.db.models import Q
+    mes_fichiers = FileModel.objects.filter(
+        Q(folder__isnull=True) | Q(folder__is_deleted=False, folder__is_archived=False),
+        utilisateur=user,
+    )
     total_fichiers = mes_fichiers.count()
     total_size = sum(f.taille or 0 for f in mes_fichiers.only('taille'))
 
