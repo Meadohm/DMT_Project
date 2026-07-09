@@ -665,7 +665,7 @@ const handleClearNotifications = async () => {
                 <h3>Top dossiers par taille</h3>
                 <table className="service-activity-table">
                   <thead>
-                    <tr><th>Dossier</th><th>Parent</th><th>Fichiers</th><th>Taille</th></tr>
+                    <tr><th>Dossier</th><th>Fichiers</th><th>Taille</th></tr>
                   </thead>
                   <tbody>
                     {userStats.top_dossiers.map((d, idx) => (
@@ -674,7 +674,6 @@ const handleClearNotifications = async () => {
                           {d.parent ? `　└ 📁 ${d.nom}` : `📁 ${d.nom}`}
                           {d.parent && <span style={{fontSize:'0.72rem', color:'#9ca3af', marginLeft:'4px'}}>({d.parent})</span>}
                         </td>
-                        <td>{d.parent || '—'}</td>
                         <td>{d.nb_fichiers}</td>
                         <td>{d.size_mb} MB</td>
                       </tr>
