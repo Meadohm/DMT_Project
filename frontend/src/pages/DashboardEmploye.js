@@ -609,7 +609,10 @@ const handleClearNotifications = async () => {
                   className="service-stat-value stat-clickable"
                   onClick={() => setDetailModal({
                     title: '📁 Mes dossiers',
-                    rows: userStats.dossiers.detail?.map(d => ({ label: d.nom, value: `${d.nb_fichiers} fichier${d.nb_fichiers > 1 ? 's' : ''}` }))
+                    rows: userStats.dossiers.detail?.map(d => ({
+                      label: d.niveau === 1 ? `　└ ${d.nom}` : `📁 ${d.nom}`,
+                      value: `${d.nb_fichiers} fichier${d.nb_fichiers > 1 ? 's' : ''}`
+                    }))
                   })}
                 >
                   {userStats.dossiers.total}

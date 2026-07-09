@@ -1244,11 +1244,26 @@ def get_user_stats(request):
         top_dossiers.append(get_folder_stats_recursive(folder))
     top_dossiers = sorted(top_dossiers, key=lambda x: x['size_mb'], reverse=True)[:5]
 
-    # Détail dossiers
-    dossiers_detail = [{
-        'nom': f.nom,
-        'nb_fichiers': FileModel.objects.filter(folder=f).count(),
-    } for f in mes_dossiers.order_by('-created_at')]
+    # Détail dossiers avec hiérarchie
+    dossiers_raw = []
+    for f in mes_dossiers.order_by('nom'):
+        dossiers_raw.append({
+            'nom': f.nom,
+            'parent': f.parent.nom if f.parent else None,
+            'niveau': 1 if f.parent else 0,
+            'nb_fichiers': FileModel.objects.filter(folder=f).count(),
+        })
+    # Trier : racines d'abord puis sous-dossiers regroupés
+    dossiers_detail = []
+    for d in [x for x in dossiers_raw if x['niveau'] == 0]:
+        dossiers_detail.append(d)
+        for sub in [x for x in dossiers_raw if x['parent'] == d['nom']]:
+            dossiers_detail.append(sub)
+    # Ajouter sous-dossiers orphelins (parent non propriétaire)
+    noms_ajoutes = {d['nom'] for d in dossiers_detail}
+    for d in dossiers_raw:
+        if d['nom'] not in noms_ajoutes:
+            dossiers_detail.append(d)
 
     # Détail partages reçus
     partages_recus_detail = []
