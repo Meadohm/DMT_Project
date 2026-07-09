@@ -48,6 +48,8 @@ function DashboardEmploye() {
   const [searchTerm, setSearchTerm] = useState("");
   const [userStats, setUserStats] = useState(null);
   const [statsOpen, setStatsOpen] = useState(false);
+  const [detailModal, setDetailModal] = useState(null);
+  // detailModal = { type: 'fichiers'|'partages', data: [...], title: '' }
 
   const fetchUserStats = async () => {
     try {
@@ -609,8 +611,11 @@ const handleClearNotifications = async () => {
               <div className="service-stat-card">
                 <div className="service-stat-icon">📄</div>
                 <div
-                  className="service-stat-value stat-tooltip-trigger"
-                  title={userStats.fichiers.detail?.map(d => `.${d.ext} : ${d.count}`).join('\n')}
+                  className="service-stat-value stat-clickable"
+                  onClick={() => setDetailModal({
+                    title: '📄 Types de fichiers',
+                    rows: userStats.fichiers.detail?.map(d => ({ label: `.${d.ext}`, value: `${d.count} fichier${d.count > 1 ? 's' : ''}` }))
+                  })}
                 >
                   {userStats.fichiers.total}
                 </div>
@@ -625,8 +630,11 @@ const handleClearNotifications = async () => {
               <div className="service-stat-card">
                 <div className="service-stat-icon">📤</div>
                 <div
-                  className="service-stat-value stat-tooltip-trigger"
-                  title={userStats.partages.donnes_detail?.map(d => `📁 ${d.dossier} → ${d.destinataire}`).join('\n')}
+                  className="service-stat-value stat-clickable"
+                  onClick={() => setDetailModal({
+                    title: '📤 Partagés donnés',
+                    rows: userStats.partages.donnes_detail?.map(d => ({ label: `📁 ${d.dossier}`, value: d.destinataire }))
+                  })}
                 >
                   {userStats.partages.donnes}
                 </div>
@@ -668,6 +676,25 @@ const handleClearNotifications = async () => {
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {detailModal && (
+        <div className="detail-modal-overlay" onClick={() => setDetailModal(null)}>
+          <div className="detail-modal-box" onClick={e => e.stopPropagation()}>
+            <div className="detail-modal-header">
+              <span>{detailModal.title}</span>
+              <button onClick={() => setDetailModal(null)}>✕</button>
+            </div>
+            <div className="detail-modal-list">
+              {detailModal.rows?.map((row, i) => (
+                <div key={i} className="detail-modal-row">
+                  <span className="detail-modal-label">{row.label}</span>
+                  <span className="detail-modal-value">{row.value}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
