@@ -439,6 +439,17 @@ def delete_user_account(request, user_id):
 
     nom = utilisateur.username
 
+    # Trouver le responsable du service de l'utilisateur supprimé
+    responsable_service = None
+    if utilisateur.service:
+        responsable_service = Utilisateur.objects.filter(
+            role='responsable',
+            service=utilisateur.service,
+            is_active=True
+        ).exclude(id=utilisateur.id).first()
+    # Destinataire final = responsable du service ou l'admin qui supprime
+    destinataire = responsable_service if responsable_service else request.user
+
     # Archiver les dossiers privés (non partagés) de l'utilisateur
     dossiers_prives = Folder.objects.filter(
         proprietaire=utilisateur,
@@ -450,7 +461,7 @@ def delete_user_account(request, user_id):
     nb_archives = dossiers_prives.count()
     noms_archives = list(dossiers_prives.values_list('nom', flat=True))
     # Réassigner au responsable de la suppression pour survivre au CASCADE de proprietaire
-    dossiers_prives.update(is_archived=True, proprietaire=request.user)
+    dossiers_prives.update(is_archived=True, proprietaire=destinataire)
 
     # Dossiers partagés : réassignés (sans archivage) pour rester accessibles aux destinataires
     dossiers_partages = Folder.objects.filter(
@@ -460,11 +471,12 @@ def delete_user_account(request, user_id):
         id__in=FolderShare.objects.values_list('folder_id', flat=True)
     )
     noms_partages = list(dossiers_partages.values_list('nom', flat=True))
-    dossiers_partages.update(proprietaire=request.user)
+    dossiers_partages.update(proprietaire=destinataire)
 
     utilisateur.delete()
 
-    detail = f"Suppression utilisateur : {nom}"
+    destinataire_nom = destinataire.username
+    detail = f"Suppression utilisateur : {nom} → dossiers transférés à {destinataire_nom}"
     if noms_archives:
         detail += f" | Archivés : {', '.join(noms_archives)}"
     if noms_partages:
