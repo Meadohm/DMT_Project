@@ -439,16 +439,17 @@ def delete_user_account(request, user_id):
 
     nom = utilisateur.username
 
-    # Trouver le responsable du service de l'utilisateur supprimé
-    responsable_service = None
+    # Trouver le responsable unique du service de l'utilisateur supprimé
+    destinataire = request.user
     if utilisateur.service:
-        responsable_service = Utilisateur.objects.filter(
+        responsables = Utilisateur.objects.filter(
             role='responsable',
             service=utilisateur.service,
             is_active=True
-        ).exclude(id=utilisateur.id).first()
-    # Destinataire final = responsable du service ou l'admin qui supprime
-    destinataire = responsable_service if responsable_service else request.user
+        ).exclude(id=utilisateur.id)
+        if responsables.count() == 1:
+            destinataire = responsables.first()
+        # Si 0 ou 2+ responsables → admin qui supprime
 
     # Archiver les dossiers privés (non partagés) de l'utilisateur
     dossiers_prives = Folder.objects.filter(
