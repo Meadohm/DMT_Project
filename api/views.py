@@ -1210,7 +1210,12 @@ def get_user_stats(request):
     from api.models import File as FileModel
 
     # Dossiers personnels
-    mes_dossiers = Folder.objects.filter(proprietaire=user, is_archived=False, is_deleted=False)
+    mes_dossiers = Folder.objects.filter(
+        proprietaire=user,
+        is_archived=False,
+        is_deleted=False,
+        service=user.service
+    )
     total_dossiers = mes_dossiers.count()
 
     # Fichiers uploadés — exclure ceux dans des dossiers supprimés/archivés
