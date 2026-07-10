@@ -65,6 +65,8 @@ function AdminPanel() {
   const [cleanupLoading, setCleanupLoading] = useState(false);
   const [selectedCleanupIds, setSelectedCleanupIds] = useState([]);
   const [cleanupFilter, setCleanupFilter] = useState('all');
+  const [cleanupSearch, setCleanupSearch] = useState('');
+  const [confirmCleanup, setConfirmCleanup] = useState(false);
   const [trashLoading, setTrashLoading] = useState(false);
   const [emptyTrashModal, setEmptyTrashModal] = useState(false);
   const [trashEmail, setTrashEmail] = useState('');
@@ -241,6 +243,7 @@ function AdminPanel() {
 
   useEffect(() => {
     if (activeSection === 'trash') fetchTrash();
+    if (activeSection === 'cleanup') fetchCleanup();
   }, [activeSection]);
 
   const fetchCleanup = async () => {
@@ -257,8 +260,12 @@ function AdminPanel() {
     }
   };
 
-  const handleCleanupSelected = async () => {
+  const handleCleanupSelected = () => {
     if (selectedCleanupIds.length === 0) return;
+    setConfirmCleanup(true);
+  };
+
+  const handleCleanupConfirm = async () => {
     try {
       const res = await fetch(`${API_BASE_URL}/cleanup/folders/`, {
         method: 'POST',
@@ -271,8 +278,8 @@ function AdminPanel() {
       const data = await res.json();
       if (res.ok) {
         setSelectedCleanupIds([]);
+        setConfirmCleanup(false);
         await fetchCleanup();
-        alert(`✅ ${data.success}`);
       }
     } catch (err) {
       console.error('Erreur cleanup', err);
@@ -870,7 +877,7 @@ function AdminPanel() {
               <div className="dashboard-card dashboard-card-trash" onClick={() => { setActiveSection("trash"); fetchTrash(); }}>
                 <div className="dashboard-card-icon">🗑️</div>
                 <div className="dashboard-card-content">
-                  <h3>Corbeille</h3>
+                  <h3>🗑️ Corbeille</h3>
                   <div className="dashboard-card-main">{dashboardStats?.trash?.total ?? 0}</div>
                   <div className="dashboard-card-details">
                     <span className="dash-detail">📄 {dashboardStats?.trash?.fichiers ?? 0} fichiers · 📁 {dashboardStats?.trash?.dossiers ?? 0} dossiers</span>
@@ -1533,8 +1540,14 @@ function AdminPanel() {
                 </button>
               )}
             </div>
-            {/* Filtres */}
+            {/* Filtres + Recherche */}
             <div className="admin-filters-bar" style={{marginBottom:'12px'}}>
+              <input
+                className="filter-input"
+                placeholder="🔍 Rechercher par nom, propriétaire..."
+                value={cleanupSearch}
+                onChange={e => setCleanupSearch(e.target.value)}
+              />
               <select
                 className="filter-select"
                 value={cleanupFilter}
@@ -1556,7 +1569,7 @@ function AdminPanel() {
                 ? cleanupData.abandoned
                 : [...cleanupData.empty, ...cleanupData.abandoned];
               return items.length === 0 ? (
-                <p className="no-data">✅ Aucun dossier à nettoyer.</p>
+                <p className="no-data">Aucun dossier à nettoyer.</p>
               ) : (
                 <table className="users-table">
                   <thead>
@@ -1579,7 +1592,14 @@ function AdminPanel() {
                     </tr>
                   </thead>
                   <tbody>
-                    {items.map((item, idx) => (
+                    {items
+                      .filter(item =>
+                        !cleanupSearch ||
+                        item.nom.toLowerCase().includes(cleanupSearch.toLowerCase()) ||
+                        item.proprietaire.toLowerCase().includes(cleanupSearch.toLowerCase()) ||
+                        item.service.toLowerCase().includes(cleanupSearch.toLowerCase())
+                      )
+                      .map((item, idx) => (
                       <tr key={item.id} className={selectedCleanupIds.includes(item.id) ? "row-selected" : ""}>
                         <td>
                           <input type="checkbox"
@@ -1590,11 +1610,22 @@ function AdminPanel() {
                           />
                         </td>
                         <td>
-                          <span className={`action-badge ${item.type === 'empty' ? 'action-delete' : 'action-login'}`}>
-                            {item.type === 'empty' ? '📭 Vide' : '💤 Abandonné'}
+                          <span className={`action-badge ${
+                            item.type === 'empty' ? 'action-delete' :
+                            item.type === 'empty_parent' ? 'action-update' :
+                            'action-login'
+                          }`}>
+                            {item.type === 'empty' ? '📭 Vide' :
+                             item.type === 'empty_parent' ? '📂 Parent vide' :
+                             '💤 Abandonné'}
                           </span>
                         </td>
-                        <td>📁 {item.nom}</td>
+                        <td>
+                          {item.parent_nom
+                            ? <span>　└ 📁 {item.nom} <span style={{fontSize:'0.72rem', color:'#9ca3af'}}>({item.parent_nom})</span></span>
+                            : <span>📁 {item.nom}</span>
+                          }
+                        </td>
                         <td>{item.proprietaire}</td>
                         <td>{item.service}</td>
                         <td>{item.created_at}</td>
@@ -1605,6 +1636,28 @@ function AdminPanel() {
                 </table>
               );
             })()}
+            {confirmCleanup && (
+              <div className="modal-overlay">
+                <div className="modal-box">
+                  <div style={{textAlign:'center', marginBottom:'12px'}}>
+                    <span style={{fontSize:'2rem'}}>🧹</span>
+                  </div>
+                  <h3 style={{textAlign:'center', marginBottom:'8px'}}>Déplacement en corbeille</h3>
+                  <p style={{textAlign:'center', color:'#6b7280', fontSize:'0.85rem', marginBottom:'16px'}}>
+                    {selectedCleanupIds.length} dossier{selectedCleanupIds.length > 1 ? 's' : ''} sera{selectedCleanupIds.length > 1 ? 'ont' : ''} déplacé{selectedCleanupIds.length > 1 ? 's' : ''} en corbeille.
+                    <br/>Vous pourrez les restaurer depuis la section Corbeille.
+                  </p>
+                  <div className="modal-actions" style={{justifyContent:'center', gap:'12px'}}>
+                    <button className="btn-cancel-confirm" onClick={() => setConfirmCleanup(false)}>
+                      Annuler
+                    </button>
+                    <button className="btn-danger" onClick={handleCleanupConfirm}>
+                      🗑️ Confirmer le déplacement
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
