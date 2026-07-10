@@ -231,6 +231,12 @@ def update_user_role(request, user_id):
     if new_role not in valid_roles:
         return Response({'error': 'Rôle non valide'}, status=status.HTTP_400_BAD_REQUEST)
 
+    if new_role in ['employe', 'responsable'] and not (utilisateur.service or '').strip():
+        return Response(
+            {'error': f'Un {new_role} doit obligatoirement avoir un service assigné.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
     utilisateur.role = valid_roles[new_role]
     utilisateur.save()
     
@@ -305,6 +311,12 @@ def create_user_account(request):
     if role not in valid_roles:
         return Response({'error': 'Rôle non valide.'}, status=status.HTTP_400_BAD_REQUEST)
 
+    if role in ['employe', 'responsable'] and not service.strip():
+        return Response(
+            {'error': f'Un {role} doit obligatoirement avoir un service assigné.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
     user = Utilisateur.objects.create_user(username=username, email=email, password=password)
     user.role = role
     user.service = service
@@ -369,6 +381,12 @@ def update_user_account(request, user_id):
 
     if email and Utilisateur.objects.filter(email=email).exclude(id=user_id).exists():
         return Response({'error': 'Cet email est déjà utilisé.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if utilisateur.role in ['employe', 'responsable'] and not service.strip():
+        return Response(
+            {'error': f'Un {utilisateur.role} doit obligatoirement avoir un service assigné.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
     old_service = utilisateur.service
     utilisateur.username = username

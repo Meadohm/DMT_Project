@@ -699,6 +699,10 @@ function AdminPanel() {
       setFormError('Le mot de passe doit contenir au moins 6 caractères.');
       return false;
     }
+    if (['employe', 'responsable'].includes(formData.role) && !formData.service?.trim()) {
+      setFormError('Un employé ou responsable doit avoir un service assigné.');
+      return false;
+    }
     try {
       await createUser(formData);
       setFormSuccess(`✅ Utilisateur "${formData.username}" créé avec succès.`);
