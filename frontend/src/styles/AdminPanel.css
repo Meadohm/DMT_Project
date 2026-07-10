@@ -831,33 +831,56 @@ td:last-child {
 }
 
 /* Sticky columns # + ID + Nom */
-.users-table-wrapper th:nth-child(1),
-.users-table-wrapper td:nth-child(1) {
+/* Thead sticky colonnes 1-3 */
+.users-table-wrapper thead th:nth-child(1),
+.users-table-wrapper thead th:nth-child(2),
+.users-table-wrapper thead th:nth-child(3) {
   position: sticky;
-  left: 0;
-  z-index: 2;
-  background: inherit;
-  min-width: 40px;
+  z-index: 4;
+  background: #003366;
+  color: white;
 }
+.users-table-wrapper thead th:nth-child(1) { left: 0; min-width: 40px; }
+.users-table-wrapper thead th:nth-child(2) { left: 40px; min-width: 60px; }
+.users-table-wrapper thead th:nth-child(3) { left: 100px; min-width: 120px; box-shadow: 2px 0 4px rgba(0,0,0,0.08); }
 
-.users-table-wrapper th:nth-child(2),
-.users-table-wrapper td:nth-child(2) {
+/* Tbody sticky colonnes 1-3 */
+.users-table-wrapper tbody td:nth-child(1),
+.users-table-wrapper tbody td:nth-child(2),
+.users-table-wrapper tbody td:nth-child(3) {
   position: sticky;
-  left: 40px;
-  z-index: 2;
-  background: inherit;
-  min-width: 60px;
+  z-index: 1;
 }
+.users-table-wrapper tbody td:nth-child(1) { left: 0; min-width: 40px; background: #f8f9fa; }
+.users-table-wrapper tbody td:nth-child(2) { left: 40px; min-width: 60px; background: #f8f9fa; }
+.users-table-wrapper tbody td:nth-child(3) { left: 100px; min-width: 120px; background: white; box-shadow: 2px 0 4px rgba(0,0,0,0.06); }
 
-.users-table-wrapper th:nth-child(3),
-.users-table-wrapper td:nth-child(3) {
-  position: sticky;
-  left: 100px;
-  z-index: 2;
-  background: inherit;
-  min-width: 120px;
-  box-shadow: 2px 0 4px rgba(0,0,0,0.06);
-}
+/* Lignes alternées */
+.users-table-wrapper tbody tr:nth-child(even) td:nth-child(1),
+.users-table-wrapper tbody tr:nth-child(even) td:nth-child(2) { background: #eef0f3; }
+.users-table-wrapper tbody tr:nth-child(even) td:nth-child(3) { background: #f9f9f9; }
+
+/* Survol */
+.users-table-wrapper tbody tr:hover td:nth-child(1),
+.users-table-wrapper tbody tr:hover td:nth-child(2),
+.users-table-wrapper tbody tr:hover td:nth-child(3) { background: #e8f0fe; }
+
+/* Dark mode */
+.admin-panel-container.dark .users-table-wrapper thead th:nth-child(1),
+.admin-panel-container.dark .users-table-wrapper thead th:nth-child(2),
+.admin-panel-container.dark .users-table-wrapper thead th:nth-child(3) { background: #1a2040; }
+
+.admin-panel-container.dark .users-table-wrapper tbody td:nth-child(1),
+.admin-panel-container.dark .users-table-wrapper tbody td:nth-child(2) { background: #141c36; }
+.admin-panel-container.dark .users-table-wrapper tbody td:nth-child(3) { background: #1a2040; }
+
+.admin-panel-container.dark .users-table-wrapper tbody tr:nth-child(even) td:nth-child(1),
+.admin-panel-container.dark .users-table-wrapper tbody tr:nth-child(even) td:nth-child(2) { background: #1e2540; }
+.admin-panel-container.dark .users-table-wrapper tbody tr:nth-child(even) td:nth-child(3) { background: #1e2845; }
+
+.admin-panel-container.dark .users-table-wrapper tbody tr:hover td:nth-child(1),
+.admin-panel-container.dark .users-table-wrapper tbody tr:hover td:nth-child(2),
+.admin-panel-container.dark .users-table-wrapper tbody tr:hover td:nth-child(3) { background: #2d3555; }
 
 .btn-create-user {
   background: linear-gradient(135deg, #003366, #00509e);
