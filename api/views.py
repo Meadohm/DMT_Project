@@ -492,7 +492,7 @@ def delete_user_account(request, user_id):
             user=destinataire,
             type='info',
             message=(
-                f"📋 {request.user.username} a supprimé le compte {nom}. "
+                f"{request.user.username} a supprimé le compte {nom}. "
                 f"Dossiers transférés → "
                 f"Archivés ({len(noms_archives)}) : {archives_str} | "
                 f"Partagés ({len(noms_partages)}) : {partages_str}"
