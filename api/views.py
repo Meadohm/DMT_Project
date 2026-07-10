@@ -430,23 +430,34 @@ def delete_user_account(request, user_id):
         id__in=FolderShare.objects.values_list('folder_id', flat=True)
     )
     nb_archives = dossiers_prives.count()
+    noms_archives = list(dossiers_prives.values_list('nom', flat=True))
     # Réassigner au responsable de la suppression pour survivre au CASCADE de proprietaire
     dossiers_prives.update(is_archived=True, proprietaire=request.user)
 
     # Dossiers partagés : réassignés (sans archivage) pour rester accessibles aux destinataires
-    Folder.objects.filter(
+    dossiers_partages = Folder.objects.filter(
         proprietaire=utilisateur,
         is_deleted=False
     ).filter(
         id__in=FolderShare.objects.values_list('folder_id', flat=True)
-    ).update(proprietaire=request.user)
+    )
+    noms_partages = list(dossiers_partages.values_list('nom', flat=True))
+    dossiers_partages.update(proprietaire=request.user)
 
     utilisateur.delete()
+
+    detail = f"Suppression utilisateur : {nom}"
+    if noms_archives:
+        detail += f" | Archivés : {', '.join(noms_archives)}"
+    if noms_partages:
+        detail += f" | Partagés réassignés : {', '.join(noms_partages)}"
+    if len(detail) > 255:
+        detail = detail[:252] + '...'
 
     AuditLog.objects.create(
         utilisateur=request.user,
         action='DELETE',
-        objet=f"Suppression utilisateur : {nom} — {nb_archives} dossier(s) privé(s) archivé(s)",
+        objet=detail,
         adresse_ip=request.META.get('REMOTE_ADDR'),
     )
     return Response({'success': f'Utilisateur {nom} supprimé. {nb_archives} dossier(s) privé(s) archivé(s).'})
