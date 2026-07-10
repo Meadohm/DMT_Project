@@ -1202,6 +1202,114 @@ def get_service_stats(request):
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
+def get_cleanup_candidates(request):
+    """
+    Retourne les dossiers candidats au nettoyage :
+    - Dossiers vides (0 fichier, 0 sous-dossier)
+    - Dossiers abandonnés (non modifiés depuis 30 jours)
+    """
+    from datetime import timedelta
+    from api.models import File as FileModel
+
+    threshold_abandoned = timezone.now() - timedelta(days=30)
+
+    all_folders = Folder.objects.filter(
+        is_deleted=False,
+        is_archived=False
+    ).select_related('proprietaire')
+
+    empty = []
+    abandoned = []
+
+    for folder in all_folders:
+        nb_fichiers = FileModel.objects.filter(folder=folder).count()
+        nb_enfants = Folder.objects.filter(
+            parent=folder,
+            is_deleted=False,
+            is_archived=False
+        ).count()
+
+        if nb_fichiers == 0 and nb_enfants == 0:
+            empty.append({
+                'id': folder.id,
+                'nom': folder.nom,
+                'proprietaire': folder.proprietaire.username if folder.proprietaire else '—',
+                'service': folder.service or '—',
+                'created_at': folder.created_at.strftime('%d/%m/%Y'),
+                'updated_at': folder.updated_at.strftime('%d/%m/%Y'),
+                'type': 'empty',
+            })
+        elif folder.updated_at < threshold_abandoned:
+            abandoned.append({
+                'id': folder.id,
+                'nom': folder.nom,
+                'proprietaire': folder.proprietaire.username if folder.proprietaire else '—',
+                'service': folder.service or '—',
+                'nb_fichiers': nb_fichiers,
+                'created_at': folder.created_at.strftime('%d/%m/%Y'),
+                'updated_at': folder.updated_at.strftime('%d/%m/%Y'),
+                'type': 'abandoned',
+            })
+
+    return Response({
+        'empty': empty,
+        'abandoned': abandoned,
+        'total_empty': len(empty),
+        'total_abandoned': len(abandoned),
+    })
+
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
+def cleanup_folders(request):
+    """
+    Déplace en corbeille une liste de dossiers sélectionnés
+    Body: { "folder_ids": [1, 2, 3] }
+    """
+    folder_ids = request.data.get('folder_ids', [])
+    if not folder_ids:
+        return Response({'error': 'Aucun dossier sélectionné.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    cleaned = 0
+    for fid in folder_ids:
+        try:
+            folder = Folder.objects.get(id=fid, is_deleted=False)
+            Trash.objects.create(
+                item_type='folder',
+                item_id=folder.id,
+                nom=folder.nom,
+                original_name=folder.original_name,
+                deleted_by=request.user,
+                folder_nom=folder.nom,
+                file_path='',
+                size_bytes=0,
+                metadata={
+                    'service': folder.service,
+                    'proprietaire_id': folder.proprietaire.id if folder.proprietaire else None,
+                }
+            )
+            folder.is_deleted = True
+            folder.deleted_at = timezone.now()
+            folder.deleted_by = request.user
+            folder.save(update_fields=['is_deleted', 'deleted_at', 'deleted_by'])
+            cleaned += 1
+        except Folder.DoesNotExist:
+            continue
+
+    AuditLog.objects.create(
+        utilisateur=request.user,
+        action='DELETE',
+        objet=f"Nettoyage : {cleaned} dossier(s) déplacés en corbeille",
+        adresse_ip=request.META.get('REMOTE_ADDR', '')
+    )
+
+    return Response({'success': f'{cleaned} dossier(s) déplacés en corbeille.'})
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_user_stats(request):
     """Stats personnelles de l'utilisateur connecté"""

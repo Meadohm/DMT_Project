@@ -99,4 +99,8 @@ urlpatterns = [
     path('trash/<int:trash_id>/restore/', views.restore_trash_item, name='restore_trash_item'),
     path('trash/<int:trash_id>/restore-folder/', views.restore_folder_from_trash, name='restore_folder_from_trash'),
 
+    # Cleanup
+    path('cleanup/candidates/', views.get_cleanup_candidates, name='cleanup_candidates'),
+    path('cleanup/folders/', views.cleanup_folders, name='cleanup_folders'),
+
 ]
