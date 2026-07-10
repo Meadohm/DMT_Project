@@ -1948,6 +1948,70 @@ body.dark .dashboard-card-trend .recharts-text {
   gap: 6px;
 }
 
+/* ====== COLONNES FIXES TABLEAU UTILISATEURS ====== */
+.users-table-wrapper {
+  overflow-x: auto;
+  position: relative;
+}
+
+.users-table-wrapper table th:nth-child(1),
+.users-table-wrapper table td:nth-child(1) {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: #003366;
+  color: white;
+  min-width: 40px;
+}
+
+.users-table-wrapper table th:nth-child(2),
+.users-table-wrapper table td:nth-child(2) {
+  position: sticky;
+  left: 40px;
+  z-index: 2;
+  background: #003366;
+  color: white;
+  min-width: 60px;
+}
+
+.users-table-wrapper table th:nth-child(3),
+.users-table-wrapper table td:nth-child(3) {
+  position: sticky;
+  left: 100px;
+  z-index: 2;
+  background: white;
+  min-width: 120px;
+  box-shadow: 2px 0 4px rgba(0,0,0,0.08);
+}
+
+.users-table-wrapper tbody tr td:nth-child(1),
+.users-table-wrapper tbody tr td:nth-child(2) {
+  background: #003366;
+  color: white;
+}
+
+.users-table-wrapper tbody tr:nth-child(even) td:nth-child(3) {
+  background: #f0f0f0;
+}
+
+.users-table-wrapper tbody tr:nth-child(odd) td:nth-child(3) {
+  background: white;
+}
+
+.admin-panel-container.dark .users-table-wrapper table th:nth-child(1),
+.admin-panel-container.dark .users-table-wrapper table td:nth-child(1),
+.admin-panel-container.dark .users-table-wrapper table th:nth-child(2),
+.admin-panel-container.dark .users-table-wrapper table td:nth-child(2) {
+  background: #1a2040;
+  color: #e6e8f0;
+}
+
+.admin-panel-container.dark .users-table-wrapper table th:nth-child(3),
+.admin-panel-container.dark .users-table-wrapper table td:nth-child(3) {
+  background: #141c36;
+  color: #e6e8f0;
+}
+
 /*.sidebar-danger-zone {
   margin-top: auto;
   padding-top: 12px;
