@@ -2072,7 +2072,7 @@ function AdminPanel() {
                 </select>
               </div>
               <div className="form-group">
-                <label>Service</label>
+                <label>Service <span style={{color:'#ef4444'}}>*</span> <span style={{fontSize:'0.72rem', color:'#9ca3af'}}>(obligatoire pour employé/responsable)</span></label>
                 <select name="service" value={formData.service || ''} onChange={(e) => setFormData({ ...formData, service: e.target.value })}>
                   <option value="">— Aucun service —</option>
                   {services.map(s => (
