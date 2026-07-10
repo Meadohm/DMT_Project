@@ -1,5 +1,5 @@
 import os, hashlib, shutil, logging, re, csv, zipfile, mimetypes
-from django.db.models import Count
+from django.db.models import Count, F
 from django.contrib.auth import authenticate, get_user_model
 from django.conf import settings
 import shutil
@@ -485,16 +485,17 @@ def delete_user_account(request, user_id):
         id__in=FolderShare.objects.values_list('folder_id', flat=True)
     )
     noms_partages = list(dossiers_partages.values_list('nom', flat=True))
-    partages_ids = set(dossiers_partages.values_list('id', flat=True))
     dossiers_partages.update(proprietaire=destinataire, **service_update)
 
-    # Réassigner aussi les sous-dossiers des dossiers partagés
-    all_partages_ids = get_descendant_folder_ids(partages_ids)
-    if all_partages_ids:
-        Folder.objects.filter(id__in=all_partages_ids).update(
-            proprietaire=destinataire,
-            **service_update
-        )
+    # Réassigner tous les dossiers restants de l'utilisateur (y compris sous-dossiers) à destinataire
+    # avant la suppression pour éviter SET_NULL
+    Folder.objects.filter(
+        proprietaire=utilisateur,
+        is_deleted=False
+    ).update(
+        proprietaire=destinataire,
+        service=destinataire.service if destinataire.service else F('service')
+    )
 
     utilisateur.delete()
 
