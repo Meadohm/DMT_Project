@@ -486,11 +486,17 @@ def delete_user_account(request, user_id):
         detail = detail[:252] + '...'
 
     if destinataire != request.user:
-        nb_partages = len(noms_partages) if 'noms_partages' in dir() else 0
+        archives_str = ', '.join(noms_archives) if noms_archives else 'aucun'
+        partages_str = ', '.join(noms_partages) if noms_partages else 'aucun'
         Notification.objects.create(
             user=destinataire,
             type='info',
-            message=f"Suite à la suppression du compte {nom}, {nb_archives} dossier(s) privé(s) archivé(s) et {nb_partages} dossier(s) partagé(s) vous ont été transférés."
+            message=(
+                f"📋 {request.user.username} a supprimé le compte {nom}. "
+                f"Dossiers transférés → "
+                f"Archivés ({len(noms_archives)}) : {archives_str} | "
+                f"Partagés ({len(noms_partages)}) : {partages_str}"
+            )[:500]
         )
 
     AuditLog.objects.create(
