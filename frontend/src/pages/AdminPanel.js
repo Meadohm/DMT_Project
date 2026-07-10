@@ -61,6 +61,10 @@ function AdminPanel() {
   );
   const [historique, setHistorique] = useState([]);
   const [trashItems, setTrashItems] = useState([]);
+  const [cleanupData, setCleanupData] = useState(null);
+  const [cleanupLoading, setCleanupLoading] = useState(false);
+  const [selectedCleanupIds, setSelectedCleanupIds] = useState([]);
+  const [cleanupFilter, setCleanupFilter] = useState('all');
   const [trashLoading, setTrashLoading] = useState(false);
   const [emptyTrashModal, setEmptyTrashModal] = useState(false);
   const [trashEmail, setTrashEmail] = useState('');
@@ -238,6 +242,42 @@ function AdminPanel() {
   useEffect(() => {
     if (activeSection === 'trash') fetchTrash();
   }, [activeSection]);
+
+  const fetchCleanup = async () => {
+    setCleanupLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/cleanup/candidates/`, {
+        headers: { Authorization: `Token ${localStorage.getItem('token')}` }
+      });
+      if (res.ok) setCleanupData(await res.json());
+    } catch (err) {
+      console.error('Erreur cleanup', err);
+    } finally {
+      setCleanupLoading(false);
+    }
+  };
+
+  const handleCleanupSelected = async () => {
+    if (selectedCleanupIds.length === 0) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/cleanup/folders/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Token ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ folder_ids: selectedCleanupIds })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSelectedCleanupIds([]);
+        await fetchCleanup();
+        alert(`✅ ${data.success}`);
+      }
+    } catch (err) {
+      console.error('Erreur cleanup', err);
+    }
+  };
 
   const fetchTrash = async () => {
     setTrashLoading(true);
@@ -687,6 +727,7 @@ function AdminPanel() {
         <button className={activeSection === "submissions" ? "active" : ""} onClick={() => { setActiveSection("submissions"); fetchHistorique(1, historiqueAction, historiqueSearch, dateDebut, dateFin); }}>Journal d'activité</button>
         <button className={activeSection === "createService" ? "active" : ""} onClick={() => setActiveSection("createService")}>Créer un service</button>
         <button className={activeSection === "trash" ? "active" : ""} onClick={() => { setActiveSection("trash"); fetchTrash(); }}>Corbeille</button>
+        <button className={activeSection === "cleanup" ? "active" : ""} onClick={() => { setActiveSection("cleanup"); fetchCleanup(); }}>🧹 Nettoyage</button>
         <button className={activeSection === "account" ? "active" : ""} onClick={() => setActiveSection("account")}>Mon Profil</button>
         <div className="sidebar-bottom">
           <div className="sidebar-logo">
@@ -1478,6 +1519,92 @@ function AdminPanel() {
                 </div>
               </form>
             </div>
+          </div>
+        )}
+
+        {activeSection === "cleanup" && (
+          <div className="trash-section">
+            <div className="section-header">
+              <h2>🧹 Nettoyage des dossiers</h2>
+              <button className="btn-secondary" onClick={fetchCleanup}>↺ Actualiser</button>
+              {selectedCleanupIds.length > 0 && (
+                <button className="btn-danger" onClick={handleCleanupSelected}>
+                  🗑️ Déplacer en corbeille ({selectedCleanupIds.length})
+                </button>
+              )}
+            </div>
+            {/* Filtres */}
+            <div className="admin-filters-bar" style={{marginBottom:'12px'}}>
+              <select
+                className="filter-select"
+                value={cleanupFilter}
+                onChange={e => setCleanupFilter(e.target.value)}
+              >
+                <option value="all">Tous ({(cleanupData?.total_empty || 0) + (cleanupData?.total_abandoned || 0)})</option>
+                <option value="empty">📭 Vides ({cleanupData?.total_empty || 0})</option>
+                <option value="abandoned">💤 Abandonnés ({cleanupData?.total_abandoned || 0})</option>
+              </select>
+            </div>
+            {cleanupLoading ? (
+              <p>Chargement...</p>
+            ) : !cleanupData ? (
+              <p className="no-data">Cliquez sur Actualiser pour analyser.</p>
+            ) : (() => {
+              const items = cleanupFilter === 'empty'
+                ? cleanupData.empty
+                : cleanupFilter === 'abandoned'
+                ? cleanupData.abandoned
+                : [...cleanupData.empty, ...cleanupData.abandoned];
+              return items.length === 0 ? (
+                <p className="no-data">✅ Aucun dossier à nettoyer.</p>
+              ) : (
+                <table className="users-table">
+                  <thead>
+                    <tr>
+                      <th>
+                        <input type="checkbox"
+                          onChange={() => {
+                            if (selectedCleanupIds.length === items.length) setSelectedCleanupIds([]);
+                            else setSelectedCleanupIds(items.map(i => i.id));
+                          }}
+                          checked={selectedCleanupIds.length === items.length && items.length > 0}
+                        />
+                      </th>
+                      <th>Type</th>
+                      <th>Nom</th>
+                      <th>Propriétaire</th>
+                      <th>Service</th>
+                      <th>Créé le</th>
+                      <th>Modifié le</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {items.map((item, idx) => (
+                      <tr key={item.id} className={selectedCleanupIds.includes(item.id) ? "row-selected" : ""}>
+                        <td>
+                          <input type="checkbox"
+                            checked={selectedCleanupIds.includes(item.id)}
+                            onChange={() => setSelectedCleanupIds(prev =>
+                              prev.includes(item.id) ? prev.filter(i => i !== item.id) : [...prev, item.id]
+                            )}
+                          />
+                        </td>
+                        <td>
+                          <span className={`action-badge ${item.type === 'empty' ? 'action-delete' : 'action-login'}`}>
+                            {item.type === 'empty' ? '📭 Vide' : '💤 Abandonné'}
+                          </span>
+                        </td>
+                        <td>📁 {item.nom}</td>
+                        <td>{item.proprietaire}</td>
+                        <td>{item.service}</td>
+                        <td>{item.created_at}</td>
+                        <td>{item.updated_at}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              );
+            })()}
           </div>
         )}
 
