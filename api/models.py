@@ -27,7 +27,7 @@ class Utilisateur(AbstractUser):
     def __str__(self):
         return self.username
 
-# Nouveau modèle Folder ###########
+# Nouveau modèle Folder
 class Folder(models.Model):
     nom = models.CharField(max_length=255)
     original_name = models.CharField(max_length=255, blank=True, null=True)

@@ -629,48 +629,82 @@ function DashboardResponsable() {
             <div className="service-stats-cards">
               <div className="service-stat-card">
                 <div className="service-stat-icon">👥</div>
-                <div className="service-stat-value">{serviceStats.membres.total}</div>
-                <div className="service-stat-label">Membres</div>
-                <div className="service-stat-sub">
-                  {serviceStats.membres.en_ligne} en ligne
-                  {serviceStats.membres.en_ligne_noms?.length > 0 && (
-                    <div style={{marginTop:'4px', fontSize:'0.72rem', color:'#16a34a'}}>
-                      {serviceStats.membres.en_ligne_noms.join(', ')}
-                    </div>
-                  )}
+                <div className="service-stat-value stat-clickable"
+                  onClick={() => setDetailModal({
+                    title: '👥 Membres du service',
+                    rows: [
+                      ...( serviceStats.membres.en_ligne_noms?.map(n => ({ label: n, value: '🟢 En ligne' })) || []),
+                      ...( serviceStats.membres.non_connectes_aujourdhui?.map(n => ({ label: n, value: '💤 Absent' })) || []),
+                    ]
+                  })}
+                >
+                  {serviceStats.membres.total}
                 </div>
+                <div className="service-stat-label">Membres</div>
+                <div className="service-stat-sub">🟢 {serviceStats.membres.en_ligne} en ligne</div>
               </div>
               <div className="service-stat-card">
                 <div className="service-stat-icon">📅</div>
-                <div className="service-stat-value">{serviceStats.membres.connectes_aujourdhui?.length ?? 0}</div>
+                <div className="service-stat-value stat-clickable"
+                  onClick={() => setDetailModal({
+                    title: '📅 Connectés aujourd\'hui',
+                    rows: serviceStats.membres.connectes_aujourdhui?.map(n => ({ label: n, value: '✅' })) || []
+                  })}
+                >
+                  {serviceStats.membres.connectes_aujourdhui?.length ?? 0}
+                </div>
                 <div className="service-stat-label">Connectés aujourd'hui</div>
                 <div className="service-stat-sub">
-                  {serviceStats.membres.connectes_aujourdhui?.length > 0
-                    ? <span style={{color:'#16a34a'}}>{serviceStats.membres.connectes_aujourdhui.join(', ')}</span>
-                    : <span>—</span>
-                  }
+                  {serviceStats.membres.connectes_aujourdhui?.length > 0 ? '✅' : '—'}
                 </div>
               </div>
               <div className="service-stat-card">
                 <div className="service-stat-icon">💤</div>
-                <div className="service-stat-value">{serviceStats.membres.non_connectes_aujourdhui?.length ?? 0}</div>
+                <div className="service-stat-value stat-clickable"
+                  onClick={() => setDetailModal({
+                    title: '💤 Absents aujourd\'hui',
+                    rows: serviceStats.membres.non_connectes_aujourdhui?.map(n => ({ label: n, value: '❌' })) || []
+                  })}
+                >
+                  {serviceStats.membres.non_connectes_aujourdhui?.length ?? 0}
+                </div>
                 <div className="service-stat-label">Absents aujourd'hui</div>
                 <div className="service-stat-sub">
-                  {serviceStats.membres.non_connectes_aujourdhui?.length > 0
-                    ? <span style={{color:'#ef4444'}}>{serviceStats.membres.non_connectes_aujourdhui.join(', ')}</span>
-                    : <span style={{color:'#16a34a'}}>Tous connectés</span>
+                  {serviceStats.membres.non_connectes_aujourdhui?.length === 0
+                    ? <span style={{color:'#16a34a'}}>✅ Tous connectés</span>
+                    : '❌'
                   }
                 </div>
               </div>
               <div className="service-stat-card">
                 <div className="service-stat-icon">📁</div>
-                <div className="service-stat-value">{serviceStats.dossiers.total}</div>
+                <div className="service-stat-value stat-clickable"
+                  onClick={() => setDetailModal({
+                    title: '📁 Dossiers du service',
+                    rows: [
+                      { label: '🤝 Partagés', value: `${serviceStats.dossiers.partages}` },
+                      { label: '🔒 Privés', value: `${serviceStats.dossiers.prives}` },
+                    ]
+                  })}
+                >
+                  {serviceStats.dossiers.total}
+                </div>
                 <div className="service-stat-label">Dossiers</div>
-                <div className="service-stat-sub">🤝 {serviceStats.dossiers.partages} partagés · 🔒 {serviceStats.dossiers.prives} privés</div>
+                <div className="service-stat-sub">🤝 {serviceStats.dossiers.partages} · 🔒 {serviceStats.dossiers.prives}</div>
               </div>
               <div className="service-stat-card">
                 <div className="service-stat-icon">📄</div>
-                <div className="service-stat-value">{serviceStats.fichiers.total}</div>
+                <div className="service-stat-value stat-clickable"
+                  onClick={() => setDetailModal({
+                    title: '📄 Fichiers du service',
+                    rows: [
+                      { label: '📊 Total', value: `${serviceStats.fichiers.total} fichiers` },
+                      { label: '💾 Taille', value: `${serviceStats.fichiers.size_mb} MB` },
+                    ]
+                  })}
+                >
+                  {serviceStats.fichiers.total}
+                </div>
                 <div className="service-stat-label">Fichiers</div>
                 <div className="service-stat-sub">💾 {serviceStats.fichiers.size_mb} MB</div>
               </div>

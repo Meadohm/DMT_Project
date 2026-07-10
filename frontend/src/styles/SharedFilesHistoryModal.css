@@ -148,13 +148,16 @@
 }
 
 .sfh-pagination button {
-  padding: 5px 10px;
-  border: 1px solid #ddd;
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
   border-radius: 6px;
-  background: white;
+  padding: 4px 10px;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
 }
+
+.sfh-pagination button:hover:not(:disabled) { background: #e5e7eb; }
 
 .sfh-pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
 

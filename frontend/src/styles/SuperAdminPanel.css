@@ -1359,6 +1359,35 @@ td:last-child {
   margin-top: 16px;
 }
 
+.pagination-controls button {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+
+.pagination-controls button:hover:not(:disabled) {
+  background: #e5e7eb;
+}
+
+.pagination-controls button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.admin-panel-container.dark .pagination-controls button {
+  background: #1e2d3d;
+  color: #e6e8f0;
+  border-color: #2d3555;
+}
+
+.admin-panel-container.dark .pagination-controls button:hover:not(:disabled) {
+  background: #263447;
+}
+
 .pagination-goto {
   display: flex;
   align-items: center;
