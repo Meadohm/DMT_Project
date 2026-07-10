@@ -1037,6 +1037,7 @@ function SuperAdminPanel() {
                 <thead>
                   <tr>
                     <th>#</th>
+                    <th>ID</th>
                     <th>Nom</th>
                     <th>Rôle</th>
                     <th>Service</th>
@@ -1051,6 +1052,7 @@ function SuperAdminPanel() {
                       return editingUser === u.id ? (
                         <tr key={u.id} className="editing-row">
                           <td data-label="#">{index + 1}</td>
+                          <td data-label="ID" style={{color:'#9ca3af', fontSize:'0.78rem'}}>#{u.id}</td>
                           <td data-label="Nom"><input value={editUserData.username} onChange={(e) => setEditUserData({ ...editUserData, username: e.target.value })} /></td>
                           <td data-label="Rôle">
                             <select value={u.role} onChange={(e) => handleUpdateRole(u.id, e.target.value)} disabled={u.id === userInfo?.id || u.role === 'super_admin'}>
@@ -1078,6 +1080,7 @@ function SuperAdminPanel() {
                       ) : (
                         <tr key={u.id} className={!u.is_active ? 'user-inactive' : ''}>
                           <td data-label="#">{index + 1}</td>
+                          <td data-label="ID" style={{color:'#9ca3af', fontSize:'0.78rem'}}>#{u.id}</td>
                           <td data-label="Nom">{u.username}</td>
                           <td data-label="Rôle">
                             <select value={u.role} onChange={(e) => handleUpdateRole(u.id, e.target.value)} disabled={u.id === userInfo?.id || u.role === 'super_admin'}>
