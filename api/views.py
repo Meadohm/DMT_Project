@@ -420,16 +420,36 @@ def delete_user_account(request, user_id):
         return Response({'error': 'Seul le concepteur peut supprimer un super administrateur.'}, status=status.HTTP_403_FORBIDDEN)
 
     nom = utilisateur.username
+
+    # Archiver les dossiers privés (non partagés) de l'utilisateur
+    dossiers_prives = Folder.objects.filter(
+        proprietaire=utilisateur,
+        is_archived=False,
+        is_deleted=False
+    ).exclude(
+        id__in=FolderShare.objects.values_list('folder_id', flat=True)
+    )
+    nb_archives = dossiers_prives.count()
+    # Réassigner au responsable de la suppression pour survivre au CASCADE de proprietaire
+    dossiers_prives.update(is_archived=True, proprietaire=request.user)
+
+    # Dossiers partagés : réassignés (sans archivage) pour rester accessibles aux destinataires
+    Folder.objects.filter(
+        proprietaire=utilisateur,
+        is_deleted=False
+    ).filter(
+        id__in=FolderShare.objects.values_list('folder_id', flat=True)
+    ).update(proprietaire=request.user)
+
     utilisateur.delete()
 
     AuditLog.objects.create(
         utilisateur=request.user,
         action='DELETE',
-        objet=f"Suppression utilisateur : {nom}",
+        objet=f"Suppression utilisateur : {nom} — {nb_archives} dossier(s) privé(s) archivé(s)",
         adresse_ip=request.META.get('REMOTE_ADDR'),
     )
-
-    return Response({'success': 'Utilisateur supprimé.'})
+    return Response({'success': f'Utilisateur {nom} supprimé. {nb_archives} dossier(s) privé(s) archivé(s).'})
 
 
 @api_view(['PUT'])
