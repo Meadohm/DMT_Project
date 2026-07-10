@@ -1939,9 +1939,19 @@ body.dark .dashboard-card-trend .recharts-text {
 }
 
 /* ZONE DANGER SIDEBAR */
-.sidebar-danger-zone {
+/*.sidebar-danger-zone {
   margin-top: auto;
   padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}*/
+
+.sidebar-danger-zone {
+  margin-top: auto;
+  padding-top: 16px;
+  margin-top: 24px;
   border-top: 1px solid rgba(255, 255, 255, 0.15);
   display: flex;
   flex-direction: column;
