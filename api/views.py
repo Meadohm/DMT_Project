@@ -2515,7 +2515,7 @@ def list_shared_files(request):
         share = share_map.get(file.folder_id)
         data.append({
             **FileSerializer(file, context={'request': request}).data,
-            "shared_by": file.folder.proprietaire.username,
+            "shared_by": file.folder.proprietaire.username if file.folder.proprietaire else '—',
             "shared_at": share.created_at if share else None,
         })
     # Filtres
@@ -3189,7 +3189,7 @@ def leave_folder(request, folder_id):
     except FolderShare.DoesNotExist:
         return Response({"error": "Partage introuvable."}, status=status.HTTP_404_NOT_FOUND)
     folder_name = share.folder.nom
-    owner_username = share.folder.proprietaire.username
+    owner_username = share.folder.proprietaire.username if share.folder.proprietaire else '—'
     share.delete()
     try:
         utilisateur = Utilisateur.objects.get(username=request.user.username)

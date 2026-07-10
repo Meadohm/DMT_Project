@@ -34,7 +34,7 @@ class Folder(models.Model):
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
     deleted_by = models.ForeignKey(Utilisateur, on_delete=models.SET_NULL, null=True, blank=True, related_name='deleted_folders')
-    proprietaire = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="folders")
+    proprietaire = models.ForeignKey(Utilisateur, on_delete=models.SET_NULL, null=True, blank=True, related_name="folders")
     service = models.CharField(max_length=255, blank=True, null=True)
     parent = models.ForeignKey(
         "self",
@@ -55,7 +55,7 @@ class Folder(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.nom} ({self.proprietaire.username})"
+        return f"{self.nom} ({self.proprietaire.username if self.proprietaire else '—'})"
 
 # Nouveau modèle FolderShare
 class FolderShare(models.Model):
