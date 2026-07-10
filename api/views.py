@@ -1230,27 +1230,28 @@ def get_cleanup_candidates(request):
             is_archived=False
         ).count()
 
+        parent_nom = folder.parent.nom if folder.parent else None
+        item = {
+            'id': folder.id,
+            'nom': folder.nom,
+            'parent_nom': parent_nom,
+            'proprietaire': folder.proprietaire.username if folder.proprietaire else '—',
+            'service': folder.service or '—',
+            'nb_fichiers': nb_fichiers,
+            'nb_enfants': nb_enfants,
+            'created_at': folder.created_at.strftime('%d/%m/%Y %H:%M'),
+            'updated_at': folder.updated_at.strftime('%d/%m/%Y %H:%M'),
+        }
         if nb_fichiers == 0 and nb_enfants == 0:
-            empty.append({
-                'id': folder.id,
-                'nom': folder.nom,
-                'proprietaire': folder.proprietaire.username if folder.proprietaire else '—',
-                'service': folder.service or '—',
-                'created_at': folder.created_at.strftime('%d/%m/%Y'),
-                'updated_at': folder.updated_at.strftime('%d/%m/%Y'),
-                'type': 'empty',
-            })
+            item['type'] = 'empty'
+            empty.append(item)
+        elif nb_fichiers == 0 and nb_enfants > 0:
+            # Dossier parent vide mais avec sous-dossiers
+            item['type'] = 'empty_parent'
+            empty.append(item)
         elif folder.updated_at < threshold_abandoned:
-            abandoned.append({
-                'id': folder.id,
-                'nom': folder.nom,
-                'proprietaire': folder.proprietaire.username if folder.proprietaire else '—',
-                'service': folder.service or '—',
-                'nb_fichiers': nb_fichiers,
-                'created_at': folder.created_at.strftime('%d/%m/%Y'),
-                'updated_at': folder.updated_at.strftime('%d/%m/%Y'),
-                'type': 'abandoned',
-            })
+            item['type'] = 'abandoned'
+            abandoned.append(item)
 
     return Response({
         'empty': empty,
