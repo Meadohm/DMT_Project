@@ -700,7 +700,7 @@ function AdminPanel() {
       return false;
     }
     if (['employe', 'responsable'].includes(formData.role) && !formData.service?.trim()) {
-      setFormError('Un employé ou responsable doit avoir un service assigné.');
+      setFormError('Un Employé ou Responsable doit avoir un service assigné.');
       return false;
     }
     try {
@@ -1525,7 +1525,7 @@ function AdminPanel() {
                   </select>
                 </div>
                 <div className="form-group">
-                  <label>Service</label>
+                  <label>Service *</label>
                   <select name="service" value={formData.service || ''} onChange={(e) => setFormData({ ...formData, service: e.target.value })}>
                     <option value="">— Aucun service —</option>
                     {services.map(s => (
