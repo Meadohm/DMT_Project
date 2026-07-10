@@ -1212,7 +1212,7 @@ def get_cleanup_candidates(request):
     from datetime import timedelta
     from api.models import File as FileModel
 
-    threshold_abandoned = timezone.now() - timedelta(days=30)
+    threshold_abandoned = timezone.now() - timedelta(days=60)
 
     all_folders = Folder.objects.filter(
         is_deleted=False,
@@ -1249,9 +1249,15 @@ def get_cleanup_candidates(request):
             # Dossier parent vide mais avec sous-dossiers
             item['type'] = 'empty_parent'
             empty.append(item)
-        elif folder.updated_at < threshold_abandoned:
-            item['type'] = 'abandoned'
-            abandoned.append(item)
+        else:
+            # Vérifier dernier upload dans le dossier
+            from api.models import File as FileModel
+            last_upload = FileModel.objects.filter(
+                folder=folder
+            ).order_by('-updated_at').first()
+            if not last_upload or last_upload.updated_at < threshold_abandoned:
+                item['type'] = 'abandoned'
+                abandoned.append(item)
 
     return Response({
         'empty': empty,
@@ -1295,6 +1301,14 @@ def cleanup_folders(request):
             folder.deleted_at = timezone.now()
             folder.deleted_by = request.user
             folder.save(update_fields=['is_deleted', 'deleted_at', 'deleted_by'])
+            # Soft delete récursif sous-dossiers
+            all_child_ids = get_descendant_folder_ids({folder.id}) - {folder.id}
+            if all_child_ids:
+                Folder.objects.filter(id__in=all_child_ids).update(
+                    is_deleted=True,
+                    deleted_at=timezone.now(),
+                    deleted_by=request.user
+                )
             cleaned += 1
         except Folder.DoesNotExist:
             continue

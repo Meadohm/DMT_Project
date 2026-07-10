@@ -1,6 +1,6 @@
 // src/pages/AdminPanel.js
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -155,6 +155,11 @@ function SuperAdminPanel() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [historiqueSearch, setHistoriqueSearch] = useState('');
   const [historiqueAction, setHistoriqueAction] = useState('');
+  const historiqueActionRef = useRef('');
+  const historiqueSearchRef = useRef('');
+  const dateDebutRef = useRef('');
+  const dateFinRef = useRef('');
+  const historiquePageRef = useRef(1);
   const [historiquePage, setHistoriquePage] = useState(1);
   const [historiqueTotal, setHistoriqueTotal] = useState(0);
   const [historiquePageInput, setHistoriquePageInput] = useState('');
@@ -216,9 +221,18 @@ function SuperAdminPanel() {
       fetchData();
       fetchServices();
       fetchDashboardStats();
-      if (localStorage.getItem('adminActiveSection') === 'trash') {
-        fetchTrash();
+      const section = localStorage.getItem('adminActiveSection');
+      if (section === 'trash') fetchTrash();
+      if (section === 'submissions') {
+        fetchHistorique(
+          historiquePageRef.current,
+          historiqueActionRef.current,
+          historiqueSearchRef.current,
+          dateDebutRef.current,
+          dateFinRef.current
+        );
       }
+      if (section === 'cleanup') fetchCleanup();
     }, 30000);
     const section = localStorage.getItem('adminActiveSection');
     if (section === 'submissions') {
@@ -423,6 +437,12 @@ function SuperAdminPanel() {
       setError("Erreur récupération infos utilisateur");
     }
   };
+
+  useEffect(() => { historiqueActionRef.current = historiqueAction; }, [historiqueAction]);
+  useEffect(() => { historiqueSearchRef.current = historiqueSearch; }, [historiqueSearch]);
+  useEffect(() => { dateDebutRef.current = dateDebut; }, [dateDebut]);
+  useEffect(() => { dateFinRef.current = dateFin; }, [dateFin]);
+  useEffect(() => { historiquePageRef.current = historiquePage; }, [historiquePage]);
 
   // Historique
   const fetchHistorique = async (page = 1, action = '', search = '', debut = '', fin = '') => {
@@ -1614,7 +1634,7 @@ function SuperAdminPanel() {
         {activeSection === "cleanup" && (
           <div className="trash-section">
             <div className="section-header">
-              <h2>🧹 Nettoyage des dossiers</h2>
+              <h2>Nettoyage des dossiers</h2>
               <button className="btn-secondary" onClick={fetchCleanup}>↺ Actualiser</button>
               {selectedCleanupIds.length > 0 && (
                 <button className="btn-danger" onClick={handleCleanupSelected}>
