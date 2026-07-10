@@ -1660,7 +1660,7 @@ function SuperAdminPanel() {
                 <option value="abandoned">💤 Abandonnés ({cleanupData?.total_abandoned || 0})</option>
               </select>
             </div>
-            {cleanupLoading ? (
+            {cleanupLoading && !cleanupData ? (
               <p>Chargement...</p>
             ) : !cleanupData ? (
               <p className="no-data">Cliquez sur Actualiser pour analyser.</p>
@@ -1673,7 +1673,8 @@ function SuperAdminPanel() {
               return items.length === 0 ? (
                 <p className="no-data">Aucun dossier à nettoyer.</p>
               ) : (
-                <table className="users-table">
+                <div className="table-scroll-wrapper">
+                <table>
                   <thead>
                     <tr>
                       <th>
@@ -1736,6 +1737,7 @@ function SuperAdminPanel() {
                     ))}
                   </tbody>
                 </table>
+                </div>
               );
             })()}
             {confirmCleanup && (
@@ -1807,7 +1809,7 @@ function SuperAdminPanel() {
                 <option value="folder">📁 Dossiers</option>
               </select>
             </div>
-            {trashLoading ? (
+            {trashLoading && trashItems.length === 0 ? (
               <p>Chargement...</p>
             ) : trashItems.length === 0 ? (
               <p className="no-data">Corbeille vide.</p>
@@ -1819,7 +1821,8 @@ function SuperAdminPanel() {
               const paginated = filtered.slice((trashPage-1)*TRASH_PAGE_SIZE, trashPage*TRASH_PAGE_SIZE);
               return (
               <>
-              <table className="users-table">
+              <div className="table-scroll-wrapper">
+              <table>
                 <thead>
                   <tr>
                     <th>
@@ -1865,6 +1868,7 @@ function SuperAdminPanel() {
                   ))}
                 </tbody>
               </table>
+              </div>
               {/* Pagination */}
               {totalPages > 1 && (
                 <div className="pagination-controls">

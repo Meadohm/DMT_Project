@@ -1908,6 +1908,36 @@ body.dark .dashboard-card-trend .recharts-text {
   background: rgba(108, 99, 255, 0.15) !important;
 }
 
+.table-scroll-wrapper {
+  max-height: 420px;
+  overflow-y: auto;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.table-scroll-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-scroll-wrapper thead th {
+  position: sticky;
+  top: 0;
+  background: #003366;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  z-index: 1;
+}
+
+.admin-panel-container.dark .table-scroll-wrapper {
+  border-color: #2d3555;
+}
+
+.admin-panel-container.dark .table-scroll-wrapper thead th {
+  background: #1a2040;
+}
+
 /* ZONE DANGER SIDEBAR */
 .sidebar-danger-zone {
   margin-top: auto;
