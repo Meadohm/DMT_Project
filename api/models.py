@@ -96,7 +96,7 @@ def upload_to_folder(instance, filename):
 # Modèle File
 class File(models.Model):
     folder = models.ForeignKey(Folder, on_delete=models.CASCADE, related_name="files", null=True, blank=True)
-    utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="files")
+    utilisateur = models.ForeignKey(Utilisateur, on_delete=models.SET_NULL, null=True, blank=True, related_name="files")
     fichier = models.FileField(upload_to=upload_to_folder, null=True, blank=True)
     nom = models.CharField(max_length=255, default="")
     original_name = models.CharField(max_length=255, blank=True, null=True)

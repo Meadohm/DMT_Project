@@ -451,6 +451,9 @@ def delete_user_account(request, user_id):
             destinataire = responsables.first()
         # Si 0 ou 2+ responsables → admin qui supprime
 
+    # Ne pas écraser le service d'origine si le destinataire n'en a pas (ex: admin sans service)
+    service_update = {'service': destinataire.service} if destinataire.service else {}
+
     # Archiver les dossiers privés (non partagés) de l'utilisateur
     dossiers_prives = Folder.objects.filter(
         proprietaire=utilisateur,
@@ -461,8 +464,18 @@ def delete_user_account(request, user_id):
     )
     nb_archives = dossiers_prives.count()
     noms_archives = list(dossiers_prives.values_list('nom', flat=True))
+    prives_ids = set(dossiers_prives.values_list('id', flat=True))
     # Réassigner au responsable de la suppression pour survivre au CASCADE de proprietaire
-    dossiers_prives.update(is_archived=True, proprietaire=destinataire)
+    dossiers_prives.update(is_archived=True, proprietaire=destinataire, **service_update)
+
+    # Réassigner aussi les sous-dossiers des dossiers privés
+    all_prives_ids = get_descendant_folder_ids(prives_ids)
+    if all_prives_ids:
+        Folder.objects.filter(id__in=all_prives_ids).update(
+            is_archived=True,
+            proprietaire=destinataire,
+            **service_update
+        )
 
     # Dossiers partagés : réassignés (sans archivage) pour rester accessibles aux destinataires
     dossiers_partages = Folder.objects.filter(
@@ -472,7 +485,16 @@ def delete_user_account(request, user_id):
         id__in=FolderShare.objects.values_list('folder_id', flat=True)
     )
     noms_partages = list(dossiers_partages.values_list('nom', flat=True))
-    dossiers_partages.update(proprietaire=destinataire)
+    partages_ids = set(dossiers_partages.values_list('id', flat=True))
+    dossiers_partages.update(proprietaire=destinataire, **service_update)
+
+    # Réassigner aussi les sous-dossiers des dossiers partagés
+    all_partages_ids = get_descendant_folder_ids(partages_ids)
+    if all_partages_ids:
+        Folder.objects.filter(id__in=all_partages_ids).update(
+            proprietaire=destinataire,
+            **service_update
+        )
 
     utilisateur.delete()
 
