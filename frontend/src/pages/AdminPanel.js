@@ -734,7 +734,7 @@ function AdminPanel() {
         <button className={activeSection === "submissions" ? "active" : ""} onClick={() => { setActiveSection("submissions"); fetchHistorique(1, historiqueAction, historiqueSearch, dateDebut, dateFin); }}>📋 Journal d'activité</button>
         <button className={activeSection === "createService" ? "active" : ""} onClick={() => setActiveSection("createService")}>🏢 Créer un service</button>
         <div className="sidebar-danger-zone">
-          <button className={activeSection === "trash" ? "active" : ""} onClick={() => { setActiveSection("trash"); fetchTrash(); }}>Corbeille</button>
+          <button className={activeSection === "trash" ? "active" : ""} onClick={() => { setActiveSection("trash"); fetchTrash(); }}>🗑️ Corbeille</button>
           <button className={activeSection === "cleanup" ? "active" : ""} onClick={() => { setActiveSection("cleanup"); fetchCleanup(); }}>🧹 Nettoyage</button>
         </div>
         <button className={activeSection === "account" ? "active" : ""} onClick={() => setActiveSection("account")}>👤 Mon Profil</button>
