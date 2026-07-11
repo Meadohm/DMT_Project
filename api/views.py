@@ -469,7 +469,9 @@ def delete_user_account(request, user_id):
     dossiers_prives.update(is_archived=True, proprietaire=destinataire, **service_update)
 
     # Réassigner aussi les sous-dossiers des dossiers privés
-    all_prives_ids = get_descendant_folder_ids(prives_ids)
+    # Exclure les sous-dossiers qui sont dans des dossiers partagés
+    partages_ids_set = set(FolderShare.objects.values_list('folder_id', flat=True))
+    all_prives_ids = get_descendant_folder_ids(prives_ids) - partages_ids_set
     if all_prives_ids:
         Folder.objects.filter(id__in=all_prives_ids).update(
             is_archived=True,
