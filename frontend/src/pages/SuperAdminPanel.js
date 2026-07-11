@@ -62,6 +62,10 @@ function SuperAdminPanel() {
   const [historique, setHistorique] = useState([]);
   const [trashItems, setTrashItems] = useState([]);
   const [cleanupData, setCleanupData] = useState(null);
+  const [deletedUsers, setDeletedUsers] = useState([]);
+  const [deletedUsersTotal, setDeletedUsersTotal] = useState(0);
+  const [deletedUsersSearch, setDeletedUsersSearch] = useState('');
+  const [confirmUserAction, setConfirmUserAction] = useState(null);
   const [adminArchives, setAdminArchives] = useState([]);
   const [adminArchivesTotal, setAdminArchivesTotal] = useState(0);
   const [adminArchivesPage, setAdminArchivesPage] = useState(1);
@@ -273,6 +277,7 @@ function SuperAdminPanel() {
   useEffect(() => {
     if (activeSection === 'trash') fetchTrash();
     if (activeSection === 'cleanup') fetchCleanup();
+    if (activeSection === 'deleted-users') fetchDeletedUsers();
     if (activeSection === 'admin-archives') fetchAdminArchives(1);
   }, [activeSection]);
 
@@ -349,6 +354,52 @@ function SuperAdminPanel() {
       }
     } catch (err) {
       console.error('Erreur suppression archive', err);
+    }
+  };
+
+  const fetchDeletedUsers = async (search = deletedUsersSearch) => {
+    try {
+      const params = new URLSearchParams({ search });
+      const res = await fetch(`${API_BASE_URL}/deleted-users/?${params}`, {
+        headers: { Authorization: `Token ${localStorage.getItem('token')}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setDeletedUsers(data.users || []);
+        setDeletedUsersTotal(data.total || 0);
+      }
+    } catch (err) {
+      console.error('Erreur comptes supprimés', err);
+    }
+  };
+
+  const handleRestoreUser = async (id) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/deleted-users/${id}/restore/`, {
+        method: 'POST',
+        headers: { Authorization: `Token ${localStorage.getItem('token')}` }
+      });
+      if (res.ok) {
+        setConfirmUserAction(null);
+        await fetchDeletedUsers();
+      }
+    } catch (err) {
+      console.error('Erreur restauration compte', err);
+    }
+  };
+
+  const handleDeleteUserPermanent = async (id) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/deleted-users/${id}/delete/`, {
+        method: 'DELETE',
+        headers: { Authorization: `Token ${localStorage.getItem('token')}` }
+      });
+      if (res.ok) {
+        setConfirmUserAction(null);
+        await fetchDeletedUsers();
+      }
+    } catch (err) {
+      console.error('Erreur suppression définitive', err);
     }
   };
 
@@ -876,6 +927,7 @@ function SuperAdminPanel() {
         <button className={activeSection === "createService" ? "active" : ""} onClick={() => setActiveSection("createService")}>🏢 Créer un service</button>
         <div className="sidebar-danger-zone">
           <button className={activeSection === "trash" ? "active" : ""} onClick={() => { setActiveSection("trash"); fetchTrash(); }}> 🗑️ Corbeille</button>
+          <button className={activeSection === "deleted-users" ? "active" : ""} onClick={() => { setActiveSection("deleted-users"); fetchDeletedUsers(); }}>👤 Comptes supprimés</button>
           <button className={activeSection === "cleanup" ? "active" : ""} onClick={() => { setActiveSection("cleanup"); fetchCleanup(); }}>🧹 Nettoyage</button>
         </div>
         <button className={activeSection === "account" ? "active" : ""} onClick={() => setActiveSection("account")}>👤 Mon Profil</button>
@@ -1872,6 +1924,91 @@ function SuperAdminPanel() {
                         <div className="modal-actions">
                           <button className="btn-cancel-confirm" onClick={() => setConfirmArchiveAction(null)}>Annuler</button>
                           <button className="btn-danger" onClick={handleDeleteSelectedArchives}>🗑️ Supprimer</button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+              </>
+            )}
+          </div>
+        )}
+
+        {activeSection === "deleted-users" && (
+          <div className="trash-section">
+            <div className="section-header">
+              <h2>👤 Comptes supprimés ({deletedUsersTotal})</h2>
+              <button className="btn-secondary" onClick={() => fetchDeletedUsers()}>↺ Actualiser</button>
+            </div>
+            <div className="admin-filters-bar" style={{marginBottom:'12px'}}>
+              <input
+                className="filter-input"
+                placeholder="🔍 Rechercher par nom, email, service..."
+                value={deletedUsersSearch}
+                onChange={e => { setDeletedUsersSearch(e.target.value); fetchDeletedUsers(e.target.value); }}
+              />
+            </div>
+            {deletedUsers.length === 0 ? (
+              <p className="no-data">Aucun compte supprimé.</p>
+            ) : (
+              <>
+              <div className="table-scroll-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Rôle</th>
+                    <th>Service</th>
+                    <th>Supprimé par</th>
+                    <th>Supprimé le</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {deletedUsers.map((u, idx) => (
+                    <tr key={u.id}>
+                      <td>{idx + 1}</td>
+                      <td style={{color:'#9ca3af', fontSize:'0.78rem'}}>#{u.id}</td>
+                      <td>{u.username}</td>
+                      <td>{u.email}</td>
+                      <td><span className="role-badge">{u.role}</span></td>
+                      <td>{u.service}</td>
+                      <td>{u.deleted_by}</td>
+                      <td>{u.deleted_at}</td>
+                      <td>
+                        <button className="btn-edit" onClick={() => setConfirmUserAction({ type: 'restore', user: u })}>↩️ Restaurer</button>
+                        <button className="btn-danger-sm" onClick={() => setConfirmUserAction({ type: 'delete', user: u })}>🗑️ Supprimer</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              </div>
+              {confirmUserAction && (
+                <div className="modal-overlay">
+                  <div className="modal-box">
+                    {confirmUserAction.type === 'restore' ? (
+                      <>
+                        <h3>↩️ Restaurer le compte</h3>
+                        <p>Restaurer le compte <strong>{confirmUserAction.user.username}</strong> ?</p>
+                        <p style={{fontSize:'0.82rem', color:'#6b7280'}}>Le compte redeviendra actif et accessible.</p>
+                        <div className="modal-actions">
+                          <button className="btn-cancel-confirm" onClick={() => setConfirmUserAction(null)}>Annuler</button>
+                          <button className="btn-edit" onClick={() => handleRestoreUser(confirmUserAction.user.id)}>↩️ Restaurer</button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <h3>🗑️ Suppression définitive</h3>
+                        <p>Supprimer définitivement le compte <strong>{confirmUserAction.user.username}</strong> ?</p>
+                        <p style={{color:'#ef4444', fontSize:'0.82rem'}}>Cette action est irréversible — toutes les données seront perdues.</p>
+                        <div className="modal-actions">
+                          <button className="btn-cancel-confirm" onClick={() => setConfirmUserAction(null)}>Annuler</button>
+                          <button className="btn-danger" onClick={() => handleDeleteUserPermanent(confirmUserAction.user.id)}>🗑️ Supprimer définitivement</button>
                         </div>
                       </>
                     )}
