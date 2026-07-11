@@ -3078,7 +3078,8 @@ body.dark .file-item-selected {
 
 .detail-modal-list {
   overflow-y: auto;
-  max-height: 280px;
+  max-height: 320px;
+  flex: 1;
 }
 
 .detail-modal-row {
