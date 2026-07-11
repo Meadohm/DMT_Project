@@ -163,3 +163,8 @@ RATELIMIT_USE_CACHE = 'default'
 
 # Handler 403 pour ratelimit JSON
 RATELIMIT_FAIL_OPEN = False
+
+# Gunicorn + Nginx via Unix socket — fix pour django-ratelimit
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+RATELIMIT_IP_META_KEY = 'HTTP_X_REAL_IP'
