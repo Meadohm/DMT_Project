@@ -72,7 +72,7 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 - Aperçu inline des fichiers (docx, xlsx, images, PDF)
 - Notifications temps réel
 - Mode sombre · Responsive
-- Panneau "Mes stats" : dossiers, fichiers, taille, partages reçus/donnés, top dossiers, activité 30 jours
+- Statistiques personnelles (📊) : dossiers, fichiers uploadés, partages, top dossiers, activité 30j
 
 ### Responsable
 - Toutes les fonctionnalités Employé
@@ -84,7 +84,7 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 - Section dédiée aux dossiers reçus en partage hors service
 - Quitter un dossier partagé sans affecter le propriétaire
 - Migration automatique des dossiers récents lors d'un changement de service
-- Panneau "Stats service" : membres en ligne, connectés/absents aujourd'hui, dossiers service, fichiers, activité équipe 7 jours
+- Stats service (📊) : 2 onglets — Mon service (membres, dossiers, fichiers, activité) + Mes stats
 - Breadcrumb hiérarchique cliquable dans la navigation de fichiers
 
 ### Administrateur
@@ -101,6 +101,8 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 - Vidage corbeille avec confirmation email + mot de passe et notification tous les admins
 - Alerte automatique si corbeille ≥ 10 éléments
 - Backup automatique PostgreSQL + media tous les 7 jours
+- Section Archives : voir, restaurer ou supprimer définitivement tous les dossiers archivés
+- Section Nettoyage : identifier et supprimer les dossiers vides ou abandonnés (60 jours)
 
 ### Super Administrateur
 - Toutes les fonctionnalités Administrateur
@@ -111,6 +113,7 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 - Isolation totale — actions invisibles des admins normaux
 - Compte `is_superuser` immuable, non modifiable par les admins
 - Dashboard et corbeille synchronisés avec AdminPanel
+- Corbeille comptes supprimés : restaurer ou supprimer définitivement les comptes soft-deletés
 
 ---
 
@@ -233,6 +236,9 @@ DMT_Project
 ---
 
 ## Versions
+
+**v1.5.5 — Juillet 2026**
+Archives admin (restauration/suppression), corbeille comptes (SuperAdmin), soft delete utilisateurs, stats employé/responsable enrichies, filtres extensions espace stockage, optimisation upload, toasts X, scroll modaux
 
 **v1.5.2 — Juillet 2026**
 Stats service responsable (membres en ligne, absents, dossiers, fichiers, activité équipe) · Stats personnelles employé (quota, top dossiers récursif, activité 30j) · Heartbeat last-seen tous dashboards · Corbeille admin complète
