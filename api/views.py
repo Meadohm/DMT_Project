@@ -2313,7 +2313,11 @@ def upload_file(request, folder_id):
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         "text/csv",
         "audio/mpeg", "audio/wav",
-        "video/mp4", "video/x-matroska", "video/x-msvideo", "video/quicktime"
+        "video/mp4", "video/x-matroska", "video/x-msvideo", "video/quicktime",
+        "video/mpeg", "video/webm", "video/ogg", "video/3gpp", "video/3gpp2",
+        "video/x-ms-wmv", "video/x-flv", "video/avi",
+        "image/gif",
+        "audio/mp4", "audio/aac", "audio/ogg", "audio/flac", "audio/x-m4a",
 
     ]
 
