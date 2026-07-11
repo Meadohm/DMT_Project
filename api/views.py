@@ -1733,7 +1733,7 @@ def get_user_stats(request):
         user=user,
         folder__is_deleted=False,
         folder__is_archived=False
-    ).select_related('folder', 'folder__proprietaire')[:10]:
+    ).select_related('folder', 'folder__proprietaire'):
         partages_recus_detail.append({
             'dossier': share.folder.nom,
             'proprietaire': f"{share.folder.proprietaire.username} ({share.folder.proprietaire.service or 'Sans service'})" if share.folder.proprietaire else '—',
@@ -1761,7 +1761,7 @@ def get_user_stats(request):
         folder__proprietaire=user,
         folder__is_deleted=False,
         folder__is_archived=False
-    ).select_related('user', 'folder')[:10]:
+    ).select_related('user', 'folder'):
         partages_donnes_detail.append({
             'dossier': share.folder.nom,
             'destinataire': f"{share.user.username} ({share.user.service or 'Sans service'})",
