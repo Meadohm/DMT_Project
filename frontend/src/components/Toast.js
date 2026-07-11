@@ -17,6 +17,7 @@ export default function Toast({ type = "success", message, onClose }) {
     <div className={`toast ${type}`}>
       <span className="toast-icon">{icon}</span>
       <p className="toast-message">{message}</p>
+      <button className="toast-close" onClick={onClose}>✕</button>
     </div>
   );
 }
