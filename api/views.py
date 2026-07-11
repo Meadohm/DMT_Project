@@ -1,5 +1,5 @@
 import os, hashlib, shutil, logging, re, csv, zipfile, mimetypes
-from django.db.models import Count, F
+from django.db.models import Count
 from django.contrib.auth import authenticate, get_user_model
 from django.conf import settings
 import shutil
@@ -454,48 +454,30 @@ def delete_user_account(request, user_id):
     # Ne pas écraser le service d'origine si le destinataire n'en a pas (ex: admin sans service)
     service_update = {'service': destinataire.service} if destinataire.service else {}
 
-    # Archiver les dossiers privés (non partagés) de l'utilisateur
-    dossiers_prives = Folder.objects.filter(
-        proprietaire=utilisateur,
-        is_archived=False,
-        is_deleted=False
-    ).exclude(
-        id__in=FolderShare.objects.values_list('folder_id', flat=True)
-    )
+    # 1. Identifier tous les dossiers partagés (racines ET sous-dossiers)
+    partages_racines_ids = set(FolderShare.objects.filter(
+        folder__proprietaire=utilisateur
+    ).values_list('folder_id', flat=True))
+    tous_partages_ids = get_descendant_folder_ids(partages_racines_ids) | partages_racines_ids
+
+    # 2. Dossiers privés = tous les dossiers de l'utilisateur SAUF les partagés
+    tous_dossiers_ids = set(Folder.objects.filter(
+        proprietaire=utilisateur
+    ).values_list('id', flat=True))
+    prives_ids = tous_dossiers_ids - tous_partages_ids
+
+    # 3. Archiver les dossiers privés
+    dossiers_prives = Folder.objects.filter(id__in=prives_ids)
     nb_archives = dossiers_prives.count()
     noms_archives = list(dossiers_prives.values_list('nom', flat=True))
-    prives_ids = set(dossiers_prives.values_list('id', flat=True))
-    # Réassigner au responsable de la suppression pour survivre au CASCADE de proprietaire
     dossiers_prives.update(is_archived=True, proprietaire=destinataire, **service_update)
 
-    # Réassigner aussi les sous-dossiers des dossiers privés
-    # Exclure les sous-dossiers qui sont dans des dossiers partagés
-    partages_ids_set = set(FolderShare.objects.values_list('folder_id', flat=True))
-    all_prives_ids = get_descendant_folder_ids(prives_ids) - partages_ids_set
-    if all_prives_ids:
-        Folder.objects.filter(id__in=all_prives_ids).update(
-            is_archived=True,
-            proprietaire=destinataire,
-            **service_update
-        )
-
-    # Dossiers partagés : réassignés (sans archivage) pour rester accessibles aux destinataires
-    dossiers_partages = Folder.objects.filter(
-        proprietaire=utilisateur,
-        is_deleted=False
-    ).filter(
-        id__in=FolderShare.objects.values_list('folder_id', flat=True)
-    )
-    noms_partages = list(dossiers_partages.values_list('nom', flat=True))
+    # 4. Réassigner les dossiers partagés (sans archivage)
+    dossiers_partages = Folder.objects.filter(id__in=tous_partages_ids)
+    noms_partages = list(Folder.objects.filter(
+        id__in=partages_racines_ids
+    ).values_list('nom', flat=True))
     dossiers_partages.update(proprietaire=destinataire, **service_update)
-
-    # Réassigner TOUS les dossiers (y compris soft-deleted) pour éviter SET_NULL ou perte
-    Folder.objects.filter(
-        proprietaire=utilisateur
-    ).update(
-        proprietaire=destinataire,
-        service=destinataire.service if destinataire.service else F('service')
-    )
 
     utilisateur.delete()
 
