@@ -403,8 +403,9 @@ const handleClearNotifications = async () => {
             : f
         )
       );
+      setNotif({ type: "success", title: "Succès 🎉", message: `Sous-dossier « ${name} » créé.` });
     } catch (err) {
-      alert("⛔ Impossible de créer le sous-dossier.");
+      setNotif({ type: "error", title: "Erreur", message: "⛔ Impossible de créer le sous-dossier." });
     }
   };
 
