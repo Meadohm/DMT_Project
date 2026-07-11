@@ -1415,7 +1415,7 @@ def restore_archived_folder(request, folder_id):
         Notification.objects.create(
             user=folder.proprietaire,
             type='info',
-            message=f"📦 {request.user.username} a restauré votre dossier archivé « {folder.nom} »."
+            message=f"{request.user.username} a restauré votre dossier archivé « {folder.nom} »."
         )
     AuditLog.objects.create(
         utilisateur=request.user,
@@ -1443,7 +1443,7 @@ def delete_archived_folder(request, folder_id):
         Notification.objects.create(
             user=proprietaire,
             type='warning',
-            message=f"🗑️ {request.user.username} a supprimé définitivement votre dossier archivé « {nom} »."
+            message=f"{request.user.username} a supprimé définitivement votre dossier archivé « {nom} »."
         )
     AuditLog.objects.create(
         utilisateur=request.user,
