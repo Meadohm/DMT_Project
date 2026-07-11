@@ -62,6 +62,14 @@ function AdminPanel() {
   const [historique, setHistorique] = useState([]);
   const [trashItems, setTrashItems] = useState([]);
   const [cleanupData, setCleanupData] = useState(null);
+  const [adminArchives, setAdminArchives] = useState([]);
+  const [adminArchivesTotal, setAdminArchivesTotal] = useState(0);
+  const [adminArchivesPage, setAdminArchivesPage] = useState(1);
+  const [adminArchivesTotalPages, setAdminArchivesTotalPages] = useState(1);
+  const [adminArchivesSearch, setAdminArchivesSearch] = useState('');
+  const [adminArchivesService, setAdminArchivesService] = useState('');
+  const [adminArchivesLoading, setAdminArchivesLoading] = useState(false);
+  const [confirmArchiveAction, setConfirmArchiveAction] = useState(null);
   const [cleanupLoading, setCleanupLoading] = useState(false);
   const [selectedCleanupIds, setSelectedCleanupIds] = useState([]);
   const [cleanupFilter, setCleanupFilter] = useState('all');
@@ -258,7 +266,59 @@ function AdminPanel() {
   useEffect(() => {
     if (activeSection === 'trash') fetchTrash();
     if (activeSection === 'cleanup') fetchCleanup();
+    if (activeSection === 'admin-archives') fetchAdminArchives(1);
   }, [activeSection]);
+
+  const fetchAdminArchives = async (page = 1, search = adminArchivesSearch, service = adminArchivesService) => {
+    setAdminArchivesLoading(true);
+    try {
+      const params = new URLSearchParams({ page, search, service });
+      const res = await fetch(`${API_BASE_URL}/admin-archives/?${params}`, {
+        headers: { Authorization: `Token ${localStorage.getItem('token')}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAdminArchives(data.results || []);
+        setAdminArchivesTotal(data.total || 0);
+        setAdminArchivesPage(data.page || 1);
+        setAdminArchivesTotalPages(data.total_pages || 1);
+      }
+    } catch (err) {
+      console.error('Erreur archives', err);
+    } finally {
+      setAdminArchivesLoading(false);
+    }
+  };
+
+  const handleRestoreArchive = async (id, nom) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/admin-archives/${id}/restore/`, {
+        method: 'POST',
+        headers: { Authorization: `Token ${localStorage.getItem('token')}` }
+      });
+      if (res.ok) {
+        setConfirmArchiveAction(null);
+        await fetchAdminArchives(adminArchivesPage);
+      }
+    } catch (err) {
+      console.error('Erreur restauration archive', err);
+    }
+  };
+
+  const handleDeleteArchive = async (id, nom) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/admin-archives/${id}/delete/`, {
+        method: 'DELETE',
+        headers: { Authorization: `Token ${localStorage.getItem('token')}` }
+      });
+      if (res.ok) {
+        setConfirmArchiveAction(null);
+        await fetchAdminArchives(adminArchivesPage);
+      }
+    } catch (err) {
+      console.error('Erreur suppression archive', err);
+    }
+  };
 
   const fetchCleanup = async () => {
     setCleanupLoading(true);
@@ -755,6 +815,7 @@ function AdminPanel() {
         <button className={activeSection === "dashboard" ? "active" : ""} onClick={() => setActiveSection("dashboard")}>📊 Tableau de bord</button>
         <button className={activeSection === "users" ? "active" : ""} onClick={() => setActiveSection("users")}>👥 Gestion utilisateurs </button>
         <button className={activeSection === "files" ? "active" : ""} onClick={() => setActiveSection("files")}>📁 Gestion fichiers</button>
+        <button className={activeSection === "admin-archives" ? "active" : ""} onClick={() => { setActiveSection("admin-archives"); fetchAdminArchives(1); }}>📦 Archives</button>
         <button className={activeSection === "submissions" ? "active" : ""} onClick={() => { setActiveSection("submissions"); fetchHistorique(1, historiqueAction, historiqueSearch, dateDebut, dateFin); }}>📋 Journal d'activité</button>
         <button className={activeSection === "createService" ? "active" : ""} onClick={() => setActiveSection("createService")}>🏢 Créer un service</button>
         <div className="sidebar-danger-zone">
@@ -1555,6 +1616,110 @@ function AdminPanel() {
                 </div>
               </form>
             </div>
+          </div>
+        )}
+
+        {activeSection === "admin-archives" && (
+          <div className="trash-section">
+            <div className="section-header">
+              <h2>📦 Archives ({adminArchivesTotal})</h2>
+              <button className="btn-secondary" onClick={() => fetchAdminArchives(adminArchivesPage)}>↺ Actualiser</button>
+            </div>
+            {/* Filtres */}
+            <div className="admin-filters-bar" style={{marginBottom:'12px'}}>
+              <input
+                className="filter-input"
+                placeholder="🔍 Rechercher par nom..."
+                value={adminArchivesSearch}
+                onChange={e => { setAdminArchivesSearch(e.target.value); fetchAdminArchives(1, e.target.value, adminArchivesService); }}
+              />
+              <input
+                className="filter-input"
+                placeholder="Filtrer par service..."
+                value={adminArchivesService}
+                onChange={e => { setAdminArchivesService(e.target.value); fetchAdminArchives(1, adminArchivesSearch, e.target.value); }}
+              />
+            </div>
+            {adminArchivesLoading ? (
+              <p>Chargement...</p>
+            ) : adminArchives.length === 0 ? (
+              <p className="no-data">Aucun dossier archivé.</p>
+            ) : (
+              <>
+              <div className="table-scroll-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Nom</th>
+                    <th>Propriétaire</th>
+                    <th>Service</th>
+                    <th>Créé le</th>
+                    <th>Archivé le</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {adminArchives.map((item, idx) => (
+                    <tr key={item.id}>
+                      <td>{(adminArchivesPage - 1) * 20 + idx + 1}</td>
+                      <td>
+                        {item.parent_nom
+                          ? <span>　└ 📁 {item.nom} <span style={{fontSize:'0.72rem', color:'#9ca3af'}}>({item.parent_nom})</span></span>
+                          : <span>📁 {item.nom}</span>
+                        }
+                      </td>
+                      <td>{item.proprietaire}</td>
+                      <td>{item.service}</td>
+                      <td>{item.created_at}</td>
+                      <td>{item.updated_at}</td>
+                      <td>
+                        <button className="btn-edit" onClick={() => setConfirmArchiveAction({ type: 'restore', item })}>↩️ Restaurer</button>
+                        <button className="btn-danger-sm" onClick={() => setConfirmArchiveAction({ type: 'delete', item })}>🗑️ Supprimer</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              </div>
+              {adminArchivesTotalPages > 1 && (
+                <div className="pagination-controls">
+                  <button onClick={() => fetchAdminArchives(1)} disabled={adminArchivesPage === 1}>⏮</button>
+                  <button onClick={() => fetchAdminArchives(adminArchivesPage - 1)} disabled={adminArchivesPage === 1}>← Précédent</button>
+                  <span>Page {adminArchivesPage} / {adminArchivesTotalPages}</span>
+                  <button onClick={() => fetchAdminArchives(adminArchivesPage + 1)} disabled={adminArchivesPage === adminArchivesTotalPages}>Suivant →</button>
+                  <button onClick={() => fetchAdminArchives(adminArchivesTotalPages)} disabled={adminArchivesPage === adminArchivesTotalPages}>⏭</button>
+                </div>
+              )}
+              {confirmArchiveAction && (
+                <div className="modal-overlay">
+                  <div className="modal-box">
+                    {confirmArchiveAction.type === 'restore' ? (
+                      <>
+                        <h3>↩️ Restaurer le dossier</h3>
+                        <p>Restaurer <strong>{confirmArchiveAction.item.nom}</strong> ?</p>
+                        <p style={{fontSize:'0.82rem', color:'#6b7280'}}>Le dossier redeviendra accessible à son propriétaire.</p>
+                        <div className="modal-actions">
+                          <button className="btn-cancel-confirm" onClick={() => setConfirmArchiveAction(null)}>Annuler</button>
+                          <button className="btn-edit" onClick={() => handleRestoreArchive(confirmArchiveAction.item.id, confirmArchiveAction.item.nom)}>↩️ Restaurer</button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <h3>🗑️ Suppression définitive</h3>
+                        <p>Supprimer définitivement <strong>{confirmArchiveAction.item.nom}</strong> ?</p>
+                        <p style={{color:'#ef4444', fontSize:'0.82rem'}}>Cette action est irréversible.</p>
+                        <div className="modal-actions">
+                          <button className="btn-cancel-confirm" onClick={() => setConfirmArchiveAction(null)}>Annuler</button>
+                          <button className="btn-danger" onClick={() => handleDeleteArchive(confirmArchiveAction.item.id, confirmArchiveAction.item.nom)}>🗑️ Supprimer</button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+              </>
+            )}
           </div>
         )}
 
