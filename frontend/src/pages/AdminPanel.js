@@ -70,6 +70,7 @@ function AdminPanel() {
   const [adminArchivesService, setAdminArchivesService] = useState('');
   const [adminArchivesLoading, setAdminArchivesLoading] = useState(false);
   const [confirmArchiveAction, setConfirmArchiveAction] = useState(null);
+  const [adminArchivesServices, setAdminArchivesServices] = useState([]);
   const [cleanupLoading, setCleanupLoading] = useState(false);
   const [selectedCleanupIds, setSelectedCleanupIds] = useState([]);
   const [cleanupFilter, setCleanupFilter] = useState('all');
@@ -279,6 +280,7 @@ function AdminPanel() {
       if (res.ok) {
         const data = await res.json();
         setAdminArchives(data.results || []);
+        if (data.services) setAdminArchivesServices(data.services);
         setAdminArchivesTotal(data.total || 0);
         setAdminArchivesPage(data.page || 1);
         setAdminArchivesTotalPages(data.total_pages || 1);
@@ -1622,7 +1624,7 @@ function AdminPanel() {
         {activeSection === "admin-archives" && (
           <div className="trash-section">
             <div className="section-header">
-              <h2>📦 Archives ({adminArchivesTotal})</h2>
+              <h2>Archives ({adminArchivesTotal})</h2>
               <button className="btn-secondary" onClick={() => fetchAdminArchives(adminArchivesPage)}>↺ Actualiser</button>
             </div>
             {/* Filtres */}
@@ -1633,12 +1635,16 @@ function AdminPanel() {
                 value={adminArchivesSearch}
                 onChange={e => { setAdminArchivesSearch(e.target.value); fetchAdminArchives(1, e.target.value, adminArchivesService); }}
               />
-              <input
-                className="filter-input"
-                placeholder="Filtrer par service..."
+              <select
+                className="filter-select"
                 value={adminArchivesService}
                 onChange={e => { setAdminArchivesService(e.target.value); fetchAdminArchives(1, adminArchivesSearch, e.target.value); }}
-              />
+              >
+                <option value="">Tous les services</option>
+                {(adminArchivesServices || []).map(s => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
             </div>
             {adminArchivesLoading ? (
               <p>Chargement...</p>

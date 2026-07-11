@@ -1,5 +1,5 @@
 import os, hashlib, shutil, logging, re, csv, zipfile, mimetypes
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.contrib.auth import authenticate, get_user_model
 from django.conf import settings
 import shutil
@@ -1364,7 +1364,10 @@ def list_archived_folders(request):
     ).select_related('proprietaire').order_by('-updated_at')
 
     if search:
-        qs = qs.filter(nom__icontains=search)
+        qs = qs.filter(
+            Q(nom__icontains=search) |
+            Q(proprietaire__username__icontains=search)
+        )
     if service:
         qs = qs.filter(service=service)
 
@@ -1382,12 +1385,17 @@ def list_archived_folders(request):
         'updated_at': f.updated_at.strftime('%d/%m/%Y %H:%M'),
     } for f in folders]
 
+    services = list(Folder.objects.filter(
+        is_archived=True, is_deleted=False
+    ).exclude(service='').exclude(service__isnull=True).values_list('service', flat=True).distinct().order_by('service'))
+
     return Response({
         'results': data,
         'total': total,
         'page': page,
         'page_size': page_size,
         'total_pages': (total + page_size - 1) // page_size,
+        'services': services,
     })
 
 
@@ -1402,6 +1410,13 @@ def restore_archived_folder(request, folder_id):
         return Response({'error': 'Dossier archivé introuvable.'}, status=status.HTTP_404_NOT_FOUND)
     folder.is_archived = False
     folder.save(update_fields=['is_archived'])
+    # Notifier le propriétaire
+    if folder.proprietaire and folder.proprietaire != request.user:
+        Notification.objects.create(
+            user=folder.proprietaire,
+            type='info',
+            message=f"📦 {request.user.username} a restauré votre dossier archivé « {folder.nom} »."
+        )
     AuditLog.objects.create(
         utilisateur=request.user,
         action='UPDATE',
@@ -1421,7 +1436,15 @@ def delete_archived_folder(request, folder_id):
     except Folder.DoesNotExist:
         return Response({'error': 'Dossier archivé introuvable.'}, status=status.HTTP_404_NOT_FOUND)
     nom = folder.nom
+    proprietaire = folder.proprietaire
     folder.delete()
+    # Notifier le propriétaire
+    if proprietaire and proprietaire != request.user:
+        Notification.objects.create(
+            user=proprietaire,
+            type='warning',
+            message=f"🗑️ {request.user.username} a supprimé définitivement votre dossier archivé « {nom} »."
+        )
     AuditLog.objects.create(
         utilisateur=request.user,
         action='DELETE',
