@@ -140,7 +140,7 @@ Restaurer un compte :
 Cliquez "↩️ Restaurer" → le compte redevient actif. Le responsable du service reçoit une notification. Les dossiers transférés lors de la suppression restent chez le destinataire.
 
 Supprimer définitivement :
-Cliquez "🗑️ Supprimer définitivement" → suppression physique irréversible de toutes les données du compte.
+Cliquez "Supprimer définitivement" → suppression physique irréversible de toutes les données du compte.
 
 Filtres disponibles : par nom/email, par rôle, par service.`
   },

@@ -4,6 +4,7 @@ import { markAllRead } from "../services/notificationService";
 import { formatRelativeTime } from "../utils/timeUtils";
 import API_BASE_URL from "../config";
 import HelpModal from "./HelpModal";
+import HelpModalResponsable from "./HelpModalResponsable";
 import "../styles/DashboardTopbar.css";
 
 
@@ -396,7 +397,11 @@ function DashboardTopbar({
         </div>
       </div>
 
-      {helpOpen && <HelpModal onClose={() => setHelpOpen(false)} />}
+      {helpOpen && (
+        role === 'responsable'
+          ? <HelpModalResponsable onClose={() => setHelpOpen(false)} />
+          : <HelpModal onClose={() => setHelpOpen(false)} />
+      )}
     </div>
   );
 }
