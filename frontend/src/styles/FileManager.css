@@ -3076,13 +3076,12 @@ body.dark .file-item-selected {
   color: #6b7280;
 }
 
-
-
 .detail-modal-list {
   overflow-y: auto;
-  max-height: 200px;
+  max-height: 320px;
   flex: 1;
 }
+
 
 .detail-modal-row {
   display: flex;
