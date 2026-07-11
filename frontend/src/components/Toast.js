@@ -9,7 +9,7 @@ export default function Toast({ type = "success", message, onClose }) {
   }, [onClose]);
 
   const icon =
-    type === "success" ? "✅" :
+    type === "success" ? "" :
     type === "error" ? "❌" :
     type === "info" ? "ℹ️" : "🔔";
 
