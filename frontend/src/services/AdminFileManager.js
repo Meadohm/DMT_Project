@@ -48,6 +48,7 @@ function AdminFileManager() {
   const [fileStats, setFileStats] = useState({ totalFiles: 0, totalSize: 0, typeDistribution: [] });
   const [error, setError] = useState(null);
   const [search, setSearch] = useState('');
+  const [extFilter, setExtFilter] = useState('');
   const [dateDebut, setDateDebut] = useState('');
   const [dateFin, setDateFin] = useState('');
   const [page, setPage] = useState(() => parseInt(localStorage.getItem('filesPage') || '1'));
@@ -227,6 +228,17 @@ function AdminFileManager() {
     setPreviewLoading(false);
   };
 
+  const EXT_GROUPS = {
+    'PDF': ['pdf'],
+    'Images': ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'],
+    'Vidéos': ['mp4', 'avi', 'mov', 'mkv', 'wmv', 'flv'],
+    'Word': ['doc', 'docx'],
+    'Excel': ['xls', 'xlsx', 'csv'],
+    'PowerPoint': ['ppt', 'pptx'],
+    'Archives': ['zip', 'rar', 'tar', 'gz'],
+    'Autre': [],
+  };
+
   const filtered = files.filter(f => {
     const name = getCleanName(f.fichier || '').toLowerCase();
     const owner = (f.utilisateur || '').toLowerCase();
@@ -234,7 +246,17 @@ function AdminFileManager() {
     const fileDate = f.date_validation ? f.date_validation.split('/').reverse().join('-') : '';
     const matchDebut = dateDebut ? fileDate >= dateDebut : true;
     const matchFin = dateFin ? fileDate <= dateFin : true;
-    return matchSearch && matchDebut && matchFin;
+    let matchExt = true;
+    if (extFilter) {
+      const ext = getCleanName(f.fichier || '').split('.').pop().toLowerCase();
+      if (extFilter === 'Autre') {
+        const allExts = Object.values(EXT_GROUPS).flat();
+        matchExt = !allExts.includes(ext);
+      } else {
+        matchExt = (EXT_GROUPS[extFilter] || []).includes(ext);
+      }
+    }
+    return matchSearch && matchDebut && matchFin && matchExt;
   });
 
   const sortedFiles = getSortedFiles(filtered);
@@ -367,13 +389,24 @@ function AdminFileManager() {
       <div className="historique-filters">
         <input
           className="historique-search"
-          placeholder="Rechercher par nom ou propriétaire..."
+          placeholder="🔍 Nom ou propriétaire..."
           value={search}
           onChange={e => { setSearch(e.target.value); setPage(1); }}
+          style={{maxWidth:'200px'}}
         />
+        <select
+          className="filter-select"
+          value={extFilter}
+          onChange={e => { setExtFilter(e.target.value); setPage(1); }}
+        >
+          <option value="">Tous les types</option>
+          {Object.keys(EXT_GROUPS).map(g => (
+            <option key={g} value={g}>{g}</option>
+          ))}
+        </select>
         <input type="date" className="historique-date" value={dateDebut} onChange={e => { setDateDebut(e.target.value); setPage(1); }} title="Date début" />
         <input type="date" className="historique-date" value={dateFin} onChange={e => { setDateFin(e.target.value); setPage(1); }} title="Date fin" />
-        <button className="btn-cancel" onClick={() => { setSearch(''); setDateDebut(''); setDateFin(''); setPage(1); }}>Réinitialiser</button>
+        <button className="btn-cancel" onClick={() => { setSearch(''); setExtFilter(''); setDateDebut(''); setDateFin(''); setPage(1); }}>Réinitialiser</button>
       </div>
 
       <div className="users-table-wrapper">
