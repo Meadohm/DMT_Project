@@ -1729,16 +1729,34 @@ def get_user_stats(request):
 
     # Détail partages reçus
     partages_recus_detail = []
-    for share in FolderShare.objects.filter(
+    shares_directs = FolderShare.objects.filter(
         user=user,
         folder__is_deleted=False,
         folder__is_archived=False
-    ).select_related('folder', 'folder__proprietaire', 'folder__parent'):
+    ).select_related('folder', 'folder__proprietaire', 'folder__parent')
+
+    for share in shares_directs:
+        # Dossier partagé directement
         partages_recus_detail.append({
             'dossier': share.folder.nom,
             'parent_nom': share.folder.parent.nom if share.folder.parent else None,
             'proprietaire': f"{share.folder.proprietaire.username} ({share.folder.proprietaire.service or 'Sans service'})" if share.folder.proprietaire else '—',
         })
+        # Sous-dossiers hérités
+        enfants_ids = get_descendant_folder_ids({share.folder.id})
+        for enfant in Folder.objects.filter(
+            id__in=enfants_ids,
+            is_deleted=False,
+            is_archived=False
+        ).select_related('proprietaire', 'parent').order_by('nom'):
+            partages_recus_detail.append({
+                'dossier': enfant.nom,
+                'parent_nom': enfant.parent.nom if enfant.parent else share.folder.nom,
+                'proprietaire': f"{enfant.proprietaire.username} ({enfant.proprietaire.service or 'Sans service'})" if enfant.proprietaire else '—',
+            })
+
+    # Mettre à jour le compteur pour inclure les sous-dossiers
+    partages_recus = len(partages_recus_detail)
 
     # Détail fichiers par type
     from collections import Counter
@@ -1758,16 +1776,34 @@ def get_user_stats(request):
 
     # Détail partages donnés
     partages_donnes_detail = []
-    for share in FolderShare.objects.filter(
+    shares_donnes = FolderShare.objects.filter(
         folder__proprietaire=user,
         folder__is_deleted=False,
         folder__is_archived=False
-    ).select_related('user', 'folder', 'folder__parent'):
+    ).select_related('user', 'folder', 'folder__parent')
+
+    for share in shares_donnes:
+        # Dossier partagé directement
         partages_donnes_detail.append({
             'dossier': share.folder.nom,
             'parent_nom': share.folder.parent.nom if share.folder.parent else None,
             'destinataire': f"{share.user.username} ({share.user.service or 'Sans service'})",
         })
+        # Sous-dossiers hérités
+        enfants_ids = get_descendant_folder_ids({share.folder.id})
+        for enfant in Folder.objects.filter(
+            id__in=enfants_ids,
+            is_deleted=False,
+            is_archived=False
+        ).select_related('parent').order_by('nom'):
+            partages_donnes_detail.append({
+                'dossier': enfant.nom,
+                'parent_nom': enfant.parent.nom if enfant.parent else share.folder.nom,
+                'destinataire': f"{share.user.username} ({share.user.service or 'Sans service'})",
+            })
+
+    # Mettre à jour le compteur pour inclure les sous-dossiers
+    partages_donnes = len(partages_donnes_detail)
 
     return Response({
         'username': user.username,
