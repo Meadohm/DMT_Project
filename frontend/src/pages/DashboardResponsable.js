@@ -772,7 +772,10 @@ function DashboardResponsable() {
                       className="service-stat-value stat-clickable"
                       onClick={() => setDetailModal({
                         title: '🤝 Partagés reçus',
-                        rows: userStats.partages.recus_detail?.map(d => ({ label: `📁 ${d.dossier}`, value: d.proprietaire }))
+                        rows: userStats.partages.recus_detail?.map(d => ({
+                          label: d.parent_nom ? `　└ 📁 ${d.dossier} (${d.parent_nom})` : `📁 ${d.dossier}`,
+                          value: d.proprietaire
+                        }))
                       })}
                     >
                       {userStats.partages.recus}
@@ -785,7 +788,10 @@ function DashboardResponsable() {
                       className="service-stat-value stat-clickable"
                       onClick={() => setDetailModal({
                         title: '📤 Partagés donnés',
-                        rows: userStats.partages.donnes_detail?.map(d => ({ label: `📁 ${d.dossier}`, value: d.destinataire }))
+                        rows: userStats.partages.donnes_detail?.map(d => ({
+                          label: d.parent_nom ? `　└ 📁 ${d.dossier} (${d.parent_nom})` : `📁 ${d.dossier}`,
+                          value: d.destinataire
+                        }))
                       })}
                     >
                       {userStats.partages.donnes}
