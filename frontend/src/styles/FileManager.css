@@ -3052,6 +3052,7 @@ body.dark .file-item-selected {
   padding: 20px;
   width: min(340px, 90vw);
   max-height: 400px;
+  overflow-y: hidden;
   box-shadow: 0 8px 24px rgba(0,0,0,0.15);
   display: flex;
   flex-direction: column;
@@ -3077,7 +3078,7 @@ body.dark .file-item-selected {
 
 .detail-modal-list {
   overflow-y: auto;
-  max-height: 300px;
+  max-height: 280px;
 }
 
 .detail-modal-row {
