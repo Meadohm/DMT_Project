@@ -1297,6 +1297,15 @@ def get_dashboard_stats(request):
             'free_gb': round(shutil.disk_usage(settings.BASE_DIR).free / (1024**3), 1),
             'used_pct': round((shutil.disk_usage(settings.BASE_DIR).used / shutil.disk_usage(settings.BASE_DIR).total) * 100, 1),
         },
+        'archives': {
+            'total': Folder.objects.filter(is_archived=True, is_deleted=False).count(),
+        },
+        'cleanup': {
+            'vides': Folder.objects.filter(is_deleted=False, is_archived=False).count() - Folder.objects.filter(is_deleted=False, is_archived=False, files__isnull=False).distinct().count(),
+        },
+        'deleted_users': {
+            'total': Utilisateur.objects.filter(is_deleted=True).count(),
+        },
         'trash': {
             'total': Trash.objects.count(),
             'fichiers': Trash.objects.filter(item_type='file').count(),

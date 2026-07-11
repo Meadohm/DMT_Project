@@ -988,6 +988,28 @@ function AdminPanel() {
                 </div>
                 <div className="dashboard-card-arrow">→</div>
               </div>
+              <div className="dashboard-card dashboard-card-archives" onClick={() => { setActiveSection("admin-archives"); fetchAdminArchives(1); }}>
+                <div className="dashboard-card-icon">📦</div>
+                <div className="dashboard-card-content">
+                  <h3>Archives</h3>
+                  <div className="dashboard-card-main">{dashboardStats?.archives?.total ?? 0}</div>
+                  <div className="dashboard-card-details">
+                    <span className="dash-detail">Dossiers archivés</span>
+                  </div>
+                </div>
+                <div className="dashboard-card-arrow">→</div>
+              </div>
+              <div className="dashboard-card dashboard-card-cleanup" onClick={() => { setActiveSection("cleanup"); fetchCleanup(); }}>
+                <div className="dashboard-card-icon">🧹</div>
+                <div className="dashboard-card-content">
+                  <h3>Nettoyage</h3>
+                  <div className="dashboard-card-main">{dashboardStats?.cleanup?.vides ?? 0}</div>
+                  <div className="dashboard-card-details">
+                    <span className="dash-detail">Dossiers à nettoyer</span>
+                  </div>
+                </div>
+                <div className="dashboard-card-arrow">→</div>
+              </div>
               <div className="dashboard-card dashboard-card-trash" onClick={() => { setActiveSection("trash"); fetchTrash(); }}>
                 <div className="dashboard-card-icon">🗑️</div>
                 <div className="dashboard-card-content">

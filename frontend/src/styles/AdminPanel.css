@@ -1327,6 +1327,18 @@ td:last-child {
   background: linear-gradient(90deg, #ef4444, #dc2626);
 }
 
+.dashboard-card-archives::before {
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.dashboard-card-cleanup::before {
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.dashboard-card-deleted-users::before {
+  background: linear-gradient(90deg, #8b5cf6, #7c3aed);
+}
+
 .dashboard-card-icon {
   font-size: 2.2em;
   flex-shrink: 0;
