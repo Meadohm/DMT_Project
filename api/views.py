@@ -1348,6 +1348,89 @@ def get_cleanup_candidates(request):
     })
 
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
+def list_archived_folders(request):
+    """Liste tous les dossiers archivés"""
+    search = request.GET.get('search', '')
+    service = request.GET.get('service', '')
+    page = int(request.GET.get('page', 1))
+    page_size = 20
+
+    qs = Folder.objects.filter(
+        is_archived=True,
+        is_deleted=False
+    ).select_related('proprietaire').order_by('-updated_at')
+
+    if search:
+        qs = qs.filter(nom__icontains=search)
+    if service:
+        qs = qs.filter(service=service)
+
+    total = qs.count()
+    start = (page - 1) * page_size
+    folders = qs[start:start + page_size]
+
+    data = [{
+        'id': f.id,
+        'nom': f.nom,
+        'parent_nom': f.parent.nom if f.parent else None,
+        'proprietaire': f.proprietaire.username if f.proprietaire else '—',
+        'service': f.service or '—',
+        'created_at': f.created_at.strftime('%d/%m/%Y %H:%M'),
+        'updated_at': f.updated_at.strftime('%d/%m/%Y %H:%M'),
+    } for f in folders]
+
+    return Response({
+        'results': data,
+        'total': total,
+        'page': page,
+        'page_size': page_size,
+        'total_pages': (total + page_size - 1) // page_size,
+    })
+
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
+def restore_archived_folder(request, folder_id):
+    """Restaurer un dossier archivé"""
+    try:
+        folder = Folder.objects.get(id=folder_id, is_archived=True)
+    except Folder.DoesNotExist:
+        return Response({'error': 'Dossier archivé introuvable.'}, status=status.HTTP_404_NOT_FOUND)
+    folder.is_archived = False
+    folder.save(update_fields=['is_archived'])
+    AuditLog.objects.create(
+        utilisateur=request.user,
+        action='UPDATE',
+        objet=f"Restauration archive : {folder.nom}",
+        adresse_ip=request.META.get('REMOTE_ADDR', '')
+    )
+    return Response({'success': f"Dossier '{folder.nom}' restauré."})
+
+
+@api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
+def delete_archived_folder(request, folder_id):
+    """Supprimer définitivement un dossier archivé"""
+    try:
+        folder = Folder.objects.get(id=folder_id, is_archived=True)
+    except Folder.DoesNotExist:
+        return Response({'error': 'Dossier archivé introuvable.'}, status=status.HTTP_404_NOT_FOUND)
+    nom = folder.nom
+    folder.delete()
+    AuditLog.objects.create(
+        utilisateur=request.user,
+        action='DELETE',
+        objet=f"Suppression définitive archive : {nom}",
+        adresse_ip=request.META.get('REMOTE_ADDR', '')
+    )
+    return Response({'success': f"Dossier '{nom}' supprimé définitivement."})
+
+
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])

@@ -103,4 +103,9 @@ urlpatterns = [
     path('cleanup/candidates/', views.get_cleanup_candidates, name='cleanup_candidates'),
     path('cleanup/folders/', views.cleanup_folders, name='cleanup_folders'),
 
+    
+    path('archives/', views.list_archived_folders, name='list_archived_folders'),
+    path('archives/<int:folder_id>/restore/', views.restore_archived_folder, name='restore_archived_folder'),
+    path('archives/<int:folder_id>/delete/', views.delete_archived_folder, name='delete_archived_folder'),
+    
 ]
