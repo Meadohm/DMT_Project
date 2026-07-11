@@ -3189,3 +3189,22 @@ body.dark .table-scroll-wrapper thead th {
 body.dark .table-scroll-wrapper tbody td {
   border-bottom-color: #2d3555;
 }
+
+/* Stats panel employé — forcer scroll interne */
+.service-stats-panel .table-scroll-wrapper {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.service-stats-panel .table-scroll-wrapper thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #f0fdf4;
+  color: #0d5c5c;
+}
+
+body.dark .service-stats-panel .table-scroll-wrapper thead th {
+  background: #1e2d3d;
+  color: #0e9e87;
+}
