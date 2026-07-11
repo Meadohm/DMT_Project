@@ -589,7 +589,7 @@ def restore_deleted_user(request, user_id):
             Notification.objects.create(
                 user=responsable,
                 type='info',
-                message=f"ℹ️ Le compte {user.username} a été restauré par {request.user.username}. Les dossiers transférés lors de sa suppression restent à votre disposition."
+                message=f"Le compte {user.username} a été restauré par {request.user.username}. Les dossiers transférés lors de sa suppression restent à votre disposition."
             )
     AuditLog.objects.create(
         utilisateur=request.user,
