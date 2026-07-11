@@ -71,6 +71,7 @@ function SuperAdminPanel() {
   const [adminArchivesLoading, setAdminArchivesLoading] = useState(false);
   const [confirmArchiveAction, setConfirmArchiveAction] = useState(null);
   const [adminArchivesServices, setAdminArchivesServices] = useState([]);
+  const [selectedArchiveIds, setSelectedArchiveIds] = useState([]);
   const [cleanupLoading, setCleanupLoading] = useState(false);
   const [selectedCleanupIds, setSelectedCleanupIds] = useState([]);
   const [cleanupFilter, setCleanupFilter] = useState('all');
@@ -295,6 +296,30 @@ function SuperAdminPanel() {
     } finally {
       setAdminArchivesLoading(false);
     }
+  };
+
+  const handleRestoreSelectedArchives = async () => {
+    for (const id of selectedArchiveIds) {
+      await fetch(`${API_BASE_URL}/admin-archives/${id}/restore/`, {
+        method: 'POST',
+        headers: { Authorization: `Token ${localStorage.getItem('token')}` }
+      });
+    }
+    setSelectedArchiveIds([]);
+    setConfirmArchiveAction(null);
+    await fetchAdminArchives(adminArchivesPage);
+  };
+
+  const handleDeleteSelectedArchives = async () => {
+    for (const id of selectedArchiveIds) {
+      await fetch(`${API_BASE_URL}/admin-archives/${id}/delete/`, {
+        method: 'DELETE',
+        headers: { Authorization: `Token ${localStorage.getItem('token')}` }
+      });
+    }
+    setSelectedArchiveIds([]);
+    setConfirmArchiveAction(null);
+    await fetchAdminArchives(adminArchivesPage);
   };
 
   const handleRestoreArchive = async (id, nom) => {
@@ -1706,6 +1731,16 @@ function SuperAdminPanel() {
             <div className="section-header">
               <h2>Archives ({adminArchivesTotal})</h2>
               <button className="btn-secondary" onClick={() => fetchAdminArchives(adminArchivesPage)}>↺ Actualiser</button>
+              {selectedArchiveIds.length > 0 && (
+                <>
+                  <button className="btn-edit" onClick={() => setConfirmArchiveAction({ type: 'restore_selected' })}>
+                    ↩️ Restaurer ({selectedArchiveIds.length})
+                  </button>
+                  <button className="btn-danger" onClick={() => setConfirmArchiveAction({ type: 'delete_selected' })}>
+                    🗑️ Supprimer ({selectedArchiveIds.length})
+                  </button>
+                </>
+              )}
             </div>
             {/* Filtres */}
             <div className="admin-filters-bar" style={{marginBottom:'12px'}}>
@@ -1736,6 +1771,15 @@ function SuperAdminPanel() {
               <table>
                 <thead>
                   <tr>
+                    <th>
+                      <input type="checkbox"
+                        onChange={() => {
+                          if (selectedArchiveIds.length === adminArchives.length) setSelectedArchiveIds([]);
+                          else setSelectedArchiveIds(adminArchives.map(a => a.id));
+                        }}
+                        checked={selectedArchiveIds.length === adminArchives.length && adminArchives.length > 0}
+                      />
+                    </th>
                     <th>#</th>
                     <th>Nom</th>
                     <th>Propriétaire</th>
@@ -1747,7 +1791,15 @@ function SuperAdminPanel() {
                 </thead>
                 <tbody>
                   {adminArchives.map((item, idx) => (
-                    <tr key={item.id}>
+                    <tr key={item.id} className={selectedArchiveIds.includes(item.id) ? "row-selected" : ""}>
+                      <td>
+                        <input type="checkbox"
+                          checked={selectedArchiveIds.includes(item.id)}
+                          onChange={() => setSelectedArchiveIds(prev =>
+                            prev.includes(item.id) ? prev.filter(i => i !== item.id) : [...prev, item.id]
+                          )}
+                        />
+                      </td>
                       <td>{(adminArchivesPage - 1) * 20 + idx + 1}</td>
                       <td>
                         {item.parent_nom
@@ -1780,7 +1832,7 @@ function SuperAdminPanel() {
               {confirmArchiveAction && (
                 <div className="modal-overlay">
                   <div className="modal-box">
-                    {confirmArchiveAction.type === 'restore' ? (
+                    {confirmArchiveAction.type === 'restore' && (
                       <>
                         <h3>↩️ Restaurer le dossier</h3>
                         <p>Restaurer <strong>{confirmArchiveAction.item.nom}</strong> ?</p>
@@ -1790,7 +1842,8 @@ function SuperAdminPanel() {
                           <button className="btn-edit" onClick={() => handleRestoreArchive(confirmArchiveAction.item.id, confirmArchiveAction.item.nom)}>↩️ Restaurer</button>
                         </div>
                       </>
-                    ) : (
+                    )}
+                    {confirmArchiveAction.type === 'delete' && (
                       <>
                         <h3>🗑️ Suppression définitive</h3>
                         <p>Supprimer définitivement <strong>{confirmArchiveAction.item.nom}</strong> ?</p>
@@ -1798,6 +1851,27 @@ function SuperAdminPanel() {
                         <div className="modal-actions">
                           <button className="btn-cancel-confirm" onClick={() => setConfirmArchiveAction(null)}>Annuler</button>
                           <button className="btn-danger" onClick={() => handleDeleteArchive(confirmArchiveAction.item.id, confirmArchiveAction.item.nom)}>🗑️ Supprimer</button>
+                        </div>
+                      </>
+                    )}
+                    {confirmArchiveAction?.type === 'restore_selected' && (
+                      <>
+                        <h3>↩️ Restauration multiple</h3>
+                        <p>Restaurer <strong>{selectedArchiveIds.length}</strong> dossier(s) archivé(s) ?</p>
+                        <div className="modal-actions">
+                          <button className="btn-cancel-confirm" onClick={() => setConfirmArchiveAction(null)}>Annuler</button>
+                          <button className="btn-edit" onClick={handleRestoreSelectedArchives}>↩️ Restaurer</button>
+                        </div>
+                      </>
+                    )}
+                    {confirmArchiveAction?.type === 'delete_selected' && (
+                      <>
+                        <h3>🗑️ Suppression multiple</h3>
+                        <p>Supprimer définitivement <strong>{selectedArchiveIds.length}</strong> dossier(s) ?</p>
+                        <p style={{color:'#ef4444', fontSize:'0.82rem'}}>Cette action est irréversible.</p>
+                        <div className="modal-actions">
+                          <button className="btn-cancel-confirm" onClick={() => setConfirmArchiveAction(null)}>Annuler</button>
+                          <button className="btn-danger" onClick={handleDeleteSelectedArchives}>🗑️ Supprimer</button>
                         </div>
                       </>
                     )}
