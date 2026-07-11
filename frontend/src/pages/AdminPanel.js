@@ -1787,7 +1787,7 @@ function AdminPanel() {
                     )}
                     {confirmArchiveAction.type === 'delete' && (
                       <>
-                        <h3>🗑️ Suppression définitive</h3>
+                        <h3>⚠️ Suppression définitive</h3>
                         <p>Supprimer définitivement <strong>{confirmArchiveAction.item.nom}</strong> ?</p>
                         <p style={{color:'#ef4444', fontSize:'0.82rem'}}>Cette action est irréversible.</p>
                         <div className="modal-actions">

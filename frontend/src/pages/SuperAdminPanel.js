@@ -1938,7 +1938,7 @@ function SuperAdminPanel() {
                     )}
                     {confirmArchiveAction.type === 'delete' && (
                       <>
-                        <h3>🗑️ Suppression définitive</h3>
+                        <h3>⚠️ Suppression définitive</h3>
                         <p>Supprimer définitivement <strong>{confirmArchiveAction.item.nom}</strong> ?</p>
                         <p style={{color:'#ef4444', fontSize:'0.82rem'}}>Cette action est irréversible.</p>
                         <div className="modal-actions">
@@ -2055,12 +2055,12 @@ function SuperAdminPanel() {
                       </>
                     ) : (
                       <>
-                        <h3>🗑️ Suppression définitive</h3>
+                        <h3>⚠️ Suppression définitive</h3>
                         <p>Supprimer définitivement le compte <strong>{confirmUserAction.user.username}</strong> ?</p>
-                        <p style={{color:'#ef4444', fontSize:'0.82rem'}}>Cette action est irréversible — toutes les données seront perdues.</p>
+                        <p style={{color:'#ef4444', fontSize:'0.82rem'}}>Cette action est irréversible - toutes les données seront perdues.</p>
                         <div className="modal-actions">
                           <button className="btn-cancel-confirm" onClick={() => setConfirmUserAction(null)}>Annuler</button>
-                          <button className="btn-danger" onClick={() => handleDeleteUserPermanent(confirmUserAction.user.id)}>🗑️ Supprimer définitivement</button>
+                          <button className="btn-danger" onClick={() => handleDeleteUserPermanent(confirmUserAction.user.id)}>Supprimer définitivement</button>
                         </div>
                       </>
                     )}
@@ -2197,7 +2197,7 @@ function SuperAdminPanel() {
                       Annuler
                     </button>
                     <button className="btn-danger" onClick={handleCleanupConfirm}>
-                      🗑️ Confirmer le déplacement
+                      Confirmer le déplacement
                     </button>
                   </div>
                 </div>
