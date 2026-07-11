@@ -10,7 +10,10 @@ const SECTIONS = [
 - Gestion des services : organiser les équipes en services distincts.
 - Gestion fichiers : consulter tous les fichiers uploadés sur la plateforme.
 - Journal d'activité : suivre toutes les actions réalisées par les utilisateurs.
+- Archives : consulter et restaurer les dossiers archivés (manuellement ou lors de suppression de compte).
+- Nettoyage : identifier et supprimer les dossiers vides ou abandonnés.
 - Corbeille : restaurer ou supprimer définitivement les fichiers et dossiers supprimés.
+- Comptes supprimés (SuperAdmin) : restaurer ou supprimer définitivement les comptes utilisateurs supprimés.
 - Mon Profil : modifier vos informations personnelles et votre mot de passe.`
   },
   {
@@ -100,6 +103,46 @@ Un avertissement s'affiche automatiquement quand la corbeille dépasse 10 élém
 
 Sauvegarde automatique :
 Un backup complet de la base de données et des fichiers media est effectué automatiquement tous les 7 jours à 2h du matin.`
+  },
+  {
+    icon: "📦",
+    title: "Archives",
+    content: `La section Archives liste tous les dossiers archivés — manuellement par les utilisateurs ou automatiquement lors de la suppression d'un compte.
+
+Restaurer un dossier archivé :
+Sélectionnez un ou plusieurs dossiers → cliquez "↩️ Restaurer". Le dossier redevient accessible à son propriétaire qui reçoit une notification.
+
+Supprimer définitivement :
+Cliquez "🗑️ Supprimer" → confirmation requise. Action irréversible. Le propriétaire reçoit une notification.
+
+Filtres disponibles : par nom, par service.
+Multi-sélection disponible pour restauration et suppression en lot.`
+  },
+  {
+    icon: "🧹",
+    title: "Nettoyage des dossiers",
+    content: `La section Nettoyage identifie automatiquement les dossiers pouvant être supprimés :
+
+📭 Dossiers vides : aucun fichier ni sous-dossier.
+💤 Dossiers abandonnés : aucun fichier uploadé depuis 60 jours.
+
+Comment nettoyer :
+Cochez les dossiers à supprimer → cliquez "🗑️ Déplacer en corbeille" → confirmation requise. Les dossiers sont déplacés en corbeille (récupérables).
+
+Filtres disponibles : par type (vides/abandonnés), par nom, par propriétaire, par service.`
+  },
+  {
+    icon: "👤",
+    title: "Comptes supprimés (SuperAdmin)",
+    content: `La section Comptes supprimés est réservée au Super Administrateur. Elle liste tous les comptes utilisateurs soft-deletés par les administrateurs.
+
+Restaurer un compte :
+Cliquez "↩️ Restaurer" → le compte redevient actif. Le responsable du service reçoit une notification. Les dossiers transférés lors de la suppression restent chez le destinataire.
+
+Supprimer définitivement :
+Cliquez "🗑️ Supprimer définitivement" → suppression physique irréversible de toutes les données du compte.
+
+Filtres disponibles : par nom/email, par rôle, par service.`
   },
   {
     icon: "🔒",

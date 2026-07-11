@@ -50,16 +50,16 @@ La cloche 🔔 en haut à droite affiche le nombre de notifications non lues. Cl
   {
     icon: "📊",
     title: "Mes statistiques",
-    content: `Accédez à vos statistiques personnelles en cliquant sur le bouton 📊 dans la barre supérieure.
+    content: `Cliquez sur 📊 dans la barre supérieure pour voir vos statistiques personnelles.
 
-Informations disponibles :
-- Nombre de dossiers créés
-- Nombre de fichiers uploadés et taille totale
-- Partages reçus et donnés
-- Top 5 dossiers par taille (sous-dossiers inclus)
-- Activité récente sur 30 jours (uploads, suppressions, renommages)
+Disponible :
+- Nombre de dossiers créés (avec hiérarchie parent/sous-dossier)
+- Fichiers uploadés (total, taille, répartition par type)
+- Partages reçus et donnés (avec détails au clic)
+- Top 5 dossiers par taille
+- Activité récente sur 30 jours
 
-Les statistiques se mettent à jour à chaque ouverture du panneau.`
+Cliquez sur les chiffres pour voir le détail dans un mini-modal.`
   },
   {
     icon: "🔍",
