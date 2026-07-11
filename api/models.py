@@ -20,6 +20,15 @@ class Utilisateur(AbstractUser):
     email = models.EmailField(blank=True, unique=False)
     service = models.CharField(max_length=255, null=True, blank=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+    deleted_by = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='deleted_users'
+    )
 
     class Meta:
         app_label = 'api'
