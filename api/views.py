@@ -518,6 +518,74 @@ def delete_user_account(request, user_id):
     return Response({'success': f'Utilisateur {nom} supprimé. {nb_archives} dossier(s) privé(s) archivé(s).'})
 
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsSuperAdmin])
+def list_deleted_users(request):
+    """Liste les comptes soft-deleted — SuperAdmin uniquement"""
+    search = request.GET.get('search', '')
+    qs = Utilisateur.objects.filter(is_deleted=True).order_by('-deleted_at')
+    if search:
+        qs = qs.filter(
+            Q(username__icontains=search) |
+            Q(email__icontains=search) |
+            Q(service__icontains=search)
+        )
+    data = [{
+        'id': u.id,
+        'username': u.username,
+        'email': u.email or '—',
+        'role': u.role,
+        'service': u.service or '—',
+        'deleted_at': u.deleted_at.strftime('%d/%m/%Y %H:%M') if u.deleted_at else '—',
+        'deleted_by': u.deleted_by.username if u.deleted_by else '—',
+    } for u in qs]
+    return Response({'users': data, 'total': len(data)})
+
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsSuperAdmin])
+def restore_deleted_user(request, user_id):
+    """Restaurer un compte soft-deleted — SuperAdmin uniquement"""
+    try:
+        user = Utilisateur.objects.get(id=user_id, is_deleted=True)
+    except Utilisateur.DoesNotExist:
+        return Response({'error': 'Compte introuvable.'}, status=status.HTTP_404_NOT_FOUND)
+    user.is_deleted = False
+    user.is_active = True
+    user.deleted_at = None
+    user.deleted_by = None
+    user.save(update_fields=['is_deleted', 'is_active', 'deleted_at', 'deleted_by'])
+    AuditLog.objects.create(
+        utilisateur=request.user,
+        action='UPDATE',
+        objet=f"Restauration compte : {user.username}",
+        adresse_ip=request.META.get('REMOTE_ADDR', '')
+    )
+    return Response({'success': f"Compte {user.username} restauré."})
+
+
+@api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsSuperAdmin])
+def delete_user_permanent(request, user_id):
+    """Supprimer définitivement un compte — SuperAdmin uniquement"""
+    try:
+        user = Utilisateur.objects.get(id=user_id, is_deleted=True)
+    except Utilisateur.DoesNotExist:
+        return Response({'error': 'Compte introuvable.'}, status=status.HTTP_404_NOT_FOUND)
+    username = user.username
+    user.delete()
+    AuditLog.objects.create(
+        utilisateur=request.user,
+        action='DELETE',
+        objet=f"Suppression définitive compte : {username}",
+        adresse_ip=request.META.get('REMOTE_ADDR', '')
+    )
+    return Response({'success': f"Compte {username} supprimé définitivement."})
+
+
 @api_view(['PUT'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
