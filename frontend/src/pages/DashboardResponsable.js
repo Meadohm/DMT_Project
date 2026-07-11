@@ -819,7 +819,7 @@ function DashboardResponsable() {
                 </div>
                 {userStats.top_dossiers?.length > 0 && (
                   <div className="service-stats-activity" style={{marginBottom:'16px'}}>
-                    <h3>📦 Top dossiers par taille</h3>
+                    <h3>Top dossiers par taille</h3>
                     <div className="table-scroll-wrapper">
                       <table>
                         <thead>
