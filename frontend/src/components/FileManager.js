@@ -240,18 +240,15 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
             Array.from(selectedFiles).map((file) => uploadFile(activeFolder.id, file))
           );
 
-          // Rafraîchit la liste après upload
-          await fetchFiles();
-
-          // Affiche un toast de confirmation
+          // Affiche le toast immédiatement après upload
           const fileCount = selectedFiles.length;
           setToast({
             type: "success",
             message: `${fileCount} fichier${fileCount > 1 ? "s" : ""} uploadé${fileCount > 1 ? "s" : ""} avec succès !`,
           });
-
-          // Cache le toast automatiquement après 3 secondes
           setTimeout(() => setToast(null), 3000);
+          // Rafraîchit la liste en parallèle (non bloquant)
+          fetchFiles();
 
         } catch (err) {
           console.error("❌ Erreur upload", err);
