@@ -14,6 +14,8 @@ import mammoth from "mammoth";
 import Modal from "./Modal";
 import Toast from "./Toast";
 import "../styles/FileManager.css";
+import Plyr from "plyr";
+import "plyr/dist/plyr.css";
 
 /*import ReactPlayer from "react-player";
 import AudioPlayer from "react-h5-audio-player";
@@ -26,6 +28,24 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
   const [dragOver, setDragOver] = useState(false);
   const [previewFileData, setPreviewFileData] = useState(null);
   const [previewMeta, setPreviewMeta] = useState(null);
+  const videoRef = React.useRef(null);
+  const audioRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (previewFileData?.type === 'video' && videoRef.current) {
+      const player = new Plyr(videoRef.current, {
+        controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
+        ratio: '16:9',
+      });
+      return () => player.destroy();
+    }
+    if (previewFileData?.type === 'audio' && audioRef.current) {
+      const player = new Plyr(audioRef.current, {
+        controls: ['play', 'progress', 'current-time', 'mute', 'volume'],
+      });
+      return () => player.destroy();
+    }
+  }, [previewFileData]);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isFullPreview, setIsFullPreview] = useState(false);
   const [notif, setNotif] = useState(null);
@@ -811,29 +831,17 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                   )}
 
                   {previewFileData.type === "audio" && (
-                    <div className="audio-preview">
-                      <audio className="custom-audio" controls style={{ width: "100%" }}>
-                        <source
-                          src={previewFileData.url}
-                          type={`audio/${previewMeta.nom.split(".").pop()}`}
-                        />
-                        Votre navigateur ne supporte pas l’audio.
+                    <div className="audio-preview" style={{padding:'16px 0'}}>
+                      <audio ref={audioRef} controls style={{ width: "100%" }}>
+                        <source src={previewFileData.url} type={`audio/${previewMeta.nom.split(".").pop()}`} />
                       </audio>
                     </div>
                   )}
 
                   {previewFileData.type === "video" && (
                     <div className="video-preview">
-                      <video
-                        className="custom-video"
-                        controls
-                        style={{ width: "100%", maxHeight: "85vh" }}
-                      >
-                        <source
-                          src={previewFileData.url}
-                          type={`video/${previewMeta.nom.split(".").pop()}`}
-                        />
-                        Votre navigateur ne supporte pas la vidéo.
+                      <video ref={videoRef} controls style={{ width: "100%" }}>
+                        <source src={previewFileData.url} type={`video/${previewMeta.nom.split(".").pop()}`} />
                       </video>
                     </div>
                   )}
