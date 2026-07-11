@@ -524,6 +524,8 @@ def delete_user_account(request, user_id):
 def list_deleted_users(request):
     """Liste les comptes soft-deleted — SuperAdmin uniquement"""
     search = request.GET.get('search', '')
+    role = request.GET.get('role', '')
+    service = request.GET.get('service', '')
     qs = Utilisateur.objects.filter(is_deleted=True).order_by('-deleted_at')
     if search:
         qs = qs.filter(
@@ -531,6 +533,19 @@ def list_deleted_users(request):
             Q(email__icontains=search) |
             Q(service__icontains=search)
         )
+    if role:
+        qs = qs.filter(role=role)
+    if service:
+        qs = qs.filter(service=service)
+
+    # Listes pour les selects
+    roles_dispo = list(Utilisateur.objects.filter(
+        is_deleted=True
+    ).values_list('role', flat=True).distinct())
+    services_dispo = list(Utilisateur.objects.filter(
+        is_deleted=True
+    ).exclude(service='').exclude(service__isnull=True).values_list('service', flat=True).distinct().order_by('service'))
+
     data = [{
         'id': u.id,
         'username': u.username,
@@ -540,7 +555,12 @@ def list_deleted_users(request):
         'deleted_at': u.deleted_at.strftime('%d/%m/%Y %H:%M') if u.deleted_at else '—',
         'deleted_by': u.deleted_by.username if u.deleted_by else '—',
     } for u in qs]
-    return Response({'users': data, 'total': len(data)})
+    return Response({
+        'users': data,
+        'total': len(data),
+        'roles': roles_dispo,
+        'services': services_dispo,
+    })
 
 
 @api_view(['POST'])
@@ -557,6 +577,20 @@ def restore_deleted_user(request, user_id):
     user.deleted_at = None
     user.deleted_by = None
     user.save(update_fields=['is_deleted', 'is_active', 'deleted_at', 'deleted_by'])
+    # Notifier le responsable du service si différent
+    if user.service:
+        responsable = Utilisateur.objects.filter(
+            role='responsable',
+            service=user.service,
+            is_active=True,
+            is_deleted=False
+        ).first()
+        if responsable and responsable != request.user:
+            Notification.objects.create(
+                user=responsable,
+                type='info',
+                message=f"ℹ️ Le compte {user.username} a été restauré par {request.user.username}. Les dossiers transférés lors de sa suppression restent à votre disposition."
+            )
     AuditLog.objects.create(
         utilisateur=request.user,
         action='UPDATE',

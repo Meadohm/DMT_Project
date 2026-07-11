@@ -65,6 +65,10 @@ function SuperAdminPanel() {
   const [deletedUsers, setDeletedUsers] = useState([]);
   const [deletedUsersTotal, setDeletedUsersTotal] = useState(0);
   const [deletedUsersSearch, setDeletedUsersSearch] = useState('');
+  const [deletedUsersRole, setDeletedUsersRole] = useState('');
+  const [deletedUsersService, setDeletedUsersService] = useState('');
+  const [deletedUsersRoles, setDeletedUsersRoles] = useState([]);
+  const [deletedUsersServices, setDeletedUsersServices] = useState([]);
   const [confirmUserAction, setConfirmUserAction] = useState(null);
   const [adminArchives, setAdminArchives] = useState([]);
   const [adminArchivesTotal, setAdminArchivesTotal] = useState(0);
@@ -357,9 +361,9 @@ function SuperAdminPanel() {
     }
   };
 
-  const fetchDeletedUsers = async (search = deletedUsersSearch) => {
+  const fetchDeletedUsers = async (search = deletedUsersSearch, role = deletedUsersRole, service = deletedUsersService) => {
     try {
-      const params = new URLSearchParams({ search });
+      const params = new URLSearchParams({ search, role, service });
       const res = await fetch(`${API_BASE_URL}/deleted-users/?${params}`, {
         headers: { Authorization: `Token ${localStorage.getItem('token')}` }
       });
@@ -367,6 +371,8 @@ function SuperAdminPanel() {
         const data = await res.json();
         setDeletedUsers(data.users || []);
         setDeletedUsersTotal(data.total || 0);
+        if (data.roles) setDeletedUsersRoles(data.roles);
+        if (data.services) setDeletedUsersServices(data.services);
       }
     } catch (err) {
       console.error('Erreur comptes supprimés', err);
@@ -1938,16 +1944,27 @@ function SuperAdminPanel() {
         {activeSection === "deleted-users" && (
           <div className="trash-section">
             <div className="section-header">
-              <h2>👤 Comptes supprimés ({deletedUsersTotal})</h2>
+              <h2>Comptes supprimés ({deletedUsersTotal})</h2>
               <button className="btn-secondary" onClick={() => fetchDeletedUsers()}>↺ Actualiser</button>
             </div>
             <div className="admin-filters-bar" style={{marginBottom:'12px'}}>
               <input
                 className="filter-input"
-                placeholder="🔍 Rechercher par nom, email, service..."
+                placeholder="🔍 Nom, email..."
                 value={deletedUsersSearch}
-                onChange={e => { setDeletedUsersSearch(e.target.value); fetchDeletedUsers(e.target.value); }}
+                onChange={e => { setDeletedUsersSearch(e.target.value); fetchDeletedUsers(e.target.value, deletedUsersRole, deletedUsersService); }}
               />
+              <select className="filter-select" value={deletedUsersRole}
+                onChange={e => { setDeletedUsersRole(e.target.value); fetchDeletedUsers(deletedUsersSearch, e.target.value, deletedUsersService); }}>
+                <option value="">Tous les rôles</option>
+                {deletedUsersRoles.map(r => <option key={r} value={r}>{r}</option>)}
+              </select>
+              <select className="filter-select" value={deletedUsersService}
+                onChange={e => { setDeletedUsersService(e.target.value); fetchDeletedUsers(deletedUsersSearch, deletedUsersRole, e.target.value); }}>
+                <option value="">Tous les services</option>
+                {deletedUsersServices.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+              <button className="btn-cancel" onClick={() => { setDeletedUsersSearch(''); setDeletedUsersRole(''); setDeletedUsersService(''); fetchDeletedUsers('', '', ''); }}>Réinitialiser</button>
             </div>
             {deletedUsers.length === 0 ? (
               <p className="no-data">Aucun compte supprimé.</p>
