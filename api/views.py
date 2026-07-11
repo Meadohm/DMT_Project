@@ -1298,7 +1298,7 @@ def get_cleanup_candidates(request):
     all_folders = Folder.objects.filter(
         is_deleted=False,
         is_archived=False
-    ).select_related('proprietaire')
+    ).select_related('proprietaire').order_by('-created_at')
 
     empty = []
     abandoned = []
