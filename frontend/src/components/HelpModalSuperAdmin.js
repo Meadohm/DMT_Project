@@ -13,6 +13,7 @@ const SECTIONS = [
 - Archives : consulter et restaurer les dossiers archivés (manuellement ou lors de suppression de compte).
 - Nettoyage : identifier et supprimer les dossiers vides ou abandonnés.
 - Corbeille : restaurer ou supprimer définitivement les fichiers et dossiers supprimés.
+- Comptes supprimés (SuperAdmin) : restaurer ou supprimer définitivement les comptes utilisateurs supprimés.
 - Mon Profil : modifier vos informations personnelles et votre mot de passe.`
   },
   {
@@ -131,6 +132,19 @@ Cochez les dossiers à supprimer → cliquez "🗑️ Déplacer en corbeille" �
 Filtres disponibles : par type (vides/abandonnés), par nom, par propriétaire, par service.`
   },
   {
+    icon: "👤",
+    title: "Comptes supprimés (SuperAdmin)",
+    content: `La section Comptes supprimés est réservée au Super Administrateur. Elle liste tous les comptes utilisateurs soft-deletés par les administrateurs.
+
+Restaurer un compte :
+Cliquez "↩️ Restaurer" → le compte redevient actif. Le responsable du service reçoit une notification. Les dossiers transférés lors de la suppression restent chez le destinataire.
+
+Supprimer définitivement :
+Cliquez "🗑️ Supprimer définitivement" → suppression physique irréversible de toutes les données du compte.
+
+Filtres disponibles : par nom/email, par rôle, par service.`
+  },
+  {
     icon: "🔒",
     title: "Sécurité de la plateforme",
     content: `Rate limiting :
@@ -155,7 +169,7 @@ Précisez dans votre message : votre nom, la section concernée et une descripti
   }
 ];
 
-function HelpModalAdmin({ onClose }) {
+function HelpModalSuperAdmin({ onClose }) {
   const [openIndex, setOpenIndex] = useState(0);
 
   return (
@@ -193,4 +207,4 @@ function HelpModalAdmin({ onClose }) {
   );
 }
 
-export default HelpModalAdmin;
+export default HelpModalSuperAdmin;

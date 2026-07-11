@@ -24,7 +24,7 @@ import { validatePassword } from "../services/validators";
 
 import { getHistorique, deleteHistorique } from "../services/fileService";
 import AdminFileManager from "../services/AdminFileManager";
-import HelpModalAdmin from "../components/HelpModalAdmin";
+import HelpModalSuperAdmin from "../components/HelpModalSuperAdmin";
 import useAutoLogout from "../hooks/useAutoLogout";
 
 import API_BASE_URL from "../config";
@@ -2687,7 +2687,7 @@ function SuperAdminPanel() {
         </div>
       )}
 
-      {helpOpen && <HelpModalAdmin onClose={() => setHelpOpen(false)} />}
+      {helpOpen && <HelpModalSuperAdmin onClose={() => setHelpOpen(false)} />}
 
       {showLogoutWarning && (
         <div className="auto-logout-warning">
