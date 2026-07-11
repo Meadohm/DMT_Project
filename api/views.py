@@ -1742,8 +1742,8 @@ def get_user_stats(request):
             'parent_nom': share.folder.parent.nom if share.folder.parent else None,
             'proprietaire': f"{share.folder.proprietaire.username} ({share.folder.proprietaire.service or 'Sans service'})" if share.folder.proprietaire else '—',
         })
-        # Sous-dossiers hérités
-        enfants_ids = get_descendant_folder_ids({share.folder.id})
+        # Sous-dossiers hérités (exclure le dossier parent lui-même)
+        enfants_ids = get_descendant_folder_ids({share.folder.id}) - {share.folder.id}
         for enfant in Folder.objects.filter(
             id__in=enfants_ids,
             is_deleted=False,
@@ -1789,8 +1789,8 @@ def get_user_stats(request):
             'parent_nom': share.folder.parent.nom if share.folder.parent else None,
             'destinataire': f"{share.user.username} ({share.user.service or 'Sans service'})",
         })
-        # Sous-dossiers hérités
-        enfants_ids = get_descendant_folder_ids({share.folder.id})
+        # Sous-dossiers hérités (exclure le dossier parent lui-même)
+        enfants_ids = get_descendant_folder_ids({share.folder.id}) - {share.folder.id}
         for enfant in Folder.objects.filter(
             id__in=enfants_ids,
             is_deleted=False,
