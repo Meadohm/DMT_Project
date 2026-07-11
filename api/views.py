@@ -487,11 +487,9 @@ def delete_user_account(request, user_id):
     noms_partages = list(dossiers_partages.values_list('nom', flat=True))
     dossiers_partages.update(proprietaire=destinataire, **service_update)
 
-    # Réassigner tous les dossiers restants de l'utilisateur (y compris sous-dossiers) à destinataire
-    # avant la suppression pour éviter SET_NULL
+    # Réassigner TOUS les dossiers (y compris soft-deleted) pour éviter SET_NULL ou perte
     Folder.objects.filter(
-        proprietaire=utilisateur,
-        is_deleted=False
+        proprietaire=utilisateur
     ).update(
         proprietaire=destinataire,
         service=destinataire.service if destinataire.service else F('service')
