@@ -131,11 +131,11 @@ def get_user_view(request):
 def get_all_users(request):
     # Super admin voit tout le monde, admin normal ne voit pas les super_admins
     if hasattr(request.user, 'role') and request.user.role == 'super_admin':
-        utilisateurs = Utilisateur.objects.all().only(
+        utilisateurs = Utilisateur.objects.filter(is_deleted=False).only(
             "id", "username", "email", "role", "service", "last_seen", "is_active", "date_joined"
         )
     else:
-        utilisateurs = Utilisateur.objects.exclude(role="super_admin").only(
+        utilisateurs = Utilisateur.objects.filter(is_deleted=False).exclude(role="super_admin").only(
             "id", "username", "email", "role", "service", "last_seen", "is_active", "date_joined"
         )
     data = [
@@ -158,7 +158,7 @@ def get_all_users(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def list_users_for_sharing(request):
-    utilisateurs = Utilisateur.objects.exclude(role="super_admin").only("id", "username", "role", "service", "avatar")
+    utilisateurs = Utilisateur.objects.filter(is_deleted=False).exclude(role="super_admin").only("id", "username", "role", "service", "avatar")
     data = [
         {
             'id': u.id,
@@ -445,7 +445,8 @@ def delete_user_account(request, user_id):
         responsables = Utilisateur.objects.filter(
             role='responsable',
             service=utilisateur.service,
-            is_active=True
+            is_active=True,
+            is_deleted=False
         ).exclude(id=utilisateur.id)
         if responsables.count() == 1:
             destinataire = responsables.first()
@@ -479,7 +480,11 @@ def delete_user_account(request, user_id):
     ).values_list('nom', flat=True))
     dossiers_partages.update(proprietaire=destinataire, **service_update)
 
-    utilisateur.delete()
+    utilisateur.is_deleted = True
+    utilisateur.deleted_at = timezone.now()
+    utilisateur.deleted_by = request.user
+    utilisateur.is_active = False
+    utilisateur.save(update_fields=['is_deleted', 'deleted_at', 'deleted_by', 'is_active'])
 
     destinataire_nom = destinataire.username
     detail = f"Suppression utilisateur : {nom} → dossiers transférés à {destinataire_nom}"
@@ -837,7 +842,8 @@ def notify_admins_trash(admin_username, count, is_selected=False, ip=''):
     """Notifie tous les admins et super_admins après vidage/suppression corbeille"""
     try:
         recipients = Utilisateur.objects.filter(
-            role__in=['admin', 'super_admin']
+            role__in=['admin', 'super_admin'],
+            is_deleted=False
         ).exclude(username=admin_username)
         emails = [a.email for a in recipients if a.email]
         if not emails:
@@ -866,7 +872,8 @@ def notify_admins_deletion(admin_username, log_info, ip, is_bulk=False):
     try:
         # Notifier tous les admins et super_admins sauf l'auteur
         recipients = Utilisateur.objects.filter(
-            role__in=['admin', 'super_admin']
+            role__in=['admin', 'super_admin'],
+            is_deleted=False
         ).exclude(username=admin_username)
         emails = [a.email for a in recipients if a.email]
         if not emails:
@@ -1028,7 +1035,7 @@ def list_services(request):
     services = Service.objects.select_related('responsable').all()
     services_list = []
     for s in services:
-        nb = Utilisateur.objects.filter(service=s.nom).count()
+        nb = Utilisateur.objects.filter(service=s.nom, is_deleted=False).count()
         services_list.append({
             'id': s.id,
             'nom': s.nom,
@@ -1114,12 +1121,12 @@ def get_dashboard_stats(request):
     import datetime
 
     # Users
-    total_users = Utilisateur.objects.count()
-    active_users = Utilisateur.objects.filter(is_active=True).count()
-    inactive_users = Utilisateur.objects.filter(is_active=False).count()
+    total_users = Utilisateur.objects.filter(is_deleted=False).count()
+    active_users = Utilisateur.objects.filter(is_active=True, is_deleted=False).count()
+    inactive_users = Utilisateur.objects.filter(is_active=False, is_deleted=False).count()
     threshold = now() - datetime.timedelta(minutes=10)
-    online_users = Utilisateur.objects.filter(last_seen__gte=threshold, is_active=True).count()
-    never_connected = Utilisateur.objects.filter(last_seen__isnull=True, last_login__isnull=True, is_active=True).count()
+    online_users = Utilisateur.objects.filter(last_seen__gte=threshold, is_active=True, is_deleted=False).count()
+    never_connected = Utilisateur.objects.filter(last_seen__isnull=True, last_login__isnull=True, is_active=True, is_deleted=False).count()
 
     # Services
     total_services = Service.objects.count()
@@ -1132,10 +1139,10 @@ def get_dashboard_stats(request):
     total_size = sum(f.taille or 0 for f in FileModel.objects.only('taille'))
 
     # Répartition par rôle
-    role_employe = Utilisateur.objects.filter(role='employe').count()
-    role_responsable = Utilisateur.objects.filter(role='responsable').count()
-    role_admin = Utilisateur.objects.filter(role='admin').count()
-    role_super_admin = Utilisateur.objects.filter(role='super_admin').count()
+    role_employe = Utilisateur.objects.filter(role='employe', is_deleted=False).count()
+    role_responsable = Utilisateur.objects.filter(role='responsable', is_deleted=False).count()
+    role_admin = Utilisateur.objects.filter(role='admin', is_deleted=False).count()
+    role_super_admin = Utilisateur.objects.filter(role='super_admin', is_deleted=False).count()
 
     # Dossiers
     total_folders = Folder.objects.filter(is_archived=False).count()
@@ -1223,7 +1230,7 @@ def get_service_stats(request):
     from datetime import timedelta
 
     # Membres du service
-    membres = Utilisateur.objects.filter(service=service, is_active=True)
+    membres = Utilisateur.objects.filter(service=service, is_active=True, is_deleted=False)
     threshold = timezone.now() - timedelta(minutes=10)
     membres_en_ligne = membres.filter(last_seen__gte=threshold).count()
 
@@ -3049,7 +3056,7 @@ def create_notification(request):
     try:
         # Si recipients est fourni → envoyer à chaque utilisateur ciblé
         if isinstance(recipients, list) and len(recipients) > 0:
-            users = Utilisateur.objects.filter(id__in=recipients)
+            users = Utilisateur.objects.filter(id__in=recipients, is_deleted=False)
             for user in users:
                 Notification.objects.create(user=user, type=notif_type, message=message)
             logger.info(f"[NOTIF] Notification personnalisée envoyée à {len(users)} utilisateur(s).")
