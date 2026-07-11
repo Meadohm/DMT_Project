@@ -2293,19 +2293,25 @@ def upload_file(request, folder_id):
 
     fichier.name = new_name
 
-    hasher = hashlib.sha256()
-    for chunk in fichier.chunks():
-        hasher.update(chunk)
-
     file_instance = FileModel.objects.create(
-    folder=folder,
-    utilisateur=request.user,
-    fichier=fichier,
-    nom=new_name,
-    taille=fichier.size,
-    type_fichier=fichier.content_type or "application/octet-stream",
-    file_hash=hasher.hexdigest()
+        folder=folder,
+        utilisateur=request.user,
+        fichier=fichier,
+        nom=new_name,
+        taille=fichier.size,
+        type_fichier=fichier.content_type or "application/octet-stream",
+        file_hash=''
     )
+    # Calculer le hash après sauvegarde (depuis le fichier sur disque — 1 seule lecture)
+    try:
+        hasher = hashlib.sha256()
+        with open(file_instance.fichier.path, 'rb') as f:
+            for chunk in iter(lambda: f.read(8192), b''):
+                hasher.update(chunk)
+        file_instance.file_hash = hasher.hexdigest()
+        file_instance.save(update_fields=['file_hash'])
+    except Exception:
+        pass
 
     file_instance.original_name = base
     file_instance.save(update_fields=['original_name'])
