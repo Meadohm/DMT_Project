@@ -14,8 +14,6 @@ import mammoth from "mammoth";
 import Modal from "./Modal";
 import Toast from "./Toast";
 import "../styles/FileManager.css";
-import Plyr from "plyr";
-import "plyr/dist/plyr.css";
 
 /*import ReactPlayer from "react-player";
 import AudioPlayer from "react-h5-audio-player";
@@ -33,14 +31,14 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
 
   React.useEffect(() => {
     if (previewFileData?.type === 'video' && videoRef.current) {
-      const player = new Plyr(videoRef.current, {
+      const player = new window.Plyr(videoRef.current, {
         controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
         ratio: '16:9',
       });
       return () => player.destroy();
     }
     if (previewFileData?.type === 'audio' && audioRef.current) {
-      const player = new Plyr(audioRef.current, {
+      const player = new window.Plyr(audioRef.current, {
         controls: ['play', 'progress', 'current-time', 'mute', 'volume'],
       });
       return () => player.destroy();
