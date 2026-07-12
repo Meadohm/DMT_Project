@@ -246,6 +246,7 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
 
       // === Upload de fichiers ===
       const handleUpload = async (selectedFiles) => {
+        console.log('[UPLOAD DEBUG] fichiers:', Array.from(selectedFiles).map(f => ({name: f.name, size: f.size, type: f.type})));
         if (!activeFolder.permissions?.can_write) {
           setPermissionMessage("⛔ Vous n’avez pas la permission d’ajouter un fichier dans ce dossier.");
           setPermissionModalOpen(true);
