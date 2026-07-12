@@ -254,10 +254,21 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
         }
 
         try {
+          console.log('[UPLOAD DEBUG] début upload vers dossier', activeFolder.id);
           // Upload parallèle des fichiers
-          await Promise.all(
-            Array.from(selectedFiles).map((file) => uploadFile(activeFolder.id, file))
+          const results = await Promise.all(
+            Array.from(selectedFiles).map((file) => {
+              console.log('[UPLOAD DEBUG] envoi fichier:', file.name, file.size);
+              return uploadFile(activeFolder.id, file).then(r => {
+                console.log('[UPLOAD DEBUG] succès:', file.name);
+                return r;
+              }).catch(e => {
+                console.error('[UPLOAD DEBUG] erreur:', file.name, e.message);
+                throw e;
+              });
+            })
           );
+          console.log('[UPLOAD DEBUG] tous uploadés:', results);
 
           // Affiche le toast immédiatement après upload
           const fileCount = selectedFiles.length;
