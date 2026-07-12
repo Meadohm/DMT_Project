@@ -42,10 +42,10 @@ La cloche 🔔 en haut à droite affiche le nombre de notifications non lues. Cl
   {
     icon: "📦",
     title: "Archives",
-    content: `Les archives permettent de sauvegarder temporairement un ou plusieurs fichiers :
-- Créer une archive : allez dans le menu de votre profil (en haut à droite) → "Archives" → onglet "Créer". Sélectionnez les fichiers à archiver et confirmez.
+    content: `Les archives permettent de sauvegarder temporairement un ou plusieurs dossiers. Elles sont utiles pour libérer de l'espace ou conserver des fichiers sans les supprimer définitivement.
+- Créer une archive : allez dans le menu de votre profil (en haut à droite) → "Archives" → onglet "Créer". Sélectionnez les dossiers à archiver et confirmez.
 - Consulter vos archives : onglet "Mes archives". Chaque archive a une date d'expiration automatique — elle sera supprimée après ce délai.
-- Archivage multiple : vous pouvez cocher plusieurs fichiers à la fois et les archiver ensemble.`
+- Archivage multiple : vous pouvez cocher plusieurs dossiers à la fois et les archiver ensemble.`
   },
   {
     icon: "📊",
