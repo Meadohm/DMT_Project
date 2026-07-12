@@ -3,7 +3,7 @@ import axios from "axios";
 import { getToken } from "./authService";
 import API_BASE_URL from "../config";
 
-// --- Gestion des fichiers centralisés ---
+// Gestion des fichiers centralisés
 export const getCentralizedFiles = async () => {
   const token = getToken();
   const res = await axios.get(`${API_BASE_URL}/centralized-files/`, {
@@ -29,7 +29,7 @@ export const deleteFile = async (fileId) => {
   });
 };
 
-// --- Utilisateurs ---
+// Utilisateurs
 export const getUsers = async () => {
   const token = getToken();
   const res = await axios.get(`${API_BASE_URL}/utilisateurs/`, {
@@ -77,7 +77,7 @@ export const updateUserAccount = async (userId, userData) => {
   return res.data;
 };
 
-// --- Services ---
+// Services
 export const createService = async (serviceName) => {
   const token = getToken();
   return axios.post(

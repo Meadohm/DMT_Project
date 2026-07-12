@@ -3,7 +3,7 @@ import axios from "axios";
 import { getToken } from "./authService";
 import API_BASE_URL from "../config"; //Import centralisé
 
-// 📂 Récupérer fichiers d’un dossier
+// Récupérer fichiers d’un dossier
 export const getFilesByFolder = async (folderId) => {
   try {
     const token = getToken();
@@ -12,7 +12,7 @@ export const getFilesByFolder = async (folderId) => {
     });
     return res.data;
   } catch (error) {
-    console.error("❌ Erreur récupération fichiers :", error.response || error.message);
+    console.error("Erreur récupération fichiers :", error.response || error.message);
     throw error;
   }
 };
@@ -24,20 +24,26 @@ export const uploadFile = async (folderId, file) => {
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await axios.post(`${API_BASE_URL}/folders/${folderId}/upload/`, formData, {
+    const res = await fetch(`${API_BASE_URL}/folders/${folderId}/upload/`, {
+      method: 'POST',
       headers: {
         Authorization: `Token ${token}`,
-        "Content-Type": "multipart/form-data",
       },
+      body: formData,
+      keepalive: true,
     });
-    return res.data;
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Erreur upload');
+    }
+    return await res.json();
   } catch (error) {
-    console.error("❌ Erreur upload fichier :", error.response || error.message);
+    console.error("Erreur upload fichier :", error.response || error.message);
     throw error;
   }
 };
 
-//Renommer un fichier
+// Renommer un fichier
 export const renameFile = async (fileId, newName) => {
   try {
     const token = getToken();
@@ -53,7 +59,7 @@ export const renameFile = async (fileId, newName) => {
     );
     return res.data;
   } catch (error) {
-    console.error("❌ Erreur renommage fichier :", error.response || error.message);
+    console.error("Erreur renommage fichier :", error.response || error.message);
     throw error;
   }
 };
@@ -84,7 +90,7 @@ export const deleteFile = async (fileId) => {
       headers: { Authorization: `Token ${token}` },
     });
   } catch (error) {
-    console.error("❌ Erreur suppression fichier :", error.response || error.message);
+    console.error("Erreur suppression fichier :", error.response || error.message);
     throw error;
   }
 };
@@ -98,7 +104,7 @@ export const getUserInfo = async () => {
     });
     return res.data;
   } catch (error) {
-    console.error("❌ Erreur récupération utilisateur :", error.response || error.message);
+    console.error("Erreur récupération utilisateur :", error.response || error.message);
     throw error;
   }
 };
@@ -112,7 +118,7 @@ export const getHistorique = async () => {
     });
     return res.data;
   } catch (error) {
-    console.error("❌ Erreur récupération historique :", error.response || error.message);
+    console.error("Erreur récupération historique :", error.response || error.message);
     throw error;
   }
 };
@@ -124,7 +130,7 @@ export const deleteHistorique = async (id) => {
       headers: { Authorization: `Token ${token}` },
     });
   } catch (error) {
-    console.error("❌ Erreur suppression historique :", error.response || error.message);
+    console.error("Erreur suppression historique :", error.response || error.message);
     throw error;
   }
 };
@@ -138,7 +144,7 @@ export const previewFile = async (fileId) => {
     });
     return res.data;
   } catch (error) {
-    console.error("❌ Erreur preview fichier :", error.response || error.message);
+    console.error("Erreur preview fichier :", error.response || error.message);
     throw error;
   }
 };

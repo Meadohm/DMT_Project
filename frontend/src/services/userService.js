@@ -5,12 +5,12 @@ import { getToken } from "./authService";
 
 /**
  * ============================
- * 👤 Informations utilisateur
+ * Informations utilisateur
  * ============================
  */
 
 /**
- * 🔹 Récupère les infos de l'utilisateur connecté (profil complet)
+ * Récupère les infos de l'utilisateur connecté (profil complet)
  * Appelle la vue Django : GET /api/user/
  */
 export const getUserInfo = async () => {
@@ -21,19 +21,19 @@ export const getUserInfo = async () => {
     });
     return res.data; // { id, username, email, role, service, avatar }
   } catch (error) {
-    console.error("❌ Erreur getUserInfo:", error);
+    console.error("Erreur getUserInfo:", error);
     throw error;
   }
 };
 
 /**
  * ============================
- * 🤝 Gestion du partage
+ * Gestion du partage
  * ============================
  */
 
 /**
- * 🔹 Récupère la liste des utilisateurs disponibles pour le partage
+ * Récupère la liste des utilisateurs disponibles pour le partage
  * (à l’exception de l’utilisateur connecté)
  * Appelle : GET /api/users/
  */
@@ -45,19 +45,19 @@ export const listUsersForSharing = async () => {
     });
     return res.data; // format [{ id, username, role, service, avatar }]
   } catch (error) {
-    console.error("❌ Erreur récupération utilisateurs :", error);
+    console.error("Erreur récupération utilisateurs :", error);
     throw error;
   }
 };
 
 /**
  * ============================
- * ⚙️ Mise à jour du profil
+ * Mise à jour du profil
  * ============================
  */
 
 /**
- * 🔹 Met à jour le profil utilisateur (nom, email, service)
+ * Met à jour le profil utilisateur (nom, email, service)
  * Appelle : PUT /api/user/update/
  */
 export const updateProfile = async (formData) => {
@@ -68,13 +68,13 @@ export const updateProfile = async (formData) => {
     });
     return res.data;
   } catch (error) {
-    console.error("❌ Erreur mise à jour profil :", error);
+    console.error("Erreur mise à jour profil :", error);
     throw error;
   }
 };
 
 /**
- * 🔹 Met à jour le mot de passe de l’utilisateur
+ * Met à jour le mot de passe de l’utilisateur
  * Appelle : POST /api/update-password/
  */
 export const updatePassword = async (oldPassword, newPassword) => {
@@ -89,13 +89,13 @@ export const updatePassword = async (oldPassword, newPassword) => {
     );
     return res.data; // { success: "...", token: "new_token" }
   } catch (error) {
-    console.error("❌ Erreur mise à jour mot de passe :", error);
+    console.error("Erreur mise à jour mot de passe :", error);
     throw error;
   }
 };
 
 /**
- * 🔹 Supprime définitivement le compte utilisateur
+ * Supprime définitivement le compte utilisateur
  * Appelle : DELETE /api/user/delete/
  */
 export const deleteAccount = async () => {
@@ -106,7 +106,7 @@ export const deleteAccount = async () => {
     });
     return res.data;
   } catch (error) {
-    console.error("❌ Erreur suppression compte :", error);
+    console.error("Erreur suppression compte :", error);
     throw error;
   }
 };

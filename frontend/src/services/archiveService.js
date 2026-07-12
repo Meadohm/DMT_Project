@@ -3,7 +3,7 @@ import axios from "axios";
 import API_BASE_URL from "../config";
 import { getToken } from "./authService";
 
-// --- 📦 Récupérer toutes les archives ---
+// Récupérer toutes les archives
 export const getArchives = async () => {
   const token = getToken();
   try {
@@ -12,13 +12,13 @@ export const getArchives = async () => {
     });
     return res.data;
   } catch (error) {
-    console.error("❌ Erreur récupération des archives :", error);
+    console.error("Erreur récupération des archives :", error);
     throw error;
   }
 };
 
 
-// ---Télécharger une archive ---
+// Télécharger une archive
 export const downloadArchive = async (id, filename = null, onProgress = null) => {
   const token = getToken();
   try {
@@ -64,14 +64,13 @@ export const downloadArchive = async (id, filename = null, onProgress = null) =>
 
     console.log(`⬇️ Téléchargement terminé : ${suggestedName}`);
   } catch (error) {
-    console.error("❌ Erreur lors du téléchargement de l'archive :", error);
+    console.error("Erreur lors du téléchargement de l'archive :", error);
     throw error;
   }
 };
 
 
-
-// --- Supprimer une archive ---
+// Supprimer une archive
 export const deleteArchive = async (id) => {
   const token = getToken();
   try {
@@ -79,12 +78,12 @@ export const deleteArchive = async (id) => {
       headers: { Authorization: `Token ${token}` },
     });
   } catch (error) {
-    console.error("❌ Erreur suppression archive :", error);
+    console.error("Erreur suppression archive :", error);
     throw error;
   }
 };
 
-// --- Créer une nouvelle archive pour un dossier ---
+// Créer une nouvelle archive pour un dossier
 export const createArchive = async (folderId, payload = {}) => {
   const token = getToken();
   try {
@@ -95,12 +94,12 @@ export const createArchive = async (folderId, payload = {}) => {
     );
     return res.data;
   } catch (error) {
-    console.error("❌ Erreur création archive :", error);
+    console.error("Erreur création archive :", error);
     throw error;
   }
 };
 
-// --- Partager une archive ---
+// Partager une archive
 export const shareArchive = async (archiveId, userList) => {
   const token = getToken();
   try {
@@ -111,12 +110,12 @@ export const shareArchive = async (archiveId, userList) => {
     );
     return res.data;
   } catch (error) {
-    console.error("❌ Erreur partage archive :", error);
+    console.error("Erreur partage archive :", error);
     throw error;
   }
 };
 
-// --- Supprimer toutes les archives ---
+// Supprimer toutes les archives
 export const deleteAllArchives = async () => {
   const token = getToken();
   try {
@@ -125,12 +124,12 @@ export const deleteAllArchives = async () => {
     });
     return res.data;
   } catch (error) {
-    console.error("❌ Erreur suppression toutes archives :", error);
+    console.error("Erreur suppression toutes archives :", error);
     throw error;
   }
 };
 
-// --- ♻️ Désarchiver un dossier ---
+// Désarchiver un dossier
 export const unarchive = async (archiveId) => {
   const token = getToken();
   try {
@@ -141,12 +140,12 @@ export const unarchive = async (archiveId) => {
     );
     return res.data;
   } catch (error) {
-    console.error("❌ Erreur désarchivage :", error);
+    console.error("Erreur désarchivage :", error);
     throw error;
   }
 };
 
-// --- Archivage multiple ---
+// Archivage multiple
 export const bulkCreateArchive = async (folderIds, format = "zip") => {
   const token = getToken();
   try {
@@ -157,7 +156,7 @@ export const bulkCreateArchive = async (folderIds, format = "zip") => {
     );
     return res.data;
   } catch (error) {
-    console.error("❌ Erreur archivage multiple :", error);
+    console.error("Erreur archivage multiple :", error);
     throw error;
   }
 };

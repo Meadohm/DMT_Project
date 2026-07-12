@@ -38,8 +38,6 @@ export async function deleteNotification(id) {
   return res.data;
 }
 
-
-
 export async function createNotification(data) {
   try {
     const token = localStorage.getItem("token");

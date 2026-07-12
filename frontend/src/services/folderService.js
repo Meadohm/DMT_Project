@@ -1,9 +1,9 @@
-//src/services/folderService.js
+// src/services/folderService.js
 import axios from "axios";
 import { getToken } from "./authService";
 import API_BASE_URL from "../config"; // centralisation URL API
 
-//Lister les dossiers
+// Lister les dossiers
 export const listFolders = async () => {
   try {
     const token = getToken();
@@ -12,12 +12,12 @@ export const listFolders = async () => {
     });
     return res.data;
   } catch (error) {
-    console.error("❌ Erreur récupération dossiers :", error.response || error.message);
+    console.error("Erreur récupération dossiers :", error.response || error.message);
     throw error;
   }
 };
 
-//Lister les dossiers du service (responsable)
+// Lister les dossiers du service (responsable)
 export const listFoldersService = async () => {
   try {
     const token = getToken();
@@ -26,12 +26,12 @@ export const listFoldersService = async () => {
     });
     return res.data;
   } catch (error) {
-    console.error("❌ Erreur récupération dossiers service :", error.response || error.message);
+    console.error("Erreur récupération dossiers service :", error.response || error.message);
     throw error;
   }
 };
 
-//Créer un dossier
+// Créer un dossier
 export const createFolder = async (name) => {
   try {
     const token = getToken();
@@ -47,12 +47,12 @@ export const createFolder = async (name) => {
     );
     return res.data;
   } catch (error) {
-    console.error("❌ Erreur création dossier :", error.response || error.message);
+    console.error("Erreur création dossier :", error.response || error.message);
     throw error;
   }
 };
 
-//Renommer un dossier
+// Renommer un dossier
 export const renameFolder = async (id, newName) => {
   try {
     const token = getToken();
@@ -68,12 +68,12 @@ export const renameFolder = async (id, newName) => {
     );
     return res.data;
   } catch (error) {
-    console.error("❌ Erreur renommage dossier :", error.response || error.message);
+    console.error("Erreur renommage dossier :", error.response || error.message);
     throw error;
   }
 };
 
-//Supprimer un dossier
+// Supprimer un dossier
 export const deleteFolder = async (id) => {
   try {
     const token = getToken();
@@ -81,12 +81,12 @@ export const deleteFolder = async (id) => {
       headers: { Authorization: `Token ${token}` },
     });
   } catch (error) {
-    console.error("❌ Erreur suppression dossier :", error.response || error.message);
+    console.error("Erreur suppression dossier :", error.response || error.message);
     throw error;
   }
 };
 
-//Partager un dossier avec d'autres utilisateurs/services
+// Partager un dossier avec d'autres utilisateurs/services
 export const shareFolder = async (folderId, shares) => {
   const res = await fetch(`${API_BASE_URL}/folders/${folderId}/share/`, {
     method: "POST",
@@ -103,7 +103,7 @@ export const shareFolder = async (folderId, shares) => {
   return await res.json();
 };
 
-//PATCH mise à jour d’une permission de partage
+// PATCH mise à jour d’une permission de partage
 export async function updateSharePermission(shareId, updates) {
   const res = await fetch(`${API_BASE_URL}/shares/${shareId}/`, {
     method: "PATCH",
@@ -117,7 +117,7 @@ export async function updateSharePermission(shareId, updates) {
   return await res.json();
 }
 
-//POST quitter un dossier partagé
+// POST quitter un dossier partagé
 export const leaveFolder = async (folderId) => {
   const token = getToken();
   try {
@@ -131,7 +131,7 @@ export const leaveFolder = async (folderId) => {
     if (!res.ok) throw new Error("Erreur quitter dossier");
     return await res.json();
   } catch (error) {
-    console.error("❌ Erreur leave_folder :", error);
+    console.error("Erreur leave_folder :", error);
     throw error;
   }
 };
