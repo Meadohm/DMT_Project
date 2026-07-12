@@ -733,6 +733,31 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                           </button>
                           )}
 
+                          <button
+                            className="btn-action btn-download"
+                            title="Télécharger"
+                            onClick={() => {
+                              const token = localStorage.getItem('token');
+                              const url = `${API_BASE_URL}/files/${file.id}/download/?token=${token}`;
+                              const a = document.createElement('a');
+                              a.href = url;
+                              a.download = file.nom;
+                              document.body.appendChild(a);
+                              a.click();
+                              document.body.removeChild(a);
+                            }}
+                          >⬇️</button>
+                          <button
+                            className="btn-action btn-print"
+                            title="Imprimer"
+                            onClick={() => {
+                              const token = localStorage.getItem('token');
+                              const url = `${API_BASE_URL}/files/${file.id}/view/?token=${token}`;
+                              const printWindow = window.open(url, '_blank');
+                              printWindow.onload = () => printWindow.print();
+                            }}
+                          >🖨️</button>
+
                           {activeFolder.permissions?.can_delete && (
                           <button
                             className="delete-btn"

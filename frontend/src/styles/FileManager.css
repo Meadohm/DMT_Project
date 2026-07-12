@@ -3216,3 +3216,36 @@ body.dark .service-stats-panel .table-scroll-wrapper thead th {
   background: #1e2d3d;
   color: #0e9e87;
 }
+
+.btn-download, .btn-print {
+  background: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.15s;
+}
+
+.btn-download:hover {
+  background: #e8f5e9;
+  border-color: #4caf50;
+}
+
+.btn-print:hover {
+  background: #e3f2fd;
+  border-color: #2196f3;
+}
+
+body.dark .btn-download, body.dark .btn-print {
+  border-color: #374151;
+  color: #d1d5db;
+}
+
+body.dark .btn-download:hover {
+  background: #1a3a2a;
+}
+
+body.dark .btn-print:hover {
+  background: #1a2a3a;
+}

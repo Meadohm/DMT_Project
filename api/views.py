@@ -2790,6 +2790,35 @@ def view_file(request, file_id):
 
 
 @api_view(['GET'])
+@authentication_classes([])  # gestion manuelle
+@permission_classes([])
+def download_file(request, file_id):
+    from rest_framework.authtoken.models import Token
+    user = request.user if request.user.is_authenticated else None
+    if not user:
+        token_key = request.GET.get("token")
+        if token_key:
+            try:
+                token = Token.objects.get(key=token_key)
+                user = token.user
+            except Token.DoesNotExist:
+                return Response({'error': 'Token invalide'}, status=401)
+    if not user:
+        return Response({'error': 'Non authentifié'}, status=401)
+    try:
+        file_obj = FileModel.objects.get(id=file_id)
+    except FileModel.DoesNotExist:
+        return Response({'error': 'Fichier introuvable'}, status=404)
+    if not has_folder_permission(user, file_obj.folder, "read"):
+        return Response({'error': 'Accès refusé'}, status=403)
+    if not file_obj.fichier or not os.path.exists(file_obj.fichier.path):
+        return Response({"error": "Fichier introuvable"}, status=404)
+    response = FileResponse(open(file_obj.fichier.path, 'rb'), content_type=file_obj.type_fichier)
+    response['Content-Disposition'] = f'attachment; filename="{file_obj.nom}"'
+    return response
+
+
+@api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def list_shared_files(request):

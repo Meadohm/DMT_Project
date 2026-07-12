@@ -69,6 +69,7 @@ urlpatterns = [
     # FILE PREVIEW
     path('files/<int:file_id>/preview/', views.preview_file, name='preview_file'),
     path('files/<int:file_id>/view/', views.view_file, name='view_file'),
+    path('files/<int:file_id>/download/', views.download_file, name='download_file'),
 
     # FILE SHARED
     path('shared-files/', views.list_shared_files, name='list_shared_files'),
