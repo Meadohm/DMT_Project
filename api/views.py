@@ -1989,7 +1989,24 @@ def list_folders(request):
         is_archived=False,
         is_deleted=False
     ).prefetch_related("shares__user")
-    all_folders = (folders | shared).distinct()
+    # IDs de tous les dossiers déjà collectés
+    existing_ids = set(folders.values_list('id', flat=True)) | all_shared_ids
+
+    # Sous-dossiers créés par d'autres dans les dossiers du propriétaire
+    owned_ids = set(folders.values_list('id', flat=True))
+    sub_by_others = Folder.objects.filter(
+        parent_id__in=owned_ids,
+        is_archived=False,
+        is_deleted=False
+    ).exclude(proprietaire=request.user).values_list('id', flat=True)
+
+    all_ids = existing_ids | set(sub_by_others)
+
+    all_folders = Folder.objects.filter(
+        id__in=all_ids,
+        is_archived=False,
+        is_deleted=False
+    ).prefetch_related("shares__user").distinct()
 
     serializer = FolderSerializer(all_folders, many=True, context={"request": request})
     return Response(serializer.data)
