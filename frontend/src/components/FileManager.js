@@ -179,7 +179,7 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
           if (updated) setActiveFolder(updated);
         }
       } catch (err) {
-        console.error("❌ Erreur refresh dossier", err);
+        console.error("Erreur refresh dossier", err);
       }
     };
 
@@ -225,7 +225,7 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
         // Rafraîchir dossier actif immédiatement
         await refreshActiveFolder();
       } catch (err) {
-        console.error("❌ Erreur mise à jour permission", err);
+        console.error("Erreur mise à jour permission", err);
         setNotif({
           type: "error",
           title: "Erreur ⛔",
@@ -240,7 +240,7 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
           const data = await getFilesByFolder(activeFolder.id);
           setFiles(data);
         } catch (err) {
-          console.error("❌ Erreur récupération fichiers", err);
+          console.error("Erreur récupération fichiers", err);
         }
       };
 
@@ -269,8 +269,8 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
           fetchFiles();
 
         } catch (err) {
-          console.error("❌ Erreur upload", err);
-          const msg = err?.response?.data?.error || "❌ Erreur upload.";
+          console.error("Erreur upload", err);
+          const msg = err?.message || "Erreur upload.";
           setNotif({
             type: "error",
             title: "Upload refusé",
@@ -299,7 +299,7 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
           setFiles((prev) => prev.filter((f) => f.id !== fileToDelete.id));
           if (onRefreshNotifications) onRefreshNotifications();
         } catch (err) {
-          console.error("❌ Erreur suppression fichier", err);
+          console.error("Erreur suppression fichier", err);
           setPermissionMessage("⛔ Suppression impossible.");
           setPermissionModalOpen(true);
         } finally {
@@ -336,7 +336,7 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
           );
           if (onRefreshNotifications) onRefreshNotifications();
         } catch (err) {
-          console.error("❌ Erreur renommage fichier", err);
+          console.error("Erreur renommage fichier", err);
           setPermissionMessage("⛔ Impossible de renommer ce fichier.");
           setPermissionModalOpen(true);
         } finally {
@@ -438,7 +438,7 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
           setIsFullPreview(true);
 
         } catch (err) {
-          console.error("❌ Erreur preview fichier", err);
+          console.error("Erreur preview fichier", err);
           setPermissionMessage("Impossible de prévisualiser ce fichier.");
           setPermissionModalOpen(true);
         }
