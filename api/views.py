@@ -1973,11 +1973,22 @@ def list_folders(request):
     Retourne tous les dossiers appartenant à l'utilisateur
     + ceux qui lui sont partagés, avec le parent bien sérialisé.
     """
+    # Dossiers dont l'utilisateur est propriétaire
     folders = Folder.objects.filter(
         proprietaire=request.user,
         is_archived=False,
         is_deleted=False
     ).prefetch_related("shares__user")
+
+    # Sous-dossiers créés par d'autres dans les dossiers du propriétaire
+    owned_ids = set(folders.values_list('id', flat=True))
+    all_owned_ids = get_descendant_folder_ids(owned_ids)
+    sub_folders_in_owned = Folder.objects.filter(
+        id__in=all_owned_ids,
+        is_archived=False,
+        is_deleted=False
+    ).prefetch_related("shares__user")
+    folders = (folders | sub_folders_in_owned).distinct()
 
     shared_direct = Folder.objects.filter(
         shares__user=request.user
