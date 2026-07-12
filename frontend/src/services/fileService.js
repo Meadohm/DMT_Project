@@ -18,29 +18,33 @@ export const getFilesByFolder = async (folderId) => {
 };
 
 // Uploader un fichier
-export const uploadFile = async (folderId, file) => {
-  try {
+export const uploadFile = (folderId, file) => {
+  return new Promise((resolve, reject) => {
     const token = getToken();
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await fetch(`${API_BASE_URL}/folders/${folderId}/upload/`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Token ${token}`,
-      },
-      body: formData,
-      keepalive: true,
-    });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error || 'Erreur upload');
-    }
-    return await res.json();
-  } catch (error) {
-    console.error("Erreur upload fichier :", error.response || error.message);
-    throw error;
-  }
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `${API_BASE_URL}/folders/${folderId}/upload/`);
+    xhr.setRequestHeader('Authorization', `Token ${token}`);
+    xhr.timeout = 300000; // 5 minutes
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve(JSON.parse(xhr.responseText));
+      } else {
+        try {
+          reject(new Error(JSON.parse(xhr.responseText).error || 'Erreur upload'));
+        } catch {
+          reject(new Error('Erreur upload'));
+        }
+      }
+    };
+
+    xhr.onerror = () => reject(new Error('Network Error'));
+    xhr.ontimeout = () => reject(new Error('Upload timeout'));
+    xhr.send(formData);
+  });
 };
 
 // Renommer un fichier
