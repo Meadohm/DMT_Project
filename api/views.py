@@ -762,6 +762,7 @@ def delete_centralized_file(request, file_id):
             'folder_id': folder.id if folder else None,
             'type_fichier': f.type_fichier,
             'uploadeur_id': f.utilisateur.id if f.utilisateur else None,
+            'service': folder.service if folder else '—',
         }
     )
     f.delete()
@@ -1614,7 +1615,7 @@ def cleanup_folders(request):
                 file_path='',
                 size_bytes=0,
                 metadata={
-                    'service': folder.service,
+                    'service': folder.service or '—',
                     'proprietaire_id': folder.proprietaire.id if folder.proprietaire else None,
                 }
             )
@@ -2202,7 +2203,7 @@ def delete_folder(request, folder_id):
         file_path=folder_path,
         size_bytes=0,
         metadata={
-            'service': folder.service,
+            'service': folder.service or '—',
             'proprietaire_id': folder.proprietaire.id if folder.proprietaire else None,
         }
     )
@@ -2564,6 +2565,7 @@ def delete_file(request, file_id):
             'folder_id': folder.id,
             'type_fichier': file_obj.type_fichier,
             'uploadeur_id': file_obj.utilisateur.id if file_obj.utilisateur else None,
+            'service': folder.service or '—',
         }
     )
     file_obj.delete()
@@ -2617,6 +2619,7 @@ def list_trash(request):
         'folder_nom': i.folder_nom,
         'size_bytes': i.size_bytes,
         'parent_nom': get_parent_nom(i),
+        'service': i.metadata.get('service', '—'),
     } for i in items]
     return Response({'items': data, 'total': len(data), 'total_size_mb': round(total_size / 1024 / 1024, 2)})
 

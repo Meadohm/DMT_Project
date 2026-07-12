@@ -2276,6 +2276,7 @@ function SuperAdminPanel() {
                     <th>Type</th>
                     <th>Nom</th>
                     <th>Dossier</th>
+                    <th>Service</th>
                     <th>Supprimé par</th>
                     <th>Date</th>
                   </tr>
@@ -2303,6 +2304,7 @@ function SuperAdminPanel() {
                         )}
                       </td>
                       <td>{item.folder_nom || '—'}</td>
+                      <td>{item.service || '—'}</td>
                       <td>{item.deleted_by}</td>
                       <td>{item.deleted_at}</td>
                     </tr>
