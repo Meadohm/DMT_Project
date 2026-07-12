@@ -127,6 +127,16 @@ Comportement automatique :
 - Le nom original et tous les noms intermédiaires restent consultables via la recherche globale (voir section "🔍 Recherche globale") — vous pouvez donc retrouver un fichier même en tapant un ancien nom.`,
   },
   {
+    icon: "⬇️",
+    title: "Téléchargement et impression",
+    content: `Depuis FileManager, chaque fichier dispose de deux boutons d'action :
+
+⬇️ Télécharger : télécharge directement le fichier sur votre appareil.
+
+🖨️ Imprimer : ouvre le fichier et déclenche l'impression automatique.
+Note : le bouton impression n'est pas disponible pour les vidéos et fichiers audio.`
+  },
+  {
     icon: "❓",
     title: "Questions fréquentes",
     content: `Q : Je n'arrive pas à supprimer un fichier — pourquoi ?

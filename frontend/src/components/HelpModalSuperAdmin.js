@@ -145,6 +145,27 @@ Cliquez "Supprimer définitivement" → suppression physique irréversible de to
 Filtres disponibles : par nom/email, par rôle, par service.`
   },
   {
+    icon: "⬇️",
+    title: "Téléchargement et impression",
+    content: `Depuis l'Espace de stockage, chaque fichier dispose de deux boutons d'action :
+
+⬇️ Télécharger : télécharge directement le fichier sur votre appareil.
+
+🖨️ Imprimer : ouvre le fichier et déclenche l'impression automatique.
+Note : le bouton impression n'est pas disponible pour les vidéos et fichiers audio.`
+  },
+  {
+    icon: "📊",
+    title: "Espace de stockage — filtres",
+    content: `L'espace de stockage permet de filtrer les fichiers par type :
+
+Types disponibles : PDF, Images, Vidéos, Word, Excel, PowerPoint, Archives, Autre.
+
+Filtres supplémentaires : recherche par nom ou propriétaire, filtre par date de début et fin.
+
+La colonne Service dans la corbeille indique le service d'origine du fichier ou dossier supprimé.`
+  },
+  {
     icon: "🔒",
     title: "Sécurité de la plateforme",
     content: `Rate limiting :
