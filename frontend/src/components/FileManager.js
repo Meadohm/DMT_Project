@@ -747,6 +747,9 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                               document.body.removeChild(a);
                             }}
                           >⬇️</button>
+                          {!['mp4','mkv','avi','mov','mp3','wav','ogg','aac','m4a','flac'].includes(
+                            file.nom?.split('.').pop()?.toLowerCase()
+                          ) && (
                           <button
                             className="btn-action btn-print"
                             title="Imprimer"
@@ -757,6 +760,7 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                               printWindow.onload = () => printWindow.print();
                             }}
                           >🖨️</button>
+                          )}
 
                           {activeFolder.permissions?.can_delete && (
                           <button
