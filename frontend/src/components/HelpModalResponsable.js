@@ -7,7 +7,7 @@ const SECTIONS = [
     content: `Bienvenue sur DocFlow Pro ! Voici comment bien commencer :
 - Créer un dossier : cliquez sur le bouton "+" dans la barre latérale gauche. Donnez un nom à votre dossier et confirmez.
 - Uploader un fichier : ouvrez un dossier, puis cliquez sur "Uploader un fichier". Vous pouvez envoyer des PDF, Word, Excel, images et vidéos.
-- Retrouver un fichier : utilisez la barre de recherche en haut pour chercher par nom dans tous vos dossiers.`
+- Retrouver un fichier : utilisez la barre de recherche en haut pour chercher par nom dans tous vos dossiers.`,
   },
   {
     icon: "📁",
@@ -17,7 +17,7 @@ const SECTIONS = [
 - Créer un sous-dossier : ouvrez un dossier, puis cliquez sur "Nouveau sous-dossier" (limité à 1 niveau de profondeur).
 - Renommer : clic droit sur le dossier → "Renommer".
 - Supprimer : clic droit sur le dossier → "Supprimer". Attention, cette action est irréversible.
-- Dossiers favoris : cliquez sur l'étoile ⭐ pour épingler un dossier en haut de la liste.`
+- Dossiers favoris : cliquez sur l'étoile ⭐ pour épingler un dossier en haut de la liste.`,
   },
   {
     icon: "📤",
@@ -28,7 +28,7 @@ const SECTIONS = [
 - 🗑️ Suppression fichiers : la personne peut supprimer des fichiers.
 - 🗂️ Suppression dossier : la personne peut supprimer le dossier entier.
 Pour partager : clic droit sur un dossier → "Partager". Recherchez un collègue par nom ou service, cochez les permissions souhaitées, puis cliquez "Partager".
-Pour révoquer un accès : ouvrez le partage du dossier → section "Accès actifs" → cliquez sur "Révoquer".`
+Pour révoquer un accès : ouvrez le partage du dossier → section "Accès actifs" → cliquez sur "Révoquer".`,
   },
   {
     icon: "🔔",
@@ -37,15 +37,15 @@ Pour révoquer un accès : ouvrez le partage du dossier → section "Accès acti
 - Quelqu'un a uploadé un fichier dans un dossier que vous partagez.
 - Un fichier a été renommé ou supprimé dans un de vos dossiers.
 - Quelqu'un a quitté un dossier que vous lui aviez partagé.
-La cloche 🔔 en haut à droite affiche le nombre de notifications non lues. Cliquez dessus pour les voir toutes. Vous pouvez tout marquer comme lu d'un seul clic.`
+La cloche 🔔 en haut à droite affiche le nombre de notifications non lues. Cliquez dessus pour les voir toutes. Vous pouvez tout marquer comme lu d'un seul clic.`,
   },
   {
     icon: "📦",
     title: "Archives",
-    content: `Les archives permettent de sauvegarder temporairement un ou plusieurs fichiers :
-- Créer une archive : allez dans le menu de votre profil (en haut à droite) → "Archives" → onglet "Créer". Sélectionnez les fichiers à archiver et confirmez.
-- Consulter vos archives : onglet "Mes archives". Chaque archive a une date d'expiration automatique — elle sera supprimée après ce délai.
-- Archivage multiple : vous pouvez cocher plusieurs fichiers à la fois et les archiver ensemble.`
+    content: `Les archives permettent de sauvegarder temporairement un ou plusieurs dossiers. Elles sont utiles pour libérer de l'espace ou conserver des fichiers sans les supprimer définitivement.
+- Créer une archive : allez dans le menu de votre profil (en haut à droite) → "Archives" → onglet "Créer". Sélectionnez le dossier à archiver et confirmez.
+- Consulter vos archives : onglet "Mes archives". Chaque archive a une date d'expiration automatique (7 jours) — elle sera supprimée après ce délai.
+- Archivage multiple : vous pouvez cocher plusieurs dossiers à la fois et les archiver ensemble.`,
   },
   {
     icon: "📊",
@@ -59,7 +59,7 @@ Disponible :
 - Top 5 dossiers par taille
 - Activité récente sur 30 jours
 
-Cliquez sur les chiffres pour voir le détail dans un mini-modal.`
+Cliquez sur les chiffres pour voir le détail dans un mini-modal.`,
   },
   {
     icon: "🏢",
@@ -77,7 +77,7 @@ Cliquez sur les chiffres pour voir le détail dans un mini-modal.`
 👤 Mes stats :
 - Vos dossiers, fichiers uploadés, partages reçus/donnés
 - Top 5 dossiers par taille
-- Activité personnelle 30 jours`
+- Activité personnelle 30 jours`,
   },
   {
     icon: "🔍",
@@ -94,7 +94,7 @@ La recherche couvre :
 - Le nom original à la création
 - Tous les noms intermédiaires (historique des renommages)
 
-Ainsi, même si un fichier a été renommé plusieurs fois, vous pouvez le retrouver avec son nom d'origine.`
+Ainsi, même si un fichier a été renommé plusieurs fois, vous pouvez le retrouver avec son nom d'origine.`,
   },
   {
     icon: "📦",
@@ -110,7 +110,7 @@ Comment déplacer un fichier :
 Restrictions :
 - Seul le propriétaire du fichier peut le déplacer
 - Le dossier de destination doit vous appartenir
-- Seuls vos dossiers personnels (niveau 0 et 1) sont proposés`
+- Seuls vos dossiers personnels (niveau 0 et 1) sont proposés`,
   },
   {
     icon: "✏️",
@@ -124,7 +124,7 @@ Comment renommer :
 Comportement automatique :
 - La date d'upload d'origine reste immuable, même après renommage.
 - L'extension du fichier (.pdf, .docx...) est toujours préservée.
-- Le nom original et tous les noms intermédiaires restent consultables via la recherche globale (voir section "🔍 Recherche globale") — vous pouvez donc retrouver un fichier même en tapant un ancien nom.`
+- Le nom original et tous les noms intermédiaires restent consultables via la recherche globale (voir section "🔍 Recherche globale") — vous pouvez donc retrouver un fichier même en tapant un ancien nom.`,
   },
   {
     icon: "❓",
@@ -139,7 +139,7 @@ Q : Mon fichier n'est pas prévisualisable — que faire ?
 R : Seuls les PDF, images, Word et Excel sont prévisualisables directement. Pour les autres formats, téléchargez le fichier pour l'ouvrir sur votre ordinateur.
 
 Q : Comment changer mon mot de passe ?
-R : Cliquez sur votre avatar en haut à droite → "Modifier le mot de passe". Entrez votre ancien mot de passe, puis le nouveau deux fois.`
+R : Cliquez sur votre avatar en haut à droite → "Modifier le mot de passe". Entrez votre ancien mot de passe, puis le nouveau deux fois.`,
   },
   {
     icon: "📞",
@@ -147,8 +147,8 @@ R : Cliquez sur votre avatar en haut à droite → "Modifier le mot de passe". E
     content: `Si vous avez un problème technique ou une question, contactez votre administrateur :
 - Administrateur système : MOHAMED — mohamed.fofana2022@esatic.edu.ci
 - Responsable plateforme : FOFANA — moh.fofana21@gmail.com
-Précisez dans votre message : votre nom, la section concernée (dossier, fichier, partage...) et une description du problème.`
-  }
+Précisez dans votre message : votre nom, la section concernée (dossier, fichier, partage...) et une description du problème.`,
+  },
 ];
 
 function HelpModalResponsable({ onClose }) {
@@ -156,28 +156,40 @@ function HelpModalResponsable({ onClose }) {
 
   return (
     <div className="help-modal-overlay" onClick={onClose}>
-      <div className="help-modal-box" onClick={e => e.stopPropagation()}>
+      <div className="help-modal-box" onClick={(e) => e.stopPropagation()}>
         <div className="help-modal-header">
           <h2>❓ Centre d'aide — DocFlow Pro</h2>
-          <button className="help-modal-close" onClick={onClose}>✖</button>
+          <button className="help-modal-close" onClick={onClose}>
+            ✖
+          </button>
         </div>
         <p className="help-modal-subtitle">
-          Retrouvez ici toutes les réponses pour utiliser DocFlow Pro efficacement.
+          Retrouvez ici toutes les réponses pour utiliser DocFlow Pro
+          efficacement.
         </p>
         <div className="help-accordion">
           {SECTIONS.map((section, index) => (
-            <div key={index} className={`help-accordion-item ${openIndex === index ? "open" : ""}`}>
+            <div
+              key={index}
+              className={`help-accordion-item ${openIndex === index ? "open" : ""}`}
+            >
               <button
                 className="help-accordion-header"
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
               >
-                <span>{section.icon} {section.title}</span>
-                <span className="help-accordion-arrow">{openIndex === index ? "▲" : "▼"}</span>
+                <span>
+                  {section.icon} {section.title}
+                </span>
+                <span className="help-accordion-arrow">
+                  {openIndex === index ? "▲" : "▼"}
+                </span>
               </button>
               {openIndex === index && (
                 <div className="help-accordion-content">
-                  {section.content.split('\n').map((line, i) => (
-                    <p key={i} style={{ margin: '4px 0' }}>{line}</p>
+                  {section.content.split("\n").map((line, i) => (
+                    <p key={i} style={{ margin: "4px 0" }}>
+                      {line}
+                    </p>
                   ))}
                 </div>
               )}
