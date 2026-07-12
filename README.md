@@ -72,7 +72,7 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 - Aperçu inline des fichiers (docx, xlsx, images, PDF)
 - Notifications temps réel
 - Mode sombre · Responsive
-- Statistiques personnelles (📊) : dossiers, fichiers uploadés, partages, top dossiers, activité 30j
+- Statistiques personnelles : dossiers, fichiers uploadés, partages, top dossiers, activité 30j
 
 ### Responsable
 - Toutes les fonctionnalités Employé
@@ -84,7 +84,7 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 - Section dédiée aux dossiers reçus en partage hors service
 - Quitter un dossier partagé sans affecter le propriétaire
 - Migration automatique des dossiers récents lors d'un changement de service
-- Stats service (📊) : 2 onglets — Mon service (membres, dossiers, fichiers, activité) + Mes stats
+- Stats service : 2 onglets — Mon service (membres, dossiers, fichiers, activité) + Mes stats
 - Breadcrumb hiérarchique cliquable dans la navigation de fichiers
 
 ### Administrateur
