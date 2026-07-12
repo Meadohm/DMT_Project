@@ -1942,7 +1942,21 @@ def list_folders_service(request):
         is_deleted=False
     ).prefetch_related("shares__user")
 
-    all_folders = (service_folders | shared).distinct()
+    # Sous-dossiers créés par d'autres dans les dossiers du service
+    service_ids = set(service_folders.values_list('id', flat=True))
+    sub_by_others = Folder.objects.filter(
+        parent_id__in=service_ids,
+        is_archived=False,
+        is_deleted=False
+    ).exclude(service=user.service).values_list('id', flat=True)
+
+    all_ids = service_ids | all_shared_ids | set(sub_by_others)
+
+    all_folders = Folder.objects.filter(
+        id__in=all_ids,
+        is_archived=False,
+        is_deleted=False
+    ).prefetch_related("shares__user").distinct()
 
     serializer = FolderSerializer(
         all_folders, many=True, context={"request": request}
