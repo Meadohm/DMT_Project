@@ -747,7 +747,23 @@ def delete_centralized_file(request, file_id):
         return Response({'error': 'Fichier non trouvé.'}, status=status.HTTP_404_NOT_FOUND)
 
     nom = f.nom
-    f.supprimer_fichier()
+    folder = f.folder
+    # Déplacer en corbeille avant suppression
+    Trash.objects.create(
+        item_type='file',
+        item_id=f.id,
+        nom=f.nom,
+        original_name=f.original_name,
+        deleted_by=request.user,
+        folder_nom=folder.nom if folder else '—',
+        file_path=f.fichier.name if f.fichier else '',
+        size_bytes=f.taille or 0,
+        metadata={
+            'folder_id': folder.id if folder else None,
+            'type_fichier': f.type_fichier,
+            'uploadeur_id': f.utilisateur.id if f.utilisateur else None,
+        }
+    )
     f.delete()
 
     AuditLog.objects.create(
