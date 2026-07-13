@@ -88,8 +88,9 @@ def login_view(request):
             pass
         return Response({'error': 'Nom d\'utilisateur ou mot de passe incorrect.'}, status=status.HTTP_401_UNAUTHORIZED)
     token, _ = Token.objects.get_or_create(user=user)
+    user.previous_login = user.last_login
     user.last_login = timezone.now()
-    user.save(update_fields=['last_login'])
+    user.save(update_fields=['last_login', 'previous_login'])
 
     AuditLog.objects.create(
     utilisateur=user,
@@ -123,6 +124,7 @@ def get_user_view(request):
         'avatar': user.avatar.url if user.avatar else None,
         'last_login': user.last_login,
         'date_joined': user.date_joined,
+        'previous_login': user.previous_login,
         'is_superuser': user.is_superuser,
     })
 
