@@ -48,6 +48,7 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 | Couche | Technologie |
 |---|---|
 | Serveur web | Nginx (reverse proxy) |
+| Serveur d'application | Gunicorn 26.0.0 (3 workers × 4 threads gthread, unix socket) |
 | Langage | Python 3.12 |
 | Framework backend | Django 5.1.2 · Django REST Framework 3.15.2 |
 | Base de données | PostgreSQL 16 |
@@ -103,6 +104,9 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 - Backup automatique PostgreSQL + media tous les 7 jours
 - Section Archives : voir, restaurer ou supprimer définitivement tous les dossiers archivés
 - Section Nettoyage : identifier et supprimer les dossiers vides ou abandonnés (60 jours)
+- Sidebar navigation par groupes repliables (Gestion / Fichiers / Zone danger)
+- Mon Compte : date d'inscription, vraie dernière connexion (previous_login), session active en cours
+- Aperçu inline vidéo/audio via lecteur Plyr CDN · Téléchargement et impression depuis FileManager
 
 ### Super Administrateur
 - Toutes les fonctionnalités Administrateur
@@ -114,6 +118,7 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 - Compte `is_superuser` immuable, non modifiable par les admins
 - Dashboard et corbeille synchronisés avec AdminPanel
 - Corbeille comptes supprimés : restaurer ou supprimer définitivement les comptes soft-deletés
+- Audit sécurité complet (6 tests de pénétration validés avant migration cloud)
 
 ---
 
@@ -123,6 +128,8 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 |---|---|
 | RBAC | 4 rôles : `super_admin`, `admin`, `responsable`, `employe` |
 | Rate limiting | 5 tentatives / 10 min sur le login (via Redis) |
+| Tests de pénétration | 6/6 validés : auth bypass, IDOR, upload malveillant, brute force, SQL injection, escalade privilèges |
+| previous_login | Historique connexion réelle (distincte de la session en cours) |
 | AuditLog | Traçabilité complète de toutes les actions utilisateurs |
 | AuditLogDeletion | Traçabilité des suppressions du journal d'activité |
 | Email d'alerte | Notification automatique aux admins lors de suppressions |
@@ -238,7 +245,7 @@ DMT_Project
 ## Versions
 
 **v1.5.5 — Juillet 2026**
-Archives admin (restauration/suppression), corbeille comptes (SuperAdmin), soft delete utilisateurs, stats employé/responsable enrichies, filtres extensions espace stockage, optimisation upload, toasts X, scroll modaux
+Stack production Nginx+Gunicorn (remplace runserver+dmt-frontend) · Soft delete utilisateurs (restauration/suppression définitive SuperAdmin) · Archives admin multi-sélection avec notifications propriétaires · Sidebar Admin/SuperAdmin groupes repliables (Gestion, Fichiers, Zone danger) · Contraste/espacement/mode réduit sidebar · `previous_login` (migration 0024) — vraie dernière connexion distincte de la session en cours · Suivi session active "Connecté depuis X min" dans bandeau BIENVENUE · Carte Mon Compte enrichie (date inscription, dernière connexion, temps relatif) · Dropdown compte Employé/Responsable enrichi · `formatRelativeTime` centralisé dans `utils/timeUtils.js` · Lecteur vidéo/audio Plyr CDN · Téléchargement + impression fichiers FileManager · Fix sous-dossiers appartenant à d'autres dans les dossiers utilisateurs · Stats partages hérités sans doublons · Colonne Service dans corbeille · Audit sécurité 6 tests validés (bypass auth, IDOR, upload malveillant, brute force, injection SQL, escalade privilèges) · Aliases deploy VM (deploy-front, deploy-back, deploy-all)
 
 **v1.5.2 — Juillet 2026**
 Stats service responsable (membres en ligne, absents, dossiers, fichiers, activité équipe) · Stats personnelles employé (quota, top dossiers récursif, activité 30j) · Heartbeat last-seen tous dashboards · Corbeille admin complète
