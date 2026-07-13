@@ -1501,19 +1501,6 @@ body.dark .upload-compact-bar svg {
   line-height: 1.5;
 }
 
-/* FAVORIS */
-.sidebar-section {
-  margin-top: 15px;
-  margin-bottom: 8px;
-  font-size: 14px;
-  font-weight: bold;
-  color: #f3f4f6;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  padding-bottom: 4px;
-}
-
 .folder-list li.favorite {
   background: rgba(255, 215, 0, 0.15); /* fond léger jaune */
   border-left: 4px solid #ffd700; /* barre jaune à gauche */

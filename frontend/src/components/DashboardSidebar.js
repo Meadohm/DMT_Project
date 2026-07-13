@@ -74,7 +74,7 @@ function DashboardSidebar({
       <div className="sidebar-layout-fix">
 
         {/* ⭐ Favoris */}
-        <h4 className="sidebar-section">⭐ Favoris</h4>
+        <h4 className="sidebar-section">⭐ Favoris {favoriteFolders.length > 0 && <span className="sidebar-section-count">{favoriteFolders.length}</span>}</h4>
         <div className="section-scroll">
           {favoriteFolders.length === 0 ? (
             <p className="no-folder-msg1">Aucun favori</p>
@@ -111,7 +111,7 @@ function DashboardSidebar({
         </div>
 
         {/* 📂 Mes dossiers */}
-        <h4 className="sidebar-section">📂 Mes dossiers</h4>
+        <h4 className="sidebar-section">📂 Mes dossiers {myFolders.length > 0 && <span className="sidebar-section-count">{myFolders.filter(f => !f.parent).length}</span>}</h4>
         <div className="section-scroll">
           {myFolders.length === 0 ? (
             <p className="no-folder-msg1">Aucun dossier</p>
@@ -138,6 +138,7 @@ function DashboardSidebar({
         {/* 🤝 Partagés avec moi / 🏢 Dossiers service */}
         <h4 className="sidebar-section">
           {role === "responsable" ? "🏢 Dossiers service" : "🤝 Partagés avec moi"}
+          {sharedFolders.length > 0 && <span className="sidebar-section-count">{sharedFolders.filter(f => !f.parent).length}</span>}
         </h4>
         <div className="section-scroll">
           {sharedFolders.length === 0 ? (
@@ -197,7 +198,7 @@ function DashboardSidebar({
 
         {role === "responsable" && (
           <>
-            <h4 className="sidebar-section">🤝 Partagés avec moi</h4>
+            <h4 className="sidebar-section">🤝 Partagés avec moi {externalFolders.length > 0 && <span className="sidebar-section-count">{externalFolders.filter(f => !f.parent).length}</span>}</h4>
             <div className="section-scroll">
               {externalFolders.length === 0 ? (
                 <p className="no-folder-msg1">Aucun dossier partagé</p>
