@@ -852,10 +852,10 @@ function AdminPanel() {
             👥 Gestion {sidebarGroupOpen.gestion ? '▲' : '▼'}
           </div>
           {sidebarGroupOpen.gestion && (
-            <>
+            <div className="sidebar-group-items">
               <button className={`sidebar-sub ${activeSection === "users" ? "active" : ""}`} onClick={() => setActiveSection("users")}>👥 Utilisateurs</button>
               <button className={`sidebar-sub ${activeSection === "createService" ? "active" : ""}`} onClick={() => setActiveSection("createService")}>🏢 Services</button>
-            </>
+            </div>
           )}
         </div>
 
@@ -865,11 +865,11 @@ function AdminPanel() {
             📁 Fichiers {sidebarGroupOpen.fichiers ? '▲' : '▼'}
           </div>
           {sidebarGroupOpen.fichiers && (
-            <>
+            <div className="sidebar-group-items">
               <button className={`sidebar-sub ${activeSection === "files" ? "active" : ""}`} onClick={() => setActiveSection("files")}>📁 Gestion fichiers</button>
               <button className={`sidebar-sub ${activeSection === "admin-archives" ? "active" : ""}`} onClick={() => { setActiveSection("admin-archives"); fetchAdminArchives(1); }}>📦 Archives</button>
               <button className={`sidebar-sub ${activeSection === "submissions" ? "active" : ""}`} onClick={() => { setActiveSection("submissions"); fetchHistorique(1, historiqueAction, historiqueSearch, dateDebut, dateFin); }}>📋 Journal</button>
-            </>
+            </div>
           )}
         </div>
 
@@ -879,14 +879,14 @@ function AdminPanel() {
             ⚠️ Zone danger {sidebarGroupOpen.danger ? '▲' : '▼'}
           </div>
           {sidebarGroupOpen.danger && (
-            <>
+            <div className="sidebar-group-items">
               <button className={`sidebar-sub ${activeSection === "trash" ? "active" : ""}`} onClick={() => { setActiveSection("trash"); fetchTrash(); }}>🗑️ Corbeille</button>
               <button className={`sidebar-sub ${activeSection === "cleanup" ? "active" : ""}`} onClick={() => { setActiveSection("cleanup"); fetchCleanup(); }}>🧹 Nettoyage</button>
-            </>
+            </div>
           )}
         </div>
 
-        <button className={activeSection === "account" ? "active" : ""} onClick={() => setActiveSection("account")}>👤 Mon Profil</button>
+        <button className={`sidebar-account-btn ${activeSection === "account" ? "active" : ""}`} onClick={() => setActiveSection("account")}>👤 Mon Profil</button>
         <div className="sidebar-bottom">
           <div className="sidebar-logo">
             <img src={logo} alt="Logo" className="app-logo" />

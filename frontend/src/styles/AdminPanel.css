@@ -1962,7 +1962,7 @@ body.dark .dashboard-card-trend .recharts-text {
 .sidebar-group-title {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.6);
   padding: 6px 16px;
   cursor: pointer;
   text-transform: uppercase;
@@ -1974,11 +1974,11 @@ body.dark .dashboard-card-trend .recharts-text {
 }
 
 .sidebar-group-title:hover {
-  color: #0d5c5c;
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .sidebar-group-title.danger {
-  color: #ef4444;
+  color: #ff8080;
 }
 
 .sidebar-sub {
@@ -1986,12 +1986,23 @@ body.dark .dashboard-card-trend .recharts-text {
   font-size: 0.85rem !important;
 }
 
-/*.sidebar-danger-zone {
-  margin-top: auto;
-  padding-top: 12px;
-  margin-top: 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
+.sidebar-group-items {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-}*/
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.sidebar-account-btn {
+  margin-top: 12px;
+}
+
+.sidebar-collapsed .sidebar-group-title,
+.sidebar-collapsed .sidebar-group-items {
+  display: none;
+}
+
+.sidebar-collapsed .sidebar-danger-zone {
+  border-top: none;
+  padding-top: 0;
+}
