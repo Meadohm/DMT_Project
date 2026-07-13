@@ -1960,17 +1960,20 @@ body.dark .dashboard-card-trend .recharts-text {
 }
 
 .sidebar-group-title {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: 0.8rem;
+  font-weight: 800;
   color: rgba(255, 255, 255, 0.6);
-  padding: 6px 16px;
+  padding: 8px 16px;
   cursor: pointer;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   display: flex;
   justify-content: space-between;
   align-items: center;
   user-select: none;
+  margin-top: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 4px;
 }
 
 .sidebar-group-title:hover {
