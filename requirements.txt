@@ -1,3 +1,4 @@
+gunicorn==21.2.0
 asgiref==3.11.1
 chardet==5.2.0
 Django==6.0.6
