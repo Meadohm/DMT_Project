@@ -2231,6 +2231,22 @@ function AdminPanel() {
                 >
                   {showPasswordForm ? 'Annuler' : 'Modifier mon mot de passe'}
                 </button>
+                {!showPasswordForm && (
+                  <div className="account-security-info">
+                    <div className="account-security-row">
+                      <span className="account-security-label">📅 Membre depuis</span>
+                      <span className="account-security-value">
+                        {userInfo?.date_joined ? new Date(userInfo.date_joined).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }) : '—'}
+                      </span>
+                    </div>
+                    <div className="account-security-row">
+                      <span className="account-security-label">🕐 Dernière connexion</span>
+                      <span className="account-security-value">
+                        {userInfo?.last_login ? new Date(userInfo.last_login).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'}
+                      </span>
+                    </div>
+                  </div>
+                )}
                 {showPasswordForm && (
                   <div className="account-password-form">
                     <div className="form-group">
