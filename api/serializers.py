@@ -197,7 +197,6 @@ class SharePermissionUpdateSerializer(serializers.ModelSerializer):
             "can_delete_folder",
         ]
 
-
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
