@@ -17,6 +17,7 @@ export const login = async (username, password) => {
       console.log("Token reçu:", data.token); // Log du token reçu
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.role);
+      localStorage.setItem("sessionStart", Date.now().toString());
       return data;
     } else {
       const errorData = await response.json();

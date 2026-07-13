@@ -140,9 +140,7 @@ function DashboardTopbar({
           <div>
             <span className="emp-topbar-greeting">BIENVENUE,</span>
             <span className="emp-topbar-username">{userInfo.username}</span>
-            {userInfo.last_login && (
-              <span className="emp-topbar-session-time">🟢 Connecté depuis {formatRelativeTime(userInfo.last_login)}</span>
-            )}
+            <span className="emp-topbar-session-time">🟢 Connecté depuis {formatRelativeTime(parseInt(localStorage.getItem('sessionStart') || Date.now()))}</span>
             {role === "responsable" && (
               <span
                 className="topbar-role-badge"

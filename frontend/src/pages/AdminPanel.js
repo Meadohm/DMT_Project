@@ -927,9 +927,7 @@ function AdminPanel() {
           <div className="welcome-text">
             <span className="welcome-label">Bienvenue,</span>
             <span className="welcome-name">{userInfo?.username}</span>
-            {userInfo?.last_login && (
-              <span className="welcome-session-time">🟢 Connecté depuis {formatRelativeTime(userInfo.last_login)}</span>
-            )}
+            <span className="welcome-session-time">🟢 Connecté depuis {formatRelativeTime(parseInt(localStorage.getItem('sessionStart') || Date.now()))}</span>
           </div>
         </div>
 

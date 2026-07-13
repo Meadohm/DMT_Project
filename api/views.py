@@ -2296,13 +2296,13 @@ def share_folder(request, folder_id):
             Notification.objects.create(
                 user=user,
                 type="share",
-                message=f"📂 Nouveau dossier partage par {request.user.username} : {folder.nom}"
+                message=f"Nouveau dossier partage par {request.user.username} : {folder.nom}"
             )
         else:
             Notification.objects.create(
                 user=user,
                 type="permission",
-                message=f"✏️ Permissions mises a jour pour le dossier : {folder.nom}"
+                message=f"Permissions mises a jour pour le dossier : {folder.nom}"
             )
 
     folder.is_shared = True
