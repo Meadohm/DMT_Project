@@ -1,0 +1,71 @@
+version: '3.9'
+
+services:
+
+  dmt-db:
+    image: postgres:16-alpine
+    container_name: dmt-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  dmt-redis:
+    image: redis:7-alpine
+    container_name: dmt-redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  dmt-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: dmt-backend
+    restart: unless-stopped
+    env_file: .env.docker
+    volumes:
+      - media_data:/app/media
+      - static_data:/app/staticfiles
+    depends_on:
+      dmt-db:
+        condition: service_healthy
+      dmt-redis:
+        condition: service_healthy
+
+  dmt-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: dmt-frontend
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: dmt-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.docker.conf:/etc/nginx/conf.d/default.conf:ro
+      - static_data:/app/staticfiles:ro
+      - media_data:/app/media:ro
+    depends_on:
+      - dmt-backend
+      - dmt-frontend
+
+volumes:
+  postgres_data:
+  media_data:
+  static_data:
