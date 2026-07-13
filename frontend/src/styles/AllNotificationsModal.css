@@ -554,3 +554,37 @@ body.dark .notif-pagination button:disabled {
 body.dark .notif-pagination span {
   color: #aab4c8;
 }
+
+body.dark .account-dropdown {
+  background: #1e2d3d;
+  border: 1px solid #2d3555;
+}
+
+body.dark .account-dropdown p,
+body.dark .account-dropdown .account-title {
+  color: #e6e8f0;
+}
+
+body.dark .account-dropdown li {
+  color: #e6e8f0;
+}
+
+body.dark .account-dropdown li:hover {
+  background: #263447;
+}
+
+body.dark .account-info-label {
+  color: #6b7280;
+}
+
+body.dark .account-info-value {
+  color: #e6e8f0;
+}
+
+body.dark .account-info-relative {
+  color: #4a5568;
+}
+
+body.dark .account-dropdown li.account-info-static {
+  border-top-color: #2d3555;
+}
