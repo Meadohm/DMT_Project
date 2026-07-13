@@ -1302,6 +1302,14 @@ td:last-child {
   color: #6b7280;
 }
 
+.welcome-session-time {
+  display: block;
+  font-size: 0.78em;
+  color: #22c55e;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
 /* Dashboard grid */
 .dashboard-grid {
   display: grid;

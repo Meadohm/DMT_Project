@@ -163,7 +163,6 @@
   background: #666;
 }
 
-
 /*  Barre de recherche  */
 .archive-search-section {
   padding: 10px 14px;
@@ -210,7 +209,6 @@
     transform: translateY(0);
   }
 }
-
 
 /*  Animation bouton téléchargement  */
 .btn-download.downloading {
@@ -286,7 +284,6 @@
   width: 100%;
 }
 
-
 /*  Boutons d’action alignés horizontalement  */
 .archive-actions {
   display: flex;
@@ -303,8 +300,6 @@
   padding: 8px 0;
   transition: all 0.25s ease;
 }
-
-
 
 .btn-download, .btn-delete, .btn-unarchive {
   border: none;

@@ -1787,7 +1787,7 @@ body.dark .dashboard-card-trend .recharts-text {
   background: rgba(255,255,255,0.15);
 }
 
-/* ===== DARK MODE — FIXES SUPPLEMENTAIRES ===== */
+/*  DARK MODE — FIXES SUPPLEMENTAIRES */
 
 /* Lignes tableau alternées */
 .admin-panel-container.dark tbody tr:nth-child(even) {
@@ -1890,7 +1890,7 @@ body.dark .dashboard-card-trend .recharts-text {
   color: #eb5757;
 }
 
-/* ====== CORBEILLE ====== */
+/* CORBEILLE */
 .trash-alert {
   background: #fef3c7;
   border: 1px solid #f59e0b;
@@ -2055,4 +2055,12 @@ body.dark .dashboard-card-trend .recharts-text {
 
 .admin-panel-container.dark .account-security-relative {
   color: #6b7280;
+}
+
+.welcome-session-time {
+  display: block;
+  font-size: 0.78em;
+  color: #22c55e;
+  font-weight: 600;
+  margin-top: 2px;
 }

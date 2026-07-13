@@ -52,6 +52,7 @@ function DashboardTopbar({
   const [accountOpen, setAccountOpen] = useState(false);
   const [searchExpanded, setSearchExpanded] = useState(false);
   const [confirmClearDropdown, setConfirmClearDropdown] = useState(false);
+  const [, forceTick] = useState(0);
   const [globalResults, setGlobalResults] = useState([]);
   const [globalLoading, setGlobalLoading] = useState(false);
   const [showGlobalResults, setShowGlobalResults] = useState(false);
@@ -78,6 +79,12 @@ function DashboardTopbar({
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Rafraîchit le temps relatif "Connecté depuis" toutes les minutes
+  useEffect(() => {
+    const timer = setInterval(() => forceTick(t => t + 1), 60000);
+    return () => clearInterval(timer);
   }, []);
 
   // Recherche globale de fichiers
@@ -133,6 +140,9 @@ function DashboardTopbar({
           <div>
             <span className="emp-topbar-greeting">BIENVENUE,</span>
             <span className="emp-topbar-username">{userInfo.username}</span>
+            {userInfo.last_login && (
+              <span className="emp-topbar-session-time">🟢 Connecté depuis {formatRelativeTime(userInfo.last_login)}</span>
+            )}
             {role === "responsable" && (
               <span
                 className="topbar-role-badge"
