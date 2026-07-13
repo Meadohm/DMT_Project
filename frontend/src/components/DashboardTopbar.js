@@ -397,7 +397,7 @@ function DashboardTopbar({
                   <li className="account-info-static">
                     <span className="account-info-label">🕐 Dernière connexion</span>
                     <span className="account-info-value">
-                      {userInfo.last_login ? new Date(userInfo.last_login).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—'}
+                      {userInfo.previous_login ? new Date(userInfo.previous_login).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : 'Première connexion'}
                     </span>
                   </li>
 

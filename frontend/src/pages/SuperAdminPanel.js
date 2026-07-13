@@ -2489,7 +2489,7 @@ function SuperAdminPanel() {
                     <div className="account-security-row">
                       <span className="account-security-label">🕐 Dernière connexion</span>
                       <span className="account-security-value">
-                        {userInfo?.last_login ? new Date(userInfo.last_login).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'}
+                        {userInfo?.previous_login ? new Date(userInfo.previous_login).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Première connexion'}
                       </span>
                     </div>
                   </div>
