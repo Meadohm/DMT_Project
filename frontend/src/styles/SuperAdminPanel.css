@@ -1292,6 +1292,16 @@ td:last-child {
   color: #e6e8f0;
 }
 
+.account-security-relative {
+  color: #9ca3af;
+  font-weight: 400;
+  font-size: 0.85em;
+}
+
+.admin-panel-container.dark .account-security-relative {
+  color: #6b7280;
+}
+
 /* Dashboard grid */
 .dashboard-grid {
   display: grid;

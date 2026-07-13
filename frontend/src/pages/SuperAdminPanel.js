@@ -19,6 +19,7 @@ import {
 } from "../services/adminService";
 
 import { getUser, getToken } from "../services/authService";
+import { formatRelativeTime } from "../utils/timeUtils";
 import { updatePassword } from "../services/passwordService";
 import { validatePassword } from "../services/validators";
 
@@ -2490,6 +2491,9 @@ function SuperAdminPanel() {
                       <span className="account-security-label">🕐 Dernière connexion</span>
                       <span className="account-security-value">
                         {userInfo?.previous_login ? new Date(userInfo.previous_login).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Première connexion'}
+                        {userInfo?.previous_login && (
+                          <span className="account-security-relative"> · {formatRelativeTime(userInfo.previous_login)}</span>
+                        )}
                       </span>
                     </div>
                   </div>

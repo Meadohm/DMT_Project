@@ -339,6 +339,12 @@
   font-weight: 600;
 }
 
+.account-info-relative {
+  color: #9ca3af;
+  font-weight: 400;
+  font-size: 11px;
+}
+
 /* Centrer le titre des notifications */
 .notif-title {
   font-weight: 700;

@@ -398,6 +398,9 @@ function DashboardTopbar({
                     <span className="account-info-label">🕐 Dernière connexion</span>
                     <span className="account-info-value">
                       {userInfo.previous_login ? new Date(userInfo.previous_login).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : 'Première connexion'}
+                      {userInfo.previous_login && (
+                        <span className="account-info-relative"> · {formatRelativeTime(userInfo.previous_login)}</span>
+                      )}
                     </span>
                   </li>
 
