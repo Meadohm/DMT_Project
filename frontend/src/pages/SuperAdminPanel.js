@@ -973,7 +973,7 @@ function SuperAdminPanel() {
           )}
         </div>
 
-        <button className={`sidebar-account-btn ${activeSection === "account" ? "active" : ""}`} onClick={() => setActiveSection("account")}>👤 Mon Profil</button>
+        <button className={`sidebar-account-btn ${activeSection === "account" ? "active" : ""}`} onClick={() => setActiveSection("account")}>👤 Mon profil</button>
         <div className="sidebar-bottom">
           <div className="sidebar-logo">
             <img src={logo} alt="Logo" className="app-logo" />
