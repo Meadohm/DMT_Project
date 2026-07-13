@@ -1684,12 +1684,23 @@ body.dark .upload-compact-bar svg {
 
 /* Titres et listes du contenu */
 .folder-title {
-  position: sticky;
-  top: 0;
-  background: #fff;
-  z-index: 10;
   padding: 8px 0;
   border-bottom: 1px solid #eee;
+}
+
+.file-sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fff;
+  padding: 0 0 4px 0;
+  border-bottom: 2px solid #e5e7eb;
+  margin-bottom: 8px;
+}
+
+body.dark .file-sticky-header {
+  background: var(--card-bg);
+  border-bottom-color: var(--border-color);
 }
 
 /* Centrage propre du contenu preview */

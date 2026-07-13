@@ -14,6 +14,7 @@ import mammoth from "mammoth";
 import Modal from "./Modal";
 import Toast from "./Toast";
 import "../styles/FileManager.css";
+import { formatRelativeTime } from "../utils/timeUtils";
 
 /*import ReactPlayer from "react-player";
 import AudioPlayer from "react-h5-audio-player";
@@ -597,6 +598,7 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
             {/* Contenu du dossier (caché si preview) */}
             {!isFullPreview && (
               <div className="file-content-scroll">
+                <div className="file-sticky-header">
                 <h3 className="folder-title">
                   📑 Contenu du dossier :{" "}
                   {breadcrumb.map((crumb, index) => (
@@ -616,12 +618,7 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                   ))}
                   {rootSharedFolder?.proprietaire ? (
                     <span className="shared-info">
-                      (🤝 partagé par {rootSharedFolder.proprietaire.username}
-                      {" le " +
-                        new Date(rootSharedFolder.shares?.[0]?.shared_at).toLocaleDateString("fr-FR") +
-                        " à " +
-                        new Date(rootSharedFolder.shares?.[0]?.shared_at).toLocaleTimeString("fr-FR")}
-                      )
+                      (🤝 {rootSharedFolder.proprietaire.username} · {formatRelativeTime(rootSharedFolder.shares?.[0]?.shared_at)})
                     </span>
                   ) : (
                     <span className="private-info">(📂 Privé)</span>
@@ -632,6 +629,7 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                     </span>
                   )}
                 </h3>
+                </div>
 
                 {files.length > 0 && (
                   <div className="file-filters-bar">
