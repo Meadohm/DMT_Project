@@ -629,8 +629,6 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                     </span>
                   )}
                 </h3>
-                </div>
-
                 {files.length > 0 && (
                   <div className="file-filters-bar">
                     <input
@@ -684,6 +682,7 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                     )}
                   </div>
                 )}
+                </div>
                 {files.length > 0 ? (
                   <ul className="file-list">
                     {filteredFiles.map((file) => (
