@@ -388,7 +388,19 @@ function DashboardTopbar({
                   <li onClick={() => { setAccountOpen(false); setHelpOpen(true); }}>
                   ❓ Aide
                 </li>
-                
+                  <li className="account-info-static">
+                    <span className="account-info-label">📅 Membre depuis</span>
+                    <span className="account-info-value">
+                      {userInfo.date_joined ? new Date(userInfo.date_joined).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
+                    </span>
+                  </li>
+                  <li className="account-info-static">
+                    <span className="account-info-label">🕐 Dernière connexion</span>
+                    <span className="account-info-value">
+                      {userInfo.last_login ? new Date(userInfo.last_login).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—'}
+                    </span>
+                  </li>
+
                 </ul>
               </div>
             )}

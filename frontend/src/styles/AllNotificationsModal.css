@@ -311,6 +311,34 @@
   background: #f3f0ff;
 }
 
+.account-dropdown li.account-info-static {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  cursor: default;
+  border-top: 1px solid #eee;
+  border-radius: 0;
+  margin-top: 4px;
+  padding-top: 10px;
+}
+
+.account-dropdown li.account-info-static:hover {
+  background: none;
+}
+
+.account-info-label {
+  font-size: 11px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.account-info-value {
+  font-size: 13px;
+  color: #333;
+  font-weight: 600;
+}
+
 /* Centrer le titre des notifications */
 .notif-title {
   font-weight: 700;

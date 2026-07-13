@@ -142,7 +142,7 @@ function DashboardEmploye() {
       const data = await getUserInfo();
       setUserInfo(data);
     } catch (err) {
-      console.error("❌ Erreur récupération utilisateur", err);
+      console.error("Erreur récupération utilisateur", err);
     }
   };
 
@@ -294,7 +294,7 @@ const handleClearNotifications = async () => {
     await clearAll();  // supprime réellement du backend
     setNotifications([]); // vide localement
   } catch (err) {
-    console.error("❌ Erreur suppression notifications", err);
+    console.error("Erreur suppression notifications", err);
   }
 };
 
@@ -777,12 +777,12 @@ const handleClearNotifications = async () => {
                 onConfirm={async () => {
                   // Vérification avant d'envoyer
                   if (oldPassword === newPassword) {
-                    setPasswordError("❌ Le nouveau mot de passe doit être différent de l’ancien.");
+                    setPasswordError("Le nouveau mot de passe doit être différent de l’ancien.");
                     return;
                   }
 
                   if (newPassword !== confirmPassword) {
-                    setPasswordError("❌ La confirmation du mot de passe ne correspond pas.");
+                    setPasswordError("La confirmation du mot de passe ne correspond pas.");
                     return;
                   }
 
@@ -859,7 +859,7 @@ const handleClearNotifications = async () => {
 
                     {confirmPassword && (
                       <small style={{ color: newPassword === confirmPassword ? "#22c55e" : "#ef4444", marginTop: "4px", display: "block" }}>
-                        {newPassword === confirmPassword ? "✅ Les mots de passe correspondent" : "❌ Les mots de passe ne correspondent pas"}
+                        {newPassword === confirmPassword ? "Les mots de passe correspondent" : "Les mots de passe ne correspondent pas"}
                       </small>
                     )}
                   </div>
