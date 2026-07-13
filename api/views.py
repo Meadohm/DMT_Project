@@ -122,6 +122,7 @@ def get_user_view(request):
         'service': user.service,
         'avatar': user.avatar.url if user.avatar else None,
         'last_login': user.last_login,
+        'date_joined': user.date_joined,
         'is_superuser': user.is_superuser,
     })
 

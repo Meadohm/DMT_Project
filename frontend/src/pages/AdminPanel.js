@@ -886,7 +886,7 @@ function AdminPanel() {
           )}
         </div>
 
-        <button className={`sidebar-account-btn ${activeSection === "account" ? "active" : ""}`} onClick={() => setActiveSection("account")}>👤 Mon profil</button>
+        <button className={`sidebar-account-btn ${activeSection === "account" ? "active" : ""}`} onClick={() => setActiveSection("account")}>👤 Mon Profil</button>
         <div className="sidebar-bottom">
           <div className="sidebar-logo">
             <img src={logo} alt="Logo" className="app-logo" />

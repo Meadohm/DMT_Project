@@ -1255,6 +1255,43 @@ td:last-child {
   gap: 12px;
 }
 
+.account-security-info {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e8edf2;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.account-security-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.88em;
+}
+
+.account-security-label {
+  color: #6b7280;
+}
+
+.account-security-value {
+  color: #003366;
+  font-weight: 600;
+}
+
+.admin-panel-container.dark .account-security-info {
+  border-color: var(--border-color);
+}
+
+.admin-panel-container.dark .account-security-label {
+  color: #aab4c8;
+}
+
+.admin-panel-container.dark .account-security-value {
+  color: #e6e8f0;
+}
+
 /* Dashboard grid */
 .dashboard-grid {
   display: grid;
