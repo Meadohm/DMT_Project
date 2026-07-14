@@ -918,7 +918,7 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
             {moveModalOpen && fileToMove && (
               <div className="modal-overlay">
                 <div className="modal-content">
-                  <h3>📦 Déplacer : <strong>{fileToMove.nom}</strong></h3>
+                  <h3>Déplacer : <strong>{fileToMove.nom}</strong></h3>
                   <p style={{fontSize:'0.85rem', color:'#6b7280', marginBottom:'12px'}}>
                     Choisir le dossier destination (vos dossiers uniquement)
                   </p>
