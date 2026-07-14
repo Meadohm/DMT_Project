@@ -302,6 +302,8 @@ API REST Django + React · Auth RBAC 4 rôles · Gestion dossiers fichiers · Pa
 - SECRET_KEY production (python secrets.token_hex)
 - ALLOWED_HOSTS + CORS restreints au domaine cloud
 - Évaluer token temporaire pour `view_file` (previews iframe sans auth)
+- Configurer rclone → Google Drive (backup externe automatique après chaque backup.sh)
+- Configurer IP fixe serveur + démarrage Docker automatique au boot
 
 **Phase applicative — v2.2.0+**
 - JWT refresh token (remplace Token Auth)
