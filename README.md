@@ -59,6 +59,8 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 | Tâches planifiées | django-cron · crontab système |
 | Versioning | Git / GitHub |
 | Environnement | Ubuntu 24.04 · Python venv |
+| Conteneurisation | Docker 29.6 · Docker Compose v5.3 |
+| Déploiement cible | AWS EC2 / GCP (v2.0.0+) |
 
 ---
 
@@ -244,6 +246,9 @@ DMT_Project
 
 ## Versions
 
+**v2.0.0 — Juillet 2026**
+Dockerisation complète (5 services : dmt-backend, dmt-frontend, dmt-db, dmt-redis, nginx) · Gunicorn TCP 0.0.0.0:8000 (remplace Unix socket) · Build React multi-stage (node:18-alpine → nginx:alpine) · `docker-entrypoint.sh` (wait DB + migrate + collectstatic + gunicorn) · `STATIC_URL=/django-static/` pour éviter conflit avec chunks React · Resolver DNS Docker 127.0.0.11 · Settings dynamiques (DEBUG, ALLOWED_HOSTS, CORS, REDIS_URL depuis env) · `.env.docker` séparé du `.env` système · Aliases Docker VM (docker-deploy-all, docker-deploy-front, docker-deploy-back, docker-status, docker-logs-back, docker-stop-all) · Import données réelles via pg_dump → psql Docker · Tag v2.0.0 GitHub
+
 **v1.5.5 — Juillet 2026**
 Stack production Nginx+Gunicorn (remplace runserver+dmt-frontend) · Soft delete utilisateurs (restauration/suppression définitive SuperAdmin) · Archives admin multi-sélection avec notifications propriétaires · Sidebar Admin/SuperAdmin groupes repliables (Gestion, Fichiers, Zone danger) · Contraste/espacement/mode réduit sidebar · `previous_login` (migration 0024) — vraie dernière connexion distincte de la session en cours · Suivi session active "Connecté depuis X min" dans bandeau BIENVENUE · Carte Mon Compte enrichie (date inscription, dernière connexion, temps relatif) · Dropdown compte Employé/Responsable enrichi · `formatRelativeTime` centralisé dans `utils/timeUtils.js` · Lecteur vidéo/audio Plyr CDN · Téléchargement + impression fichiers FileManager · Fix sous-dossiers appartenant à d'autres dans les dossiers utilisateurs · Stats partages hérités sans doublons · Colonne Service dans corbeille · Audit sécurité 6 tests validés (bypass auth, IDOR, upload malveillant, brute force, injection SQL, escalade privilèges) · Aliases deploy VM (deploy-front, deploy-back, deploy-all)
 
@@ -287,7 +292,21 @@ API REST Django + React · Auth RBAC 4 rôles · Gestion dossiers fichiers · Pa
 
 ## Roadmap
 
-Les features suivantes sont planifiées pour les prochaines phases :
+**Complété**
+- v2.0.0 : Dockerisation complète — prêt pour déploiement cloud
+
+**Phase suivante — Cloud (v2.1.0)**
+- Déploiement AWS EC2 (t3.micro → t3.small selon charge)
+- HTTPS via Let's Encrypt (Certbot)
+- UFW port 5432 restreint à IP spécifique
+- SECRET_KEY production (python secrets.token_hex)
+- ALLOWED_HOSTS + CORS restreints au domaine cloud
+- Évaluer token temporaire pour `view_file` (previews iframe sans auth)
+
+**Phase applicative — v2.2.0+**
+- JWT refresh token (remplace Token Auth)
+- DashboardResponsable : permissions fines par service
+- Tests unitaires Django (login, upload, delete, share, permissions)
 - Phase Analytics : statistiques suppressions (graphiques mensuels/hebdomadaires)
 - Phase Chat : système de commentaires par dossier/fichier (WebSocket)
 

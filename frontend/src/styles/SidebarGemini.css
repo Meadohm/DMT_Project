@@ -144,7 +144,6 @@
 }
 
 /* ACTIONS SUR DOSSIERS */
-
 .folder-actions button {
   border: none;
   cursor: pointer;
@@ -336,7 +335,6 @@
 }
 
 /* MENU CONTEXTUEL PREMIUM  */
-
 .context-menu.glass-effect {
   backdrop-filter: blur(10px) saturate(180%);
   -webkit-backdrop-filter: blur(10px) saturate(180%);
