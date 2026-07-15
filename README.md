@@ -310,7 +310,13 @@ API REST Django + React · Auth RBAC 4 rôles · Gestion dossiers fichiers · Pa
 - DashboardResponsable : permissions fines par service
 - Tests unitaires Django (login, upload, delete, share, permissions)
 - Phase Analytics : statistiques suppressions (graphiques mensuels/hebdomadaires)
-- Phase Chat : système de commentaires par dossier/fichier (WebSocket)
+- Phase Chat : système de commentaires par dossier/fichier (WebSocket) — temps réel, mentions @utilisateur
+
+**Phase Mobile — v3.0.0**
+- Application mobile Android/iOS (React Native) — accès complet depuis smartphone
+- Scanner intégré : numérisation directe via caméra + OCR automatique → upload dans DocFlow Pro
+- Notifications push (upload, partage, commentaire reçu)
+- Mode hors-ligne : consultation des derniers documents synchronisés
 
 ---
 
