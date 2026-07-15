@@ -171,3 +171,8 @@ RATELIMIT_FAIL_OPEN = False
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 RATELIMIT_IP_META_KEY = 'HTTP_X_REAL_IP'
+
+# Tests unitaires : utiliser REMOTE_ADDR au lieu de HTTP_X_REAL_IP
+import sys
+if 'test' in sys.argv:
+    RATELIMIT_IP_META_KEY = 'REMOTE_ADDR'
