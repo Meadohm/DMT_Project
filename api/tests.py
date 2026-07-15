@@ -21,9 +21,11 @@ def create_user(username, role='employe', service='Service Test', password='Test
     u.save()
     return u
 
-def get_token(client, username, password='Test1234!'):
-    res = client.post('/api/login/', {'username': username, 'password': password}, format='json')
-    return res.data.get('token')
+def get_token(username, password='Test1234!'):
+    """Génère un token directement en DB sans passer par la vue login (évite rate limiting)"""
+    user = Utilisateur.objects.get(username=username)
+    token, _ = Token.objects.get_or_create(user=user)
+    return token.key
 
 def auth_client(token):
     c = APIClient()
@@ -37,6 +39,10 @@ class TestAuthentification(TestCase):
     def setUp(self):
         self.client = APIClient()
         create_user('TESTUSER', role='employe')
+
+    def tearDown(self):
+        from django.core.cache import cache
+        cache.clear()
 
     def test_login_correct(self):
         """Login avec bons credentials → token + rôle retournés"""
@@ -75,7 +81,7 @@ class TestAuthentification(TestCase):
 
     def test_acces_avec_token_valide(self):
         """Accès avec token valide → 200"""
-        token = get_token(self.client, 'TESTUSER')
+        token = get_token('TESTUSER')
         c = auth_client(token)
         res = c.get('/api/user/')
         self.assertEqual(res.status_code, 200)
@@ -219,7 +225,7 @@ class TestCreationDossier(TestCase):
     def setUp(self):
         self.employe = create_user('EMP2', role='employe', service='Service D')
         self.client = APIClient()
-        token = get_token(self.client, 'EMP2')
+        token = get_token('EMP2')
         self.client = auth_client(token)
 
     def test_creer_dossier_simple(self):
@@ -245,7 +251,7 @@ class TestPartage(TestCase):
     def setUp(self):
         self.proprio = create_user('PROPRIO2', role='employe', service='Service E')
         self.destinataire = create_user('DEST', role='employe', service='Service E')
-        self.token = get_token(APIClient(), 'PROPRIO2')
+        self.token = get_token('PROPRIO2')
         self.client = auth_client(self.token)
         self.dossier = Folder.objects.create(
             nom='DossierPartage',
@@ -267,7 +273,7 @@ class TestPartage(TestCase):
 
     def test_non_proprietaire_ne_peut_pas_partager(self):
         """Non-propriétaire sans partage ne peut pas partager le dossier"""
-        token_autre = get_token(APIClient(), 'DEST')
+        token_autre = get_token('DEST')
         c = auth_client(token_autre)
         res = c.post(f'/api/folders/{self.dossier.id}/share/', {
             'user_id': self.proprio.id,
@@ -304,7 +310,7 @@ class TestSuppression(TestCase):
     def setUp(self):
         self.proprio = create_user('PROPRIO3', role='employe', service='Service F')
         self.autre = create_user('AUTRE3', role='employe', service='Service F')
-        self.token = get_token(APIClient(), 'PROPRIO3')
+        self.token = get_token('PROPRIO3')
         self.client = auth_client(self.token)
         self.dossier = Folder.objects.create(
             nom='DossierASupprimer',
@@ -328,7 +334,7 @@ class TestSuppression(TestCase):
 
     def test_non_proprietaire_ne_peut_pas_supprimer(self):
         """Non-propriétaire sans droits ne peut pas supprimer"""
-        token_autre = get_token(APIClient(), 'AUTRE3')
+        token_autre = get_token('AUTRE3')
         c = auth_client(token_autre)
         res = c.delete(f'/api/folders/{self.dossier.id}/delete/')
         self.assertIn(res.status_code, [401, 403, 404])
@@ -345,8 +351,8 @@ class TestControleAccesRole(TestCase):
     def setUp(self):
         self.employe = create_user('EMP3', role='employe', service='Service G')
         self.admin = create_user('ADMIN3', role='admin', service='Service G')
-        self.token_emp = get_token(APIClient(), 'EMP3')
-        self.token_admin = get_token(APIClient(), 'ADMIN3')
+        self.token_emp = get_token('EMP3')
+        self.token_admin = get_token('ADMIN3')
 
     def test_employe_ne_peut_pas_lister_tous_les_utilisateurs(self):
         """Employé ne peut pas accéder à /api/utilisateurs/"""
