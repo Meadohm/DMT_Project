@@ -39,6 +39,11 @@ echo "Cron configuré : $CRON_JOB"
 echo "[5/6] Permissions backup.sh..."
 chmod +x $COMPOSE_DIR/backup.sh
 
+# Alias test-api
+echo "" >> ~/.bashrc
+echo "# === Alias test DMT ===" >> ~/.bashrc
+echo "alias test-api='cd $COMPOSE_DIR && source venv/bin/activate && python manage.py test api --verbosity=2 2>&1 | tail -15'" >> ~/.bashrc
+
 # 6. Vérification Docker
 echo "[6/6] Vérification Docker..."
 docker --version
@@ -54,4 +59,8 @@ echo "  1. Créer .env.docker  : cp .env.docker.example .env.docker && nano .env
 echo "  2. Lancer l'app       : docker compose --env-file .env.docker up -d"
 echo "  3. Importer DB        : voir RUNBOOK_DMT4.docx section 6"
 echo "  4. Configurer rclone  : rclone config (Google Drive / S3)"
+echo ""
+echo "Workflow déploiement :"
+echo "  1. Modifier code (Mac) → node /tmp/checkN.js → git commit + push"
+echo "  2. VM : git pull → test-api → Si OK : docker-deploy-all"
 echo "======================================"
