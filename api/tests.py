@@ -261,14 +261,18 @@ class TestPartage(TestCase):
 
     def test_proprietaire_peut_partager(self):
         """Propriétaire peut partager son dossier"""
-        res = self.client.post(f'/api/folders/{self.dossier.id}/share/', {
-            'user_id': self.destinataire.id,
-            'can_read': True,
-            'can_write': False,
-            'can_update': False,
-            'can_delete': False,
-            'can_delete_folder': False,
-        }, format='json')
+        res = self.client.post(f'/api/folders/{self.dossier.id}/share/', [
+            {
+                'user_id': self.destinataire.id,
+                'permissions': {
+                    'read': True,
+                    'write': False,
+                    'update': False,
+                    'delete': False,
+                    'delete_folder': False,
+                }
+            }
+        ], format='json')
         self.assertIn(res.status_code, [200, 201])
 
     def test_non_proprietaire_ne_peut_pas_partager(self):
