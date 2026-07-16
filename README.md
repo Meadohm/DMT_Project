@@ -332,7 +332,6 @@ API REST Django + React · Auth RBAC 4 rôles · Gestion dossiers fichiers · Pa
 **Phase applicative — v2.2.0+**
 - JWT refresh token (remplace Token Auth)
 - ~~Tests unitaires Django~~ → **28 tests passent** (auth, propriétaire, responsable, partage, suppression, RBAC)
-- Phase Analytics : statistiques suppressions (graphiques mensuels/hebdomadaires)
 - Phase Chat : système de commentaires par dossier/fichier (WebSocket) — temps réel, mentions @utilisateur
 
 **Phase Mobile — v3.0.0**
