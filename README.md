@@ -64,6 +64,30 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 
 ---
 
+## Workflow de déploiement
+
+```bash
+# 1. Modifier le code (Mac — Claude Code)
+# 2. Vérification syntaxe/structure
+node /tmp/checkN.js
+
+# 3. Commit + push (Mac iTerm2)
+git add ... && git commit -m "..." && git push origin main
+
+# 4. VM — pull + tests unitaires
+git pull
+test-api          # alias → python manage.py test api --verbosity=2
+
+# 5. Si tous les tests passent → déployer
+docker-deploy-all
+
+# Si FAIL → corriger avant de déployer (jamais déployer avec des tests qui échouent)
+```
+
+> **Règle stricte** : aucun déploiement sans `test-api` vert au préalable sur les modifications backend.
+
+---
+
 ## Fonctionnalités par rôle
 
 ### Employé
@@ -308,7 +332,7 @@ API REST Django + React · Auth RBAC 4 rôles · Gestion dossiers fichiers · Pa
 **Phase applicative — v2.2.0+**
 - JWT refresh token (remplace Token Auth)
 - DashboardResponsable : permissions fines par service
-- Tests unitaires Django (login, upload, delete, share, permissions)
+- ~~Tests unitaires Django~~ → **28 tests passent** (auth, propriétaire, responsable, partage, suppression, RBAC)
 - Phase Analytics : statistiques suppressions (graphiques mensuels/hebdomadaires)
 - Phase Chat : système de commentaires par dossier/fichier (WebSocket) — temps réel, mentions @utilisateur
 
