@@ -1869,3 +1869,48 @@ tr.user-inactive td {
   border-color: #f59e0b;
   color: #fbbf24;
 }
+
+/* === ANALYTICS === */
+.analytics-section { padding: 16px 0; }
+.analytics-periode-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.analytics-periode-btn {
+  padding: 6px 16px; border-radius: 20px; border: 1px solid #d1d5db;
+  background: #fff; color: #374151; font-size: 0.85rem; cursor: pointer;
+  transition: all 0.15s;
+}
+.analytics-periode-btn:hover { border-color: #6c63ff; color: #6c63ff; }
+.analytics-periode-btn.active { background: #6c63ff; color: #fff; border-color: #6c63ff; }
+.analytics-kpi-row { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.analytics-kpi-card {
+  flex: 1; min-width: 120px; background: #f9fafb; border: 1px solid #e5e7eb;
+  border-radius: 10px; padding: 16px 12px; display: flex;
+  flex-direction: column; align-items: center; gap: 4px;
+}
+.analytics-kpi-icon { font-size: 1.6rem; }
+.analytics-kpi-value { font-size: 1.8rem; font-weight: 800; color: #003366; }
+.analytics-kpi-label { font-size: 0.78rem; color: #6b7280; text-align: center; }
+.analytics-chart-block { margin-bottom: 24px; }
+.analytics-chart-block h4 { font-size: 1rem; color: #003366; margin-bottom: 12px; font-weight: 700; }
+.analytics-top-users { margin-bottom: 24px; }
+.analytics-top-users h4 { font-size: 1rem; color: #003366; margin-bottom: 10px; font-weight: 700; }
+.analytics-top-list { display: flex; flex-direction: column; gap: 8px; }
+.analytics-top-item {
+  display: flex; align-items: center; gap: 12px;
+  background: #f9fafb; border-radius: 8px; padding: 10px 14px;
+}
+.analytics-top-rank { font-weight: 800; color: #6c63ff; width: 28px; }
+.analytics-top-name { flex: 1; font-weight: 600; color: #1a1a1a; }
+.analytics-top-count { color: #ef4444; font-weight: 700; font-size: 0.9rem; }
+.analytics-last-table { margin-bottom: 24px; }
+.analytics-last-table h4 { font-size: 1rem; color: #003366; margin-bottom: 10px; font-weight: 700; }
+.analytics-last-table table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.analytics-last-table th { background: #003366; color: #fff; padding: 8px 12px; text-align: left; }
+.analytics-last-table td { padding: 8px 12px; border-bottom: 1px solid #e5e7eb; }
+.analytics-loading { padding: 40px; text-align: center; color: #6b7280; }
+/* Dark mode */
+.admin-panel-container.dark .analytics-kpi-card { background: #1e2d3d; border-color: var(--border-color); }
+.admin-panel-container.dark .analytics-kpi-value { color: #e6e8f0; }
+.admin-panel-container.dark .analytics-top-item { background: #1e2d3d; }
+.admin-panel-container.dark .analytics-top-name { color: #e6e8f0; }
+.admin-panel-container.dark .analytics-periode-btn { background: #1e2d3d; color: #aab4c8; border-color: #2d3555; }
+.admin-panel-container.dark .analytics-last-table td { border-bottom-color: var(--border-color); }

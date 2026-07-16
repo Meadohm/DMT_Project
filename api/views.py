@@ -3597,6 +3597,100 @@ def list_audit_deletions(request):
     } for d in deletions]
     return Response(data)
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
+def analytics_suppressions(request):
+    """Analytics suppressions — Admin et SuperAdmin uniquement"""
+    import datetime
+    from django.utils.timezone import now
+    from django.db.models import Count
+    from django.db.models.functions import TruncWeek, TruncMonth
+
+    periode = int(request.GET.get('periode', 30))
+    date_debut = now() - datetime.timedelta(days=periode)
+
+    # Filtrer les actions DELETE dans AuditLog
+    qs = AuditLog.objects.filter(
+        action='DELETE',
+        timestamp__gte=date_debut
+    )
+
+    # KPI totaux
+    total = qs.count()
+    fichiers = qs.filter(objet__icontains='fichier').count()
+    dossiers = qs.filter(objet__icontains='dossier').count()
+    autres = total - fichiers - dossiers
+
+    # Top 5 utilisateurs qui suppriment le plus
+    top_users = (
+        qs.filter(utilisateur__isnull=False)
+        .values('utilisateur__username')
+        .annotate(total=Count('id'))
+        .order_by('-total')[:5]
+    )
+
+    # Graphique — par semaine si periode <= 90j, par mois sinon
+    if periode <= 90:
+        trend = (
+            qs.annotate(periode=TruncWeek('timestamp'))
+            .values('periode')
+            .annotate(total=Count('id'))
+            .order_by('periode')
+        )
+        trend_data = [
+            {
+                'label': t['periode'].strftime('%d/%m'),
+                'total': t['total'],
+            }
+            for t in trend if t['periode']
+        ]
+        granularite = 'semaine'
+    else:
+        trend = (
+            qs.annotate(periode=TruncMonth('timestamp'))
+            .values('periode')
+            .annotate(total=Count('id'))
+            .order_by('periode')
+        )
+        trend_data = [
+            {
+                'label': t['periode'].strftime('%b %Y'),
+                'total': t['total'],
+            }
+            for t in trend if t['periode']
+        ]
+        granularite = 'mois'
+
+    # 10 dernières suppressions
+    last_10 = qs.select_related('utilisateur').order_by('-timestamp')[:10]
+    last_10_data = [
+        {
+            'utilisateur': l.utilisateur.username if l.utilisateur else '—',
+            'objet': l.objet,
+            'details': l.details,
+            'timestamp': l.timestamp.strftime('%d/%m/%Y %H:%M'),
+        }
+        for l in last_10
+    ]
+
+    return Response({
+        'kpi': {
+            'total': total,
+            'fichiers': fichiers,
+            'dossiers': dossiers,
+            'autres': autres,
+        },
+        'top_users': [
+            {'username': t['utilisateur__username'], 'total': t['total']}
+            for t in top_users
+        ],
+        'trend': trend_data,
+        'granularite': granularite,
+        'last_10': last_10_data,
+        'periode': periode,
+    })
+
 @api_view(["DELETE"])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsSuperAdmin])

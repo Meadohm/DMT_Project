@@ -198,6 +198,9 @@ function SuperAdminPanel() {
   const [deletionDateFrom, setDeletionDateFrom] = useState("");
   const [deletionDateTo, setDeletionDateTo] = useState("");
   const [journalTab, setJournalTab] = useState("journal");
+  const [analyticsData, setAnalyticsData] = useState(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [analyticsPeriode, setAnalyticsPeriode] = useState(30);
   const [tooltip, setTooltip] = useState(null);
   const [showCreateServiceModal, setShowCreateServiceModal] = useState(false);
   const [confirmDeleteServiceId, setConfirmDeleteServiceId] = useState(null);
@@ -627,6 +630,20 @@ function SuperAdminPanel() {
       console.error('Erreur suppressions journal', e);
     } finally {
       setDeletionsLoading(false);
+    }
+  };
+
+  const fetchAnalytics = async (periode = 30) => {
+    setAnalyticsLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/analytics/suppressions/?periode=${periode}`, {
+        headers: { Authorization: `Token ${localStorage.getItem('token')}` }
+      });
+      if (res.ok) setAnalyticsData(await res.json());
+    } catch (err) {
+      console.error('Erreur analytics', err);
+    } finally {
+      setAnalyticsLoading(false);
     }
   };
 
@@ -1394,6 +1411,12 @@ function SuperAdminPanel() {
               >
                 🔍 Suppressions {auditDeletions.length > 0 && <span className="tab-badge-red">{auditDeletions.length}</span>}
               </button>
+              <button
+                className={`journal-tab${journalTab === "analytics" ? " active" : ""}`}
+                onClick={() => { setJournalTab("analytics"); fetchAnalytics(analyticsPeriode); }}
+              >
+                📊 Analytics
+              </button>
             </div>
 
             {journalTab === "journal" && (
@@ -1636,6 +1659,113 @@ function SuperAdminPanel() {
                       🗑️ Nettoyer les suppressions
                     </button>
                   </div>
+                )}
+              </div>
+            )}
+
+            {journalTab === "analytics" && (
+              <div className="analytics-section">
+                {/* Sélecteur période */}
+                <div className="analytics-periode-bar">
+                  {[7, 30, 90, 180].map(p => (
+                    <button
+                      key={p}
+                      className={`analytics-periode-btn${analyticsPeriode === p ? " active" : ""}`}
+                      onClick={() => { setAnalyticsPeriode(p); fetchAnalytics(p); }}
+                    >
+                      {p === 7 ? '7 jours' : p === 30 ? '30 jours' : p === 90 ? '3 mois' : '6 mois'}
+                    </button>
+                  ))}
+                </div>
+                {analyticsLoading ? (
+                  <div className="analytics-loading">Chargement...</div>
+                ) : analyticsData ? (
+                  <>
+                    {/* KPI Cards */}
+                    <div className="analytics-kpi-row">
+                      <div className="analytics-kpi-card">
+                        <span className="analytics-kpi-icon">🗑️</span>
+                        <span className="analytics-kpi-value">{analyticsData.kpi.total}</span>
+                        <span className="analytics-kpi-label">Total suppressions</span>
+                      </div>
+                      <div className="analytics-kpi-card">
+                        <span className="analytics-kpi-icon">📄</span>
+                        <span className="analytics-kpi-value">{analyticsData.kpi.fichiers}</span>
+                        <span className="analytics-kpi-label">Fichiers</span>
+                      </div>
+                      <div className="analytics-kpi-card">
+                        <span className="analytics-kpi-icon">📁</span>
+                        <span className="analytics-kpi-value">{analyticsData.kpi.dossiers}</span>
+                        <span className="analytics-kpi-label">Dossiers</span>
+                      </div>
+                      <div className="analytics-kpi-card">
+                        <span className="analytics-kpi-icon">📊</span>
+                        <span className="analytics-kpi-value">{analyticsData.kpi.autres}</span>
+                        <span className="analytics-kpi-label">Autres</span>
+                      </div>
+                    </div>
+                    {/* Graphique tendance */}
+                    <div className="analytics-chart-block">
+                      <h4>📈 Tendance suppressions — par {analyticsData.granularite}</h4>
+                      {analyticsData.trend.length === 0 ? (
+                        <p className="no-data">Aucune suppression sur cette période.</p>
+                      ) : (
+                        <ResponsiveContainer width="100%" height={220}>
+                          <BarChart data={analyticsData.trend} margin={{top:8, right:16, left:-20, bottom:0}}>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                            <XAxis dataKey="label" tick={{fontSize:11}} axisLine={false} tickLine={false} />
+                            <YAxis allowDecimals={false} tick={{fontSize:11}} axisLine={false} tickLine={false} />
+                            <Tooltip
+                              formatter={(value) => [value, "Suppressions"]}
+                              contentStyle={{fontSize:'0.8rem', borderRadius:'8px'}}
+                            />
+                            <Bar dataKey="total" fill="#ef4444" radius={[4,4,0,0]} />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      )}
+                    </div>
+                    {/* Top utilisateurs */}
+                    {analyticsData.top_users.length > 0 && (
+                      <div className="analytics-top-users">
+                        <h4>👤 Top 5 — Plus de suppressions</h4>
+                        <div className="analytics-top-list">
+                          {analyticsData.top_users.map((u, i) => (
+                            <div key={u.username} className="analytics-top-item">
+                              <span className="analytics-top-rank">#{i+1}</span>
+                              <span className="analytics-top-name">{u.username}</span>
+                              <span className="analytics-top-count">{u.total} suppression{u.total > 1 ? 's' : ''}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {/* 10 dernières suppressions */}
+                    {analyticsData.last_10.length > 0 && (
+                      <div className="analytics-last-table">
+                        <h4>🕐 10 dernières suppressions</h4>
+                        <table>
+                          <thead>
+                            <tr>
+                              <th>Utilisateur</th>
+                              <th>Objet</th>
+                              <th>Date</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {analyticsData.last_10.map((l, i) => (
+                              <tr key={i}>
+                                <td><span className="badge-admin">👤 {l.utilisateur}</span></td>
+                                <td>{l.objet}</td>
+                                <td>{l.timestamp}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <p className="no-data">Cliquez sur une période pour charger les analytics.</p>
                 )}
               </div>
             )}
