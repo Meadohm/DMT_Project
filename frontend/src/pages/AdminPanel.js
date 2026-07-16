@@ -1069,7 +1069,7 @@ function AdminPanel() {
               <div className="dashboard-card dashboard-card-trash" onClick={() => { setActiveSection("trash"); fetchTrash(); }}>
                 <div className="dashboard-card-icon">🗑️</div>
                 <div className="dashboard-card-content">
-                  <h3>🗑️ Corbeille</h3>
+                  <h3>Corbeille</h3>
                   <div className="dashboard-card-main">{dashboardStats?.trash?.total ?? 0}</div>
                   <div className="dashboard-card-details">
                     <span className="dash-detail">📄 {dashboardStats?.trash?.fichiers ?? 0} fichiers · 📁 {dashboardStats?.trash?.dossiers ?? 0} dossiers</span>
