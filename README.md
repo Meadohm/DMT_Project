@@ -67,7 +67,7 @@ Doumbia Moussa Transport exploitait des données opérationnelles dispersées su
 ## Workflow de déploiement
 
 ```bash
-# 1. Modifier le code (Mac — Claude Code)
+# 1. Modifier le code (Mac)
 # 2. Vérification syntaxe/structure
 node /tmp/checkN.js
 
