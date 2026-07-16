@@ -398,7 +398,7 @@ function DashboardResponsable() {
         title: "Succès",
         message: `Vous avez quitté le dossier "${folder.nom}".`,
       });
-      if (activeFolder?.id === folder.id) setActiveFolder(null);
+      setActiveFolder(prev => prev?.id === folder.id ? null : prev);
     } catch (err) {
       setNotif({
         type: "error",
