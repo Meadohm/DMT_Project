@@ -166,6 +166,27 @@ Rôles et permissions :
 Un administrateur normal ne peut pas modifier le rôle d'un autre administrateur ni supprimer un compte admin. Ces actions sont réservées au Super Administrateur.`
   },
   {
+    icon: "📈",
+    title: "Analytics — Suppressions",
+    content: `L'onglet "📊 Analytics" dans le Journal d'activité affiche des statistiques visuelles sur les suppressions réalisées dans la plateforme.
+
+Accès : Journal d'activité → onglet 📊 Analytics
+
+Sélecteur de période :
+- 7 jours : vue hebdomadaire récente
+- 30 jours : vue mensuelle (défaut)
+- 3 mois : tendance trimestrielle
+- 6 mois : tendance semestrielle
+
+Ce que vous voyez :
+- KPI : total suppressions, fichiers supprimés, dossiers supprimés, autres
+- Graphique barres : tendance par semaine (≤ 90j) ou par mois (> 90j)
+- Top 5 utilisateurs qui suppriment le plus
+- 10 dernières suppressions avec utilisateur, objet et date
+
+Note : seules les actions DELETE de l'AuditLog sont comptabilisées (fichiers, dossiers, notifications, archives expirées).`,
+  },
+  {
     icon: "📞",
     title: "Contact support",
     content: `Pour tout problème technique ou question sur la plateforme, contactez le Super Administrateur :
