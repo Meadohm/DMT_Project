@@ -1914,3 +1914,27 @@ tr.user-inactive td {
 .admin-panel-container.dark .analytics-top-name { color: #e6e8f0; }
 .admin-panel-container.dark .analytics-periode-btn { background: #1e2d3d; color: #aab4c8; border-color: #2d3555; }
 .admin-panel-container.dark .analytics-last-table td { border-bottom-color: var(--border-color); }
+
+/* Analytics dark mode — éléments manquants */
+.admin-panel-container.dark .analytics-chart-block h4,
+.admin-panel-container.dark .analytics-top-users h4,
+.admin-panel-container.dark .analytics-last-table h4 {
+  color: #e6e8f0;
+}
+.admin-panel-container.dark .analytics-last-table th {
+  background: #1e3a5f;
+}
+.admin-panel-container.dark .analytics-last-table td {
+  color: #e6e8f0;
+}
+.admin-panel-container.dark .analytics-periode-btn:hover {
+  border-color: #6c63ff;
+  color: #a78bfa;
+}
+.admin-panel-container.dark .analytics-loading {
+  color: #aab4c8;
+}
+.admin-panel-container.dark .analytics-kpi-card {
+  background: #1e2d3d;
+  border-color: #2d3555;
+}
