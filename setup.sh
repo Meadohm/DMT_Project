@@ -42,7 +42,7 @@ chmod +x $COMPOSE_DIR/backup.sh
 # Alias test-api
 echo "" >> ~/.bashrc
 echo "# === Alias test DMT ===" >> ~/.bashrc
-echo "alias test-api='cd $COMPOSE_DIR && source venv/bin/activate && python manage.py test api --verbosity=2 2>&1 | tail -15'" >> ~/.bashrc
+echo "alias test-api='cd $COMPOSE_DIR && source venv/bin/activate && python manage.py test api --verbosity=2'" >> ~/.bashrc
 
 # 6. Vérification Docker
 echo "[6/6] Vérification Docker..."
