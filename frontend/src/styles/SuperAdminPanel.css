@@ -1907,6 +1907,29 @@ tr.user-inactive td {
 .analytics-last-table th { background: #003366; color: #fff; padding: 8px 12px; text-align: left; }
 .analytics-last-table td { padding: 8px 12px; border-bottom: 1px solid #e5e7eb; }
 .analytics-loading { padding: 40px; text-align: center; color: #6b7280; }
+.analytics-periode-sep {
+  color: #9ca3af;
+  font-size: 0.9rem;
+  align-self: center;
+}
+.analytics-date-input {
+  padding: 5px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  color: #374151;
+  background: #fff;
+  cursor: pointer;
+  outline: none;
+}
+.analytics-date-input:focus {
+  border-color: #6c63ff;
+}
+.admin-panel-container.dark .analytics-date-input {
+  background: #1e2d3d;
+  color: #aab4c8;
+  border-color: #2d3555;
+}
 /* Dark mode */
 .admin-panel-container.dark .analytics-kpi-card { background: #1e2d3d; border-color: var(--border-color); }
 .admin-panel-container.dark .analytics-kpi-value { color: #e6e8f0; }

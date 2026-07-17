@@ -189,6 +189,8 @@ function AdminPanel() {
   const [analyticsData, setAnalyticsData] = useState(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
   const [analyticsPeriode, setAnalyticsPeriode] = useState(30);
+  const [analyticsDateDebut, setAnalyticsDateDebut] = useState('');
+  const [analyticsDateFin, setAnalyticsDateFin] = useState('');
   const [tooltip, setTooltip] = useState(null);
   const [showCreateServiceModal, setShowCreateServiceModal] = useState(false);
   const [confirmDeleteServiceId, setConfirmDeleteServiceId] = useState(null);
@@ -572,10 +574,16 @@ function AdminPanel() {
     }
   };
 
-  const fetchAnalytics = async (periode = 30) => {
+  const fetchAnalytics = async (periode = 30, dateDebut = '', dateFin = '') => {
     setAnalyticsLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/analytics/suppressions/?periode=${periode}`, {
+      let url = `${API_BASE_URL}/analytics/suppressions/`;
+      if (dateDebut && dateFin) {
+        url += `?date_debut=${dateDebut}&date_fin=${dateFin}`;
+      } else {
+        url += `?periode=${periode}`;
+      }
+      const res = await fetch(url, {
         headers: { Authorization: `Token ${localStorage.getItem('token')}` }
       });
       if (res.ok) setAnalyticsData(await res.json());
@@ -1522,11 +1530,37 @@ function AdminPanel() {
                     <button
                       key={p}
                       className={`analytics-periode-btn${analyticsPeriode === p ? " active" : ""}`}
-                      onClick={() => { setAnalyticsPeriode(p); fetchAnalytics(p); }}
+                      onClick={() => { setAnalyticsPeriode(p); setAnalyticsDateDebut(''); setAnalyticsDateFin(''); fetchAnalytics(p); }}
                     >
                       {p === 7 ? '7 jours' : p === 30 ? '30 jours' : p === 90 ? '3 mois' : '6 mois'}
                     </button>
                   ))}
+                  <span className="analytics-periode-sep">|</span>
+                  <input
+                    type="date"
+                    className="analytics-date-input"
+                    value={analyticsDateDebut}
+                    onChange={e => setAnalyticsDateDebut(e.target.value)}
+                  />
+                  <span className="analytics-periode-sep">→</span>
+                  <input
+                    type="date"
+                    className="analytics-date-input"
+                    value={analyticsDateFin}
+                    onChange={e => setAnalyticsDateFin(e.target.value)}
+                  />
+                  <button
+                    className={`analytics-periode-btn${analyticsDateDebut && analyticsDateFin ? ' active' : ''}`}
+                    onClick={() => {
+                      if (analyticsDateDebut && analyticsDateFin) {
+                        setAnalyticsPeriode(null);
+                        fetchAnalytics(30, analyticsDateDebut, analyticsDateFin);
+                      }
+                    }}
+                    disabled={!analyticsDateDebut || !analyticsDateFin}
+                  >
+                    Appliquer
+                  </button>
                 </div>
                 {analyticsLoading ? (
                   <div className="analytics-loading">Chargement...</div>

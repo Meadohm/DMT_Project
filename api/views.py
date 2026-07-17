@@ -3607,13 +3607,28 @@ def analytics_suppressions(request):
     from django.db.models import Count
     from django.db.models.functions import TruncWeek, TruncMonth
 
-    periode = int(request.GET.get('periode', 30))
-    date_debut = now() - datetime.timedelta(days=periode)
+    # Priorité : dates personnalisées > période prédéfinie
+    date_debut_param = request.GET.get('date_debut')
+    date_fin_param = request.GET.get('date_fin')
+    if date_debut_param and date_fin_param:
+        try:
+            date_debut = datetime.datetime.strptime(date_debut_param, '%Y-%m-%d').replace(tzinfo=datetime.timezone.utc)
+            date_fin = datetime.datetime.strptime(date_fin_param, '%Y-%m-%d').replace(tzinfo=datetime.timezone.utc) + datetime.timedelta(days=1)
+            periode = (date_fin - date_debut).days
+        except ValueError:
+            periode = 30
+            date_debut = now() - datetime.timedelta(days=periode)
+            date_fin = now()
+    else:
+        periode = int(request.GET.get('periode', 30))
+        date_debut = now() - datetime.timedelta(days=periode)
+        date_fin = now()
 
     # Filtrer les actions DELETE dans AuditLog
     qs = AuditLog.objects.filter(
         action='DELETE',
-        timestamp__gte=date_debut
+        timestamp__gte=date_debut,
+        timestamp__lt=date_fin
     )
 
     # KPI totaux
@@ -3631,7 +3646,7 @@ def analytics_suppressions(request):
     )
 
     # Graphique — par semaine si periode <= 90j, par mois sinon
-    if periode <= 90:
+    if periode <= 91:
         trend = (
             qs.annotate(periode=TruncWeek('timestamp'))
             .values('periode')
