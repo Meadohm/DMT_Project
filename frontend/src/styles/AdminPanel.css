@@ -2206,3 +2206,28 @@ body.dark .dashboard-card-trend .recharts-text {
 .admin-panel-container.dark .disk-type-label,
 .admin-panel-container.dark .disk-user-name { color: #e6e8f0; }
 .admin-panel-container.dark .disk-type-bar-wrap { background: #2d3555; }
+
+/* Dark mode disk modal — tableau top 10 */
+.admin-panel-container.dark .disk-modal-box {
+  background: #111827;
+  color: #e6e8f0;
+}
+.admin-panel-container.dark .disk-modal-box table thead th {
+  background: #1e3a5f;
+  color: #e6e8f0;
+  border-color: #2d3555;
+}
+.admin-panel-container.dark .disk-modal-box table tbody td {
+  color: #e6e8f0;
+  border-color: #2d3555;
+}
+.admin-panel-container.dark .disk-modal-box table tbody tr:nth-child(even) {
+  background: #1a2535;
+}
+.admin-panel-container.dark .disk-modal-box table tbody tr:nth-child(odd) {
+  background: #111827;
+}
+.admin-panel-container.dark .disk-type-size { color: #e6e8f0; }
+.admin-panel-container.dark .disk-type-pct { color: #aab4c8; }
+.admin-panel-container.dark .disk-type-label { color: #e6e8f0; }
+.admin-panel-container.dark .disk-user-service { color: #aab4c8; }
