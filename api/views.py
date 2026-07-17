@@ -1176,11 +1176,11 @@ def disk_analysis(request):
         for t, s in sorted(type_stats.items(), key=lambda x: x[1], reverse=True)
     ]
 
-    # Par utilisateur — top 8
+    # Par utilisateur
     user_data = [
         {'username': u, 'taille_mb': round(d['total'] / 1024 / 1024, 1), 'service': d['service']}
         for u, d in sorted(user_stats.items(), key=lambda x: x[1]['total'], reverse=True)
-    ][:8]
+    ]
 
     return Response({
         'disk': {

@@ -204,6 +204,7 @@ function AdminPanel() {
   const [diskAnalysis, setDiskAnalysis] = useState(null);
   const [diskAnalysisLoading, setDiskAnalysisLoading] = useState(false);
   const [selectedDiskFiles, setSelectedDiskFiles] = useState([]);
+  const [diskConfirmDelete, setDiskConfirmDelete] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [showLogoutWarning, setShowLogoutWarning] = useState(false);
 
@@ -2716,25 +2717,14 @@ function AdminPanel() {
                 <h4 className="disk-modal-section-title">🏋️ Top 10 fichiers les plus lourds
                   {selectedDiskFiles.length > 0 && (
                     <button className="btn-danger" style={{marginLeft:'12px', fontSize:'0.8rem', padding:'4px 12px'}}
-                      onClick={async () => {
-                        for (const id of selectedDiskFiles) {
-                          try {
-                            await fetch(`${API_BASE_URL}/centralized-files/${id}/delete/`, {
-                              method: 'DELETE',
-                              headers: { Authorization: `Token ${localStorage.getItem('token')}` }
-                            });
-                          } catch(e) {}
-                        }
-                        setSelectedDiskFiles([]);
-                        fetchDiskAnalysis();
-                        showToast(`${selectedDiskFiles.length} fichier(s) supprimé(s).`, 'success');
-                      }}
+                      onClick={() => setDiskConfirmDelete(true)}
                     >🗑️ Supprimer la sélection ({selectedDiskFiles.length})</button>
                   )}
                 </h4>
                 <div className="users-table-wrapper">
                   <table style={{width:'100%', fontSize:'0.85rem'}}>
                     <thead><tr>
+                      <th style={{width:'32px'}}>#</th>
                       <th style={{width:'32px'}}>
                         <input type="checkbox"
                           checked={selectedDiskFiles.length === diskAnalysis.top_10.length}
@@ -2749,6 +2739,7 @@ function AdminPanel() {
                     <tbody>
                       {diskAnalysis.top_10.map(f => (
                         <tr key={f.id}>
+                          <td style={{textAlign:'center', color:'#6b7280', fontSize:'0.82rem'}}>{diskAnalysis.top_10.indexOf(f) + 1}</td>
                           <td><input type="checkbox" checked={selectedDiskFiles.includes(f.id)}
                             onChange={e => setSelectedDiskFiles(prev => e.target.checked ? [...prev, f.id] : prev.filter(i=>i!==f.id))} /></td>
                           <td style={{maxWidth:'200px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}>{f.nom}</td>
@@ -2763,13 +2754,17 @@ function AdminPanel() {
                 {/* Par utilisateur */}
                 <h4 className="disk-modal-section-title">👤 Espace par utilisateur</h4>
                 <div className="disk-user-list">
-                  {diskAnalysis.by_user.map(u => {
+                  {diskAnalysis.by_user.map((u, index) => {
                     const max = diskAnalysis.by_user[0]?.taille_mb || 1;
                     const p = Math.round(u.taille_mb / max * 100);
                     return (
-                      <div key={u.username} className="disk-user-item">
-                        <span className="disk-user-name">{u.username}</span>
-                        <span className="disk-user-service">{u.service}</span>
+                      <div key={u.username + '_' + index} className="disk-user-item">
+                        <span className="disk-user-name">
+                          {u.username === '—' ? <span style={{color:'#f59e0b', fontWeight:700}}>⚠️ Orphelin</span> : u.username}
+                        </span>
+                        <span className="disk-user-service">
+                          {u.service === '—' ? <span style={{color:'#9ca3af', fontSize:'0.75rem'}}>Propriétaire supprimé</span> : u.service}
+                        </span>
                         <div className="disk-type-bar-wrap">
                           <div className="disk-type-bar disk-user-bar" style={{width:`${p}%`}} />
                         </div>
@@ -2778,6 +2773,39 @@ function AdminPanel() {
                     );
                   })}
                 </div>
+                {diskConfirmDelete && (
+                  <div style={{
+                    position:'fixed', inset:0, background:'rgba(0,0,0,0.5)',
+                    display:'flex', alignItems:'center', justifyContent:'center', zIndex:9999
+                  }}>
+                    <div style={{background:'var(--card-bg)', borderRadius:'12px', padding:'28px 32px', maxWidth:'420px', width:'90%', boxShadow:'0 8px 40px rgba(0,0,0,0.2)'}}>
+                      <h3 style={{color:'#003366', marginBottom:'12px'}}>🗑️ Confirmer la suppression</h3>
+                      <p style={{color:'#374151', marginBottom:'8px'}}>
+                        Vous allez supprimer <strong>{selectedDiskFiles.length} fichier(s)</strong>.
+                      </p>
+                      <p style={{color:'#6b7280', fontSize:'0.85rem', marginBottom:'20px'}}>
+                        Les fichiers seront placés dans la <strong>corbeille</strong> et pourront être restaurés depuis la section Corbeille.
+                      </p>
+                      <div style={{display:'flex', gap:'12px', justifyContent:'flex-end'}}>
+                        <button className="btn-cancel" onClick={() => setDiskConfirmDelete(false)}>Annuler</button>
+                        <button className="btn-danger" onClick={async () => {
+                          for (const id of selectedDiskFiles) {
+                            try {
+                              await fetch(`${API_BASE_URL}/centralized-files/${id}/delete/`, {
+                                method: 'DELETE',
+                                headers: { Authorization: `Token ${localStorage.getItem('token')}` }
+                              });
+                            } catch(e) {}
+                          }
+                          setDiskConfirmDelete(false);
+                          setSelectedDiskFiles([]);
+                          fetchDiskAnalysis();
+                          showToast(`${selectedDiskFiles.length} fichier(s) déplacé(s) en corbeille.`, 'success');
+                        }}>Confirmer — Mettre en corbeille</button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </>
             ) : null}
           </div>
