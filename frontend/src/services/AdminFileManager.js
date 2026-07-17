@@ -442,7 +442,24 @@ function AdminFileManager() {
                       {f.nom || cleanName}
                     </span>
                   </td>
-                  <td>{f.utilisateur || '—'}</td>
+                  <td>
+                    <span style={{fontWeight:'600', display:'block'}}>{f.utilisateur || '—'}</span>
+                    {f.utilisateur_service && (
+                      <span style={{fontSize:'0.78rem', color:'#6b7280', display:'block'}}>
+                        {f.utilisateur_service}
+                      </span>
+                    )}
+                    {f.folder_nom && (
+                      <span style={{fontSize:'0.78rem', color:'#0066cc', display:'block'}}>
+                        📁 {f.folder_nom}
+                      </span>
+                    )}
+                    {f.is_orphan && (
+                      <span style={{fontSize:'0.75rem', color:'#dc3545', display:'block'}}>
+                        ⚠️ Orphelin
+                      </span>
+                    )}
+                  </td>
                   <td>{f.date_validation}</td>
                   <td>{size}</td>
                   <td style={{textAlign:'center'}}>
