@@ -3654,10 +3654,13 @@ def analytics_suppressions(request):
             .annotate(total=Count('id'))
             .order_by('periode')
         )
-        trend_data = [
-            {'label': t['periode'].strftime('%d/%m'), 'total': t['total']}
-            for t in trend if t['periode']
-        ]
+        # Remplir les jours vides avec 0
+        trend_dict = {t['periode'].strftime('%d/%m'): t['total'] for t in trend if t['periode']}
+        trend_data = []
+        for i in range(int(periode), -1, -1):
+            day = (date_fin - datetime.timedelta(days=1) - datetime.timedelta(days=i)).date()
+            label = day.strftime('%d/%m')
+            trend_data.append({'label': label, 'total': trend_dict.get(label, 0)})
         granularite = 'jour'
     elif periode <= 91:
         trend = (
@@ -3666,13 +3669,18 @@ def analytics_suppressions(request):
             .annotate(total=Count('id'))
             .order_by('periode')
         )
-        trend_data = [
-            {
-                'label': t['periode'].strftime('%d/%m'),
-                'total': t['total'],
-            }
-            for t in trend if t['periode']
-        ]
+        # Remplir les semaines vides avec 0
+        trend_dict = {t['periode'].strftime('%d/%m'): t['total'] for t in trend if t['periode']}
+        trend_data = []
+        # Générer toutes les semaines de la période
+        current = date_debut.date()
+        # Aligner sur le lundi de la semaine de date_debut
+        current = current - datetime.timedelta(days=current.weekday())
+        end = date_fin.date()
+        while current <= end:
+            label = current.strftime('%d/%m')
+            trend_data.append({'label': label, 'total': trend_dict.get(label, 0)})
+            current += datetime.timedelta(weeks=1)
         granularite = 'semaine'
     else:
         trend = (
@@ -3681,13 +3689,19 @@ def analytics_suppressions(request):
             .annotate(total=Count('id'))
             .order_by('periode')
         )
-        trend_data = [
-            {
-                'label': t['periode'].strftime('%b %Y'),
-                'total': t['total'],
-            }
-            for t in trend if t['periode']
-        ]
+        # Remplir les mois vides avec 0
+        trend_dict = {t['periode'].strftime('%b %Y'): t['total'] for t in trend if t['periode']}
+        trend_data = []
+        current = date_debut.date().replace(day=1)
+        end = date_fin.date().replace(day=1)
+        while current <= end:
+            label = current.strftime('%b %Y')
+            trend_data.append({'label': label, 'total': trend_dict.get(label, 0)})
+            # Avancer d'un mois
+            if current.month == 12:
+                current = current.replace(year=current.year+1, month=1)
+            else:
+                current = current.replace(month=current.month+1)
         granularite = 'mois'
 
     # 10 dernières suppressions
