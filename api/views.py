@@ -2406,7 +2406,7 @@ def share_folder(request, folder_id):
         status=status.HTTP_200_OK
     )
 
-##### FILES CRUD #####
+# FILES CRUD
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])

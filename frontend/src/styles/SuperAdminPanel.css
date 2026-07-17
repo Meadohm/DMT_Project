@@ -1962,7 +1962,7 @@ tr.user-inactive td {
   border-color: #2d3555;
 }
 
-/* === MODAL ESPACE DISQUE === */
+/* MODAL ESPACE DISQUE */
 .disk-modal-box {
   background: var(--card-bg);
   border-radius: 16px;

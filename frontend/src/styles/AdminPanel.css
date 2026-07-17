@@ -2148,7 +2148,7 @@ body.dark .dashboard-card-trend .recharts-text {
   color: #aab4c8;
 }
 
-/* === MODAL ESPACE DISQUE === */
+/*  MODAL ESPACE DISQUE */
 .disk-modal-box {
   background: var(--card-bg);
   border-radius: 16px;
