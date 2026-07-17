@@ -3645,8 +3645,21 @@ def analytics_suppressions(request):
         .order_by('-total')[:5]
     )
 
-    # Graphique — par semaine si periode <= 90j, par mois sinon
-    if periode <= 91:
+    # Graphique — par jour si periode <= 7j, par semaine si periode <= 91j, par mois sinon
+    if periode <= 7:
+        from django.db.models.functions import TruncDate
+        trend = (
+            qs.annotate(periode=TruncDate('timestamp'))
+            .values('periode')
+            .annotate(total=Count('id'))
+            .order_by('periode')
+        )
+        trend_data = [
+            {'label': t['periode'].strftime('%d/%m'), 'total': t['total']}
+            for t in trend if t['periode']
+        ]
+        granularite = 'jour'
+    elif periode <= 91:
         trend = (
             qs.annotate(periode=TruncWeek('timestamp'))
             .values('periode')
