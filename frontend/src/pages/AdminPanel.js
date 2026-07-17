@@ -200,6 +200,10 @@ function AdminPanel() {
   const [editServiceForm, setEditServiceForm] = useState({ nom: '', description: '', statut: 'actif', responsable_id: '' });
   const [editServiceError, setEditServiceError] = useState('');
   const [dashboardStats, setDashboardStats] = useState(null);
+  const [diskModalOpen, setDiskModalOpen] = useState(false);
+  const [diskAnalysis, setDiskAnalysis] = useState(null);
+  const [diskAnalysisLoading, setDiskAnalysisLoading] = useState(false);
+  const [selectedDiskFiles, setSelectedDiskFiles] = useState([]);
   const [helpOpen, setHelpOpen] = useState(false);
   const [showLogoutWarning, setShowLogoutWarning] = useState(false);
 
@@ -591,6 +595,20 @@ function AdminPanel() {
       console.error('Erreur analytics', err);
     } finally {
       setAnalyticsLoading(false);
+    }
+  };
+
+  const fetchDiskAnalysis = async () => {
+    setDiskAnalysisLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/disk-analysis/`, {
+        headers: { Authorization: `Token ${localStorage.getItem('token')}` }
+      });
+      if (res.ok) setDiskAnalysis(await res.json());
+    } catch (err) {
+      console.error('Erreur disk analysis', err);
+    } finally {
+      setDiskAnalysisLoading(false);
     }
   };
 
@@ -1016,7 +1034,7 @@ function AdminPanel() {
                 </div>
                 <div className="dashboard-card-arrow">→</div>
               </div>
-              <div className="dashboard-card dashboard-card-disk">
+              <div className="dashboard-card dashboard-card-disk" style={{cursor:'pointer'}} onClick={() => { setDiskModalOpen(true); fetchDiskAnalysis(); }}>
                 <div className="dashboard-card-icon">💽</div>
                 <div className="dashboard-card-content">
                   <h3>Espace disque</h3>
@@ -1039,6 +1057,7 @@ function AdminPanel() {
                     </span>
                   </div>
                 </div>
+                <div className="dashboard-card-arrow">→</div>
               </div>
               <div className="dashboard-card dashboard-card-folders" onClick={() => setActiveSection("files")}>
                 <div className="dashboard-card-icon">🗂️</div>
@@ -2648,6 +2667,120 @@ function AdminPanel() {
           whiteSpace: 'normal',
         }}>
           {tooltip.text}
+        </div>
+      )}
+
+      {diskModalOpen && (
+        <div className="help-modal-overlay" onClick={() => { setDiskModalOpen(false); setSelectedDiskFiles([]); }}>
+          <div className="disk-modal-box" onClick={e => e.stopPropagation()}>
+            <div className="help-modal-header">
+              <h2>💾 Analyse de l'espace disque</h2>
+              <button className="help-modal-close" onClick={() => { setDiskModalOpen(false); setSelectedDiskFiles([]); }}>✖</button>
+            </div>
+            {diskAnalysisLoading ? (
+              <div className="analytics-loading">Chargement de l'analyse...</div>
+            ) : diskAnalysis ? (
+              <>
+                {/* Barre globale */}
+                <div className="disk-modal-global">
+                  <div className="disk-modal-pct">{diskAnalysis.disk.used_pct}%</div>
+                  <div className="disk-progress-bar" style={{margin:'8px 0'}}>
+                    <div className={`disk-progress-fill ${diskAnalysis.disk.used_pct > 85 ? 'disk-critical' : diskAnalysis.disk.used_pct > 65 ? 'disk-warning' : ''}`}
+                      style={{width:`${diskAnalysis.disk.used_pct}%`}} />
+                  </div>
+                  <div style={{fontSize:'0.85rem', color:'#6b7280'}}>
+                    {diskAnalysis.disk.used_gb} GB utilisés · {diskAnalysis.disk.free_gb} GB libres · {diskAnalysis.disk.total_gb} GB total
+                  </div>
+                </div>
+                {/* Répartition par type */}
+                <h4 className="disk-modal-section-title">📊 Répartition par type</h4>
+                <div className="disk-type-list">
+                  {diskAnalysis.by_type.map(t => {
+                    const icons = {video:'🎬', image:'🖼️', document:'📄', audio:'🎵', archive:'📦', autre:'📎'};
+                    const pct = diskAnalysis.by_type.reduce((a,b) => a + b.taille, 0);
+                    const p = pct > 0 ? Math.round(t.taille / pct * 100) : 0;
+                    return (
+                      <div key={t.type} className="disk-type-item">
+                        <span className="disk-type-icon">{icons[t.type] || '📎'}</span>
+                        <span className="disk-type-label">{t.type.charAt(0).toUpperCase() + t.type.slice(1)}</span>
+                        <div className="disk-type-bar-wrap">
+                          <div className="disk-type-bar" style={{width:`${p}%`}} />
+                        </div>
+                        <span className="disk-type-pct">{p}%</span>
+                        <span className="disk-type-size">{t.taille_mb >= 1024 ? (t.taille_mb/1024).toFixed(1)+' GB' : t.taille_mb+' MB'}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+                {/* Top 10 fichiers lourds */}
+                <h4 className="disk-modal-section-title">🏋️ Top 10 fichiers les plus lourds
+                  {selectedDiskFiles.length > 0 && (
+                    <button className="btn-danger" style={{marginLeft:'12px', fontSize:'0.8rem', padding:'4px 12px'}}
+                      onClick={async () => {
+                        for (const id of selectedDiskFiles) {
+                          try {
+                            await fetch(`${API_BASE_URL}/centralized-files/${id}/delete/`, {
+                              method: 'DELETE',
+                              headers: { Authorization: `Token ${localStorage.getItem('token')}` }
+                            });
+                          } catch(e) {}
+                        }
+                        setSelectedDiskFiles([]);
+                        fetchDiskAnalysis();
+                        showToast(`${selectedDiskFiles.length} fichier(s) supprimé(s).`, 'success');
+                      }}
+                    >🗑️ Supprimer la sélection ({selectedDiskFiles.length})</button>
+                  )}
+                </h4>
+                <div className="users-table-wrapper">
+                  <table style={{width:'100%', fontSize:'0.85rem'}}>
+                    <thead><tr>
+                      <th style={{width:'32px'}}>
+                        <input type="checkbox"
+                          checked={selectedDiskFiles.length === diskAnalysis.top_10.length}
+                          onChange={e => setSelectedDiskFiles(e.target.checked ? diskAnalysis.top_10.map(f=>f.id) : [])}
+                        />
+                      </th>
+                      <th>Fichier</th>
+                      <th>Propriétaire</th>
+                      <th>Dossier</th>
+                      <th>Taille</th>
+                    </tr></thead>
+                    <tbody>
+                      {diskAnalysis.top_10.map(f => (
+                        <tr key={f.id}>
+                          <td><input type="checkbox" checked={selectedDiskFiles.includes(f.id)}
+                            onChange={e => setSelectedDiskFiles(prev => e.target.checked ? [...prev, f.id] : prev.filter(i=>i!==f.id))} /></td>
+                          <td style={{maxWidth:'200px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}>{f.nom}</td>
+                          <td><span style={{fontWeight:600}}>{f.utilisateur}</span><br/><span style={{fontSize:'0.75rem',color:'#6b7280'}}>{f.service}</span></td>
+                          <td style={{color:'#0066cc', fontSize:'0.82rem'}}>📁 {f.folder_nom}</td>
+                          <td style={{fontWeight:700, color: f.taille_mb >= 500 ? '#ef4444' : '#374151'}}>{f.taille_mb >= 1024 ? (f.taille_mb/1024).toFixed(1)+' GB' : f.taille_mb+' MB'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                {/* Par utilisateur */}
+                <h4 className="disk-modal-section-title">👤 Espace par utilisateur</h4>
+                <div className="disk-user-list">
+                  {diskAnalysis.by_user.map(u => {
+                    const max = diskAnalysis.by_user[0]?.taille_mb || 1;
+                    const p = Math.round(u.taille_mb / max * 100);
+                    return (
+                      <div key={u.username} className="disk-user-item">
+                        <span className="disk-user-name">{u.username}</span>
+                        <span className="disk-user-service">{u.service}</span>
+                        <div className="disk-type-bar-wrap">
+                          <div className="disk-type-bar disk-user-bar" style={{width:`${p}%`}} />
+                        </div>
+                        <span className="disk-type-size">{u.taille_mb >= 1024 ? (u.taille_mb/1024).toFixed(1)+' GB' : u.taille_mb+' MB'}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            ) : null}
+          </div>
         </div>
       )}
 

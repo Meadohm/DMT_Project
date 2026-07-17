@@ -1961,3 +1961,62 @@ tr.user-inactive td {
   background: #1e2d3d;
   border-color: #2d3555;
 }
+
+/* === MODAL ESPACE DISQUE === */
+.disk-modal-box {
+  background: var(--card-bg);
+  border-radius: 16px;
+  width: 700px;
+  max-width: 96vw;
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 28px 32px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+}
+.disk-modal-global {
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+.disk-modal-pct {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #003366;
+}
+.disk-modal-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #003366;
+  margin: 20px 0 10px 0;
+  display: flex;
+  align-items: center;
+}
+.disk-type-list, .disk-user-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.disk-type-item, .disk-user-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+}
+.disk-type-icon { font-size: 1.2rem; width: 24px; text-align: center; }
+.disk-type-label { width: 80px; font-size: 0.88rem; color: #374151; font-weight: 500; }
+.disk-user-name { width: 80px; font-size: 0.88rem; color: #374151; font-weight: 600; }
+.disk-user-service { width: 130px; font-size: 0.78rem; color: #6b7280; }
+.disk-type-bar-wrap { flex: 1; background: #e5e7eb; border-radius: 4px; height: 8px; overflow: hidden; }
+.disk-type-bar { height: 8px; background: #6c63ff; border-radius: 4px; transition: width 0.4s; }
+.disk-user-bar { background: #0066cc; }
+.disk-type-pct { width: 36px; text-align: right; font-size: 0.82rem; color: #6b7280; }
+.disk-type-size { width: 70px; text-align: right; font-size: 0.82rem; font-weight: 600; color: #374151; }
+/* Dark mode */
+.admin-panel-container.dark .disk-modal-global { background: #1e2d3d; }
+.admin-panel-container.dark .disk-modal-pct { color: #e6e8f0; }
+.admin-panel-container.dark .disk-modal-section-title { color: #e6e8f0; }
+.admin-panel-container.dark .disk-type-label,
+.admin-panel-container.dark .disk-user-name { color: #e6e8f0; }
+.admin-panel-container.dark .disk-type-bar-wrap { background: #2d3555; }

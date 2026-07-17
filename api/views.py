@@ -1111,7 +1111,91 @@ def get_disk_usage(request):
     })
 
 
-##### SERVICES #####
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])
+def disk_analysis(request):
+    """Analyse détaillée de l'espace disque — Admin et SuperAdmin"""
+    import shutil as shutil_mod
+
+    # Espace disque global
+    total, used, free = shutil_mod.disk_usage('/')
+    used_pct = round(used / total * 100, 1)
+
+    # Répartition par type de fichier
+    TYPE_MAP = {
+        'video': ['mp4', 'avi', 'mkv', 'mov', 'wmv', 'flv', 'webm', 'm4v'],
+        'image': ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'tiff'],
+        'document': ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'csv', 'odt'],
+        'audio': ['mp3', 'wav', 'aac', 'ogg', 'flac', 'm4a'],
+        'archive': ['zip', 'rar', 'gz', 'tar', '7z'],
+    }
+
+    def get_type(nom):
+        ext = nom.rsplit('.', 1)[-1].lower() if '.' in nom else ''
+        for t, exts in TYPE_MAP.items():
+            if ext in exts:
+                return t
+        return 'autre'
+
+    files = FileModel.objects.select_related('utilisateur').filter(taille__isnull=False)
+
+    type_stats = {}
+    user_stats = {}
+    top_files = []
+
+    for f in files:
+        taille = f.taille or 0
+        ftype = get_type(f.nom or '')
+        type_stats[ftype] = type_stats.get(ftype, 0) + taille
+
+        username = f.utilisateur.username if f.utilisateur else '—'
+        service = f.utilisateur.service if f.utilisateur and hasattr(f.utilisateur, 'service') else '—'
+        if username not in user_stats:
+            user_stats[username] = {'total': 0, 'service': service}
+        user_stats[username]['total'] += taille
+
+        top_files.append({
+            'id': f.id,
+            'nom': f.nom or '—',
+            'taille': taille,
+            'taille_mb': round(taille / 1024 / 1024, 1),
+            'utilisateur': username,
+            'service': service,
+            'type': ftype,
+            'folder_nom': f.folder.nom if f.folder else '—',
+        })
+
+    # Top 10 fichiers les plus lourds
+    top_files.sort(key=lambda x: x['taille'], reverse=True)
+    top_10 = top_files[:10]
+
+    # Répartition par type — format frontend
+    type_data = [
+        {'type': t, 'taille_mb': round(s / 1024 / 1024, 1), 'taille': s}
+        for t, s in sorted(type_stats.items(), key=lambda x: x[1], reverse=True)
+    ]
+
+    # Par utilisateur — top 8
+    user_data = [
+        {'username': u, 'taille_mb': round(d['total'] / 1024 / 1024, 1), 'service': d['service']}
+        for u, d in sorted(user_stats.items(), key=lambda x: x[1]['total'], reverse=True)
+    ][:8]
+
+    return Response({
+        'disk': {
+            'total_gb': round(total / (1024**3), 1),
+            'used_gb': round(used / (1024**3), 1),
+            'free_gb': round(free / (1024**3), 1),
+            'used_pct': used_pct,
+        },
+        'by_type': type_data,
+        'by_user': user_data,
+        'top_10': top_10,
+    })
+
+
+# SERVICES
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAdminUser | IsCustomAdminUser | IsSuperAdmin])

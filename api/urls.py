@@ -37,6 +37,7 @@ urlpatterns = [
     path('synchroniser_fichiers/', views.synchroniser_fichiers, name='synchroniser_fichiers'),
     path('centralized-files/', views.list_centralized_files, name='list_centralized_files'),
     path('disk-usage/', views.get_disk_usage, name='get_disk_usage'),
+    path('disk-analysis/', views.disk_analysis, name='disk_analysis'),
     path('centralized-files/<int:file_id>/update/', views.update_centralized_file, name='update_centralized_file'),
     path('centralized-files/<int:file_id>/delete/', views.delete_centralized_file, name='delete_centralized_file'),
     path('centralized-files/<int:file_id>/check-shared/', views.check_file_shared, name='check_file_shared'),
