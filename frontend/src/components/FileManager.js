@@ -670,7 +670,9 @@ function FileManager({ activeFolder, setActiveFolder, userInfo, sidebarCollapsed
                         onChange={toggleSelectAllFiles}
                         checked={selectedFileIds.length > 0 && selectedFileIds.length === filteredFiles.filter(f => activeFolder?.permissions?.can_delete).length}
                       />
-                      Tout sélectionner
+                      {selectedFileIds.length > 0 && selectedFileIds.length === filteredFiles.filter(f => activeFolder?.permissions?.can_delete).length
+                        ? "Tout désélectionner"
+                        : "Tout sélectionner"}
                     </label>
                     {selectedFileIds.length > 0 && (
                       <button

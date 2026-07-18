@@ -73,20 +73,31 @@ function DashboardEmploye() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Favoris
-  const [favorites, setFavorites] = useState(
-    JSON.parse(localStorage.getItem("favorites")) || []
-  );
+  const [favorites, setFavorites] = useState([]);
 
   const navigate = useNavigate();
 
   const handleWarning = useCallback(() => setShowLogoutWarning(true), []);
-  const handleAutoLogout = useCallback(() => { localStorage.clear(); navigate("/"); }, [navigate]);
+  const handleAutoLogout = useCallback(() => {
+    const favKey = `favorites_${userInfo?.id}`;
+    const favs = localStorage.getItem(favKey);
+    localStorage.clear();
+    if (favs && favKey !== 'favorites_undefined') localStorage.setItem(favKey, favs);
+    navigate("/");
+  }, [navigate, userInfo?.id]);
 
   useAutoLogout(
     userInfo?.role || 'employe',
     handleAutoLogout,
     handleWarning
   );
+
+  useEffect(() => {
+    if (userInfo?.id) {
+      const saved = JSON.parse(localStorage.getItem(`favorites_${userInfo.id}`)) || [];
+      setFavorites(saved);
+    }
+  }, [userInfo?.id]);
 
    // Authentification et récupération données
   useEffect(() => {
@@ -207,6 +218,8 @@ function DashboardEmploye() {
       .map(f => ({ ...f, children: deleteFromTree(f.children || [], id) }));
 
   const handleLogout = async () => {
+    const favKey = `favorites_${userInfo?.id}`;
+    const favs = localStorage.getItem(favKey);
     try {
       const token = localStorage.getItem('token');
       if (token) {
@@ -217,6 +230,7 @@ function DashboardEmploye() {
       }
     } catch (e) {}
     localStorage.clear();
+    if (favs && favKey !== 'favorites_undefined') localStorage.setItem(favKey, favs);
     window.location.replace("/");
   };
 
@@ -336,7 +350,7 @@ const handleClearNotifications = async () => {
 
         setFavorites(prev => prev.filter(favId => favId !== currentFolder.id));
         localStorage.setItem(
-          "favorites",
+          `favorites_${userInfo?.id}`,
           JSON.stringify(favorites.filter(favId => favId !== currentFolder.id))
         );
       }
@@ -437,7 +451,7 @@ const handleClearNotifications = async () => {
       updated = [...favorites, folderId];
     }
     setFavorites(updated);
-    localStorage.setItem("favorites", JSON.stringify(updated));
+    localStorage.setItem(`favorites_${userInfo?.id}`, JSON.stringify(updated));
   };
 
   // Filtrage et regroupement dossiers
@@ -585,8 +599,20 @@ const handleClearNotifications = async () => {
       {notif && notif.context === "password_change" && (
         <Modal
           title={notif.title}
-          onClose={() => { setNotif(null); localStorage.clear(); navigate("/"); }}
-          onConfirm={() => { setNotif(null); localStorage.clear(); navigate("/"); }}
+          onClose={() => {
+            const favKey = `favorites_${userInfo?.id}`;
+            const favs = localStorage.getItem(favKey);
+            setNotif(null); localStorage.clear();
+            if (favs && favKey !== 'favorites_undefined') localStorage.setItem(favKey, favs);
+            navigate("/");
+          }}
+          onConfirm={() => {
+            const favKey = `favorites_${userInfo?.id}`;
+            const favs = localStorage.getItem(favKey);
+            setNotif(null); localStorage.clear();
+            if (favs && favKey !== 'favorites_undefined') localStorage.setItem(favKey, favs);
+            navigate("/");
+          }}
           className={notif.type === "success" ? "success-modal" : "error-modal"}
           mode="notif"
         >
