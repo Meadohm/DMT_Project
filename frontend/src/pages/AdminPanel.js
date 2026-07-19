@@ -264,6 +264,8 @@ function AdminPanel() {
     return () => clearInterval(refreshInterval);
   }, []);
 
+  const heartbeatIntervalRef = useRef(null);
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) return;
@@ -273,8 +275,8 @@ function AdminPanel() {
       }).catch(() => {});
     };
     heartbeat();
-    const interval = setInterval(heartbeat, 30000);
-    return () => clearInterval(interval);
+    heartbeatIntervalRef.current = setInterval(heartbeat, 30000);
+    return () => clearInterval(heartbeatIntervalRef.current);
   }, []);
 
   useEffect(() => {
@@ -702,6 +704,7 @@ function AdminPanel() {
   };
 
   const handleLogout = async () => {
+    if (heartbeatIntervalRef.current) clearInterval(heartbeatIntervalRef.current);
     try {
       const token = localStorage.getItem('token');
       if (token) {

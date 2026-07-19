@@ -95,6 +95,8 @@ function DashboardResponsable() {
     return () => clearInterval(interval);
   }, []);
 
+  const heartbeatIntervalRef = useRef(null);
+
   // Heartbeat last-seen toutes les 30s
   useEffect(() => {
     const heartbeat = async () => {
@@ -109,8 +111,8 @@ function DashboardResponsable() {
       } catch (err) {}
     };
     heartbeat();
-    const interval = setInterval(heartbeat, 30000);
-    return () => clearInterval(interval);
+    heartbeatIntervalRef.current = setInterval(heartbeat, 30000);
+    return () => clearInterval(heartbeatIntervalRef.current);
   }, []);
 
   useEffect(() => {
@@ -193,6 +195,7 @@ function DashboardResponsable() {
       .map(f => ({ ...f, children: deleteFromTree(f.children || [], id) }));
 
   const handleLogout = async () => {
+    if (heartbeatIntervalRef.current) clearInterval(heartbeatIntervalRef.current);
     const favKey = `favorites_${userInfo?.id}`;
     const favs = localStorage.getItem(favKey);
     try {

@@ -118,6 +118,8 @@ function DashboardEmploye() {
     return () => clearInterval(interval);
   }, []);
 
+  const heartbeatIntervalRef = useRef(null);
+
   // Heartbeat last-seen toutes les 30s
   useEffect(() => {
     const heartbeat = async () => {
@@ -132,8 +134,8 @@ function DashboardEmploye() {
       } catch (err) {}
     };
     heartbeat();
-    const interval = setInterval(heartbeat, 30000);
-    return () => clearInterval(interval);
+    heartbeatIntervalRef.current = setInterval(heartbeat, 30000);
+    return () => clearInterval(heartbeatIntervalRef.current);
   }, []);
 
 
@@ -218,6 +220,8 @@ function DashboardEmploye() {
       .map(f => ({ ...f, children: deleteFromTree(f.children || [], id) }));
 
   const handleLogout = async () => {
+    // Arrêter le heartbeat AVANT le logout pour éviter la race condition
+    if (heartbeatIntervalRef.current) clearInterval(heartbeatIntervalRef.current);
     const favKey = `favorites_${userInfo?.id}`;
     const favs = localStorage.getItem(favKey);
     try {
