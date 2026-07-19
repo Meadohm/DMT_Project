@@ -3843,7 +3843,7 @@ def logout_view(request):
     AuditLog.objects.create(
         utilisateur=user,
         action='LOGOUT',
-        objet='Déconnexion',
+        objet='Système',
         details=f"Déconnexion de {user.username}",
         adresse_ip=request.META.get('REMOTE_ADDR')
     )

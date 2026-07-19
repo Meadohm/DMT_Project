@@ -983,7 +983,7 @@ function SuperAdminPanel() {
           </div>
           {sidebarGroupOpen.gestion && (
             <div className="sidebar-group-items">
-              <button className={`sidebar-sub ${activeSection === "users" ? "active" : ""}`} onClick={() => setActiveSection("users")}>👥 Utilisateurs</button>
+              <button className={`sidebar-sub ${activeSection === "users" ? "active" : ""}`} onClick={() => { setActiveSection("users"); fetchData(); }}>👥 Utilisateurs</button>
               <button className={`sidebar-sub ${activeSection === "createService" ? "active" : ""}`} onClick={() => setActiveSection("createService")}>🏢 Services</button>
             </div>
           )}

@@ -254,7 +254,7 @@ function AdminPanel() {
         );
       }
       if (section === 'cleanup') fetchCleanup();
-    }, 30000);
+    }, 10000);
     const section = localStorage.getItem('adminActiveSection');
     if (section === 'submissions') {
       const savedPage = parseInt(localStorage.getItem('historiquePage') || '1');
@@ -898,7 +898,7 @@ function AdminPanel() {
           </div>
           {sidebarGroupOpen.gestion && (
             <div className="sidebar-group-items">
-              <button className={`sidebar-sub ${activeSection === "users" ? "active" : ""}`} onClick={() => setActiveSection("users")}>👥 Utilisateurs</button>
+              <button className={`sidebar-sub ${activeSection === "users" ? "active" : ""}`} onClick={() => { setActiveSection("users"); fetchData(); }}>👥 Utilisateurs</button>
               <button className={`sidebar-sub ${activeSection === "createService" ? "active" : ""}`} onClick={() => setActiveSection("createService")}>🏢 Services</button>
             </div>
           )}
