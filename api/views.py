@@ -148,7 +148,7 @@ def get_all_users(request):
             'email': u.email,
             'role': u.role,
             'service': u.service,
-            'last_seen': (u.last_seen or u.last_login).isoformat() if (u.last_seen or u.last_login) else None,
+            'last_seen': u.last_seen.isoformat() if u.last_seen else None,
             'is_active': u.is_active,
             'date_joined': u.date_joined.isoformat() if u.date_joined else None,
             'is_superuser': u.is_superuser,
