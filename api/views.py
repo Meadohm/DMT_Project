@@ -3831,8 +3831,20 @@ def clear_audit_deletions(request):
 @permission_classes([IsAuthenticated])
 def logout_view(request):
     """Invalide le token — déconnecte tous les appareils"""
+    user = request.user
     try:
-        request.user.auth_token.delete()
+        user.auth_token.delete()
     except Exception:
         pass
+    # Invalider immédiatement le statut en ligne
+    user.last_seen = None
+    user.save(update_fields=['last_seen'])
+    # Tracer la déconnexion dans le journal
+    AuditLog.objects.create(
+        utilisateur=user,
+        action='LOGOUT',
+        objet='Déconnexion',
+        details=f"Déconnexion de {user.username}",
+        adresse_ip=request.META.get('REMOTE_ADDR')
+    )
     return Response({'success': 'Deconnecte.'})
