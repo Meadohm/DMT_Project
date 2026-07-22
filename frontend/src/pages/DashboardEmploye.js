@@ -71,6 +71,7 @@ function DashboardEmploye() {
   const now = useClock();
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarMobileOpen, setSidebarMobileOpen] = useState(false);
 
   // Favoris
   const [favorites, setFavorites] = useState([]);
@@ -489,6 +490,8 @@ const handleClearNotifications = async () => {
       <DashboardSidebar
         collapsed={sidebarCollapsed}
         onToggle={() => setSidebarCollapsed((prev) => !prev)}
+        mobileOpen={sidebarMobileOpen}
+        onMobileClose={() => setSidebarMobileOpen(false)}
         myFolders={myFolders}
         sharedFolders={sharedFolders}
         favoriteFolders={favoriteFolders}
@@ -508,6 +511,13 @@ const handleClearNotifications = async () => {
 
       {/* --- MAIN --- */}
       <main className="main-content">
+        <button
+          className="sidebar-hamburger"
+          onClick={() => setSidebarMobileOpen(prev => !prev)}
+          style={{position:'fixed', top:'12px', left:'12px', zIndex:201}}
+        >
+          ☰
+        </button>
         <DashboardTopbar
           userInfo={userInfo}
           role="employe"

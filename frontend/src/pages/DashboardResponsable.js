@@ -48,6 +48,7 @@ function DashboardResponsable() {
   const now = useClock();
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarMobileOpen, setSidebarMobileOpen] = useState(false);
 
   // Favoris
   const [favorites, setFavorites] = useState([]);
@@ -494,6 +495,8 @@ function DashboardResponsable() {
       <DashboardSidebar
         collapsed={sidebarCollapsed}
         onToggle={() => setSidebarCollapsed((prev) => !prev)}
+        mobileOpen={sidebarMobileOpen}
+        onMobileClose={() => setSidebarMobileOpen(false)}
         myFolders={myFolders}
         sharedFolders={sharedFolders}
         favoriteFolders={favoriteFolders}
@@ -514,6 +517,13 @@ function DashboardResponsable() {
 
       {/* --- MAIN --- */}
       <main className="main-content">
+        <button
+          className="sidebar-hamburger"
+          onClick={() => setSidebarMobileOpen(prev => !prev)}
+          style={{position:'fixed', top:'12px', left:'12px', zIndex:201}}
+        >
+          ☰
+        </button>
         <DashboardTopbar
           userInfo={userInfo}
           role="responsable"

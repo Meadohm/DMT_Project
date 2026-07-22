@@ -30,6 +30,8 @@ import logo from "../assets/dmt.png";
 function DashboardSidebar({
   collapsed,
   onToggle,
+  mobileOpen = false,
+  onMobileClose,
   myFolders = [],
   sharedFolders = [],
   favoriteFolders = [],
@@ -54,7 +56,7 @@ function DashboardSidebar({
   const menuRefs = useRef({});
 
   return (
-    <aside className={`sidebar${collapsed ? " collapsed" : ""}${role === "responsable" ? " sidebar-teal" : ""}`}>
+    <aside className={`sidebar${collapsed ? " collapsed" : ""}${role === "responsable" ? " sidebar-teal" : ""}${mobileOpen ? " mobile-open" : ""}`}>
       <div className="sidebar-top-fixed">
         <button
           className="sidebar-toggle"
@@ -252,6 +254,10 @@ function DashboardSidebar({
             </div>
           </div>
         </div>
+      )}
+
+      {mobileOpen && (
+        <div className="sidebar-overlay" onClick={onMobileClose} />
       )}
     </aside>
   );
