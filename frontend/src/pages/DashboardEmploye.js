@@ -72,6 +72,13 @@ function DashboardEmploye() {
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [sidebarMobileOpen, setSidebarMobileOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Favoris
   const [favorites, setFavorites] = useState([]);
@@ -483,7 +490,7 @@ const handleClearNotifications = async () => {
   return (
     <div
       className={`dashboard-container ${theme === "dark" ? "dark" : ""}`}
-      style={{ paddingLeft: sidebarCollapsed ? "48px" : "240px", transition: "padding-left 0.2s ease" }}
+      style={{ paddingLeft: isMobile ? 0 : (sidebarCollapsed ? "48px" : "240px"), transition: "padding-left 0.2s ease" }}
     >
 
       {/* --- SIDEBAR --- */}
@@ -496,7 +503,7 @@ const handleClearNotifications = async () => {
         sharedFolders={sharedFolders}
         favoriteFolders={favoriteFolders}
         activeFolder={activeFolder}
-        onSelect={setActiveFolder}
+        onSelect={(folder) => { setActiveFolder(folder); if (isMobile) setSidebarMobileOpen(false); }}
         favorites={favorites}
         onToggleFavorite={toggleFavorite}
         onCreateFolder={handleCreateFolder}
