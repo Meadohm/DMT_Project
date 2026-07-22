@@ -494,16 +494,14 @@
 }
 
 /* Fix : évite d’être masqué par les overflow hidden */
-.sidebar,
 .main-content {
   overflow: visible !important;
 }
-
-
-/*  Forcer le menu contextuel à rester visible au-dessus  */
-.main-content,
-.sidebar {
-  overflow: visible !important;
+/* Le menu contextuel passe par z-index, pas overflow */
+@media (min-width: 769px) {
+  .sidebar {
+    overflow: visible !important;
+  }
 }
 
 .context-menu.modern-menu {
@@ -630,6 +628,7 @@
     z-index: 200;
     bottom: 0;
     width: 240px !important;
+    overflow: hidden !important;
   }
   .sidebar.mobile-open {
     transform: translateX(0);
