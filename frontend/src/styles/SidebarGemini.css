@@ -629,6 +629,7 @@
     bottom: 0;
     width: 240px !important;
     overflow: hidden !important;
+    overflow-y: auto !important;
   }
   .sidebar.mobile-open {
     transform: translateX(0);
