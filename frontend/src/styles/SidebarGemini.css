@@ -623,16 +623,14 @@
 }
 @media (max-width: 768px) {
   .sidebar {
-    transform: translateX(-100%);
-    transition: transform 0.25s ease, width 0.2s ease;
+    display: none;
     z-index: 200;
     bottom: 0;
     width: 240px !important;
-    overflow: hidden !important;
     overflow-y: auto !important;
   }
   .sidebar.mobile-open {
-    transform: translateX(0);
+    display: flex !important;
   }
   .sidebar-overlay {
     display: block;

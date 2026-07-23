@@ -3248,48 +3248,44 @@ body.dark .btn-print:hover {
   background: #1a2a3a;
 }
 
-/* === MOBILE OVERRIDE CONSOLIDÉ < 768px === */
+/* === MOBILE < 768px === */
 @media (max-width: 768px) {
-  /* Container — plus de padding sidebar */
   .dashboard-container {
-    padding-left: 8px !important;
+    padding-left: 0 !important;
     padding-right: 8px !important;
+    padding-top: 8px !important;
   }
-
-  /* Preview plein écran sans décalage sidebar */
   .file-preview-container {
     left: 0 !important;
-    right: 0 !important;
     width: 100% !important;
     border-radius: 0 !important;
-    bottom: 0 !important;
   }
-
   .file-manager.full-preview-mode .file-preview {
     left: 0 !important;
     width: 100% !important;
     top: 60px !important;
   }
-
   .file-manager.full-preview-mode .close-preview {
     top: 70px !important;
     right: 12px !important;
   }
-
-  /* Topbar mobile */
   .emp-topbar {
     border-radius: 8px !important;
     padding: 8px 10px !important;
     margin-bottom: 10px !important;
+    min-height: 50px !important;
   }
-
-  /* FileManager plein écran */
   .file-manager {
     height: calc(100vh - 120px) !important;
   }
-
-  /* file-sticky-header */
-  .file-sticky-header {
-    padding: 0 0 4px 0 !important;
+  .sidebar-hamburger {
+    position: fixed !important;
+    top: 10px !important;
+    left: 10px !important;
+    z-index: 201 !important;
+    background: #003366 !important;
+    border-radius: 6px !important;
+    color: white !important;
+    display: flex !important;
   }
 }
